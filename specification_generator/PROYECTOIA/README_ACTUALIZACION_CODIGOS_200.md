@@ -2,13 +2,23 @@
 
 ## Formatos Word compatibles
 
-El gestor busca dentro de `ESPECIFICACIONES_VIEJAS` y sus subcarpetas:
+El gestor busca dentro de `ESPECIFICACIONES_VIEJAS` y
+`ESPECIFICACIONES_VIEJAS_ENG`, incluidas sus subcarpetas:
 
 - `.docx`: lectura directa.
 - `.doc`: conversión temporal de solo lectura a `.docx`.
 - `.docm`: conversión temporal de solo lectura a `.docx`.
 
-Los archivos originales nunca se modifican ni se sobrescriben. Para `.doc` y `.docm`, la conversión ocurre en una carpeta temporal que se elimina al terminar. En Windows se utiliza Microsoft Word mediante `pywin32`; si no está disponible, se intenta usar LibreOffice.
+Los originales `.doc` y `.docm` no se modifican: se convierten en una carpeta
+temporal que se elimina al terminar. En Windows se utiliza Microsoft Word
+mediante `pywin32`; si no está disponible, se intenta usar LibreOffice. Los
+documentos ingleses detectados dentro de `ESPECIFICACIONES_VIEJAS` se mueven a
+`ESPECIFICACIONES_VIEJAS_ENG` antes de procesarse.
+
+Los documentos de `ESPECIFICACIONES_VIEJAS_ENG` también se extraen al mismo
+esquema JSON. Las etiquetas inglesas de columnas y control documental se
+normalizan a los mismos campos; el idioma del JSON se marca como `en`, aunque se
+haya usado una plantilla visual en español.
 
 `CODIGOS_200.xlsx` también permanece estrictamente en modo de solo lectura. Toda la información derivada se almacena en `especificaciones.db`.
 
@@ -21,10 +31,23 @@ C:\Users\JonathanRomo\Music\PROYECTOIA\
 ├── CODIGOS_200.xlsx
 ├── especificaciones.db
 ├── ESPECIFICACIONES_VIEJAS\
+├── ESPECIFICACIONES_VIEJAS_ENG\
 └── ESPECIFICACIONES_JSON\
 ```
 
 ## Instalación y ejecución con Python 3.11
+
+En Linux, puedes ejecutar el lanzador desde cualquier carpeta. Siempre usa
+`.venv/bin/python` y crea el entorno e instala los requisitos si hacen falta:
+
+```bash
+/home/jonathan/Documents/lubricant-formulation/specification_generator/PROYECTOIA/EJECUTAR_GESTOR.sh
+```
+
+En VS Code, abre `PROYECTOIA` como carpeta (no solamente `Documents`) para que
+se apliquen los ajustes locales de `.vscode`.
+
+En Windows:
 
 ```powershell
 cd "C:\Users\JonathanRomo\Music\PROYECTOIA"

@@ -33,18 +33,36 @@ COLUMNAS = {
     "PRUEBA": "prueba", "UNIDAD": "unidades", "UNIDADES": "unidades",
     "METODO": "metodo", "ESPECIFICACION": "especificacion",
     "VALOR TIPICO": "valor_tipico", "VALORES TIPICOS": "valor_tipico",
+    "TEST": "prueba", "UNITS": "unidades", "UNIT": "unidades",
+    "TEST METHOD": "metodo", "METHOD": "metodo",
+    "SPECIFICATION": "especificacion", "SPECIFICATIONS": "especificacion",
+    "TYPICAL VALUE": "valor_tipico", "TYPICAL VALUES": "valor_tipico",
 }
 CONTROL = {
     "ELABORO Y APROBO": "elaboro_y_aprobo",
     "ELABORADO Y APROBADO POR": "elaboro_y_aprobo",
+    "PREPARED AND APPROVED BY": "elaboro_y_aprobo",
+    "ELABORATED AND APPROVED BY": "elaboro_y_aprobo",
     "FOLIO APQP": "folio_apqp", "FOLIO VAP": "folio_vap",
+    "APQP FOLIO": "folio_apqp", "VAP FOLIO": "folio_vap",
     "CODIGO UNICO DE PRODUCTO": "codigo_unico_producto",
     "CODIGO DE PRODUCTO": "codigo_unico_producto",
     "PART ID": "codigo_unico_producto",
+    "PRODUCT CODE": "codigo_unico_producto",
+    "UNIQUE PRODUCT CODE": "codigo_unico_producto",
+    "PROTOTYPE BATCH NUMBER": "numero_lote_prototipo",
+    "PROTOTYPE BATCH NO": "numero_lote_prototipo",
+    "PROTOTYPE PART NUMBER": "codigo_unico_producto",
     "ID": "codigo_unico_producto",
-    "FECHA": "fecha", "REVISION": "revision",
+    "FECHA": "fecha", "DATE": "fecha", "REVISION": "revision", "REV": "revision",
     "NOMBRE CLIENTE": "nombre_cliente", "REVISION CLIENTE": "revision_cliente",
     "NUMERO DE REVISION": "revision_cliente",
+    "NAME CLIENT": "nombre_cliente", "CLIENT NAME": "nombre_cliente",
+    "CUSTOMER NAME": "nombre_cliente", "CUSTOMERS NAME": "nombre_cliente",
+    "REVISION CLIENT": "revision_cliente", "CLIENT REVISION": "revision_cliente",
+    "CUSTOMER REVISION": "revision_cliente",
+    "CUSTOMERS REVISION NUMBER": "revision_cliente",
+    "CUSTOMER S REVISION NUMBER": "revision_cliente",
 }
 
 
@@ -240,6 +258,24 @@ def preparar(path: Path, tmp: Path) -> tuple[Path, bool]:
     raise ValueError(f"Formato Word no compatible: {extension}")
 
 
+def validar_documento_word(path: Path, tmp: Path) -> None:
+    if path.stat().st_size == 0:
+        raise ValueError("el archivo esta vacio")
+    lectura, _ = preparar(path, tmp)
+    try:
+        doc = Document(lectura)
+    except Exception as exc:
+        raise ValueError("el archivo no es un documento Word valido") from exc
+    if not doc.tables:
+        raise ValueError("el documento Word no contiene tablas")
+    tiene_contenido = any(limpiar(p.text) for p in doc.paragraphs)
+    tiene_contenido = tiene_contenido or any(
+        limpiar(celda.text) for tabla in doc.tables for fila in tabla.rows for celda in fila.cells
+    )
+    if not tiene_contenido:
+        raise ValueError("el documento Word no contiene texto")
+
+
 def texto_ooxml(path: Path) -> str:
     partes = []
     with ZipFile(path) as z:
@@ -281,9 +317,21 @@ def metadatos_formato(path: Path) -> dict:
 
 
 def contiene_marcadores_ingles(path: Path) -> bool:
-    """Detecta documentos antiguos en ingles por las palabras completas NAME o DATE."""
-    texto = texto_ooxml(path)
-    return bool(re.search(r"\b(?:NAME|DATE)\b", texto, re.I))
+    """Detecta idioma por etiquetas del documento, no por el formato visual usado."""
+    texto = clave(texto_ooxml(path))
+    marcadores_ingles = (
+        "TEST", "UNITS", "TEST METHOD", "SPECIFICATION", "TYPICAL VALUES",
+        "PART ID", "PRODUCT CODE", "CUSTOMER", "NAME", "DATE", "POSITION",
+        "SIGNATURE", "COMPANY",
+    )
+    marcadores_espanol = (
+        "PRUEBA", "UNIDAD", "METODO", "ESPECIFICACION", "VALOR TIPICO",
+        "CODIGO UNICO DE PRODUCTO", "FECHA", "NOMBRE CLIENTE",
+        "ELABORO Y APROBO",
+    )
+    ingles = sum(bool(re.search(rf"\b{re.escape(m)}\b", texto)) for m in marcadores_ingles)
+    espanol = sum(bool(re.search(rf"\b{re.escape(m)}\b", texto)) for m in marcadores_espanol)
+    return ingles > espanol
 
 def destino_movimiento_sin_colision(destino: Path) -> Path:
     """Evita sobrescribir un archivo existente al mover una especificacion ENG."""
@@ -296,12 +344,27 @@ def destino_movimiento_sin_colision(destino: Path) -> Path:
             return candidato
         indice += 1
 
-def extraer(path: Path) -> dict:
+
+def nombre_archivo_json(part_id: str, revision: str, fecha: datetime) -> str:
+    codigo = nombre_seguro(part_id) or "SIN_CODIGO_200"
+    revision_archivo = nombre_seguro(revision) or "SIN_REVISION"
+    if revision_archivo.isdigit():
+        revision_archivo = revision_archivo.zfill(2)
+    return f"{codigo} {revision_archivo}_{fecha:%d_%m_%y}.JSON"
+
+
+def extraer(path: Path, idioma: str = "es") -> dict:
     doc = Document(path)
-    encabezados = [limpiar(p.text) for s in doc.sections for p in s.header.paragraphs if limpiar(p.text)]
+    encabezados = [
+        limpiar(p.text) for s in doc.sections for p in s.header.paragraphs
+        if limpiar(p.text) and clave(p.text) not in {"ESPECIFICACION", "SPECIFICATION"}
+    ]
     producto = encabezados[0] if encabezados else ""
     if not producto:
-        candidatos = [limpiar(p.text) for p in doc.paragraphs if limpiar(p.text) and clave(p.text) != "ESPECIFICACION"]
+        candidatos = [
+            limpiar(p.text) for p in doc.paragraphs
+            if limpiar(p.text) and clave(p.text) not in {"ESPECIFICACION", "SPECIFICATION"}
+        ]
         producto = candidatos[0] if candidatos else ""
     if not producto:
         raise ValueError("No se encontro el nombre del producto.")
@@ -322,8 +385,8 @@ def extraer(path: Path) -> dict:
         valores = [limpiar(c.text) for c in fila.cells]
         no_vacios = [v for v in valores if v]
         if not no_vacios: continue
-        if len({clave(v) for v in no_vacios}) == 1 and "NOTA" in clave(no_vacios[0]):
-            notas.append(re.sub(r"^Notas?\s*:\s*", "", no_vacios[0], flags=re.I)); continue
+        if len({clave(v) for v in no_vacios}) == 1 and re.search(r"\b(?:NOTA|NOTES?)\b", clave(no_vacios[0])):
+            notas.append(re.sub(r"^(?:Notas?|Notes?)\s*:\s*", "", no_vacios[0], flags=re.I)); continue
         item = {"numero": len(pruebas) + 1, "fila_origen": fila_origen}
         for j, valor in enumerate(valores):
             if j < len(mapa) and mapa[j]: item[mapa[j]] = valor
@@ -343,7 +406,7 @@ def extraer(path: Path) -> dict:
 
     pie = " ".join(limpiar(p.text) for s in doc.sections for p in s.footer.paragraphs if limpiar(p.text))
     return {"esquema": "especificacion_producto_es_v3", "producto": {"nombre": producto},
-            "documento": {"tipo": "ESPECIFICACION", "idioma": "es", **metadatos_formato(path)},
+            "documento": {"tipo": "ESPECIFICACION", "idioma": idioma, **metadatos_formato(path)},
             "control_documental": control, "pruebas": pruebas, "notas": notas,
             "datos_institucionales": {"pie_pagina": pie},
             "estructura_detectada": {"numero_tablas": len(doc.tables), "tabla_pruebas_indice": indice,
@@ -351,7 +414,9 @@ def extraer(path: Path) -> dict:
                                       "encabezados": [limpiar(c.text) for c in tabla.rows[0].cells]}}
 
 
-def validar_catalogo(nombre: str, part_id: str, catalogo: list[dict]) -> dict:
+def validar_catalogo(
+    nombre: str, part_id: str, catalogo: list[dict], *, permitir_coincidencia_part_id: bool = False
+) -> dict:
     nk, ik = clave(nombre), id_clave(part_id)
     por_nombre = [r for r in catalogo if r["descripcion_clave"] == nk]
     por_id = [r for r in catalogo if ik and r["part_id_clave"] == ik]
@@ -361,6 +426,9 @@ def validar_catalogo(nombre: str, part_id: str, catalogo: list[dict]) -> dict:
                  "coincidencias_nombre": len(por_nombre), "coincidencias_part_id": len(por_id)}
     if ik and exactos:
         resultado.update(estado="COINCIDENCIA_EXACTA", registro_catalogo=exactos[0])
+    elif permitir_coincidencia_part_id and ik and por_id:
+        resultado.update(estado="COINCIDENCIA_PART_ID", part_id_final=por_id[0]["part_id"],
+                         registro_catalogo=por_id[0])
     elif not ik and len(por_nombre) == 1:
         resultado.update(estado="PART_ID_COMPLETADO_DESDE_CATALOGO", prefijo_archivo="&&& ",
                          part_id_final=por_nombre[0]["part_id"], registro_catalogo=por_nombre[0])
@@ -380,48 +448,69 @@ def validar_catalogo(nombre: str, part_id: str, catalogo: list[dict]) -> dict:
 
 def procesar(base: Path) -> dict:
     entrada, entrada_eng, salida = base / ENTRADA, base / ENTRADA_ENG, base / SALIDA
-    entrada.mkdir(exist_ok=True); entrada_eng.mkdir(exist_ok=True); salida.mkdir(exist_ok=True)
+    entrada.mkdir(exist_ok=True)
+    entrada_eng.mkdir(exist_ok=True)
+    archivos = sorted(
+        ((p, raiz == entrada_eng) for raiz in (entrada, entrada_eng)
+         for p in raiz.rglob("*") if p.is_file() and p.suffix.lower() in EXTENSIONES),
+        key=lambda item: str(item[0]),
+    )
+    invalidos = []
+    for origen, _ in archivos:
+        try:
+            with tempfile.TemporaryDirectory(prefix="validar_espec_") as td:
+                validar_documento_word(origen, Path(td))
+        except Exception as exc:
+            invalidos.append(f"{origen.relative_to(base).as_posix()}: {exc}")
+    if invalidos:
+        detalle = "\n  ".join(invalidos)
+        raise ValueError(f"Validacion previa cancelada; no se proceso ningun archivo:\n  {detalle}")
+
+    salida.mkdir(exist_ok=True)
     con = conectar(base / DB)
     ahora_inicio = datetime.now().isoformat(timespec="seconds")
     catalogo, hash_catalogo = leer_catalogo(base / CATALOGO)
     registrar_catalogo(con, catalogo, hash_catalogo, ahora_inicio, base / CATALOGO)
     resumen = {"nuevos": 0, "actualizados": 0, "ignorados": 0, "movidos_eng": 0, "conflictos": 0, "completados": 0, "errores": 0}
-    archivos = sorted(p for p in entrada.rglob("*") if p.is_file() and p.suffix.lower() in EXTENSIONES)
-    for origen in archivos:
-        rel = origen.relative_to(entrada).as_posix(); digest = sha256(origen); stat = origen.stat()
-        anterior = con.execute("SELECT * FROM archivos WHERE ruta_relativa=?", (rel,)).fetchone()
-        if anterior and anterior["hash_actual"] == digest and anterior["hash_catalogo"] == hash_catalogo and anterior["estado"] == "OK":
-            resumen["ignorados"] += 1; continue
+    for origen, ya_esta_en_ingles in archivos:
+        digest = sha256(origen)
+        stat = origen.stat()
+        rel = origen.relative_to(base).as_posix()
         ahora = datetime.now(); fecha_iso = ahora.isoformat(timespec="seconds")
         try:
             with tempfile.TemporaryDirectory(prefix="espec_") as td:
                 lectura, convertido = preparar(origen, Path(td))
-                es_ingles = contiene_marcadores_ingles(lectura)
-                datos = None if es_ingles else extraer(lectura)
-            if es_ingles:
-                destino_eng = destino_movimiento_sin_colision(entrada_eng / Path(rel))
-                destino_eng.parent.mkdir(parents=True, exist_ok=True)
+                idioma = "en" if ya_esta_en_ingles or contiene_marcadores_ingles(lectura) else "es"
+                datos = extraer(lectura, idioma)
+            if idioma == "en" and not ya_esta_en_ingles:
+                destino_eng = destino_movimiento_sin_colision(entrada_eng / origen.name)
                 shutil.move(str(origen), str(destino_eng))
-                ruta_eng = destino_eng.relative_to(base).as_posix()
-                con.execute("""INSERT INTO archivos
-                  (ruta_relativa,nombre_archivo,hash_actual,hash_catalogo,tamano_bytes,fecha_modificacion_ns,
-                   formato_origen,idioma,primera_deteccion,ultima_revision_procesada,estado,ultimo_error)
-                  VALUES(?,?,?,?,?,?,?,?,?,?,'MOVIDO_ENG',NULL)
-                  ON CONFLICT(ruta_relativa) DO UPDATE SET nombre_archivo=excluded.nombre_archivo,
-                   hash_actual=excluded.hash_actual,hash_catalogo=excluded.hash_catalogo,
-                   tamano_bytes=excluded.tamano_bytes,fecha_modificacion_ns=excluded.fecha_modificacion_ns,
-                   formato_origen=excluded.formato_origen,idioma='ENG',
-                   ultima_revision_procesada=excluded.ultima_revision_procesada,
-                   estado='MOVIDO_ENG',ultimo_error=NULL""",
-                  (rel, origen.name, digest, hash_catalogo, stat.st_size, stat.st_mtime_ns,
-                   origen.suffix[1:].lower(), "ENG", fecha_iso, fecha_iso))
+                origen = destino_eng
+                rel = origen.relative_to(base).as_posix()
                 con.commit()
                 resumen["movidos_eng"] += 1
-                print(f"MOVIDO ENG (sin JSON): {rel} -> {ruta_eng}")
+                print(f"MOVIDO ENG: {rel}")
+            anterior = con.execute("SELECT * FROM archivos WHERE ruta_relativa=?", (rel,)).fetchone()
+            if anterior is None and idioma == "en":
+                anterior_movido = con.execute(
+                    """SELECT id FROM archivos
+                       WHERE nombre_archivo=? AND hash_actual=? AND estado='MOVIDO_ENG'
+                       ORDER BY id DESC LIMIT 1""",
+                    (origen.name, digest),
+                ).fetchone()
+                if anterior_movido:
+                    con.execute("UPDATE archivos SET ruta_relativa=? WHERE id=?", (rel, anterior_movido["id"]))
+                    con.commit()
+                    anterior = con.execute("SELECT * FROM archivos WHERE ruta_relativa=?", (rel,)).fetchone()
+            if (anterior and anterior["hash_actual"] == digest
+                    and anterior["hash_catalogo"] == hash_catalogo and anterior["estado"] == "OK"):
+                resumen["ignorados"] += 1
                 continue
             nombre = datos["producto"]["nombre"]
             part_fuente = datos["control_documental"].get("codigo_unico_producto", "")
-            validacion = validar_catalogo(nombre, part_fuente, catalogo)
+            validacion = validar_catalogo(
+                nombre, part_fuente, catalogo, permitir_coincidencia_part_id=idioma == "en"
+            )
             part_final = validacion["part_id_final"]
             if part_final:
                 datos["control_documental"]["codigo_unico_producto"] = part_final
@@ -429,15 +518,22 @@ def procesar(base: Path) -> dict:
             pk = clave(nombre)
             ultima = con.execute("SELECT MAX(revision_json) m FROM versiones WHERE producto_clave=?", (pk,)).fetchone()["m"]
             revision = 0 if ultima is None else ultima + 1
+            rev_esp = datos["control_documental"].get("revision", "")
             prefijo = validacion["prefijo_archivo"]
-            archivo_json = f"{prefijo}ESPECIFICACION {nombre_seguro(nombre)}_{revision:02d}_{ahora:%d_%m_%y}.json"
+            nombre_base = nombre_archivo_json(part_final, rev_esp, ahora)
+            archivo_json = nombre_base
+            sufijo = 1
+            while (salida / archivo_json).exists() or con.execute(
+                "SELECT 1 FROM versiones WHERE archivo_json=?", (archivo_json,)
+            ).fetchone():
+                archivo_json = f"{Path(nombre_base).stem}_{sufijo:02d}.JSON"
+                sufijo += 1
             destino = salida / archivo_json
             datos.update(archivo_origen=rel, hash_sha256_origen=digest, hash_sha256_catalogo=hash_catalogo,
                          formato_origen=origen.suffix[1:].lower(), conversion_temporal=convertido,
                          revision_json=f"{revision:02d}", fecha_creacion_json=fecha_iso,
                          archivo_json=archivo_json, extractor_version=APP_VERSION)
             destino.write_text(json.dumps(datos, ensure_ascii=False, indent=2), encoding="utf-8")
-            rev_esp = datos["control_documental"].get("revision", "")
             cod_fmt = datos["documento"].get("codigo_formato", "")
             rev_fmt = datos["documento"].get("revision_formato", "")
             con.execute("""INSERT INTO archivos
@@ -453,11 +549,11 @@ def procesar(base: Path) -> dict:
                part_id_final=excluded.part_id_final,validacion_catalogo=excluded.validacion_catalogo,
                revision_especificacion=excluded.revision_especificacion,codigo_formato=excluded.codigo_formato,
                revision_formato=excluded.revision_formato,formato_origen=excluded.formato_origen,
-               idioma='ESP',ultima_revision_json=excluded.ultima_revision_json,ultimo_json=excluded.ultimo_json,
+               idioma=excluded.idioma,ultima_revision_json=excluded.ultima_revision_json,ultimo_json=excluded.ultimo_json,
                ultima_revision_procesada=excluded.ultima_revision_procesada,estado='OK',ultimo_error=NULL""",
               (rel, origen.name, digest, hash_catalogo, stat.st_size, stat.st_mtime_ns, pk, nombre,
                part_fuente, part_final, validacion["estado"], rev_esp, cod_fmt, rev_fmt,
-               origen.suffix[1:].lower(), "ESP", revision, archivo_json, fecha_iso, fecha_iso))
+               origen.suffix[1:].lower(), idioma.upper(), revision, archivo_json, fecha_iso, fecha_iso))
             archivo_id = con.execute("SELECT id FROM archivos WHERE ruta_relativa=?", (rel,)).fetchone()["id"]
             con.execute("""INSERT INTO versiones
               (archivo_id,producto_clave,revision_json,hash_fuente,hash_catalogo,part_id_fuente,
@@ -465,7 +561,8 @@ def procesar(base: Path) -> dict:
                revision_formato,formato_origen,idioma,fecha_creacion,archivo_json)
               VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
               (archivo_id, pk, revision, digest, hash_catalogo, part_fuente, part_final,
-               validacion["estado"], rev_esp, cod_fmt, rev_fmt, origen.suffix[1:].lower(), "ESP", fecha_iso, archivo_json))
+               validacion["estado"], rev_esp, cod_fmt, rev_fmt, origen.suffix[1:].lower(),
+               idioma.upper(), fecha_iso, archivo_json))
             con.commit()
             resumen["actualizados" if anterior else "nuevos"] += 1
             if prefijo == "--- ": resumen["conflictos"] += 1
@@ -504,7 +601,11 @@ def main() -> int:
     parser.add_argument("--ver-registro", action="store_true")
     args = parser.parse_args(); base = base_app()
     if args.ver_registro: ver_registro(base); return 0
-    resumen = procesar(base)
+    try:
+        resumen = procesar(base)
+    except Exception as exc:
+        print(f"ERROR: {exc}")
+        return 1
     print("\nRESUMEN")
     for k, v in resumen.items(): print(f"  {k}: {v}")
     return 1 if resumen["errores"] else 0

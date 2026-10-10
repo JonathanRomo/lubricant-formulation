@@ -1,14 +1,39 @@
 # Entornos virtuales
 .venv/
 venv/
+env/
 
-# Caché de Python
+# Cache y archivos compilados de Python
 __pycache__/
 *.py[cod]
+*$py.class
 
-# Configuración local
+# Configuracion local y secretos
 .env
+.env.*
+!.env.example
 
-# Archivos temporales
+# Configuracion del editor
+.vscode/
+.idea/
+
+# Archivos temporales del sistema
 .DS_Store
 Thumbs.db
+
+# Carpetas con informacion confidencial
+ESPECIFICACIONES_JSON/
+ESPECIFICACIONES_VIEJAS/
+ESPECIFICACIONES_VIEJAS_ENG/
+
+# Base de datos local y archivos auxiliares de SQLite
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Archivos temporales
+*.tmp
+*.temp
+*.log
