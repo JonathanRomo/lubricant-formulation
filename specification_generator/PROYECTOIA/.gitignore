@@ -21,10 +21,12 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Carpetas con informacion confidencial
+# Carpetas con informacion confidencial o generada
 ESPECIFICACIONES_JSON/
 ESPECIFICACIONES_VIEJAS/
 ESPECIFICACIONES_VIEJAS_ENG/
+REVISAR/
+FORMATOS/
 
 # Base de datos local y archivos auxiliares de SQLite
 *.db

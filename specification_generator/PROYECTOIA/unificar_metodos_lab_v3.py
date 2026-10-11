@@ -33,7 +33,7 @@ def key(v):
 def clean(v,asterisco=False):
     s=txt(v)
     if asterisco:s=re.sub(r"^\s*\*+\s*","",s)
-    return "N/A" if key(s) in {"NA","N A","NO APLICA","NO APLICABLE"} else s.strip(" ;")
+    return "NA" if key(s) in {"NA","N A","NO APLICA","NO APLICABLE"} else s.strip(" ;")
 def digest(p):
     h=hashlib.sha256()
     with p.open("rb") as f:
