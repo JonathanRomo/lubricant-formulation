@@ -1,0 +1,532 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ WS-LV VACCINE GRADE OMV"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-07-21"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "-",
+    "codigo_unico_producto": "21200009",
+    "fecha": "21/07/2026",
+    "revision": "00",
+    "nombre_cliente": "",
+    "revision_cliente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA VISUAL",
+      "unidades": "N/A",
+      "metodo": "ORGANOLÉPTICO",
+      "especificacion": "LIQUIDO OLEOSO, TRANSPARENTE, INCOLORO",
+      "valor_tipico": "LIQUIDO OLEOSO, TRANSPARENTE, INCOLORO"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "OLOR",
+      "unidades": "N/A",
+      "metodo": "ORGANOLÉPTICO",
+      "especificacion": "INOLORO",
+      "valor_tipico": "INOLORO"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "COLOR SAYBOLT",
+      "unidades": "N/A",
+      "metodo": "ASTM D156",
+      "especificacion": "+30 MINIMO",
+      "valor_tipico": ">+30"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "DENSIDAD RELATIVA A 20 °C",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D1298 / ASTM D7042",
+      "especificacion": "0,800 – 0,830",
+      "valor_tipico": "0,820"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "7,000 – 8,000",
+      "valor_tipico": "7,350"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "La porción oleosa de la muestra puede volverse turbia, pero se mantiene incolora o muestra un color ligeramente rosa o amarillo, y la porción ácida de la muestra no se torna más oscura que la solución estándar.",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "LIMITE DE HIDROCARBUROS POLICICLICOS AROMATICOS",
+      "unidades": "N/A",
+      "metodo": "USP",
+      "especificacion": "La absorbancia a cualquier longitud de onda en el rango especificado de la solución muestra es no mayor a un tercio de la absorbancia de la solución estándar.",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "HUMEDAD POR CREPITACIÓN",
+      "unidades": "N/A",
+      "metodo": "MÉTODO INTERNO (91300029)",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": "NEGATIVA"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "unidades": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "metodo": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 9,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ WS-LV VACCINE GRADE OMV",
+    "part_id_fuente": "21200009",
+    "part_id_final": "21200009",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "81200039",
+        "descripcion": "SCHUTZ WS-LV VACCINE GRADE OMV"
+      },
+      {
+        "part_id": "21200009",
+        "descripcion": "SCHUTZ WS-LV VACCINE GRADE OMV"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21200009"
+    ],
+    "nombre_catalogo": "SCHUTZ WS-LV VACCINE GRADE OMV",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2689,
+      "part_id": "21200009",
+      "descripcion": "SCHUTZ WS-LV VACCINE GRADE OMV",
+      "part_id_clave": "21200009",
+      "descripcion_clave": "SCHUTZ WS LV VACCINE GRADE OMV"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ESPECIFICACIÓN SCHUTZ WS-LV VACCINE GRADE OMV REV. 03.docx",
+  "hash_sha256_origen": "ad9748823c36ee9dcdd82a2a62f7fda672275e5712cbf8c1af79f4003166a3bf",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "01",
+  "fecha_creacion_json": "2026-10-11T01:30:34",
+  "archivo_json": "21200009 00_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:45:17",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 5,
+      "revision": 3,
+      "sin_coincidencia": 1
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "ALINEADO",
+        "nombre_original": "APARIENCIA VISUAL",
+        "metodo_original": "ORGANOLÉPTICO",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "ORGANOLÉPTICO",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "61",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "fila_segunda_opcion": "64",
+        "margen_puntaje": 0.32,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "LIQUIDO OLEOSO, TRANSPARENTE, INCOLORO",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "LIQUIDO OLEOSO, TRANSPARENTE, INCOLORO",
+          "valor_tipico": "LIQUIDO OLEOSO, TRANSPARENTE, INCOLORO"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "OLOR",
+        "metodo_original": "ORGANOLÉPTICO",
+        "nombre_maestro_propuesto": "OLOR",
+        "nombre_maestro_ingles_propuesto": "ODOR",
+        "metodo_original_normalizado": "ORGANOLÉPTICO",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "63",
+        "nombre_segunda_opcion": "COLOR",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "80",
+        "margen_puntaje": 0.3956,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "INOLORO",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "OLOR",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "INOLORO",
+          "valor_tipico": "INOLORO"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "ALINEADO",
+        "nombre_original": "COLOR SAYBOLT",
+        "metodo_original": "ASTM D156",
+        "nombre_maestro_propuesto": "COLOR SAYBOLT",
+        "nombre_maestro_ingles_propuesto": "SAYBOLT COLOR",
+        "metodo_original_normalizado": "ASTM D156",
+        "metodo_maestro_fuente": "ASTM D156",
+        "metodo_maestro_propuesto": "ASTM D156",
+        "referencias_astm_originales": [
+          "D156"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D156"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "14",
+        "nombre_segunda_opcion": "COLOR",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "80",
+        "margen_puntaje": 0.592,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": ">+30",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR SAYBOLT",
+          "unidades": "N/A",
+          "metodo": "ASTM D156",
+          "especificacion": "+30 MINIMO",
+          "valor_tipico": ">+30"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD RELATIVA A 20°C",
+        "metodo_original": "ASTM D1298 / ASTM D7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "RELATIVE DENSITY AT 20 °C/4 °C",
+        "metodo_original_normalizado": "ASTM D1298 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017) / NMX-J-123-ANCE-2019 P 6,3",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "126",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1298 - 12b (2017)",
+        "fila_segunda_opcion": "119",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "ADIMENSIONAL",
+        "valor_tipico_original": "0,820",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5992,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DENSIDAD RELATIVA A 20°C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D1298",
+          "especificacion": "0,800 – 0,830",
+          "valor_tipico": "0,820"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 40°C",
+        "metodo_original": "ASTM D445 / ASTM D7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "140",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "143",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm²/s",
+        "valor_tipico_original": "7,350",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6182,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 40°C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "7,000 – 8,000",
+          "valor_tipico": "7,350"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "ALINEADO",
+        "nombre_original": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+        "metodo_original": "USP",
+        "nombre_maestro_propuesto": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+        "nombre_maestro_ingles_propuesto": "READILY CARBONIZABLE SUBSTANCES",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP (271) / FEUM (MGA. 0881)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "76",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "79",
+        "margen_puntaje": 0.379,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.984,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "La porción oleosa de la muestra puede volverse turbia, pero se mantiene incolora o muestra un color ligeramente rosa o amarillo, y la porción ácida de la muestra no se torna más oscura que la solución estándar.",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "LIMITE DE HIDROCARBUROS POLICICLICOS AROMATICOS",
+        "metodo_original": "USP",
+        "nombre_maestro_propuesto": "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICO",
+        "nombre_maestro_ingles_propuesto": "LIMIT OF POLYCYCLIC AROMATIC HYDROCARBONS",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "73",
+        "nombre_segunda_opcion": "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICO",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "74",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9927,
+        "puntaje_nombre": 0.9892,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICO",
+          "unidades": "A",
+          "metodo": "USP",
+          "especificacion": "La absorbancia a cualquier longitud de onda en el rango especificado de la solución muestra es no mayor a un tercio de la absorbancia de la solución estándar.",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "HUMEDAD POR CREPITACIÓN",
+        "metodo_original": "MÉTODO INTERNO (91300029)",
+        "nombre_maestro_propuesto": "HUMEDAD POR CREPITACIÓN",
+        "nombre_maestro_ingles_propuesto": "Moisture by crackle test",
+        "metodo_original_normalizado": "MÉTODO INTERNO (91300029)",
+        "metodo_maestro_fuente": "MÉTODO INTERNO (91300029)",
+        "metodo_maestro_propuesto": "MÉTODO INTERNO (91300029)",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "52",
+        "nombre_segunda_opcion": "NÚMERO DE SAPONIFICACIÓN",
+        "metodo_segunda_opcion": "ASTM D94",
+        "fila_segunda_opcion": "42",
+        "margen_puntaje": 0.66,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "NEGATIVA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "HUMEDAD POR CREPITACIÓN",
+          "unidades": "N/A",
+          "metodo": "MÉTODO INTERNO (91300029)",
+          "especificacion": "NEGATIVA",
+          "valor_tipico": "NEGATIVA"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "nombre_maestro_propuesto": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "nombre_maestro_ingles_propuesto": "INTERFACIAL TENSION BY THE RING METHOD",
+        "metodo_original_normalizado": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_maestro_fuente": "ASTM D971",
+        "metodo_maestro_propuesto": "ASTM D971",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D971"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "94",
+        "nombre_segunda_opcion": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "metodo_segunda_opcion": "ASTM D 971-20 / NMX-J-123-ANCE-2019 P 6,6",
+        "fila_segunda_opcion": "110",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "valor_tipico_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "unidades_maestras_propuestas": "mN/m",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3043,
+        "puntaje_nombre": 0.4475,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+          "unidades": "mN/m",
+          "metodo": "ASTM D971",
+          "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+          "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

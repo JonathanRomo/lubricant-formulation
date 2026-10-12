@@ -1,0 +1,538 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ EM GREASE PTFE III"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2024-04-10"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "INVESTIGACIÓN Y DESARROLLO",
+    "folio_apqp": "------",
+    "folio_vap": "------",
+    "codigo_unico_producto": "21100055",
+    "fecha": "10/04/2024",
+    "revision": "1",
+    "nombre_cliente": "-----",
+    "revision_cliente": "NA"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "GRADO NLGI",
+      "unidades": "N/A",
+      "metodo": "ASTM D217",
+      "especificacion": "2",
+      "valor_tipico": "2"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "TIPO DE JABÓN",
+      "unidades": "---",
+      "metodo": "---",
+      "especificacion": "POLIUREA",
+      "valor_tipico": "Poliurea"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "COLOR",
+      "unidades": "---",
+      "metodo": "VISUAL",
+      "especificacion": "VERDE",
+      "valor_tipico": "Verde"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "PENETRACIÓN DE CONO EN GRASAS A 25 °C (60 GOLPES)",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D217",
+      "especificacion": "265 – 295",
+      "valor_tipico": "268"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D217",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "13"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PUNTO DE GOTEO DE GRASAS LUBRICANTES",
+      "unidades": "°C",
+      "metodo": "ASTM D2265",
+      "especificacion": "240 MÍNIMO",
+      "valor_tipico": "261"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "MÉTODO DE 4 BOLAS DESGASTE EN GRASAS",
+      "unidades": "mm",
+      "metodo": "ASTM D2266",
+      "especificacion": "0.6 TÍPICO",
+      "valor_tipico": "0,500"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "SEPARACIÓN DE ACEITE DURANTE EL ALMACENAJE A 25 °C, 0.25 PSI, 24 H",
+      "unidades": "%",
+      "metodo": "ASTM D1742",
+      "especificacion": "2 MÁXIMO",
+      "valor_tipico": "0,4"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "VISCOSIDAD CINEMATICA DEL ACEITE @ 40 °C",
+      "unidades": "cSt",
+      "metodo": "ASTM D445",
+      "especificacion": "198 – 242",
+      "valor_tipico": "222,00"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 9,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ EM GREASE PTFE III",
+    "part_id_fuente": "21100055",
+    "part_id_final": "21100055",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80800065",
+        "descripcion": "SCHUTZ EM GREASE PTFE III"
+      },
+      {
+        "part_id": "21100055",
+        "descripcion": "SCHUTZ EM GREASE PTFE III"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21100055"
+    ],
+    "nombre_catalogo": "SCHUTZ EM GREASE PTFE III",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2701,
+      "part_id": "21100055",
+      "descripcion": "SCHUTZ EM GREASE PTFE III",
+      "part_id_clave": "21100055",
+      "descripcion_clave": "SCHUTZ EM GREASE PTFE III"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ EM GREASE PTFE III.doc",
+  "hash_sha256_origen": "15d8bc63c823ebf74bf5145f6f63a6d6fe66d73695847ef6bc9e55565f97a7f7",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:37:15",
+  "archivo_json": "21100055 01_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:45:14",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 6,
+      "revision": 1,
+      "sin_coincidencia": 2
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "ALINEADO",
+        "nombre_original": "GRADO NLGI",
+        "metodo_original": "ASTM D217",
+        "nombre_maestro_propuesto": "GRADO NLGI",
+        "nombre_maestro_ingles_propuesto": "NLGI GRADE",
+        "metodo_original_normalizado": "ASTM D217",
+        "metodo_maestro_fuente": "ASTM D217",
+        "metodo_maestro_propuesto": "ASTM D217",
+        "referencias_astm_originales": [
+          "D217"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D217"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "21",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS LUBRICANTES",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "20",
+        "margen_puntaje": 0.48,
+        "unidades_originales": "---",
+        "valor_tipico_original": "2",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "GRADO NLGI",
+          "unidades": "N/A",
+          "metodo": "ASTM D217",
+          "especificacion": "2",
+          "valor_tipico": "2"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "TIPO DE JABÓN",
+        "metodo_original": "---",
+        "nombre_maestro_propuesto": "DETERMINACIÓN DE ZINC (ZN) EN ACEITES LUBRICANTES POR ICP-OES",
+        "nombre_maestro_ingles_propuesto": "DETERMINATION OF ZINC (ZN) IN LUBRICATING OILS BY ICP-OES",
+        "metodo_original_normalizado": "---",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "85",
+        "nombre_segunda_opcion": "RESIDUO DE LA IGNICIÓN",
+        "metodo_segunda_opcion": "USP (281) / FEUM (MGA 0751)",
+        "fila_segunda_opcion": "90",
+        "margen_puntaje": 0.0089,
+        "unidades_originales": "---",
+        "valor_tipico_original": "Poliurea",
+        "unidades_maestras_propuestas": "mg/kg",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3489,
+        "puntaje_nombre": 0.2778,
+        "puntaje_metodo": 0.5,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DETERMINACIÓN DE ZINC (ZN) EN ACEITES LUBRICANTES POR ICP-OES",
+          "unidades": "mg/kg",
+          "metodo": "---",
+          "especificacion": "POLIUREA",
+          "valor_tipico": "Poliurea"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "COLOR",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "COLOR",
+        "nombre_maestro_ingles_propuesto": "COLOR",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "80",
+        "nombre_segunda_opcion": "OLOR",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO",
+        "fila_segunda_opcion": "63",
+        "margen_puntaje": 0.0756,
+        "unidades_originales": "---",
+        "valor_tipico_original": "Verde",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.68,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "VERDE",
+          "valor_tipico": "Verde"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "PENETRACIÓN, A 25 ° C TRABAJADA @ 60 GOLPES",
+        "metodo_original": "ASTM D217",
+        "nombre_maestro_propuesto": "PENETRACIÓN DE CONO EN GRASAS A 25°C (60 GOLPES)",
+        "nombre_maestro_ingles_propuesto": "CONE PENETRATION OF GREASES AT 25°C (60 STROKES)",
+        "metodo_original_normalizado": "ASTM D217",
+        "metodo_maestro_fuente": "ASTM D217",
+        "metodo_maestro_propuesto": "ASTM D217",
+        "referencias_astm_originales": [
+          "D217"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D217"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "23",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS A 25°C, 0 GOLPES (SIN TRABAJAR)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "22",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "1/mm",
+        "valor_tipico_original": "268",
+        "unidades_maestras_propuestas": "1/10 mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.7027,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PENETRACIÓN DE CONO EN GRASAS A 25°C (60 GOLPES)",
+          "unidades": "1/10 mm",
+          "metodo": "ASTM D217",
+          "especificacion": "265 – 295",
+          "valor_tipico": "268"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "ALINEADO",
+        "nombre_original": "CAMBIO DE PENETRACION DE 60 A 10,000 GOLPES",
+        "metodo_original": "ASTM D217",
+        "nombre_maestro_propuesto": "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+        "nombre_maestro_ingles_propuesto": "PENETRATION CHANGE (60 TO 100,000 STROKES)",
+        "metodo_original_normalizado": "ASTM D217",
+        "metodo_maestro_fuente": "ASTM D217",
+        "metodo_maestro_propuesto": "ASTM D217",
+        "referencias_astm_originales": [
+          "D217"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D217"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "19",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS A 25°C (60 GOLPES)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "23",
+        "margen_puntaje": 0.13,
+        "unidades_originales": "1/mm",
+        "valor_tipico_original": "13",
+        "unidades_maestras_propuestas": "1/10mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.97,
+        "puntaje_nombre": 0.9559,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+          "unidades": "1/10 mm",
+          "metodo": "ASTM D217",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "13"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE GOTEO",
+        "metodo_original": "ASTM D2265",
+        "nombre_maestro_propuesto": "PUNTO DE GOTEO DE GRASAS LUBRICANTES",
+        "nombre_maestro_ingles_propuesto": "DROPPING POINT OF LUBRICATING GREASE",
+        "metodo_original_normalizado": "ASTM D2265",
+        "metodo_maestro_fuente": "ASTM 2265",
+        "metodo_maestro_propuesto": "ASTM D2265",
+        "referencias_astm_originales": [
+          "D2265"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2265"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "3",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "ASTM D127",
+        "fila_segunda_opcion": "7",
+        "margen_puntaje": 0.4408,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "261",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.604,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE GOTEO DE GRASAS LUBRICANTES",
+          "unidades": "°C",
+          "metodo": "ASTM D2265",
+          "especificacion": "240 MÍNIMO",
+          "valor_tipico": "261"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "4 BOLAS DESGASTE",
+        "metodo_original": "ASTM D2266",
+        "nombre_maestro_propuesto": "MÉTODO DE 4 BOLAS DESGASTE EN GRASAS",
+        "nombre_maestro_ingles_propuesto": "4-BALL WEAR TEST METHOD IN GREASES",
+        "metodo_original_normalizado": "ASTM D2266",
+        "metodo_maestro_fuente": "ASTM D2266",
+        "metodo_maestro_propuesto": "ASTM D2266",
+        "referencias_astm_originales": [
+          "D2266"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2266"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "24",
+        "nombre_segunda_opcion": "MÉTODO DE 4 BOLAS DESGASTE (MODIFICADO)",
+        "metodo_segunda_opcion": "ASTM D4172",
+        "fila_segunda_opcion": "33",
+        "margen_puntaje": 0.4025,
+        "unidades_originales": "mm",
+        "valor_tipico_original": "0.500",
+        "unidades_maestras_propuestas": "mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6538,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "MÉTODO DE 4 BOLAS DESGASTE EN GRASAS",
+          "unidades": "mm",
+          "metodo": "ASTM D2266",
+          "especificacion": "0.6 TÍPICO",
+          "valor_tipico": "0,500"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "SEPARACIÓN DE ACEITE DURANTE EL ALMACENAJE A 25 °C, 0.25 PSI, 24 H",
+        "metodo_original": "ASTM D1742",
+        "nombre_maestro_propuesto": "SEPARACIÓN DE ACEITE DURANTE EL ALMACENAJE A 25 °C, 0.25 PSI, 24 H",
+        "nombre_maestro_ingles_propuesto": "OIL SEPARATION DURING STORAGE AT 25 °C, 0.25 PSI, 24 H",
+        "metodo_original_normalizado": "ASTM D1742",
+        "metodo_maestro_fuente": "ASTM D1742",
+        "metodo_maestro_propuesto": "ASTM D1742",
+        "referencias_astm_originales": [
+          "D1742"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1742"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "115",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS A 25°C (60 GOLPES)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "23",
+        "margen_puntaje": 0.6297,
+        "unidades_originales": "%",
+        "valor_tipico_original": "0.4",
+        "unidades_maestras_propuestas": "%",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "SEPARACIÓN DE ACEITE DURANTE EL ALMACENAJE A 25 °C, 0.25 PSI, 24 H",
+          "unidades": "%",
+          "metodo": "ASTM D1742",
+          "especificacion": "2 MÁXIMO",
+          "valor_tipico": "0,4"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMATICA DEL ACEITE @ 40°C",
+        "metodo_original": "ASTM D445",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "140",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "143",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "cSt",
+        "valor_tipico_original": "222.00",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5859,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMATICA DEL ACEITE @ 40°C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "198 – 242",
+          "valor_tipico": "222,00"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

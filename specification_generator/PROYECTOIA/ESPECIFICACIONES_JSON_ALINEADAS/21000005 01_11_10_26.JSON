@@ -1,0 +1,441 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ VAAM W70"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2012-02-05"
+  },
+  "control_documental": {
+    "folio_apqp": "VAP12I149",
+    "fecha": "05/02/12",
+    "revision": "01",
+    "nombre_cliente": "GOMAS NATURALES",
+    "revision_cliente": "----",
+    "codigo_unico_producto_fuente": "",
+    "codigo_unico_producto": "21000005"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "COLOR LOVIBOND, CELDA DE DE 2 PULG",
+      "unidades": "N/A",
+      "metodo": "USP 32",
+      "especificacion": "1.0 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR USP",
+      "unidades": "N/A",
+      "metodo": "USP 32",
+      "especificacion": "CUMPLE",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "GRAVEDAD ESPECIFICA A 60 °C",
+      "unidades": "A/D",
+      "metodo": "ASTM D-1298",
+      "especificacion": "0.815 – 0.860",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "REACCIÓN",
+      "unidades": "N/A",
+      "metodo": "USP",
+      "especificacion": "PASA PRUEBA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "ÁCIDOS ORGÁNICOS",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "PASA PRUEBA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "MEZCLA DE ACEITES, GRASAS Y RESINAS",
+      "unidades": "A/D",
+      "metodo": "USP 32",
+      "especificacion": "PASA PRUEBA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "VISCOSIDAD SAYBOLT A 210 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D2161",
+      "especificacion": "43 - 51",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Oficina: Av. Universidad 1001 Piso 10 Int. 11 Torre Plaza Bosques, C.P. 20127, Aguascalientes, Ags. Planta: Carretera a San Luis Potosí Km 14.5, C.P. 20337, El Llano, Aguascalientes. Tel 01(449)2.35.25.75 contacto@schutzoil.com, www.schutzlubricants.com"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 7,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ VAAM W70",
+    "part_id_fuente": "",
+    "part_id_final": "21000005",
+    "coincidencias_nombre": 1,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "21000005",
+        "descripcion": "SCHUTZ VAAM W70"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21000005"
+    ],
+    "nombre_catalogo": "SCHUTZ VAAM W70",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2796,
+      "part_id": "21000005",
+      "descripcion": "SCHUTZ VAAM W70",
+      "part_id_clave": "21000005",
+      "descripcion_clave": "SCHUTZ VAAM W70"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ VAAM W70.doc",
+  "hash_sha256_origen": "242e5a4c4ca12eecb096228eed06b689eb8880f12d3d2084ee331418f3876671",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T11:26:21",
+  "archivo_json": "21000005 01_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:44:42",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 3,
+      "revision": 3,
+      "sin_coincidencia": 1
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "COLOR LOVIBOND, CELDA DE DE 2 PULG",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "CONSISTENCIA DE PETROLATOS",
+        "nombre_maestro_ingles_propuesto": "CONSISTENCY OF PETROLATUMS",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "79",
+        "nombre_segunda_opcion": "LÍMITE DE COMPUESTOS DE AZUFRE",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "72",
+        "margen_puntaje": 0.0006,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "1/10mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5703,
+        "puntaje_nombre": 0.3916,
+        "puntaje_metodo": 0.95,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "CONSISTENCIA DE PETROLATOS",
+          "unidades": "1/10 mm",
+          "metodo": "USP / FEUM",
+          "especificacion": "1.0 MAXIMO",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "COLOR USP",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "COLOR",
+        "nombre_maestro_ingles_propuesto": "COLOR",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "80",
+        "nombre_segunda_opcion": "ÁCIDOS ORGÁNICOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "82",
+        "margen_puntaje": 0.2331,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8091,
+        "puntaje_nombre": 0.7429,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "CUMPLE",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "GRAVEDAD ESPECIFICA A 60 °C",
+        "metodo_original": "ASTM D-1298",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "SPECIFIC GRAVITY AT X °C/X °C",
+        "metodo_original_normalizado": "ASTM D1298",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017)",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "122",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1298 - 12b (2017) / NMX-J-123-ANCE-2019 P 6,3",
+        "fila_segunda_opcion": "126",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.527,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "GRAVEDAD ESPECIFICA A 60 °C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D1298",
+          "especificacion": "0.815 – 0.860",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "REACCION USP",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "REACCIÓN",
+        "nombre_maestro_ingles_propuesto": "REQACTION",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "71",
+        "nombre_segunda_opcion": "PARAFINA SÓLIDA",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "69",
+        "margen_puntaje": 0.2554,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8776,
+        "puntaje_nombre": 0.82,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "REACCIÓN",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "PASA PRUEBA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "ALINEADO",
+        "nombre_original": "ACIDOS ORGANICOS",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "ÁCIDOS ORGÁNICOS",
+        "nombre_maestro_ingles_propuesto": "ORGANIC ACIDS",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "82",
+        "nombre_segunda_opcion": "RESIDUO DE LA IGNICIÓN",
+        "metodo_segunda_opcion": "USP (281) / FEUM (MGA 0751)",
+        "fila_segunda_opcion": "90",
+        "margen_puntaje": 0.3668,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.984,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ÁCIDOS ORGÁNICOS",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA PRUEBA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "MEZCLA DE ACEITES, GRASAS Y RESINAS",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "ACEITES FIJOS, GRASAS Y RESINA",
+        "nombre_maestro_ingles_propuesto": "FIXED OILS, FATS, AND RESINS",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "83",
+        "nombre_segunda_opcion": "LÍMITE DE COMPUESTOS DE AZUFRE",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "72",
+        "margen_puntaje": 0.2,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8059,
+        "puntaje_nombre": 0.7381,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ACEITES FIJOS, GRASAS Y RESINA",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA PRUEBA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSIDAD A 210 °F",
+        "metodo_original": "ASTM D-2161",
+        "nombre_maestro_propuesto": "VISCOSIDAD SAYBOLT A 210°F",
+        "nombre_maestro_ingles_propuesto": "SAYBOLT VISCOSITY AT 210°F",
+        "metodo_original_normalizado": "ASTM D2161",
+        "metodo_maestro_fuente": "ASTM D2161",
+        "metodo_maestro_propuesto": "ASTM D2161",
+        "referencias_astm_originales": [
+          "D2161"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2161"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "18",
+        "nombre_segunda_opcion": "VISCOSIDAD SAYBOLT A 100°F",
+        "metodo_segunda_opcion": "ASTM D2161",
+        "fila_segunda_opcion": "17",
+        "margen_puntaje": 0.0363,
+        "unidades_originales": "SUS",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "SUS",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8887,
+        "puntaje_nombre": 0.8364,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD SAYBOLT A 210°F",
+          "unidades": "SUS",
+          "metodo": "ASTM D2161",
+          "especificacion": "43 - 51",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

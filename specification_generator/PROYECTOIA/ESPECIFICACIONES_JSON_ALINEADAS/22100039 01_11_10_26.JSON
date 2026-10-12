@@ -1,0 +1,731 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ ALPHA VET LITE 350"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-09-07"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "VAP1410250936BLA",
+    "codigo_unico_producto": "22100039",
+    "fecha": "07/09/2026",
+    "revision": "01",
+    "nombre_cliente": "-",
+    "revision_cliente": "-"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA VISUAL",
+      "unidades": "N/A",
+      "metodo": "ORGANOLÉPTICO",
+      "especificacion": "Líquido oleoso, transparente e incoloro, exento total o parcialmente de fluorescencia.",
+      "valor_tipico": "TRANSPARENTE"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "OLOR",
+      "unidades": "N/A",
+      "metodo": "ORGANOLÉPTICO",
+      "especificacion": "CARACTERÍSTICO",
+      "valor_tipico": "CARACTERÍSTICO"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "COLOR SAYBOLT",
+      "unidades": "N/A",
+      "metodo": "ASTM D156",
+      "especificacion": "26 MÍNIMO",
+      "valor_tipico": "28"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "GRAVEDAD ESPECÍFICA A X °C/X °C",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "USP",
+      "especificacion": "0,840 0- 0,905 0",
+      "valor_tipico": "0,8600"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "64,00 – 73,00",
+      "valor_tipico": "68,00"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "8,700"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "VISCOSIDAD SAYBOLT A 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D2161",
+      "especificacion": "330,0 – 380,0",
+      "valor_tipico": "350,0"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "SOLUBILIDAD",
+      "unidades": "N/A",
+      "metodo": "FEUM",
+      "especificacion": "Soluble en aceites volátiles, casi insoluble en agua, poco soluble en etanol. Miscible con hidrocarburos.",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "PARAFINA SÓLIDA",
+      "unidades": "N/A",
+      "metodo": "USP",
+      "especificacion": "La muestra es lo suficientemente clara para que una línea negra de 0.5 mm de grosor, en un fondo blanco, colocada verticalmente detrás del frasco, sea claramente visible.",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "ACIDEZ",
+      "unidades": "N/A",
+      "metodo": "USP",
+      "especificacion": "La solución no produce un color rosa. No se requieren más de 1.0 mL de la solución de Hidróxido de Sodio 0.01 N, para producir un color rosa.",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "ESPECTRO INFRARROJO",
+      "unidades": "N/A",
+      "metodo": "ASTM E1252",
+      "especificacion": "IGUAL AL ESTÁNDAR",
+      "valor_tipico": "IGUAL AL ESTÁNDAR"
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa COPA ABIERTA CLEVELAND",
+      "unidades": "°C",
+      "metodo": "ASTM D 92",
+      "especificacion": "200 MÍNIMO",
+      "valor_tipico": "240"
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "unidades": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "metodo": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 13,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ ALPHA VET LITE 350",
+    "part_id_fuente": "22100039",
+    "part_id_final": "22100039",
+    "coincidencias_nombre": 1,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "22100039",
+        "descripcion": "SCHUTZ ALPHA VET LITE 350"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "22100039"
+    ],
+    "nombre_catalogo": "SCHUTZ ALPHA VET LITE 350",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2561,
+      "part_id": "22100039",
+      "descripcion": "SCHUTZ ALPHA VET LITE 350",
+      "part_id_clave": "22100039",
+      "descripcion_clave": "SCHUTZ ALPHA VET LITE 350"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ESPECIFICACION- SCHUTZ ALPHA VET LITE 350.docm",
+  "hash_sha256_origen": "b341c8afdd0bb90cb32cc8364b2872bb01e2eaa4a44593152a81f39caad05e3b",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docm",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:29:37",
+  "archivo_json": "22100039 01_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:45:53",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 8,
+      "revision": 4,
+      "sin_coincidencia": 1
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "ALINEADO",
+        "nombre_original": "APARIENCIA VISUAL",
+        "metodo_original": "ORGANOLÉPTICO",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "ORGANOLÉPTICO",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "61",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "fila_segunda_opcion": "64",
+        "margen_puntaje": 0.32,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "TRANSPARENTE",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "Líquido oleoso, transparente e incoloro, exento total o parcialmente de fluorescencia.",
+          "valor_tipico": "TRANSPARENTE"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "OLOR",
+        "metodo_original": "ORGANOLÉPTICO",
+        "nombre_maestro_propuesto": "OLOR",
+        "nombre_maestro_ingles_propuesto": "ODOR",
+        "metodo_original_normalizado": "ORGANOLÉPTICO",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "63",
+        "nombre_segunda_opcion": "COLOR",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "80",
+        "margen_puntaje": 0.3956,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "CARACTERÍSTICO",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "OLOR",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "CARACTERÍSTICO",
+          "valor_tipico": "CARACTERÍSTICO"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "ALINEADO",
+        "nombre_original": "COLOR SAYBOLT",
+        "metodo_original": "ASTM D156",
+        "nombre_maestro_propuesto": "COLOR SAYBOLT",
+        "nombre_maestro_ingles_propuesto": "SAYBOLT COLOR",
+        "metodo_original_normalizado": "ASTM D156",
+        "metodo_maestro_fuente": "ASTM D156",
+        "metodo_maestro_propuesto": "ASTM D156",
+        "referencias_astm_originales": [
+          "D156"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D156"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "14",
+        "nombre_segunda_opcion": "COLOR",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "80",
+        "margen_puntaje": 0.592,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "28",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR SAYBOLT",
+          "unidades": "N/A",
+          "metodo": "ASTM D156",
+          "especificacion": "26 MÍNIMO",
+          "valor_tipico": "28"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "GRAVEDAD ESPECÍFICA A 25°C/25°C",
+        "metodo_original": "USP",
+        "nombre_maestro_propuesto": "GRAVEDAD ESPECÍFICA A X °C/X °C",
+        "nombre_maestro_ingles_propuesto": "SPECIFIC GRAVITY AT X °C/X °C",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "75",
+        "nombre_segunda_opcion": "DENSIDAD RELATIVA X °C (PICNÓMETRO)",
+        "metodo_segunda_opcion": "USP (841) / FEUM (MGA 0251)",
+        "fila_segunda_opcion": "78",
+        "margen_puntaje": 0.3477,
+        "unidades_originales": "ADIMENSIONAL",
+        "valor_tipico_original": "0,860 0",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9292,
+        "puntaje_nombre": 0.8958,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "GRAVEDAD ESPECÍFICA A X °C/X °C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "USP",
+          "especificacion": "0,840 0- 0,905 0",
+          "valor_tipico": "0,8600"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 40°C",
+        "metodo_original": "ASTM D445 / ASTM D7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "140",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "143",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "valor_tipico_original": "68,00",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6182,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 40°C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "64,00 – 73,00",
+          "valor_tipico": "68,00"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 100°C",
+        "metodo_original": "ASTM D445 / ASTM D7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 100 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "141",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "144",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "valor_tipico_original": "8,700",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6316,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 100°C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "8,700"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSIDAD SAYBOLT A 100°F",
+        "metodo_original": "ASTM D2161",
+        "nombre_maestro_propuesto": "VISCOSIDAD SAYBOLT A 100°F",
+        "nombre_maestro_ingles_propuesto": "SAYBOLT VISCOSITY AT 100°F",
+        "metodo_original_normalizado": "ASTM D2161",
+        "metodo_maestro_fuente": "ASTM D2161",
+        "metodo_maestro_propuesto": "ASTM D2161",
+        "referencias_astm_originales": [
+          "D2161"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2161"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "17",
+        "nombre_segunda_opcion": "VISCOSIDAD SAYBOLT A 210°F",
+        "metodo_segunda_opcion": "ASTM D2161",
+        "fila_segunda_opcion": "18",
+        "margen_puntaje": 0.0262,
+        "unidades_originales": "SUS",
+        "valor_tipico_original": "350,0",
+        "unidades_maestras_propuestas": "SUS",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD SAYBOLT A 100°F",
+          "unidades": "SUS",
+          "metodo": "ASTM D2161",
+          "especificacion": "330,0 – 380,0",
+          "valor_tipico": "350,0"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "SOLUBILIDAD",
+        "metodo_original": "FEUM",
+        "nombre_maestro_propuesto": "SOLUBILIDAD",
+        "nombre_maestro_ingles_propuesto": "SOLUBILITY",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "FEUM",
+        "metodo_maestro_propuesto": "FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "FEUM"
+        ],
+        "fila_maestro": "48",
+        "nombre_segunda_opcion": "SOLUBILIDAD",
+        "metodo_segunda_opcion": "PH. EUR",
+        "fila_segunda_opcion": "67",
+        "margen_puntaje": 0.32,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "SOLUBILIDAD",
+          "unidades": "N/A",
+          "metodo": "FEUM",
+          "especificacion": "Soluble en aceites volátiles, casi insoluble en agua, poco soluble en etanol. Miscible con hidrocarburos.",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "ALINEADO",
+        "nombre_original": "PARAFINA SÓLIDA",
+        "metodo_original": "USP",
+        "nombre_maestro_propuesto": "PARAFINA SÓLIDA",
+        "nombre_maestro_ingles_propuesto": "SOLID PARAFFIN",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "69",
+        "nombre_segunda_opcion": "ALCALINIDAD",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "81",
+        "margen_puntaje": 0.3298,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PARAFINA SÓLIDA",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "La muestra es lo suficientemente clara para que una línea negra de 0.5 mm de grosor, en un fondo blanco, colocada verticalmente detrás del frasco, sea claramente visible.",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "ACIDEZ",
+        "metodo_original": "USP",
+        "nombre_maestro_propuesto": "ACIDEZ",
+        "nombre_maestro_ingles_propuesto": "ACIDITY",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "70",
+        "nombre_segunda_opcion": "ACIDEZ",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "84",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "ACIDEZ",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "La solución no produce un color rosa. No se requieren más de 1.0 mL de la solución de Hidróxido de Sodio 0.01 N, para producir un color rosa.",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "ALINEADO",
+        "nombre_original": "ESPECTRO INFRARROJO",
+        "metodo_original": "ASTM E1252",
+        "nombre_maestro_propuesto": "ESPECTRO INFRARROJO",
+        "nombre_maestro_ingles_propuesto": "INFRARED SPECTRUM",
+        "metodo_original_normalizado": "ASTM E1252",
+        "metodo_maestro_fuente": "ASTM E 1252",
+        "metodo_maestro_propuesto": "ASTM E1252",
+        "referencias_astm_originales": [
+          "E1252"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "E1252"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "44",
+        "nombre_segunda_opcion": "ESPECTROSCOPÍA INFRARROJA CUALITATIVA (FTIR)",
+        "metodo_segunda_opcion": "ASTM E1252",
+        "fila_segunda_opcion": "45",
+        "margen_puntaje": 0.16,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "IGUAL AL ESTÁNDAR",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ESPECTRO INFRARROJO",
+          "unidades": "N/A",
+          "metodo": "ASTM E1252",
+          "especificacion": "IGUAL AL ESTÁNDAR",
+          "valor_tipico": "IGUAL AL ESTÁNDAR"
+        }
+      },
+      {
+        "numero_prueba": 12,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "PUNTO DE INFLAMACIÓN A 101,3 kPa COPA ABIERTA CLEVELAND",
+        "metodo_original": "ASTM D 92",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+        "metodo_original_normalizado": "ASTM D92",
+        "metodo_maestro_fuente": "ASTM D92 - 18",
+        "metodo_maestro_propuesto": "ASTM D92",
+        "referencias_astm_originales": [
+          "D92"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D92"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "163",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D92 - 18 / NMX-J-123-ANCE- 2019 P 6,5",
+        "fila_segunda_opcion": "167",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "240",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5857,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa COPA ABIERTA CLEVELAND",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "200 MÍNIMO",
+          "valor_tipico": "240"
+        }
+      },
+      {
+        "numero_prueba": 13,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "nombre_maestro_propuesto": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "nombre_maestro_ingles_propuesto": "INTERFACIAL TENSION BY THE RING METHOD",
+        "metodo_original_normalizado": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_maestro_fuente": "ASTM D971",
+        "metodo_maestro_propuesto": "ASTM D971",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D971"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "94",
+        "nombre_segunda_opcion": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "metodo_segunda_opcion": "ASTM D 971-20 / NMX-J-123-ANCE-2019 P 6,6",
+        "fila_segunda_opcion": "110",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "valor_tipico_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "unidades_maestras_propuestas": "mN/m",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3043,
+        "puntaje_nombre": 0.4475,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+          "unidades": "mN/m",
+          "metodo": "ASTM D971",
+          "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+          "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

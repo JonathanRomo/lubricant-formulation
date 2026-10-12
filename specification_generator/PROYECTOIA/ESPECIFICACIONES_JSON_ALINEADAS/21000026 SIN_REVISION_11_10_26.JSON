@@ -1,0 +1,343 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ ASSEMBLY"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": ""
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "",
+    "folio_apqp": "",
+    "folio_vap": "",
+    "codigo_unico_producto": "21000026",
+    "fecha": "",
+    "revision": "",
+    "nombre_cliente": "",
+    "revision_cliente": "",
+    "codigo_unico_producto_fuente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+      "unidades": "°C",
+      "metodo": "ASTM D127",
+      "especificacion": "70 MÍNIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "DENSIDAD RELATIVA @ 60 °C",
+      "unidades": "g/cm³",
+      "metodo": "FEUM 11 EDICION",
+      "especificacion": "0.8400-0.8600",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "PENETRACIÓN DE PETROLATOS",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D932 - 07",
+      "especificacion": "135-150",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "MÉTODO DE 4 BOLAS DESGASTE (MODIFICADO)",
+      "unidades": "mm",
+      "metodo": "ASTM D4172",
+      "especificacion": "0.37 TÍPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (TIEMPO/TEMPERATURA)* Indicar por cliente",
+      "unidades": "N/A",
+      "metodo": "ASTM D130",
+      "especificacion": "1b MÁXIMO",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 5,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ ASSEMBLY",
+    "part_id_fuente": "",
+    "part_id_final": "21000026",
+    "coincidencias_nombre": 1,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "21000026",
+        "descripcion": "SCHUTZ ASSEMBLY"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21000026"
+    ],
+    "nombre_catalogo": "SCHUTZ ASSEMBLY",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2775,
+      "part_id": "21000026",
+      "descripcion": "SCHUTZ ASSEMBLY",
+      "part_id_clave": "21000026",
+      "descripcion_clave": "SCHUTZ ASSEMBLY"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/91600060 SCHUTZ ASSEMBLY REV 01.doc",
+  "hash_sha256_origen": "658ac8a674e892667ca577d632106cd7300695eb2040197a6159f5463d76b445",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:21:32",
+  "archivo_json": "21000026 SIN_REVISION_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:44:50",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 3,
+      "revision": 1,
+      "sin_coincidencia": 1
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE FUSIÓN",
+        "metodo_original": "ASTM D127",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "USP (741) / FEUM (MGA 0471)",
+        "fila_segunda_opcion": "77",
+        "margen_puntaje": 0.345,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.7279,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "70 MÍNIMO",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD RELATIVA @ 60 °C",
+        "metodo_original": "FEUM 11 EDICION",
+        "nombre_maestro_propuesto": "DENSIDAD RELATIVA X°C (PICNÓMETRO)",
+        "nombre_maestro_ingles_propuesto": "RELATIVE DENSITY X°C (PYCNOMETER)",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "FEUM (MGA 0251)",
+        "metodo_maestro_propuesto": "FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "FEUM"
+        ],
+        "fila_maestro": "49",
+        "nombre_segunda_opcion": "DENSIDAD RELATIVA X °C (PICNÓMETRO)",
+        "metodo_segunda_opcion": "USP (841) / FEUM (MGA 0251)",
+        "fila_segunda_opcion": "78",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "g/cm³",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8326,
+        "puntaje_nombre": 0.7538,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DENSIDAD RELATIVA X°C (PICNÓMETRO)",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "FEUM",
+          "especificacion": "0.8400-0.8600",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PENETRACIÓN DE PETROLATOS",
+        "metodo_original": "ASTM D932 - 07",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D932",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D932"
+        ],
+        "referencias_astm_no_encontradas": [
+          "D932"
+        ],
+        "mensaje_astm_no_encontradas": "Prueba 3 (PENETRACIÓN DE PETROLATOS): Referencias no encontradas en la lista maestra: ASTM D932.",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "USP (741) / FEUM (MGA 0471)",
+        "fila_segunda_opcion": "77",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "1/10 mm",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.4746,
+        "puntaje_nombre": 0.698,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "135-150",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "4 BOLAS DESGASTE Método modificado40 kg, 1200 rpm, 5 minutos @ 75°C",
+        "metodo_original": "ASTM D4172",
+        "nombre_maestro_propuesto": "MÉTODO DE 4 BOLAS DESGASTE (MODIFICADO)",
+        "nombre_maestro_ingles_propuesto": "4-BALL WEAR TEST METHOD (MODIFIED)",
+        "metodo_original_normalizado": "ASTM D4172",
+        "metodo_maestro_fuente": "ASTM D4172",
+        "metodo_maestro_propuesto": "ASTM D4172",
+        "referencias_astm_originales": [
+          "D4172"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D4172"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "33",
+        "nombre_segunda_opcion": "MÉTODO DE 4 BOLAS DESGASTE EN GRASAS",
+        "metodo_segunda_opcion": "ASTM D2266",
+        "fila_segunda_opcion": "24",
+        "margen_puntaje": 0.5067,
+        "unidades_originales": "mm",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5867,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "MÉTODO DE 4 BOLAS DESGASTE (MODIFICADO)",
+          "unidades": "mm",
+          "metodo": "ASTM D4172",
+          "especificacion": "0.37 TÍPICO",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "ALINEADO",
+        "nombre_original": "CORROSIÓN EN LÁMINA DE COBRE 3HR/100°C",
+        "metodo_original": "ASTM D130",
+        "nombre_maestro_propuesto": "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (TIEMPO/TEMPERATURA)* Indicar por cliente",
+        "nombre_maestro_ingles_propuesto": "COPPER CORROSION (COPPER STRIP) (TIME/TEMPERATURE)",
+        "metodo_original_normalizado": "ASTM D130",
+        "metodo_maestro_fuente": "ASTM D130",
+        "metodo_maestro_propuesto": "ASTM D130",
+        "referencias_astm_originales": [
+          "D130"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D130"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "8",
+        "nombre_segunda_opcion": "CORROSIVIDAD AL COBRE (TIRA DE COBRE) 24H/100 °C",
+        "metodo_segunda_opcion": "ASTM D4048",
+        "fila_segunda_opcion": "116",
+        "margen_puntaje": 0.3696,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.4696,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (TIEMPO/TEMPERATURA)* Indicar por cliente",
+          "unidades": "N/A",
+          "metodo": "ASTM D130",
+          "especificacion": "1b MÁXIMO",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": [
+      "Prueba 3 (PENETRACIÓN DE PETROLATOS): Referencias no encontradas en la lista maestra: ASTM D932."
+    ]
+  }
+}

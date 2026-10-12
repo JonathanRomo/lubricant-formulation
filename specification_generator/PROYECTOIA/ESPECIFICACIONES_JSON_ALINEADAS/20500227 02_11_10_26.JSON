@@ -1,0 +1,540 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "CUTTING SCHUTZ DNM PLUS CU"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-10-06"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "VAP0107250534LUB",
+    "codigo_unico_producto": "20500227",
+    "fecha": "06/10/2026",
+    "revision": "02",
+    "nombre_cliente": "",
+    "revision_cliente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445/ ASTM D7042",
+      "especificacion": "16,20 – 19,80",
+      "valor_tipico": "16,98"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "3,668"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "ÍNDICE DE VISCOSIDAD",
+      "unidades": "A/D",
+      "metodo": "ASTM D2270",
+      "especificacion": "100 MÍNIMO",
+      "valor_tipico": "99"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "DENSIDAD A 25 °C",
+      "unidades": "g/cm3",
+      "metodo": "ASTM D1298 / ASTM D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "0,8478"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+      "unidades": "°C",
+      "metodo": "ASTM D92",
+      "especificacion": "190 MÍNIMO",
+      "valor_tipico": "195"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "COLOR ASTM",
+      "unidades": "N/A",
+      "metodo": "ASTM D1500",
+      "especificacion": "L 2,0 MÁXIMO",
+      "valor_tipico": "L0,5"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (TIEMPO/TEMPERATURA)* Indicar por cliente",
+      "unidades": "N/A",
+      "metodo": "ASTM D130",
+      "especificacion": "1b MÁXIMO",
+      "valor_tipico": "1b"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "HUMEDAD POR CREPITACIÓN",
+      "unidades": "N/A",
+      "metodo": "MÉTODO INTERNO (91300029)",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": "NEGATIVA"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "unidades": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "metodo": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 9,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "CUTTING SCHUTZ DNM PLUS CU",
+    "part_id_fuente": "20500227",
+    "part_id_final": "20500227",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80500334",
+        "descripcion": "CUTTING SCHUTZ DNM PLUS CU"
+      },
+      {
+        "part_id": "20500227",
+        "descripcion": "CUTTING SCHUTZ DNM PLUS CU"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20500227"
+    ],
+    "nombre_catalogo": "CUTTING SCHUTZ DNM PLUS CU",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2971,
+      "part_id": "20500227",
+      "descripcion": "CUTTING SCHUTZ DNM PLUS CU",
+      "part_id_clave": "20500227",
+      "descripcion_clave": "CUTTING SCHUTZ DNM PLUS CU"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/CUTTING SCHUTZ DNM PLUS CU.docx",
+  "hash_sha256_origen": "8c2431e3aca894a8d72e85bb4369f390fe0eb4503ef6d5730813db1a9e06de90",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "01",
+  "fecha_creacion_json": "2026-10-11T01:23:19",
+  "archivo_json": "20500227 02_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:44:05",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 2,
+      "revision": 6,
+      "sin_coincidencia": 1
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "metodo_original": "ASTM D445/ ASTM D7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "140",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "143",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm²/s",
+        "valor_tipico_original": "16,98",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6182,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "16,20 – 19,80",
+          "valor_tipico": "16,98"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 100 °C",
+        "metodo_original": "ASTM D445 / ASTM D7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 100 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "141",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "144",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm²/s",
+        "valor_tipico_original": "3,668",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6316,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "3,668"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "ÍNDICE DE VISCOSIDAD",
+        "metodo_original": "ASTM D2270",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "VISCOSITY INDEX",
+        "metodo_original_normalizado": "ASTM D2270",
+        "metodo_maestro_fuente": "ASTM D2270 - 10 (2016)",
+        "metodo_maestro_propuesto": "ASTM D2270",
+        "referencias_astm_originales": [
+          "D2270"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2270"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "133",
+        "nombre_segunda_opcion": "GRADO DE VISCOSIDAD ISO DE LUBRICANTE",
+        "metodo_segunda_opcion": "ASTM D2422",
+        "fila_segunda_opcion": "25",
+        "margen_puntaje": 0.4536,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "99",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5143,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ÍNDICE DE VISCOSIDAD",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D2270",
+          "especificacion": "100 MÍNIMO",
+          "valor_tipico": "99"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD A 25 °C",
+        "metodo_original": "ASTM D1298 / ASTM D7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DENSITY AT X °C",
+        "metodo_original_normalizado": "ASTM D1298 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017)",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "119",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D7042 - 14",
+        "fila_segunda_opcion": "158",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "g/cm3",
+        "valor_tipico_original": "0,847 8",
+        "unidades_maestras_propuestas": "g/cm3, g/ml, kg/L, kg/m3",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6724,
+        "puntaje_metodo": 0.95,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DENSIDAD A 25 °C",
+          "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+          "metodo": "ASTM D1298",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "0,8478"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+        "metodo_original": "ASTM D92",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+        "metodo_original_normalizado": "ASTM D92",
+        "metodo_maestro_fuente": "ASTM D92 - 18",
+        "metodo_maestro_propuesto": "ASTM D92",
+        "referencias_astm_originales": [
+          "D92"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D92"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "163",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D92 - 18 / NMX-J-123-ANCE- 2019 P 6,5",
+        "fila_segunda_opcion": "167",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "195",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5857,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "190 MÍNIMO",
+          "valor_tipico": "195"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "COLOR ASTM",
+        "metodo_original": "ASTM D1500",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "ASTM COLOR",
+        "metodo_original_normalizado": "ASTM D1500",
+        "metodo_maestro_fuente": "ASTM D1500 - 12 (2017)",
+        "metodo_maestro_propuesto": "ASTM D1500",
+        "referencias_astm_originales": [
+          "D1500"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1500"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "128",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1500 - 12 (2017) / NMX-J-123-ANCE-2019 P 6,2",
+        "fila_segunda_opcion": "129",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "L0,5",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.625,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR ASTM",
+          "unidades": "N/A",
+          "metodo": "ASTM D1500",
+          "especificacion": "L 2,0 MÁXIMO",
+          "valor_tipico": "L0,5"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "CORROSIÓN EN LÁMINA DE COBRE, 100 °C/3 h",
+        "metodo_original": "ASTM D130",
+        "nombre_maestro_propuesto": "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (TIEMPO/TEMPERATURA)* Indicar por cliente",
+        "nombre_maestro_ingles_propuesto": "COPPER CORROSION (COPPER STRIP) (TIME/TEMPERATURE)",
+        "metodo_original_normalizado": "ASTM D130",
+        "metodo_maestro_fuente": "ASTM D130",
+        "metodo_maestro_propuesto": "ASTM D130",
+        "referencias_astm_originales": [
+          "D130"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D130"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "8",
+        "nombre_segunda_opcion": "CORROSIVIDAD AL COBRE (TIRA DE COBRE) 24H/100 °C",
+        "metodo_segunda_opcion": "ASTM D4048",
+        "fila_segunda_opcion": "116",
+        "margen_puntaje": 0.3984,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "1b",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.4742,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (TIEMPO/TEMPERATURA)* Indicar por cliente",
+          "unidades": "N/A",
+          "metodo": "ASTM D130",
+          "especificacion": "1b MÁXIMO",
+          "valor_tipico": "1b"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "HUMEDAD POR CREPITACIÓN",
+        "metodo_original": "MÉTODO INTERNO (91300029)",
+        "nombre_maestro_propuesto": "HUMEDAD POR CREPITACIÓN",
+        "nombre_maestro_ingles_propuesto": "Moisture by crackle test",
+        "metodo_original_normalizado": "MÉTODO INTERNO (91300029)",
+        "metodo_maestro_fuente": "MÉTODO INTERNO (91300029)",
+        "metodo_maestro_propuesto": "MÉTODO INTERNO (91300029)",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "52",
+        "nombre_segunda_opcion": "NÚMERO DE SAPONIFICACIÓN",
+        "metodo_segunda_opcion": "ASTM D94",
+        "fila_segunda_opcion": "42",
+        "margen_puntaje": 0.66,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "NEGATIVA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "HUMEDAD POR CREPITACIÓN",
+          "unidades": "N/A",
+          "metodo": "MÉTODO INTERNO (91300029)",
+          "especificacion": "NEGATIVA",
+          "valor_tipico": "NEGATIVA"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "nombre_maestro_propuesto": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "nombre_maestro_ingles_propuesto": "INTERFACIAL TENSION BY THE RING METHOD",
+        "metodo_original_normalizado": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_maestro_fuente": "ASTM D971",
+        "metodo_maestro_propuesto": "ASTM D971",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D971"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "94",
+        "nombre_segunda_opcion": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "metodo_segunda_opcion": "ASTM D 971-20 / NMX-J-123-ANCE-2019 P 6,6",
+        "fila_segunda_opcion": "110",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "valor_tipico_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "unidades_maestras_propuestas": "mN/m",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3043,
+        "puntaje_nombre": 0.4475,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+          "unidades": "mN/m",
+          "metodo": "ASTM D971",
+          "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+          "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

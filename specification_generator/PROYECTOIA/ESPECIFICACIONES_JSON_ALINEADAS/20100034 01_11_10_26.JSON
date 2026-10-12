@@ -1,0 +1,1178 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL AW 430011 3G"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "en",
+    "fecha_documento_normalizada": "2025-11-20"
+  },
+  "control_documental": {
+    "folio_apqp": "---",
+    "folio_vap": "VAP1311251053AMO",
+    "codigo_unico_producto": "20100034",
+    "fecha": "20/11/2025",
+    "revision": "1",
+    "nombre_cliente": "Ride Control"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "DENSITY AT 15 °C",
+      "unidades": "kg/m³",
+      "metodo": "ASTM D1298 - 12 b (2017)/ ASTM D7042 - 14",
+      "especificacion": "REPORT",
+      "valor_tipico": "852"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "POUR POINT",
+      "unidades": "°C, °F",
+      "metodo": "ASTM D97",
+      "especificacion": "REPORT",
+      "valor_tipico": "-54"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "ANILINE POINT, METHOD E",
+      "unidades": "°C, °F",
+      "metodo": "ASTM D611",
+      "especificacion": "REPORT",
+      "valor_tipico": "100"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "SULFUR",
+      "unidades": "% Mass",
+      "metodo": "ASTM D 2622",
+      "especificacion": "0.218 MINIMUM",
+      "valor_tipico": "0,3126"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "ZINC",
+      "unidades": "% Mass",
+      "metodo": "ASTM D 4951",
+      "especificacion": "0.08/0.17",
+      "valor_tipico": "0,0849"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PHOSPHORUS",
+      "unidades": "% Mass",
+      "metodo": "ASTM D 4951",
+      "especificacion": "0.08/0.16",
+      "valor_tipico": "0,0872"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "WEAR PREVENTIVE CHARACTERISTICS OF LUBRICATING FLUID, 600 RPM/93 °C/1 h/40 kg (MODIFIED FOUR BALL METHOD)",
+      "unidades": "mm",
+      "metodo": "ASTM D4172 – 94 (MODIFIED)",
+      "especificacion": "0.37/0.47",
+      "valor_tipico": "0,39"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "EXTREME PRESSURE OF LUBRICATING FLUIDS BY 4-BALL METHOD",
+      "unidades": "kgf",
+      "metodo": "ASTM D2783",
+      "especificacion": "REPORT",
+      "valor_tipico": "160"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "DYNAMIC BROOKFIELD VISCOSITY AT X°C",
+      "unidades": "mPa*s",
+      "metodo": "ASTM D2983",
+      "especificacion": "3 500 MAX",
+      "valor_tipico": "2 043"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "KINEMATIC VISCOSITY AT 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "11 – 14.50",
+      "valor_tipico": "11,89"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "KINEMATIC VISCOSITY AT 100 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "2.9 – 3.5",
+      "valor_tipico": "3,203"
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "VISCOSITY INDEX",
+      "unidades": "DIMENSIONLESS",
+      "metodo": "ASTM D2270",
+      "especificacion": "135 MIN",
+      "valor_tipico": "141"
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+      "unidades": "°C",
+      "metodo": "ASTM D92",
+      "especificacion": "154 MIN",
+      "valor_tipico": "168"
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "FOAMING CHARACTERISTICS OF LUBRICATING OILS",
+      "unidades": "---",
+      "metodo": "---",
+      "especificacion": "---",
+      "valor_tipico": "---"
+    },
+    {
+      "numero": 15,
+      "fila_origen": 16,
+      "prueba": "SEC I",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892 - 13",
+      "especificacion": "70/0",
+      "valor_tipico": "20/0"
+    },
+    {
+      "numero": 16,
+      "fila_origen": 17,
+      "prueba": "SEC II",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892 - 13",
+      "especificacion": "50/0",
+      "valor_tipico": "30/0"
+    },
+    {
+      "numero": 17,
+      "fila_origen": 18,
+      "prueba": "SEC III",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892 - 13",
+      "especificacion": "70/0",
+      "valor_tipico": "20/0"
+    },
+    {
+      "numero": 18,
+      "fila_origen": 19,
+      "prueba": "WATER CONTENT BY KARL FISCHER (COULOMETRIC)",
+      "unidades": "mg/kg/ % en masa",
+      "metodo": "ASTM D6304",
+      "especificacion": "100 MAX",
+      "valor_tipico": "9,6"
+    },
+    {
+      "numero": 19,
+      "fila_origen": 20,
+      "prueba": "APPEARANCE",
+      "unidades": "---",
+      "metodo": "VISUAL",
+      "especificacion": "BRIGHT AND CLEAR",
+      "valor_tipico": "CLEAR"
+    },
+    {
+      "numero": 20,
+      "fila_origen": 21,
+      "prueba": "VISUAL COLOR",
+      "unidades": "---",
+      "metodo": "VISUAL",
+      "especificacion": "GREEN",
+      "valor_tipico": "GREEN"
+    },
+    {
+      "numero": 21,
+      "fila_origen": 22,
+      "prueba": "FLUORESCENCE TO UV LIGHT",
+      "unidades": "---",
+      "metodo": "VISUAL",
+      "especificacion": "FLUORESCES",
+      "valor_tipico": "FLUORESCES"
+    },
+    {
+      "numero": 22,
+      "fila_origen": 23,
+      "prueba": "AMOUNT OF FLUORESCENT ADDITIVE",
+      "unidades": "mg/kg",
+      "metodo": "INTERNAL",
+      "especificacion": "<100",
+      "valor_tipico": "90"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Plant: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Telephones: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 and 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 22,
+    "encabezados": [
+      "TEST",
+      "UNITS",
+      "METHOD",
+      "SPECIFICATION",
+      "TYPICAL VALUE"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "CONFLICTO_NOMBRE_PART_ID",
+    "prefijo_archivo": "--- ",
+    "nombre_fuente": "SCHUTZ FILL AW 430011 3G",
+    "part_id_fuente": "20100034",
+    "part_id_final": "20100034",
+    "coincidencias_nombre": 1,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "20100035",
+        "descripcion": "SCHUTZ FILL AW 430011 3G PLUS"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20100035"
+    ],
+    "registro_por_nombre": {
+      "hoja": "Hoja1",
+      "fila_excel": 3463,
+      "part_id": "20100035",
+      "descripcion": "SCHUTZ FILL AW 430011 3G PLUS",
+      "part_id_clave": "20100035",
+      "descripcion_clave": "SCHUTZ FILL AW 430011 3G PLUS"
+    },
+    "registro_por_part_id": {
+      "hoja": "Hoja1",
+      "fila_excel": 3464,
+      "part_id": "20100034",
+      "descripcion": "SCHUTZ FILL AW 430011 3G",
+      "part_id_clave": "20100034",
+      "descripcion_clave": "SCHUTZ FILL AW 430011 3G"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS_ENG/SCHUTZ FILL AW 430011 3G PLUS.docx",
+  "hash_sha256_origen": "5d953c24cdbaf4c87b5575feb6d7b2998f7a84d9347e815bc2b670da1dc03d24",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:44:15",
+  "archivo_json": "20100034 01_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:39:46",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 9,
+      "revision": 1,
+      "sin_coincidencia": 12
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSITY AT 15°C",
+        "metodo_original": "ASTM D1298 - 12 b (2017)/ ASTM D7042 - 14",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DENSITY AT X °C",
+        "metodo_original_normalizado": "ASTM D1298 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017)",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "119",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D7042 - 14",
+        "fila_segunda_opcion": "158",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "kg/m³",
+        "valor_tipico_original": "852",
+        "unidades_maestras_propuestas": "g/cm3, g/ml, kg/L, kg/m3",
+        "idioma": "INGLES",
+        "puntaje_total": 0.9084,
+        "puntaje_nombre": 0.8889,
+        "puntaje_metodo": 0.95,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DENSITY AT 15°C",
+          "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+          "metodo": "ASTM D1298",
+          "especificacion": "REPORT",
+          "valor_tipico": "852"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "POUR POINT",
+        "metodo_original": "ASTM D97-17b",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "POUR POINT",
+        "metodo_original_normalizado": "ASTM D97",
+        "metodo_maestro_fuente": "ASTM D97 - 17b",
+        "metodo_maestro_propuesto": "ASTM D97",
+        "referencias_astm_originales": [
+          "D97"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D97"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "184",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D97 - 17b",
+        "fila_segunda_opcion": "186",
+        "margen_puntaje": 0.1412,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "-54",
+        "unidades_maestras_propuestas": "°C, °F",
+        "idioma": "INGLES",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "POUR POINT",
+          "unidades": "°C, °F",
+          "metodo": "ASTM D97",
+          "especificacion": "REPORT",
+          "valor_tipico": "-54"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "ALINEADO",
+        "nombre_original": "ANILINE POINT, METHOD E",
+        "metodo_original": "ASTM D611 - 12 (METHOD E) (2016)",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "ANILINE POINT, METHOD E",
+        "metodo_original_normalizado": "ASTM D611",
+        "metodo_maestro_fuente": "ASTM D611 - 12 (2016)",
+        "metodo_maestro_propuesto": "ASTM D611",
+        "referencias_astm_originales": [
+          "D611"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D611"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "151",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D2272 - 14a",
+        "fila_segunda_opcion": "135",
+        "margen_puntaje": 0.6233,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "100",
+        "unidades_maestras_propuestas": "°C, °F",
+        "idioma": "INGLES",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ANILINE POINT, METHOD E",
+          "unidades": "°C, °F",
+          "metodo": "ASTM D611",
+          "especificacion": "REPORT",
+          "valor_tipico": "100"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "SULFUR",
+        "metodo_original": "ASTM D 2622",
+        "nombre_maestro_propuesto": "TOTAL SULFUR BY X-RAY FLUORESCENCE (WDXRF)",
+        "nombre_maestro_ingles_propuesto": "AZUFRE TOTAL POR FLUORESCENCIA X (WDXRF)",
+        "metodo_original_normalizado": "ASTM D2622",
+        "metodo_maestro_fuente": "ASTM D2622",
+        "metodo_maestro_propuesto": "ASTM D2622",
+        "referencias_astm_originales": [
+          "D2622"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2622"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "87",
+        "nombre_segunda_opcion": "AZUFRE TOTAL POR EDXRF",
+        "metodo_segunda_opcion": "ASTM D4294",
+        "fila_segunda_opcion": "99",
+        "margen_puntaje": 0.2077,
+        "unidades_originales": "% Mass",
+        "valor_tipico_original": "0.3126",
+        "unidades_maestras_propuestas": "wt %",
+        "idioma": "INGLES",
+        "puntaje_total": 0.5477,
+        "puntaje_nombre": 0.3348,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TOTAL SULFUR BY X-RAY FLUORESCENCE (WDXRF)",
+          "unidades": "wt %",
+          "metodo": "ASTM D2622",
+          "especificacion": "0.218 MINIMUM",
+          "valor_tipico": "0,3126"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "ZINC",
+        "metodo_original": "ASTM D 4951",
+        "nombre_maestro_propuesto": "DETERMINACIÓN DE FÓSFORO (P) EN ACEITES LUBRICANTES POR ICP-OES",
+        "nombre_maestro_ingles_propuesto": "DETERMINATION OF PHOSPHORUS (P) IN LUBRICATING OILS BY ICP-OES",
+        "metodo_original_normalizado": "ASTM D4951",
+        "metodo_maestro_fuente": "ASTM D4951",
+        "metodo_maestro_propuesto": "ASTM D4951",
+        "referencias_astm_originales": [
+          "D4951"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D4951"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "34",
+        "nombre_segunda_opcion": "REACCIÓN",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "71",
+        "margen_puntaje": 0.1571,
+        "unidades_originales": "% Mass",
+        "valor_tipico_original": "0.0849",
+        "unidades_maestras_propuestas": "mg/kg",
+        "idioma": "INGLES",
+        "puntaje_total": 0.3838,
+        "puntaje_nombre": 0.0938,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DETERMINACIÓN DE FÓSFORO (P) EN ACEITES LUBRICANTES POR ICP-OES",
+          "unidades": "mg/kg",
+          "metodo": "ASTM D4951",
+          "especificacion": "0.08/0.17",
+          "valor_tipico": "0,0849"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PHOSPHORUS",
+        "metodo_original": "ASTM D 4951",
+        "nombre_maestro_propuesto": "DETERMINACIÓN DE FÓSFORO (P) EN ACEITES LUBRICANTES POR ICP-OES",
+        "nombre_maestro_ingles_propuesto": "DETERMINATION OF PHOSPHORUS (P) IN LUBRICATING OILS BY ICP-OES",
+        "metodo_original_normalizado": "ASTM D4951",
+        "metodo_maestro_fuente": "ASTM D4951",
+        "metodo_maestro_propuesto": "ASTM D4951",
+        "referencias_astm_originales": [
+          "D4951"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D4951"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "34",
+        "nombre_segunda_opcion": "OLOR",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO",
+        "fila_segunda_opcion": "63",
+        "margen_puntaje": 0.2714,
+        "unidades_originales": "% Mass",
+        "valor_tipico_original": "0.0872",
+        "unidades_maestras_propuestas": "mg/kg",
+        "idioma": "INGLES",
+        "puntaje_total": 0.5629,
+        "puntaje_nombre": 0.3571,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DETERMINACIÓN DE FÓSFORO (P) EN ACEITES LUBRICANTES POR ICP-OES",
+          "unidades": "mg/kg",
+          "metodo": "ASTM D4951",
+          "especificacion": "0.08/0.16",
+          "valor_tipico": "0,0872"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "WEAR PREVENTIVE CHARACTERISTICS OF LUBRICATING FLUID, 600 RPM/93°C/1h/40 kg (MODIFIED FOUR BALL METHOD)",
+        "metodo_original": "ASTM D4172 – 94 (MODIFIED)",
+        "nombre_maestro_propuesto": "MÉTODO DE 4 BOLAS DESGASTE (MODIFICADO)",
+        "nombre_maestro_ingles_propuesto": "4-BALL WEAR TEST METHOD (MODIFIED)",
+        "metodo_original_normalizado": "ASTM D4172",
+        "metodo_maestro_fuente": "ASTM D4172",
+        "metodo_maestro_propuesto": "ASTM D4172",
+        "referencias_astm_originales": [
+          "D4172"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D4172"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "33",
+        "nombre_segunda_opcion": "EXTREMA PRESIÓN DE LUBRICANTES POR 4 BOLAS",
+        "metodo_segunda_opcion": "ASTM D2783",
+        "fila_segunda_opcion": "28",
+        "margen_puntaje": 0.1906,
+        "unidades_originales": "mm",
+        "valor_tipico_original": "0.39",
+        "unidades_maestras_propuestas": "mm",
+        "idioma": "INGLES",
+        "puntaje_total": 0.5883,
+        "puntaje_nombre": 0.3945,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "MÉTODO DE 4 BOLAS DESGASTE (MODIFICADO)",
+          "unidades": "mm",
+          "metodo": "ASTM D4172",
+          "especificacion": "0.37/0.47",
+          "valor_tipico": "0,39"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "EXTREME PRESSURE",
+        "metodo_original": "ASTM D2783 - 03 (REAPPROVED 2009)",
+        "nombre_maestro_propuesto": "EXTREMA PRESIÓN DE LUBRICANTES POR 4 BOLAS",
+        "nombre_maestro_ingles_propuesto": "EXTREME PRESSURE OF LUBRICATING FLUIDS BY 4-BALL METHOD",
+        "metodo_original_normalizado": "ASTM D2783",
+        "metodo_maestro_fuente": "ASTM D2783",
+        "metodo_maestro_propuesto": "ASTM D2783",
+        "referencias_astm_originales": [
+          "D2783"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2783"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "28",
+        "nombre_segunda_opcion": "EXTREMA PRESIÓN DE GRASAS POR 4 BOLAS",
+        "metodo_segunda_opcion": "ASTM 2596",
+        "fila_segunda_opcion": "4",
+        "margen_puntaje": 0.4456,
+        "unidades_originales": "kg",
+        "valor_tipico_original": "160",
+        "unidades_maestras_propuestas": "kgf",
+        "idioma": "INGLES",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5056,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "EXTREMA PRESIÓN DE LUBRICANTES POR 4 BOLAS",
+          "unidades": "kgf",
+          "metodo": "ASTM D2783",
+          "especificacion": "REPORT",
+          "valor_tipico": "160"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "ALINEADO",
+        "nombre_original": "BROOKFIELD VISCOSITY AT -40°C",
+        "metodo_original": "ASTM D2983 - 09",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DYNAMIC BROOKFIELD VISCOSITY AT X°C",
+        "metodo_original_normalizado": "ASTM D2983",
+        "metodo_maestro_fuente": "ASTM D2983 - 09",
+        "metodo_maestro_propuesto": "ASTM D2983",
+        "referencias_astm_originales": [
+          "D2983"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2983"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "139",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D2983 - 09",
+        "fila_segunda_opcion": "138",
+        "margen_puntaje": 0.0461,
+        "unidades_originales": "mPa*s",
+        "valor_tipico_original": "2 043",
+        "unidades_maestras_propuestas": "mPa*s",
+        "idioma": "INGLES",
+        "puntaje_total": 0.8861,
+        "puntaje_nombre": 0.8324,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "BROOKFIELD VISCOSITY AT -40°C",
+          "unidades": "mPa*s",
+          "metodo": "ASTM D2983",
+          "especificacion": "3 500 MAX",
+          "valor_tipico": "2 043"
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "ALINEADO",
+        "nombre_original": "KINEMATIC VISCOSITY AT 40°C",
+        "metodo_original": "ASTM D445 – 17/ ASTM D7042 - 14",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "140",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "143",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "valor_tipico_original": "11,89",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "INGLES",
+        "puntaje_total": 0.984,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "KINEMATIC VISCOSITY AT 40°C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "11 – 14.50",
+          "valor_tipico": "11,89"
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "ALINEADO",
+        "nombre_original": "KINEMATIC VISCOSITY AT 100°C",
+        "metodo_original": "ASTM D445 – 17/ ASTM D7042 - 14",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 100 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "141",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "144",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "valor_tipico_original": "3,203",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "INGLES",
+        "puntaje_total": 0.984,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "KINEMATIC VISCOSITY AT 100°C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "2.9 – 3.5",
+          "valor_tipico": "3,203"
+        }
+      },
+      {
+        "numero_prueba": 12,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSITY INDEX",
+        "metodo_original": "ASTM D 2270",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "VISCOSITY INDEX",
+        "metodo_original_normalizado": "ASTM D2270",
+        "metodo_maestro_fuente": "ASTM D2270 - 10 (2016)",
+        "metodo_maestro_propuesto": "ASTM D2270",
+        "referencias_astm_originales": [
+          "D2270"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2270"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "133",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "fila_segunda_opcion": "142",
+        "margen_puntaje": 0.6107,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "141",
+        "unidades_maestras_propuestas": "DIMENSIONLESS",
+        "idioma": "INGLES",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSITY INDEX",
+          "unidades": "DIMENSIONLESS",
+          "metodo": "ASTM D2270",
+          "especificacion": "135 MIN",
+          "valor_tipico": "141"
+        }
+      },
+      {
+        "numero_prueba": 13,
+        "estado": "ALINEADO",
+        "nombre_original": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+        "metodo_original": "ASTM D92 - 18",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+        "metodo_original_normalizado": "ASTM D92",
+        "metodo_maestro_fuente": "ASTM D92 - 18",
+        "metodo_maestro_propuesto": "ASTM D92",
+        "referencias_astm_originales": [
+          "D92"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D92"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "163",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D92 - 18 / NMX-J-123-ANCE- 2019 P 6,5",
+        "fila_segunda_opcion": "167",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "168",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "INGLES",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "154 MIN",
+          "valor_tipico": "168"
+        }
+      },
+      {
+        "numero_prueba": 14,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "FOAMING CHARACTERISTICS OF LUBRICATING OILS",
+        "metodo_original": "---",
+        "nombre_maestro_propuesto": "DETERMINACIÓN DE ZINC (ZN) EN ACEITES LUBRICANTES POR ICP-OES",
+        "nombre_maestro_ingles_propuesto": "DETERMINATION OF ZINC (ZN) IN LUBRICATING OILS BY ICP-OES",
+        "metodo_original_normalizado": "---",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "85",
+        "nombre_segunda_opcion": "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+        "metodo_segunda_opcion": "ASTM D892",
+        "fila_segunda_opcion": "37",
+        "margen_puntaje": 0.0388,
+        "unidades_originales": "---",
+        "valor_tipico_original": "---",
+        "unidades_maestras_propuestas": "mg/kg",
+        "idioma": "INGLES",
+        "puntaje_total": 0.5361,
+        "puntaje_nombre": 0.5531,
+        "puntaje_metodo": 0.5,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DETERMINACIÓN DE ZINC (ZN) EN ACEITES LUBRICANTES POR ICP-OES",
+          "unidades": "mg/kg",
+          "metodo": "---",
+          "especificacion": "---",
+          "valor_tipico": "---"
+        }
+      },
+      {
+        "numero_prueba": 15,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "SEC I",
+        "metodo_original": "ASTM D892 - 13",
+        "nombre_maestro_propuesto": "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+        "nombre_maestro_ingles_propuesto": "FOAMING CHARACTERISTICS (SEQUENCE I)",
+        "metodo_original_normalizado": "ASTM D892",
+        "metodo_maestro_fuente": "ASTM D892",
+        "metodo_maestro_propuesto": "ASTM D892",
+        "referencias_astm_originales": [
+          "D892"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D892"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "37",
+        "nombre_segunda_opcion": "FORMACIÓN DE ESPUMA (SECUENCIA II)",
+        "metodo_segunda_opcion": "ASTM D892",
+        "fila_segunda_opcion": "38",
+        "margen_puntaje": 0.0089,
+        "unidades_originales": "ml/ml",
+        "valor_tipico_original": "20/0",
+        "unidades_maestras_propuestas": "ml/ml",
+        "idioma": "INGLES",
+        "puntaje_total": 0.5127,
+        "puntaje_nombre": 0.2833,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+          "unidades": "ml/ml",
+          "metodo": "ASTM D892",
+          "especificacion": "70/0",
+          "valor_tipico": "20/0"
+        }
+      },
+      {
+        "numero_prueba": 16,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "SEC II",
+        "metodo_original": "ASTM D892 - 13",
+        "nombre_maestro_propuesto": "FORMACIÓN DE ESPUMA (SECUENCIA II)",
+        "nombre_maestro_ingles_propuesto": "FOAMING CHARACTERISTICS (SEQUENCE II)",
+        "metodo_original_normalizado": "ASTM D892",
+        "metodo_maestro_fuente": "ASTM D892",
+        "metodo_maestro_propuesto": "ASTM D892",
+        "referencias_astm_originales": [
+          "D892"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D892"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "38",
+        "nombre_segunda_opcion": "FORMACIÓN DE ESPUMA (SECUENCIA III)",
+        "metodo_segunda_opcion": "ASTM D892",
+        "fila_segunda_opcion": "39",
+        "margen_puntaje": 0.018,
+        "unidades_originales": "ml/ml",
+        "valor_tipico_original": "30/0",
+        "unidades_maestras_propuestas": "ml/ml",
+        "idioma": "INGLES",
+        "puntaje_total": 0.5473,
+        "puntaje_nombre": 0.3342,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FORMACIÓN DE ESPUMA (SECUENCIA II)",
+          "unidades": "ml/ml",
+          "metodo": "ASTM D892",
+          "especificacion": "50/0",
+          "valor_tipico": "30/0"
+        }
+      },
+      {
+        "numero_prueba": 17,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "SEC III",
+        "metodo_original": "ASTM D892 - 13",
+        "nombre_maestro_propuesto": "FORMACIÓN DE ESPUMA (SECUENCIA III)",
+        "nombre_maestro_ingles_propuesto": "FOAMING CHARACTERISTICS (SEQUENCE III)",
+        "metodo_original_normalizado": "ASTM D892",
+        "metodo_maestro_fuente": "ASTM D892",
+        "metodo_maestro_propuesto": "ASTM D892",
+        "referencias_astm_originales": [
+          "D892"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D892"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "39",
+        "nombre_segunda_opcion": "FORMACIÓN DE ESPUMA (SECUENCIA II)",
+        "metodo_segunda_opcion": "ASTM D892",
+        "fila_segunda_opcion": "38",
+        "margen_puntaje": 0.0371,
+        "unidades_originales": "ml/ml",
+        "valor_tipico_original": "20/0",
+        "unidades_maestras_propuestas": "ml/ml",
+        "idioma": "INGLES",
+        "puntaje_total": 0.575,
+        "puntaje_nombre": 0.375,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FORMACIÓN DE ESPUMA (SECUENCIA III)",
+          "unidades": "ml/ml",
+          "metodo": "ASTM D892",
+          "especificacion": "70/0",
+          "valor_tipico": "20/0"
+        }
+      },
+      {
+        "numero_prueba": 18,
+        "estado": "ALINEADO",
+        "nombre_original": "WATER CONTENT, PROCEDURE A",
+        "metodo_original": "ASTM D6304 - 07 (PROCEDIMIENTO A)",
+        "nombre_maestro_propuesto": "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+        "nombre_maestro_ingles_propuesto": "WATER CONTENT BY KARL FISCHER (COULOMETRIC)",
+        "metodo_original_normalizado": "ASTM D6304",
+        "metodo_maestro_fuente": "ASTM D6304",
+        "metodo_maestro_propuesto": "ASTM D6304",
+        "referencias_astm_originales": [
+          "D6304"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D6304"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "36",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D4737 - 10 (2016)",
+        "fila_segunda_opcion": "149",
+        "margen_puntaje": 0.3723,
+        "unidades_originales": "mg/kg",
+        "valor_tipico_original": "9.6",
+        "unidades_maestras_propuestas": "mg/kg/ % en masa",
+        "idioma": "INGLES",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5866,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+          "unidades": "mg/kg/ % en masa",
+          "metodo": "ASTM D6304",
+          "especificacion": "100 MAX",
+          "valor_tipico": "9,6"
+        }
+      },
+      {
+        "numero_prueba": 19,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "APPEARANCE",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "61",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "fila_segunda_opcion": "64",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "---",
+        "valor_tipico_original": "CLEAR",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "INGLES",
+        "puntaje_total": 0.4857,
+        "puntaje_nombre": 0.7143,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "BRIGHT AND CLEAR",
+          "valor_tipico": "CLEAR"
+        }
+      },
+      {
+        "numero_prueba": 20,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "VISUAL COLOR",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "COLOR SAYBOLT",
+        "nombre_maestro_ingles_propuesto": "SAYBOLT COLOR",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "ASTM D156",
+        "metodo_maestro_propuesto": "ASTM D156",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D156"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "14",
+        "nombre_segunda_opcion": "COLOR",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "80",
+        "margen_puntaje": 0.0616,
+        "unidades_originales": "---",
+        "valor_tipico_original": "GREEN",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "INGLES",
+        "puntaje_total": 0.4896,
+        "puntaje_nombre": 0.72,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR SAYBOLT",
+          "unidades": "N/A",
+          "metodo": "ASTM D156",
+          "especificacion": "GREEN",
+          "valor_tipico": "GREEN"
+        }
+      },
+      {
+        "numero_prueba": 21,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "FLUORESCENCE TO UV LIGHT",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "FLUORESCENCIA A LA LUZ UV",
+        "nombre_maestro_ingles_propuesto": "UV FLUORESCENCE",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "MÉTODO INTERNO / METHOD FOR INTERNAL CLIENT",
+        "metodo_maestro_propuesto": "MÉTODO INTERNO / METHOD FOR INTERNAL CLIENT",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "59",
+        "nombre_segunda_opcion": "CANTIDAD DE ADITIVO FLUORESCENTE",
+        "metodo_segunda_opcion": "MÉTODO INTERNO / METHOD FOR INTERNAL CLIENT",
+        "fila_segunda_opcion": "60",
+        "margen_puntaje": 0.0762,
+        "unidades_originales": "---",
+        "valor_tipico_original": "FLUORESCES",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "INGLES",
+        "puntaje_total": 0.4603,
+        "puntaje_nombre": 0.6769,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FLUORESCENCIA A LA LUZ UV",
+          "unidades": "N/A",
+          "metodo": "MÉTODO INTERNO / METHOD FOR INTERNAL CLIENT",
+          "especificacion": "FLUORESCES",
+          "valor_tipico": "FLUORESCES"
+        }
+      },
+      {
+        "numero_prueba": 22,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "AMOUNT OF FLUORESCENT ADDITIVE",
+        "metodo_original": "INTERNAL",
+        "nombre_maestro_propuesto": "CANTIDAD DE ADITIVO FLUORESCENTE",
+        "nombre_maestro_ingles_propuesto": "QUANTITY OF FLUORESCENT UV DYE",
+        "metodo_original_normalizado": "INTERNAL",
+        "metodo_maestro_fuente": "MÉTODO INTERNO / METHOD FOR INTERNAL CLIENT",
+        "metodo_maestro_propuesto": "MÉTODO INTERNO / METHOD FOR INTERNAL CLIENT",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "60",
+        "nombre_segunda_opcion": "FLUORESCENCIA A LA LUZ UV",
+        "metodo_segunda_opcion": "MÉTODO INTERNO / METHOD FOR INTERNAL CLIENT",
+        "fila_segunda_opcion": "59",
+        "margen_puntaje": 0.0846,
+        "unidades_originales": "mg/kg",
+        "valor_tipico_original": "90",
+        "unidades_maestras_propuestas": "mg/kg",
+        "idioma": "INGLES",
+        "puntaje_total": 0.4624,
+        "puntaje_nombre": 0.68,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CANTIDAD DE ADITIVO FLUORESCENTE",
+          "unidades": "mg/kg",
+          "metodo": "MÉTODO INTERNO / METHOD FOR INTERNAL CLIENT",
+          "especificacion": "<100",
+          "valor_tipico": "90"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

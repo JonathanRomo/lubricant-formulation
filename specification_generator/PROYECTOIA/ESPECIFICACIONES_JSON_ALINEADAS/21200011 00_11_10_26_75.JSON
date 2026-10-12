@@ -1,0 +1,475 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ VACCINE GRADE AE-AV",
+    "nombre_fuente": "SCHUTZ VACCINE GRADE"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2024-08-06"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "INVESTIGACIÓN Y DESARROLLO DE SCHUTZ",
+    "folio_apqp": "------",
+    "folio_vap": "------",
+    "codigo_unico_producto": "21200011",
+    "fecha": "06/08/24",
+    "revision": "00",
+    "nombre_cliente": "",
+    "revision_cliente": "NA",
+    "codigo_unico_producto_fuente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "unidades": "NA",
+      "metodo": "VISUAL",
+      "especificacion": "LIQUIDO OLEOSO Y LIGERAMENTE AMARILLO",
+      "valor_tipico": "LIQUIDO OLEOSO Y LIGERAMENTE AMARILLO",
+      "prueba": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "unidades": "g/cm3",
+      "metodo": "ASTM D1298",
+      "especificacion": "0.800 – 0.850",
+      "valor_tipico": "0,839",
+      "prueba": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "9.500 – 13.50",
+      "valor_tipico": "11,30",
+      "prueba": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "2,950",
+      "prueba": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "unidades": "AD",
+      "metodo": "ASTM D1500",
+      "especificacion": "1 MAXIMO",
+      "valor_tipico": "L0.5",
+      "prueba": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "unidades": "NA",
+      "metodo": "E 1252",
+      "especificacion": "SIMILAR A STD DE REFERENCIA (IR)",
+      "valor_tipico": "SIMILAR A STD DE REFERENCIA (IR)",
+      "prueba": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "unidades": "mgKOH/g",
+      "metodo": "ASTM D974",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "0,27",
+      "prueba": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "unidades": "mgKOH/g",
+      "metodo": "ASTM D94",
+      "especificacion": "11.5 - 14.0",
+      "valor_tipico": "12,8",
+      "prueba": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 8,
+    "encabezados": [
+      "PRUEBAS",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ VACCINE GRADE",
+    "part_id_fuente": "",
+    "part_id_final": "21200011",
+    "coincidencias_nombre": 0,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "81200040",
+        "descripcion": "SCHUTZ VACCINE GRADE AE-AV"
+      },
+      {
+        "part_id": "21200011",
+        "descripcion": "SCHUTZ VACCINE GRADE AE-AV"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21200011"
+    ],
+    "nombre_catalogo": "SCHUTZ VACCINE GRADE AE-AV",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2687,
+      "part_id": "21200011",
+      "descripcion": "SCHUTZ VACCINE GRADE AE-AV",
+      "part_id_clave": "21200011",
+      "descripcion_clave": "SCHUTZ VACCINE GRADE AE AV"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ VACCINE GRADE AE-AV.doc",
+  "hash_sha256_origen": "e89da3bba68b14c517130249486f3f7257b8ba01c472779ec446640c41e0e58f",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T11:26:39",
+  "archivo_json": "21200011 00_11_10_26_75.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:45:17",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 0,
+      "revision": 0,
+      "sin_coincidencia": 8
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "LIQUIDO OLEOSO Y LIGERAMENTE AMARILLO",
+        "unidades_maestras_propuestas": "",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "NA",
+          "metodo": "VISUAL",
+          "especificacion": "LIQUIDO OLEOSO Y LIGERAMENTE AMARILLO",
+          "valor_tipico": "LIQUIDO OLEOSO Y LIGERAMENTE AMARILLO"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "ASTM D1298",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D1298",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [
+          "D1298"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "g/cm3",
+        "valor_tipico_original": "0.839",
+        "unidades_maestras_propuestas": "",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "g/cm3",
+          "metodo": "ASTM D1298",
+          "especificacion": "0.800 – 0.850",
+          "valor_tipico": "0,839"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "ASTM D445",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D445",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [
+          "D445"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm²/s",
+        "valor_tipico_original": "11.30",
+        "unidades_maestras_propuestas": "",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "9.500 – 13.50",
+          "valor_tipico": "11,30"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "ASTM D445",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D445",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [
+          "D445"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm²/s",
+        "valor_tipico_original": "2.950",
+        "unidades_maestras_propuestas": "",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "2,950"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "ASTM D1500",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D1500",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [
+          "D1500"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "L0.5",
+        "unidades_maestras_propuestas": "",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "AD",
+          "metodo": "ASTM D1500",
+          "especificacion": "1 MAXIMO",
+          "valor_tipico": "L0.5"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "E 1252",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "E 1252",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "SIMILAR A STD DE REFERENCIA (IR)",
+        "unidades_maestras_propuestas": "",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "NA",
+          "metodo": "E 1252",
+          "especificacion": "SIMILAR A STD DE REFERENCIA (IR)",
+          "valor_tipico": "SIMILAR A STD DE REFERENCIA (IR)"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "ASTM D974",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D974",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [
+          "D974"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mgKOH/g",
+        "valor_tipico_original": "0.27",
+        "unidades_maestras_propuestas": "",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D974",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "0,27"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "ASTM D94",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D94",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [
+          "D94"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mgKOH/g",
+        "valor_tipico_original": "12.8",
+        "unidades_maestras_propuestas": "",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D94",
+          "especificacion": "11.5 - 14.0",
+          "valor_tipico": "12,8"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

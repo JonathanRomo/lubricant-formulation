@@ -1,0 +1,573 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ GREASE A1SL 2"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": ""
+  },
+  "control_documental": {},
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "COLOR",
+      "unidades": "AD",
+      "metodo": "VISUAL",
+      "especificacion": "AMBAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "TEXTURA",
+      "unidades": "AD",
+      "metodo": "TACTO",
+      "especificacion": "SUAVE",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "PENETRACIÓN A 25 °C SIN TRABAJAR",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D-127",
+      "especificacion": "255 – 305",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "PENETRACIÓN A 25 °C (60 GOLPES)",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D-127",
+      "especificacion": "255 – 305",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "PENETRACIÓN A 25 °C (10 000 GOLPES)",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D-127",
+      "especificacion": "255 – 320",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PENETRACIÓN A 25 °C (100 000 OLPES)",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D-127",
+      "especificacion": "255 - 325",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "ESTABILIDAD MECANICA A 10 000 GOLPES",
+      "unidades": "%",
+      "metodo": "ASTM D-127",
+      "especificacion": "5 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "ESTABILIDAD MECANICA A 100 000 GOLPES",
+      "unidades": "%",
+      "metodo": "ASTM D-127",
+      "especificacion": "6.5 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "GRADO NLGI",
+      "unidades": "AD",
+      "metodo": "ASTM D-127",
+      "especificacion": "2",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "PUNTO DE GOTEO",
+      "unidades": "°C",
+      "metodo": "ASTM D-566",
+      "especificacion": "182 TIPICO",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": ""
+  },
+  "estructura_detectada": {
+    "numero_tablas": 1,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 10,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION",
+      "RESULTADOS PLANTA MAQUILADORA",
+      "RESULTADOS LABORATORIO ACREDITADO (PETROLUBRICANT)",
+      "RESULTADOS DE MUESTRA TECMA LUB"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "CONFLICTO_NOMBRE_AMBIGUO",
+    "prefijo_archivo": "--- ",
+    "nombre_fuente": "SCHUTZ GREASE A1SL 2",
+    "part_id_fuente": "",
+    "part_id_final": "",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80800016",
+        "descripcion": "SCHUTZ GREASE A1SL 2"
+      },
+      {
+        "part_id": "80800015",
+        "descripcion": "SCHUTZ GREASE A1SL 2"
+      }
+    ],
+    "candidatos_codigo_200": []
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ GREASE A1SL 2 (METRO).docx",
+  "hash_sha256_origen": "3f1f6e313555f4b2ebcc43882786c99e915d0bbe61a76de51bce83af8e17d5e8",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "02",
+  "fecha_creacion_json": "2026-10-11T01:46:29",
+  "archivo_json": "SIN_CODIGO_200 SIN_REVISION_11_10_26_21.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:46:47",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 0,
+      "revision": 0,
+      "sin_coincidencia": 10
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "COLOR",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "COLOR",
+        "nombre_maestro_ingles_propuesto": "COLOR",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "80",
+        "nombre_segunda_opcion": "OLOR",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO",
+        "fila_segunda_opcion": "63",
+        "margen_puntaje": 0.0756,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.68,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "AMBAR",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "TEXTURA",
+        "metodo_original": "TACTO",
+        "nombre_maestro_propuesto": "TEXTURA",
+        "nombre_maestro_ingles_propuesto": "TEXTURE",
+        "metodo_original_normalizado": "TACTO",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "62",
+        "nombre_segunda_opcion": "TEMPERATURA DE FUSIÓN",
+        "metodo_segunda_opcion": "FEUM (MGA. 0471)",
+        "fila_segunda_opcion": "50",
+        "margen_puntaje": 0.3886,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.68,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TEXTURA",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "SUAVE",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PENETRACIÓN A 25 °C SIN TRABAJAR",
+        "metodo_original": "ASTM D-127",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS A 25°C, 0 GOLPES (SIN TRABAJAR)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "22",
+        "margen_puntaje": 0.1186,
+        "unidades_originales": "1/10 mm",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.613,
+        "puntaje_nombre": 0.4308,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "255 – 305",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PENETRACIÓN A 25 °C (60 GOLPES)",
+        "metodo_original": "ASTM D-127",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS A 25°C (60 GOLPES)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "23",
+        "margen_puntaje": 0.0367,
+        "unidades_originales": "1/10 mm",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5679,
+        "puntaje_nombre": 0.3645,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "255 – 305",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PENETRACIÓN A 25 °C (10 000 GOLPES)",
+        "metodo_original": "ASTM D-127",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "19",
+        "margen_puntaje": 0.0319,
+        "unidades_originales": "1/10 mm",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5513,
+        "puntaje_nombre": 0.3401,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "255 – 320",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PENETRACIÓN A 25 °C (100 000 OLPES)",
+        "metodo_original": "ASTM D-127",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "19",
+        "margen_puntaje": 0.0343,
+        "unidades_originales": "1/10 mm",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5513,
+        "puntaje_nombre": 0.3401,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "255 - 325",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "ESTABILIDAD MECANICA A 10 000 GOLPES",
+        "metodo_original": "ASTM D-127",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "19",
+        "margen_puntaje": 0.0904,
+        "unidades_originales": "%",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5143,
+        "puntaje_nombre": 0.2857,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "5 MAXIMO",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "ESTABILIDAD MECANICA A 100 000 GOLPES",
+        "metodo_original": "ASTM D-127",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "19",
+        "margen_puntaje": 0.0754,
+        "unidades_originales": "%",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5112,
+        "puntaje_nombre": 0.2812,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "6.5 MAXIMO",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "GRADO NLGI",
+        "metodo_original": "ASTM D-127",
+        "nombre_maestro_propuesto": "GRADO NLGI",
+        "nombre_maestro_ingles_propuesto": "NLGI GRADE",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D217",
+        "metodo_maestro_propuesto": "ASTM D217",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D217"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "21",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "ASTM D127",
+        "fila_segunda_opcion": "7",
+        "margen_puntaje": 0.2038,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.68,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "GRADO NLGI",
+          "unidades": "N/A",
+          "metodo": "ASTM D217",
+          "especificacion": "2",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PUNTO DE GOTEO",
+        "metodo_original": "ASTM D-566",
+        "nombre_maestro_propuesto": "PUNTO DE GOTEO DE GRASAS LUBRICANTES",
+        "nombre_maestro_ingles_propuesto": "DROPPING POINT OF LUBRICATING GREASE",
+        "metodo_original_normalizado": "ASTM D566",
+        "metodo_maestro_fuente": "ASTM 2265",
+        "metodo_maestro_propuesto": "ASTM D2265",
+        "referencias_astm_originales": [
+          "D566"
+        ],
+        "referencias_astm_no_encontradas": [
+          "D566"
+        ],
+        "mensaje_astm_no_encontradas": "Prueba 10 (PUNTO DE GOTEO): Referencias no encontradas en la lista maestra: ASTM D566.",
+        "referencias_astm_maestras": [
+          "D2265"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "3",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "ASTM D127",
+        "fila_segunda_opcion": "7",
+        "margen_puntaje": 0.0116,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.4107,
+        "puntaje_nombre": 0.604,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "PUNTO DE GOTEO DE GRASAS LUBRICANTES",
+          "unidades": "°C",
+          "metodo": "ASTM D2265",
+          "especificacion": "182 TIPICO",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": [
+      "Prueba 10 (PUNTO DE GOTEO): Referencias no encontradas en la lista maestra: ASTM D566."
+    ]
+  }
+}

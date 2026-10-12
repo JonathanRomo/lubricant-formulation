@@ -120,9 +120,7 @@ En Windows:
 
 ```powershell
 cd "C:\Users\JonathanRomo\Music\PROYECTOIA"
-py -3.11 -m venv ".venv"
-.\.venv\Scripts\python.exe -m pip install -r ".\requirements.txt"
-.\.venv\Scripts\python.exe ".\gestor_especificaciones.py"
+.\EJECUTAR_GESTOR.bat
 ```
 
 Para consultar el registro:
@@ -130,6 +128,141 @@ Para consultar el registro:
 ```powershell
 .\.venv\Scripts\python.exe ".\gestor_especificaciones.py" --ver-registro
 ```
+
+## Flujo de extraccion, alineacion y generacion
+
+El alineador lee `ESPECIFICACIONES_JSON` y `METODOS_LAB\METODOS_LAB_UNIFICADO.xlsx`
+(hoja `METODOS`), y escribe los resultados en
+`ESPECIFICACIONES_JSON_ALINEADAS`. Usa pandas para validar/leer las columnas del
+maestro y RapidFuzz para comparar nombres; solo sustituye automaticamente una
+prueba cuando supera el umbral configurado y no hay ambiguedad. Selecciona el
+nombre de prueba y las unidades segun `documento.idioma`; si falta el nombre
+maestro para ese idioma, conserva el original y exige revision. Los asteriscos
+al inicio de los nombres en la lista maestra son marcas de acreditacion y se
+quitan del nombre canonico que se escribe en el JSON alineado; la auditoria
+mantiene el nombre original de la lista maestra. En los campos de unidades y
+valor tipico, los rangos numericos se escriben con espacios alrededor del
+guion, los decimales usan coma y los millares se agrupan con espacio fino.
+Cuando un punto o una coma seguidos por tres digitos sean ambiguos, se conserva
+la interpretacion decimal para no cambiar el valor medido; los grupos de miles
+se convierten cuando su estructura los identifica claramente. En todas las
+celdas de contenido de la tabla se separa el numero del simbolo de unidad con
+un espacio, por ejemplo `0,6 mL` y `40 °C`; tambien aplica a nombres,
+metodos, especificaciones y valores tipicos. Los codigos de metodo sin unidad
+reconocida, como `ASTM D445` e `ISO 4406`, se conservan. Los metodos
+ASTM se comparan por designacion, ignorando espacios, guiones tipograficos,
+ediciones/anios y variantes como `D445`, `D 445`, `D-445`, `ASTM D 445`,
+`ASTM D-445` o `ASTM 445`. En conjugaciones detecta referencias posteriores
+sin repetir `ASTM` (por ejemplo, `ASTM D445 / D7042`). Si se alinea, el metodo
+ASTM se toma de la fila elegida del maestro, se elimina su edicion y se escribe
+como `ASTM D445`; una conjugacion ASTM queda como `ASTM D445 / ASTM D7042`.
+Las farmacopeas USP, FEUM y Ph. Eur. se comparan sin tomar en cuenta ediciones,
+capitulos USP, claves MGA ni textos como "vigente"; se escriben como `USP`,
+`FEUM` y `Ph Eur`. Las combinaciones se conservan con esos nombres canonicos
+(por ejemplo, `USP / FEUM`), y las citas ASTM reconocidas se conservan tambien
+si aparecen junto con una farmacopea. Las normas no reconocidas se omiten
+cuando el maestro incluye referencias ASTM o farmacopeicas canonizables.
+Designaciones ASTM distintas no se consideran equivalentes; los empates entre
+metodos maestros realmente distintos o con unidades conflictivas se dejan para
+revision. Si un metodo original contiene referencias ASTM ausentes de todas las
+filas del maestro, el JSON alineado las informa en
+`alineacion_metodos_lab.mensajes_astm_no_encontradas` y en el detalle de la
+prueba, aun cuando el nombre se haya alineado y el metodo final se haya
+sustituido por el canonico de la lista. Cada JSON incluye
+`alineacion_metodos_lab` con los valores originales y normalizados, las
+referencias ASTM y farmacopeicas detectadas, puntajes, alternativas y conteos;
+los casos no alineados se detallan en `REPORTE_ALINEACION.txt`.
+
+Para ejecutar consecutivamente la extraccion, alineacion y generacion de Word
+en Windows, coloca las plantillas `.doc`, `.docx` o `.docm` en `FORMATOS` y
+ejecuta:
+
+```powershell
+.\EJECUTAR_PIPELINE_ESPECIFICACIONES.bat
+```
+
+El lanzador crea `.venv` con Python 3.11 si hace falta, instala
+`requirements.txt`, pasa al generador exclusivamente los JSON alineados y
+guarda los Word en `HISTORICO_ESPECIFICACIONES`. Si no existe `FORMATOS`, se
+detiene despues de dejar los JSON alineados. Para ejecutar solo una etapa,
+usa `EJECUTAR_GESTOR.bat` para extraer o
+`.venv\Scripts\python.exe alinear_especificaciones_json.py --base .` para
+alinear.
+
+Para ejecutar **únicamente la alineación** en Linux o WSL, usa
+`./EJECUTAR_ALINEACION_ESPECIFICACIONES.sh`. El script prepara `.venv` con
+Python 3.11 y las dependencias del alineador si hacen falta; no ejecuta la
+extracción ni genera documentos Word.
+
+En Windows, ejecuta `EJECUTAR_ALINEACION_ESPECIFICACIONES.bat` para realizar
+solo esta misma etapa.
+
+## Aplicación gráfica
+
+En Windows, inicia `EJECUTAR_APLICACION_ESPECIFICACIONES.bat` para abrir el
+menú principal. `SUBIR ESPEC` permite elegir varios archivos `.doc`, `.docm` y
+`.docx` y copiarlos a `ESPECIFICACIONES_VIEJAS`. `GENERAR ESPEC` abre un editor
+JSON con validación y guardado en la carpeta de JSON alineados. `SELECCIONAR
+SPEC` abre el selector y permite enviar una especificación marcada al editor.
+`COMPARAR ESPECS` abre dos paneles de comparación;
+cada panel tiene zoom independiente y puede abrir su vista en una ventana
+emergente (hasta seis ventanas flotantes). En las vistas, la tabla de pruebas
+aparece antes que los datos complementarios del producto; el botón «×» de un
+panel limpia esa visualización sin cerrar la ventana de comparación. El divisor
+horizontal de cada vista permite ajustar verticalmente el espacio de la tabla
+frente a los datos complementarios; el divisor vertical entre especificaciones
+permite cambiar cuánto espacio ocupa cada tabla.
+Cada panel permite elegir un JSON existente o un Word `.doc`, `.docx` o `.docm`.
+El botón «ⓘ» junto al selector explica que se pueden comparar JSON limpios o
+alineados, JSON viejos o extraídos y documentos Word propios.
+Los documentos Word se extraen para la comparación con las funciones de lectura
+del gestor, sin ejecutar el procesamiento que los registra ni mover el original.
+El JSON y las conversiones auxiliares viven en una carpeta temporal: se eliminan
+al limpiar ese panel o cerrar el comparador. Si se abrió una vista emergente de
+un Word temporal, sus datos se conservan hasta cerrar también esa ventana.
+
+La aplicación también permite abrir el histórico, copiar plantillas Word a
+`FORMATOS`, ejecutar la actualización de la lista maestra y configurar las
+carpetas usadas por la interfaz. Los controles `A−` y `A+` ajustan el zoom
+general; los controles `−` y `+` de cada panel ajustan solo esa vista previa.
+El selector y la comparación incluyen JSON en español e inglés; las vistas
+inglesas se identifican como «English version» y muestran en inglés los
+encabezados de la tabla y las etiquetas del control documental.
+
+## Selector y vista previa
+
+Ejecuta `EJECUTAR_SELECTOR_ESPECIFICACIONES.bat` para abrir el selector visual.
+La pestaña `Anteriores · JSON extraídos` busca especificaciones extraídas desde
+los documentos fuente en `ESPECIFICACIONES_JSON`; `Nuevas · JSON alineados`
+busca la versión normalizada por la lista maestra en
+`ESPECIFICACIONES_JSON_ALINEADAS`. Cada pestaña tiene su propia búsqueda por
+codigo, producto, cliente o prueba, muestra todos los documentos coincidentes
+y tiene su vista previa. En la parte superior de cada vista aparecen el nombre
+del producto y el contador de pruebas, seguidos inmediatamente por la tabla.
+Los desplazamientos de la lista, la tabla de pruebas
+y el resto de la vista previa son independientes. Cada lista incluye casillas
+de selección independientes y cada vista tiene el botón «Actualizar
+especificacion», reservado por ahora sin acción. En ambas pestañas, «×» cierra
+la visualización y vuelve al mensaje de selección; la tabla aparece antes del
+control documental y los avisos. El divisor debajo de la tabla se puede
+arrastrar verticalmente para cambiar su altura y el espacio de los datos
+complementarios.
+La pestaña anterior aplica el incremento de revisión y la fecha que usaría el generador,
+pero no modifica el JSON ni genera un Word. Si la revisión fuente no es
+numérica, conserva la revisión original, muestra el error en «Avisos del
+control documental» y continúa presentando la especificación. En cambio, la
+pestaña nueva toma la tabla exclusivamente de
+`alineacion_metodos_lab.detalle[].valores_alineados` en el JSON alineado
+(`prueba`, `unidades`, `metodo`, `especificacion` y `valor_tipico`), no de la
+lista `pruebas` de la raíz. Si esa instantánea todavía no existe, la ventana
+indica que hay que volver a ejecutar la alineación; no presenta los valores
+antiguos como si fueran los alineados. La revisión y fecha se leen del control
+documental sin incrementarlos en esta pestaña. Esto no altera la vista de los
+JSON anteriores.
+
+El proyecto aún no contiene la carpeta `FORMATOS` ni una plantilla Word
+española. Por eso, la ventana presenta una vista de los campos y tablas que
+rellena el generador, no una reproducción exacta del diseño del archivo Word.
 
 ## Unificador de métodos de laboratorio
 

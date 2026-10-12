@@ -1,0 +1,621 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ VAS EVSA"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2013-06-21"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Validación de Producto",
+    "folio_apqp": "VAP12L350",
+    "fecha": "21/06/13",
+    "revision": "00",
+    "nombre_cliente": "ESTILO Y VANIDAD S.A. DE C.V.",
+    "revision_cliente": "-----"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "COLOR USP",
+      "unidades": "AD",
+      "metodo": "USP 32",
+      "especificacion": "PASA PRUEBA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+      "unidades": "°C",
+      "metodo": "ASTM D127",
+      "especificacion": "58 - 65",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "GRAVEDAD ESPECIFICA A 15.6 °C ◊",
+      "unidades": "AD",
+      "metodo": "D-1298",
+      "especificacion": "0.815 – 0.880",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "ALCALINIDAD",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "PASA PRUEBA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "ACIDEZ",
+      "unidades": "AD",
+      "metodo": "USP 32",
+      "especificacion": "PASA PRUEBA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "ÁCIDOS ORGÁNICOS",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "PASA PRUEBA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "ACEITES FIJOS, GRASAS Y RESINA",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "PASA PRUEBA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "RESIDUO DE LA IGNICIÓN",
+      "unidades": "% EN MASA",
+      "metodo": "USP / FEUM",
+      "especificacion": "PASA PRUEBA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "CONSISTENCIA DE PETROLATOS",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D937",
+      "especificacion": "160 – 190",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "COLOR LOVIBON, CELDA DE 2 “◊",
+      "unidades": "AD",
+      "metodo": "USP 32",
+      "especificacion": "1.0 – 1.8 R 8.0 – 15.0 Y",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "DISTRIBUCIÓN DE PARAFINAS ◊",
+      "unidades": "%",
+      "metodo": "----",
+      "especificacion": "MACROCRISTALINAS 4 - 8 MICROCRISTALINAS 8 – 13 INTERMEDIAS 40 - 50",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Oficina: Av. Universidad 1001 Piso 10 Int. 11 Torre Plaza Bosques, C.P. 20127, Aguascalientes, Ags Planta: Carretera a San Luis Potosí Km 14.5, C.P. 20337, El Llano, Aguascalientes. Tel 01(449)2.35.25.75 contacto@schutzls.com, www.schutzls.com"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 11,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NO_ENCONTRADO_EN_CATALOGO",
+    "prefijo_archivo": "--- ",
+    "nombre_fuente": "SCHUTZ VAS EVSA",
+    "part_id_fuente": "",
+    "part_id_final": "",
+    "coincidencias_nombre": 0,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [],
+    "candidatos_codigo_200": []
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ VAS EVSA.doc",
+  "hash_sha256_origen": "0b78cfd70853c952e34aab2de0b1e20a594c696a3fc006bdc4295bd319fbbd57",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T11:27:03",
+  "archivo_json": "SIN_CODIGO_200 00_11_10_26_78.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:46:21",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 6,
+      "revision": 3,
+      "sin_coincidencia": 2
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "COLOR USP",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "COLOR",
+        "nombre_maestro_ingles_propuesto": "COLOR",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "80",
+        "nombre_segunda_opcion": "ÁCIDOS ORGÁNICOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "82",
+        "margen_puntaje": 0.2331,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8091,
+        "puntaje_nombre": 0.7429,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA PRUEBA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE FUSIÓN ◊",
+        "metodo_original": "D-127",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "USP (741) / FEUM (MGA 0471)",
+        "fila_segunda_opcion": "77",
+        "margen_puntaje": 0.345,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.7279,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "58 - 65",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "GRAVEDAD ESPECIFICA A 15.6 °C ◊",
+        "metodo_original": "D-1298",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "RELATIVE DENSITY AT 15,6 °C/15,6 °C",
+        "metodo_original_normalizado": "ASTM D1298",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017) / NMX-J-123-ANCE-2019 P 6,3",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "127",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1298 - 12b (2017)",
+        "fila_segunda_opcion": "122",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5646,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "GRAVEDAD ESPECIFICA A 15.6 °C ◊",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D1298",
+          "especificacion": "0.815 – 0.880",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "ALCALINIDAD",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "ALCALINIDAD",
+        "nombre_maestro_ingles_propuesto": "ALKALINITY",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "81",
+        "nombre_segunda_opcion": "PARAFINA SÓLIDA",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "69",
+        "margen_puntaje": 0.2978,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.984,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ALCALINIDAD",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA PRUEBA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "ACIDEZ",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "ACIDEZ",
+        "nombre_maestro_ingles_propuesto": "ACIDITY",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "70",
+        "nombre_segunda_opcion": "ACIDEZ",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "84",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "ACIDEZ",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "PASA PRUEBA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "ALINEADO",
+        "nombre_original": "ÁCIDOS ORGÁNICOS",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "ÁCIDOS ORGÁNICOS",
+        "nombre_maestro_ingles_propuesto": "ORGANIC ACIDS",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "82",
+        "nombre_segunda_opcion": "RESIDUO DE LA IGNICIÓN",
+        "metodo_segunda_opcion": "USP (281) / FEUM (MGA 0751)",
+        "fila_segunda_opcion": "90",
+        "margen_puntaje": 0.3668,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.984,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ÁCIDOS ORGÁNICOS",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA PRUEBA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "ACEITES FIJOS, GRASAS Y RESINAS",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "ACEITES FIJOS, GRASAS Y RESINA",
+        "nombre_maestro_ingles_propuesto": "FIXED OILS, FATS, AND RESINS",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "83",
+        "nombre_segunda_opcion": "ÁCIDOS ORGÁNICOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "82",
+        "margen_puntaje": 0.3728,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9725,
+        "puntaje_nombre": 0.9831,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ACEITES FIJOS, GRASAS Y RESINA",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA PRUEBA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "RESIDUOS DE IGNICIÓN",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "RESIDUO DE LA IGNICIÓN",
+        "nombre_maestro_ingles_propuesto": "RESIDUE ON IGNITION",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP (281) / FEUM (MGA 0751)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "90",
+        "nombre_segunda_opcion": "ÁCIDOS ORGÁNICOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "82",
+        "margen_puntaje": 0.2563,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "% EN MASA",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9192,
+        "puntaje_nombre": 0.9048,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "RESIDUO DE LA IGNICIÓN",
+          "unidades": "% EN MASA",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA PRUEBA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "ALINEADO",
+        "nombre_original": "CONSISTENCIA A 25 °C 1/10 mm",
+        "metodo_original": "D-937",
+        "nombre_maestro_propuesto": "CONSISTENCIA DE PETROLATOS",
+        "nombre_maestro_ingles_propuesto": "CONSISTENCY OF PETROLATUMS",
+        "metodo_original_normalizado": "ASTM D937",
+        "metodo_maestro_fuente": "ASTM D937",
+        "metodo_maestro_propuesto": "ASTM D937",
+        "referencias_astm_originales": [
+          "D937"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D937"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "40",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "79",
+        "margen_puntaje": 0.4776,
+        "unidades_originales": "mm",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "1/10mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.533,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CONSISTENCIA DE PETROLATOS",
+          "unidades": "1/10 mm",
+          "metodo": "ASTM D937",
+          "especificacion": "160 – 190",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "COLOR LOVIBON, CELDA DE 2 “◊",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "COLOR",
+        "nombre_maestro_ingles_propuesto": "COLOR",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "80",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "79",
+        "margen_puntaje": 0.0111,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.583,
+        "puntaje_nombre": 0.4103,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "1.0 – 1.8 R 8.0 – 15.0 Y",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "DISTRIBUCIÓN DE PARAFINAS ◊",
+        "metodo_original": "----",
+        "nombre_maestro_propuesto": "DETERMINACIÓN DE ZINC (ZN) EN ACEITES LUBRICANTES POR ICP-OES",
+        "nombre_maestro_ingles_propuesto": "DETERMINATION OF ZINC (ZN) IN LUBRICATING OILS BY ICP-OES",
+        "metodo_original_normalizado": "----",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "85",
+        "nombre_segunda_opcion": "PARAFINA SÓLIDA",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "69",
+        "margen_puntaje": 0.0794,
+        "unidades_originales": "%",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "mg/kg",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.4369,
+        "puntaje_nombre": 0.4071,
+        "puntaje_metodo": 0.5,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DETERMINACIÓN DE ZINC (ZN) EN ACEITES LUBRICANTES POR ICP-OES",
+          "unidades": "mg/kg",
+          "metodo": "----",
+          "especificacion": "MACROCRISTALINAS 4 - 8 MICROCRISTALINAS 8 – 13 INTERMEDIAS 40 - 50",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

@@ -1,0 +1,286 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ YELLOW VAS SZ",
+    "nombre_fuente": "SCHUTZ YELLOW VAZ SZ"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2017-01-20"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "VALIDACION DE PRODUCTO",
+    "folio_apqp": "APQP-16-PET-018",
+    "folio_vap": "VAP121216417PET",
+    "codigo_unico_producto": "21000004",
+    "fecha": "20/01/17",
+    "revision": "01",
+    "nombre_cliente": "TINTAS SANCHEZ",
+    "revision_cliente": "2 (SOP 405-A2)",
+    "codigo_unico_producto_fuente": "PT-PET-02"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA",
+      "unidades": "NA",
+      "metodo": "VISUAL",
+      "especificacion": "PASTA AMARILLA A AMBAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+      "unidades": "°C",
+      "metodo": "ASTM D127",
+      "especificacion": "48 - 65",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "COLOR LOVIBOND CELDA DE 2 in ◊",
+      "unidades": "NA",
+      "metodo": "LOVIBOND",
+      "especificacion": "21 R / 72 Y MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "CONSISTENCIA DE PETROLATOS",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D937",
+      "especificacion": "110 – 155",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 4,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ YELLOW VAZ SZ",
+    "part_id_fuente": "PT-PET-02",
+    "part_id_final": "21000004",
+    "coincidencias_nombre": 0,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80600001",
+        "descripcion": "SCHUTZ YELLOW VAS SZ"
+      },
+      {
+        "part_id": "21000004",
+        "descripcion": "SCHUTZ YELLOW VAS SZ"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21000004"
+    ],
+    "nombre_catalogo": "SCHUTZ YELLOW VAS SZ",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2798,
+      "part_id": "21000004",
+      "descripcion": "SCHUTZ YELLOW VAS SZ",
+      "part_id_clave": "21000004",
+      "descripcion_clave": "SCHUTZ YELLOW VAS SZ"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ YELLOW VAS SZ 180117.doc",
+  "hash_sha256_origen": "628b186987d272faca4763729cb06b5e8ad2ce91342dad8052dab14841326e31",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "04",
+  "fecha_creacion_json": "2026-10-11T11:30:52",
+  "archivo_json": "21000004 01_11_10_26_19.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:44:42",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 2,
+      "revision": 0,
+      "sin_coincidencia": 2
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "APARIENCIA",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "61",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "fila_segunda_opcion": "64",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5213,
+        "puntaje_nombre": 0.7667,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "PASTA AMARILLA A AMBAR",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE FUSION ◊",
+        "metodo_original": "D-127",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "USP (741) / FEUM (MGA 0471)",
+        "fila_segunda_opcion": "77",
+        "margen_puntaje": 0.345,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.7279,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "48 - 65",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "COLOR LOVIBOND CELDA DE 2 in ◊",
+        "metodo_original": "LOVIBOND",
+        "nombre_maestro_propuesto": "COLOR LOVIBOND RYBN",
+        "nombre_maestro_ingles_propuesto": "LOVIBOND COLOR RYBN",
+        "metodo_original_normalizado": "LOVIBOND",
+        "metodo_maestro_fuente": "IP17 A",
+        "metodo_maestro_propuesto": "IP17 A",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "51",
+        "nombre_segunda_opcion": "COLOR (PLATINO-COBALTO)/ HAZEN - APHA",
+        "metodo_segunda_opcion": "ASTM D1209",
+        "fila_segunda_opcion": "5",
+        "margen_puntaje": 0.12,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.4657,
+        "puntaje_nombre": 0.6848,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR LOVIBOND RYBN",
+          "unidades": "N/A",
+          "metodo": "IP17 A",
+          "especificacion": "21 R / 72 Y MAXIMO",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "CONSISTENCIA A 25 °C",
+        "metodo_original": "D-937",
+        "nombre_maestro_propuesto": "CONSISTENCIA DE PETROLATOS",
+        "nombre_maestro_ingles_propuesto": "CONSISTENCY OF PETROLATUMS",
+        "metodo_original_normalizado": "ASTM D937",
+        "metodo_maestro_fuente": "ASTM D937",
+        "metodo_maestro_propuesto": "ASTM D937",
+        "referencias_astm_originales": [
+          "D937"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D937"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "40",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "79",
+        "margen_puntaje": 0.4156,
+        "unidades_originales": "1/10 mm",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "1/10mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6241,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CONSISTENCIA DE PETROLATOS",
+          "unidades": "1/10 mm",
+          "metodo": "ASTM D937",
+          "especificacion": "110 – 155",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

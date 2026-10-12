@@ -1,0 +1,482 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ GREASE ALL PURPOSE EP 00"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-09-29"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "",
+    "codigo_unico_producto": "21100002",
+    "fecha": "29/09/26",
+    "revision": "00",
+    "nombre_cliente": "",
+    "revision_cliente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "GRADO NLGI",
+      "unidades": "N/A",
+      "metodo": "ASTM D217",
+      "especificacion": "00",
+      "valor_tipico": "00"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "TIPO DE JABÓN",
+      "unidades": "N/A",
+      "metodo": "---",
+      "especificacion": "LITIO",
+      "valor_tipico": "LITIO"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "COLOR",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "AMBAR",
+      "valor_tipico": "AMBAR"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "APARIENCIA VISUAL",
+      "unidades": "N/A",
+      "metodo": "ORGANOLÉPTICO",
+      "especificacion": "SUAVE SIN GRUMOS",
+      "valor_tipico": "SUAVE SIN GRUMOS"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "PENETRACIÓN DE CONO EN GRASAS A 25 °C (60 GOLPES)",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D217",
+      "especificacion": "400 – 430",
+      "valor_tipico": "410"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+      "unidades": "1/10 mm",
+      "metodo": "ASTM D217",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "18"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "PUNTO DE GOTEO DE GRASAS LUBRICANTES",
+      "unidades": "°C",
+      "metodo": "ASTM D2265",
+      "especificacion": "180 MÍNIMO",
+      "valor_tipico": "194"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "unidades": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "metodo": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 8,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ GREASE ALL PURPOSE EP 00",
+    "part_id_fuente": "21100002",
+    "part_id_final": "21100002",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80800011",
+        "descripcion": "SCHUTZ GREASE ALL PURPOSE EP 00"
+      },
+      {
+        "part_id": "21100002",
+        "descripcion": "SCHUTZ GREASE ALL PURPOSE EP 00"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21100002"
+    ],
+    "nombre_catalogo": "SCHUTZ GREASE ALL PURPOSE EP 00",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2753,
+      "part_id": "21100002",
+      "descripcion": "SCHUTZ GREASE ALL PURPOSE EP 00",
+      "part_id_clave": "21100002",
+      "descripcion_clave": "SCHUTZ GREASE ALL PURPOSE EP 00"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ESPECIFICACION SCHUTZ GREASE ALL PURPOSE EP 00.docx",
+  "hash_sha256_origen": "8d8fd910687d1fa675b228bd5c3e7422fd2796c7cc508b61afbab288c2fa96ce",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:26:07",
+  "archivo_json": "21100002 00_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:44:55",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 5,
+      "revision": 0,
+      "sin_coincidencia": 3
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "ALINEADO",
+        "nombre_original": "GRADO NLGI",
+        "metodo_original": "ASTM D217",
+        "nombre_maestro_propuesto": "GRADO NLGI",
+        "nombre_maestro_ingles_propuesto": "NLGI GRADE",
+        "metodo_original_normalizado": "ASTM D217",
+        "metodo_maestro_fuente": "ASTM D217",
+        "metodo_maestro_propuesto": "ASTM D217",
+        "referencias_astm_originales": [
+          "D217"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D217"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "21",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS LUBRICANTES",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "20",
+        "margen_puntaje": 0.48,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "00",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "GRADO NLGI",
+          "unidades": "N/A",
+          "metodo": "ASTM D217",
+          "especificacion": "00",
+          "valor_tipico": "00"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "TIPO DE JABÓN",
+        "metodo_original": "---",
+        "nombre_maestro_propuesto": "DETERMINACIÓN DE ZINC (ZN) EN ACEITES LUBRICANTES POR ICP-OES",
+        "nombre_maestro_ingles_propuesto": "DETERMINATION OF ZINC (ZN) IN LUBRICATING OILS BY ICP-OES",
+        "metodo_original_normalizado": "---",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "85",
+        "nombre_segunda_opcion": "RESIDUO DE LA IGNICIÓN",
+        "metodo_segunda_opcion": "USP (281) / FEUM (MGA 0751)",
+        "fila_segunda_opcion": "90",
+        "margen_puntaje": 0.0089,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "LITIO",
+        "unidades_maestras_propuestas": "mg/kg",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3489,
+        "puntaje_nombre": 0.2778,
+        "puntaje_metodo": 0.5,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DETERMINACIÓN DE ZINC (ZN) EN ACEITES LUBRICANTES POR ICP-OES",
+          "unidades": "mg/kg",
+          "metodo": "---",
+          "especificacion": "LITIO",
+          "valor_tipico": "LITIO"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "COLOR",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "COLOR",
+        "nombre_maestro_ingles_propuesto": "COLOR",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "80",
+        "nombre_segunda_opcion": "OLOR",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO",
+        "fila_segunda_opcion": "63",
+        "margen_puntaje": 0.0756,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "AMBAR",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.68,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "AMBAR",
+          "valor_tipico": "AMBAR"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "APARIENCIA VISUAL",
+        "metodo_original": "ORGANOLÉPTICO",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "ORGANOLÉPTICO",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "61",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "fila_segunda_opcion": "64",
+        "margen_puntaje": 0.32,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "SUAVE SIN GRUMOS",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "SUAVE SIN GRUMOS",
+          "valor_tipico": "SUAVE SIN GRUMOS"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "ALINEADO",
+        "nombre_original": "PENETRACIÓN DE CONO EN GRASAS A 25°C (60 GOLPES)",
+        "metodo_original": "ASTM D217",
+        "nombre_maestro_propuesto": "PENETRACIÓN DE CONO EN GRASAS A 25°C (60 GOLPES)",
+        "nombre_maestro_ingles_propuesto": "CONE PENETRATION OF GREASES AT 25°C (60 STROKES)",
+        "metodo_original_normalizado": "ASTM D217",
+        "metodo_maestro_fuente": "ASTM D217",
+        "metodo_maestro_propuesto": "ASTM D217",
+        "referencias_astm_originales": [
+          "D217"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D217"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "23",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS A 25°C, 0 GOLPES (SIN TRABAJAR)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "22",
+        "margen_puntaje": 0.0886,
+        "unidades_originales": "1/10 mm",
+        "valor_tipico_original": "410",
+        "unidades_maestras_propuestas": "1/10 mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PENETRACIÓN DE CONO EN GRASAS A 25°C (60 GOLPES)",
+          "unidades": "1/10 mm",
+          "metodo": "ASTM D217",
+          "especificacion": "400 – 430",
+          "valor_tipico": "410"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "ALINEADO",
+        "nombre_original": "CAMBIO DE PENETRACIÓN (60 A 10 000 GOLPES)",
+        "metodo_original": "ASTM D217",
+        "nombre_maestro_propuesto": "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+        "nombre_maestro_ingles_propuesto": "PENETRATION CHANGE (60 TO 100,000 STROKES)",
+        "metodo_original_normalizado": "ASTM D217",
+        "metodo_maestro_fuente": "ASTM D217",
+        "metodo_maestro_propuesto": "ASTM D217",
+        "referencias_astm_originales": [
+          "D217"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D217"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "19",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS A 25°C (60 GOLPES)",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "23",
+        "margen_puntaje": 0.1516,
+        "unidades_originales": "1/10 mm",
+        "valor_tipico_original": "18",
+        "unidades_maestras_propuestas": "1/10mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9916,
+        "puntaje_nombre": 0.9877,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+          "unidades": "1/10 mm",
+          "metodo": "ASTM D217",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "18"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE GOTEO DE GRASAS LUBRICANTES",
+        "metodo_original": "ASTM D2265",
+        "nombre_maestro_propuesto": "PUNTO DE GOTEO DE GRASAS LUBRICANTES",
+        "nombre_maestro_ingles_propuesto": "DROPPING POINT OF LUBRICATING GREASE",
+        "metodo_original_normalizado": "ASTM D2265",
+        "metodo_maestro_fuente": "ASTM 2265",
+        "metodo_maestro_propuesto": "ASTM D2265",
+        "referencias_astm_originales": [
+          "D2265"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2265"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "3",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS LUBRICANTES",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "20",
+        "margen_puntaje": 0.4592,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "194",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE GOTEO DE GRASAS LUBRICANTES",
+          "unidades": "°C",
+          "metodo": "ASTM D2265",
+          "especificacion": "180 MÍNIMO",
+          "valor_tipico": "194"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "nombre_maestro_propuesto": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "nombre_maestro_ingles_propuesto": "INTERFACIAL TENSION BY THE RING METHOD",
+        "metodo_original_normalizado": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_maestro_fuente": "ASTM D971",
+        "metodo_maestro_propuesto": "ASTM D971",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D971"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "94",
+        "nombre_segunda_opcion": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "metodo_segunda_opcion": "ASTM D 971-20 / NMX-J-123-ANCE-2019 P 6,6",
+        "fila_segunda_opcion": "110",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "valor_tipico_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "unidades_maestras_propuestas": "mN/m",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3043,
+        "puntaje_nombre": 0.4475,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+          "unidades": "mN/m",
+          "metodo": "ASTM D971",
+          "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+          "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

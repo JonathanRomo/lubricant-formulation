@@ -1,0 +1,717 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ VAS PEARL CARE DG"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-08-19"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "-",
+    "codigo_unico_producto": "21800040",
+    "fecha": "19/08/2026",
+    "revision": "00",
+    "nombre_cliente": "-",
+    "revision_cliente": "-"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+      "unidades": "°C",
+      "metodo": "USP / FEUM",
+      "especificacion": "38 - 60",
+      "valor_tipico": "56"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+      "unidades": "°C",
+      "metodo": "USP / FEUM",
+      "especificacion": "50 - 60",
+      "valor_tipico": "55"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "CONSISTENCIA DE PETROLATOS",
+      "unidades": "1/10 mm",
+      "metodo": "USP / FEUM",
+      "especificacion": "100 - 300",
+      "valor_tipico": "115"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "CONSISTENCIA DE PETROLATOS",
+      "unidades": "1/10 mm",
+      "metodo": "USP / FEUM",
+      "especificacion": "145 - 170",
+      "valor_tipico": "115"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "COLOR",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "EL LÍQUIDO FUNDIDO NO ES MÁS OSCURO QUE 5 mL DE LA SOLUCIÓN ESTÁNDAR DE UNA MEZCLA EN UN TUBO SIMILAR. COMPARAR LOS TUBOS POR MEDIO DE LUZ REFLEJADA SONSTENIÉNDOLOS DIRECTAMENTE CONTRA UN FONDO BLANCO, EN ÁNGULO TAL QUE NO SE PRESENTE FLUORESCENCIA.",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "DENSIDAD RELATIVA 60 °C (PICNÓMETRO)",
+      "unidades": "AD",
+      "metodo": "USP/FEUM",
+      "especificacion": "0,815 – 0,880",
+      "valor_tipico": "0,830"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "ALCALINIDAD",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "LA SOLUCIÓN NO ADQUIERE UN COLOR ROSA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "ACIDEZ",
+      "unidades": "N/A",
+      "metodo": "USP/FEUM",
+      "especificacion": "NO SE PRODUCE COLOR ROJO O ROSA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "ÁCIDOS ORGÁNICOS",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "NO SE REQUIERE MÁS DE 400 µL DE SOLUCIÓN DE HIDRÓXIDO DE SODIO 0,100 N.",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "RESIDUO DE LA IGNICIÓN",
+      "unidades": "% EN MASA",
+      "metodo": "USP / FEUM",
+      "especificacion": "0,05 % MÁXIMO",
+      "valor_tipico": "<0,05 %"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "ACEITES FIJOS, GRASAS Y RESINA",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "NO SE SEPARA MATERIAL SÓLIDO O ACEITOSO",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "unidades": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "metodo": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 12,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ VAS PEARL CARE DG",
+    "part_id_fuente": "21800040",
+    "part_id_final": "21800040",
+    "coincidencias_nombre": 3,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "81800048",
+        "descripcion": "SCHUTZ VAS PEARL CARE DG"
+      },
+      {
+        "part_id": "81800047",
+        "descripcion": "SCHUTZ VAS PEARL CARE DG"
+      },
+      {
+        "part_id": "21800040",
+        "descripcion": "SCHUTZ VAS PEARL CARE DG"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21800040"
+    ],
+    "nombre_catalogo": "SCHUTZ VAS PEARL CARE DG",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2637,
+      "part_id": "21800040",
+      "descripcion": "SCHUTZ VAS PEARL CARE DG",
+      "part_id_clave": "21800040",
+      "descripcion_clave": "SCHUTZ VAS PEARL CARE DG"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/91600060 ESPECIFICACIÓN SCHUTZ VAS PEARL CARE DG (SION).docx",
+  "hash_sha256_origen": "7db70176153789173ac240f9ef73ca855f00ffb8ebb5f8669d94ab7875946e9c",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "01",
+  "fecha_creacion_json": "2026-10-11T01:21:31",
+  "archivo_json": "21800040 00_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:45:25",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 9,
+      "revision": 2,
+      "sin_coincidencia": 1
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP (741) / FEUM (MGA 0471)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "77",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "79",
+        "margen_puntaje": 0.2633,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "56",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "USP / FEUM",
+          "especificacion": "38 - 60",
+          "valor_tipico": "56"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE FUSIÓN DE PETROLATO1",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP (741) / FEUM (MGA 0471)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "77",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "79",
+        "margen_puntaje": 0.2589,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "55",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9879,
+        "puntaje_nombre": 0.9822,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "USP / FEUM",
+          "especificacion": "50 - 60",
+          "valor_tipico": "55"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "ALINEADO",
+        "nombre_original": "CONSISTENCIA DE PETROLATOS",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "CONSISTENCIA DE PETROLATOS",
+        "nombre_maestro_ingles_propuesto": "CONSISTENCY OF PETROLATUMS",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "79",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "USP (741) / FEUM (MGA 0471)",
+        "fila_segunda_opcion": "77",
+        "margen_puntaje": 0.2633,
+        "unidades_originales": "1/10 mm",
+        "valor_tipico_original": "115",
+        "unidades_maestras_propuestas": "1/10mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CONSISTENCIA DE PETROLATOS",
+          "unidades": "1/10 mm",
+          "metodo": "USP / FEUM",
+          "especificacion": "100 - 300",
+          "valor_tipico": "115"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "CONSISTENCIA DE PETROLATOS1",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "CONSISTENCIA DE PETROLATOS",
+        "nombre_maestro_ingles_propuesto": "CONSISTENCY OF PETROLATUMS",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "79",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "USP (741) / FEUM (MGA 0471)",
+        "fila_segunda_opcion": "77",
+        "margen_puntaje": 0.2581,
+        "unidades_originales": "1/10 mm",
+        "valor_tipico_original": "115",
+        "unidades_maestras_propuestas": "1/10mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9872,
+        "puntaje_nombre": 0.9811,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CONSISTENCIA DE PETROLATOS",
+          "unidades": "1/10 mm",
+          "metodo": "USP / FEUM",
+          "especificacion": "145 - 170",
+          "valor_tipico": "115"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "ALINEADO",
+        "nombre_original": "COLOR",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "COLOR",
+        "nombre_maestro_ingles_propuesto": "COLOR",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "80",
+        "nombre_segunda_opcion": "OLOR",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO",
+        "fila_segunda_opcion": "63",
+        "margen_puntaje": 0.3956,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "EL LÍQUIDO FUNDIDO NO ES MÁS OSCURO QUE 5 mL DE LA SOLUCIÓN ESTÁNDAR DE UNA MEZCLA EN UN TUBO SIMILAR. COMPARAR LOS TUBOS POR MEDIO DE LUZ REFLEJADA SONSTENIÉNDOLOS DIRECTAMENTE CONTRA UN FONDO BLANCO, EN ÁNGULO TAL QUE NO SE PRESENTE FLUORESCENCIA.",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD RELATIVA 60 °C (PICNÓMETRO)",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "DENSIDAD RELATIVA X °C (PICNÓMETRO)",
+        "nombre_maestro_ingles_propuesto": "RELATIVE DENSITY X°C (PYCNOMETER)",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP (841) / FEUM (MGA 0251)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "78",
+        "nombre_segunda_opcion": "DENSIDAD RELATIVA X°C (PICNÓMETRO)",
+        "metodo_segunda_opcion": "FEUM (MGA 0251)",
+        "fila_segunda_opcion": "49",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "AD",
+        "valor_tipico_original": "0,830",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9664,
+        "puntaje_nombre": 0.9506,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DENSIDAD RELATIVA X °C (PICNÓMETRO)",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "USP / FEUM",
+          "especificacion": "0,815 – 0,880",
+          "valor_tipico": "0,830"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "ALCALINIDAD",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "ALCALINIDAD",
+        "nombre_maestro_ingles_propuesto": "ALKALINITY",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "81",
+        "nombre_segunda_opcion": "SOLUBILIDAD",
+        "metodo_segunda_opcion": "FEUM",
+        "fila_segunda_opcion": "48",
+        "margen_puntaje": 0.3251,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ALCALINIDAD",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "LA SOLUCIÓN NO ADQUIERE UN COLOR ROSA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "ACIDEZ",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "ACIDEZ",
+        "nombre_maestro_ingles_propuesto": "ACIDITY",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "84",
+        "nombre_segunda_opcion": "ACIDEZ",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "70",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "ACIDEZ",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "NO SE PRODUCE COLOR ROJO O ROSA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "ALINEADO",
+        "nombre_original": "ÁCIDOS ORGÁNICOS",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "ÁCIDOS ORGÁNICOS",
+        "nombre_maestro_ingles_propuesto": "ORGANIC ACIDS",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "82",
+        "nombre_segunda_opcion": "RESIDUO DE LA IGNICIÓN",
+        "metodo_segunda_opcion": "USP (281) / FEUM (MGA 0751)",
+        "fila_segunda_opcion": "90",
+        "margen_puntaje": 0.3668,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ÁCIDOS ORGÁNICOS",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "NO SE REQUIERE MÁS DE 400 µL DE SOLUCIÓN DE HIDRÓXIDO DE SODIO 0,100 N.",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "ALINEADO",
+        "nombre_original": "RESIDUO DE LA IGNICIÓN",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "RESIDUO DE LA IGNICIÓN",
+        "nombre_maestro_ingles_propuesto": "RESIDUE ON IGNITION",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP (281) / FEUM (MGA 0751)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "90",
+        "nombre_segunda_opcion": "ÁCIDOS ORGÁNICOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "82",
+        "margen_puntaje": 0.3668,
+        "unidades_originales": "%",
+        "valor_tipico_original": "<0,05%",
+        "unidades_maestras_propuestas": "% EN MASA",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "RESIDUO DE LA IGNICIÓN",
+          "unidades": "% EN MASA",
+          "metodo": "USP / FEUM",
+          "especificacion": "0,05 % MÁXIMO",
+          "valor_tipico": "<0,05 %"
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "ALINEADO",
+        "nombre_original": "ACEITES FIJOS, GRASAS Y ROSINA",
+        "metodo_original": "USP/FEUM",
+        "nombre_maestro_propuesto": "ACEITES FIJOS, GRASAS Y RESINA",
+        "nombre_maestro_ingles_propuesto": "FIXED OILS, FATS, AND RESINS",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "83",
+        "nombre_segunda_opcion": "ÁCIDOS ORGÁNICOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "82",
+        "margen_puntaje": 0.3543,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9766,
+        "puntaje_nombre": 0.9655,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ACEITES FIJOS, GRASAS Y RESINA",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "NO SE SEPARA MATERIAL SÓLIDO O ACEITOSO",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 12,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "nombre_maestro_propuesto": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "nombre_maestro_ingles_propuesto": "INTERFACIAL TENSION BY THE RING METHOD",
+        "metodo_original_normalizado": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_maestro_fuente": "ASTM D971",
+        "metodo_maestro_propuesto": "ASTM D971",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D971"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "94",
+        "nombre_segunda_opcion": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "metodo_segunda_opcion": "ASTM D 971-20 / NMX-J-123-ANCE-2019 P 6,6",
+        "fila_segunda_opcion": "110",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "valor_tipico_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "unidades_maestras_propuestas": "mN/m",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3043,
+        "puntaje_nombre": 0.4475,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+          "unidades": "mN/m",
+          "metodo": "ASTM D971",
+          "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+          "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

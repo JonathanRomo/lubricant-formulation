@@ -1,0 +1,544 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FG 220 LM"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2023-11-21"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y desarrollo",
+    "folio_apqp": "NA",
+    "folio_vap": "",
+    "codigo_unico_producto": "20200029",
+    "fecha": "21/11/2023",
+    "revision": "2023"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA",
+      "unidades": "N/A",
+      "metodo": "FEUM VIGENTE",
+      "especificacion": "Liquido oleoso transparente e incoloro exento parcial o totalmente de fluorescencia",
+      "valor_tipico": "Liquido oleoso transparente e incoloro exento parcial o totalmente de fluorescencia"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "SOLUBILIDAD",
+      "unidades": "N/A",
+      "metodo": "FEUM",
+      "especificacion": "Soluble en aceites volátiles, casi insoluble en Agua y Etanol, Miscible con Disulfuro de Carbono, Cloroformo, Eter Dietilico, Benceno, Eter de Petróleo, y Aceites excepto el de Ricino",
+      "valor_tipico": "Soluble en aceites volátiles, casi insoluble en Agua y Etanol, Miscible con Disulfuro de Carbono, Cloroformo, Eter Dietilico, Benceno, Eter de Petróleo, y Aceites excepto el de Ricino"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "DENSIDAD RELATIVA",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "FEUM VIGENTE",
+      "especificacion": "0.8450 – 0.9050",
+      "valor_tipico": "0,8520"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "VISCOSIDAD CINEÁMTICA @ 40 °C",
+      "unidades": "mm2/s (cSt)",
+      "metodo": "FEUM VIGENTE",
+      "especificacion": "No menos de 34.5",
+      "valor_tipico": "41,91"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "NEUTRALIDAD",
+      "unidades": "N/A",
+      "metodo": "FEUM VIGENTE",
+      "especificacion": "El Etanol permanece neutro al papel tornasol humedecido",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "LIMITE DE COMPUESTOS POLINUCLEARES",
+      "unidades": "N/A",
+      "metodo": "FEUM VIGENTE",
+      "especificacion": "La absorbancia a cualquier longitud de onda en la región especificada no es mayor que 1/3 de la absorbancia a 275 nm que la solución de referencia",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "El aceite puede opacarse, pero permanece incoloro o toma una ligera coloración rosa o amarilla y el acido no es mas oscuro que una solución de comparación",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "PARAFINA SOLIDA",
+      "unidades": "N/A",
+      "metodo": "FEUM VIGENTE",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "ACIDEZ O ALCALINIDAD",
+      "unidades": "N/A",
+      "metodo": "FEUM VIGENTE",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 9,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FG 220 LM",
+    "part_id_fuente": "20200029",
+    "part_id_final": "20200029",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80200101",
+        "descripcion": "SCHUTZ FG 220 LM"
+      },
+      {
+        "part_id": "20200029",
+        "descripcion": "SCHUTZ FG 220 LM"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20200029"
+    ],
+    "nombre_catalogo": "SCHUTZ FG 220 LM",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3416,
+      "part_id": "20200029",
+      "descripcion": "SCHUTZ FG 220 LM",
+      "part_id_clave": "20200029",
+      "descripcion_clave": "SCHUTZ FG 220 LM"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ FG 220 LM.doc",
+  "hash_sha256_origen": "3c82162a1facc7332b27072f1c87347c3b5665c4e14a37d1645d1b39f7d863d8",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:39:01",
+  "archivo_json": "20200029 2023_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:40:09",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 2,
+      "revision": 2,
+      "sin_coincidencia": 5
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "APARIENCIA",
+        "metodo_original": "FEUM VIGENTE",
+        "nombre_maestro_propuesto": "ALCALINIDAD",
+        "nombre_maestro_ingles_propuesto": "ALKALINITY",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "81",
+        "nombre_segunda_opcion": "ACIDEZ",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "84",
+        "margen_puntaje": 0.1336,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "Liquido oleoso transparente e incoloro exento parcial o totalmente de fluorescencia",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.6926,
+        "puntaje_nombre": 0.5714,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ALCALINIDAD",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "Liquido oleoso transparente e incoloro exento parcial o totalmente de fluorescencia",
+          "valor_tipico": "Liquido oleoso transparente e incoloro exento parcial o totalmente de fluorescencia"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "SOLUBILIDAD",
+        "metodo_original": "FEUM VIGENTE",
+        "nombre_maestro_propuesto": "SOLUBILIDAD",
+        "nombre_maestro_ingles_propuesto": "SOLUBILITY",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "FEUM",
+        "metodo_maestro_propuesto": "FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "FEUM"
+        ],
+        "fila_maestro": "48",
+        "nombre_segunda_opcion": "SOLUBILIDAD",
+        "metodo_segunda_opcion": "PH. EUR",
+        "fila_segunda_opcion": "67",
+        "margen_puntaje": 0.32,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "Soluble en aceites volátiles, casi insoluble en Agua y Etanol, Miscible con Disulfuro de Carbono, Cloroformo, Eter Dietilico, Benceno, Eter de Petróleo, y Aceites excepto el de Ricino",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "SOLUBILIDAD",
+          "unidades": "N/A",
+          "metodo": "FEUM",
+          "especificacion": "Soluble en aceites volátiles, casi insoluble en Agua y Etanol, Miscible con Disulfuro de Carbono, Cloroformo, Eter Dietilico, Benceno, Eter de Petróleo, y Aceites excepto el de Ricino",
+          "valor_tipico": "Soluble en aceites volátiles, casi insoluble en Agua y Etanol, Miscible con Disulfuro de Carbono, Cloroformo, Eter Dietilico, Benceno, Eter de Petróleo, y Aceites excepto el de Ricino"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD RELATIVA",
+        "metodo_original": "FEUM VIGENTE",
+        "nombre_maestro_propuesto": "DENSIDAD RELATIVA X°C (PICNÓMETRO)",
+        "nombre_maestro_ingles_propuesto": "RELATIVE DENSITY X°C (PYCNOMETER)",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "FEUM (MGA 0251)",
+        "metodo_maestro_propuesto": "FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "FEUM"
+        ],
+        "fila_maestro": "49",
+        "nombre_segunda_opcion": "DENSIDAD RELATIVA X °C (PICNÓMETRO)",
+        "metodo_segunda_opcion": "USP (841) / FEUM (MGA 0251)",
+        "fila_segunda_opcion": "78",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "ADIMENSIONAL",
+        "valor_tipico_original": "0.8520",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8127,
+        "puntaje_nombre": 0.7245,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DENSIDAD RELATIVA X°C (PICNÓMETRO)",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "FEUM",
+          "especificacion": "0.8450 – 0.9050",
+          "valor_tipico": "0,8520"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "VISCOSIDAD CINEÁMTICA @ 40 °C",
+        "metodo_original": "FEUM VIGENTE",
+        "nombre_maestro_propuesto": "DENSIDAD RELATIVA X°C (PICNÓMETRO)",
+        "nombre_maestro_ingles_propuesto": "RELATIVE DENSITY X°C (PYCNOMETER)",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "FEUM (MGA 0251)",
+        "metodo_maestro_propuesto": "FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "FEUM"
+        ],
+        "fila_maestro": "49",
+        "nombre_segunda_opcion": "DENSIDAD RELATIVA X °C (PICNÓMETRO)",
+        "metodo_segunda_opcion": "USP (841) / FEUM (MGA 0251)",
+        "fila_segunda_opcion": "78",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "mm2/s (cSt)",
+        "valor_tipico_original": "41.91",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.6307,
+        "puntaje_nombre": 0.4569,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DENSIDAD RELATIVA X°C (PICNÓMETRO)",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "FEUM",
+          "especificacion": "No menos de 34.5",
+          "valor_tipico": "41,91"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "NEUTRALIDAD",
+        "metodo_original": "FEUM VIGENTE",
+        "nombre_maestro_propuesto": "SOLUBILIDAD",
+        "nombre_maestro_ingles_propuesto": "SOLUBILITY",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "FEUM",
+        "metodo_maestro_propuesto": "FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "FEUM"
+        ],
+        "fila_maestro": "48",
+        "nombre_segunda_opcion": "ALCALINIDAD",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "81",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.6909,
+        "puntaje_nombre": 0.5455,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "SOLUBILIDAD",
+          "unidades": "N/A",
+          "metodo": "FEUM",
+          "especificacion": "El Etanol permanece neutro al papel tornasol humedecido",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "LIMITE DE COMPUESTOS POLINUCLEARES",
+        "metodo_original": "FEUM VIGENTE",
+        "nombre_maestro_propuesto": "LIMITES MICROBIANOS: LEVADURAS",
+        "nombre_maestro_ingles_propuesto": "MICROBIAL LIMITS: YEASTS",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "FEUM (MGA 0571)",
+        "metodo_maestro_propuesto": "FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "FEUM"
+        ],
+        "fila_maestro": "105",
+        "nombre_segunda_opcion": "LIMITES MICROBIANOS: MESOFÍLICOS AEROBIOS",
+        "metodo_segunda_opcion": "FEUM (MGA 0571)",
+        "fila_segunda_opcion": "104",
+        "margen_puntaje": 0.0108,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "UFC/g",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.6708,
+        "puntaje_nombre": 0.5159,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "LIMITES MICROBIANOS: LEVADURAS",
+          "unidades": "UFC/g",
+          "metodo": "FEUM",
+          "especificacion": "La absorbancia a cualquier longitud de onda en la región especificada no es mayor que 1/3 de la absorbancia a 275 nm que la solución de referencia",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "SUSTANCIAS FACILMENTE CARBONIZABLES",
+        "metodo_original": "FEUM VIGENTE",
+        "nombre_maestro_propuesto": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+        "nombre_maestro_ingles_propuesto": "READILY CARBONIZABLE SUBSTANCES",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "USP (271) / FEUM (MGA. 0881)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "76",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "79",
+        "margen_puntaje": 0.379,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.984,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "El aceite puede opacarse, pero permanece incoloro o toma una ligera coloración rosa o amarilla y el acido no es mas oscuro que una solución de comparación",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PARAFINA SOLIDA",
+        "metodo_original": "FEUM VIGENTE",
+        "nombre_maestro_propuesto": "PARAFINA SÓLIDA",
+        "nombre_maestro_ingles_propuesto": "SOLID PARAFFIN",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "69",
+        "nombre_segunda_opcion": "ALCALINIDAD",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "81",
+        "margen_puntaje": 0.0098,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.68,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "PARAFINA SÓLIDA",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "ACIDEZ O ALCALINIDAD",
+        "metodo_original": "FEUM VIGENTE",
+        "nombre_maestro_propuesto": "ALCALINIDAD",
+        "nombre_maestro_ingles_propuesto": "ALKALINITY",
+        "metodo_original_normalizado": "FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "81",
+        "nombre_segunda_opcion": "ACIDEZ",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "84",
+        "margen_puntaje": 0.1519,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8063,
+        "puntaje_nombre": 0.7387,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ALCALINIDAD",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

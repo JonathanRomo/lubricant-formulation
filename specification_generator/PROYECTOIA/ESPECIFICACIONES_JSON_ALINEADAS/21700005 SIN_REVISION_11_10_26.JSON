@@ -1,0 +1,801 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ CRYSTALGUARD 70"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": ""
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "",
+    "folio_apqp": "",
+    "folio_vap": "",
+    "codigo_unico_producto": "21700005",
+    "fecha": "",
+    "revision": "",
+    "nombre_cliente": "",
+    "revision_cliente": "",
+    "codigo_unico_producto_fuente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "TRANSPARENTE",
+      "valor_tipico": "TRANSPARENTE"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR SAYBOLT",
+      "unidades": "N/A",
+      "metodo": "ASTM D156",
+      "especificacion": "30 MINIMO",
+      "valor_tipico": ">+30"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "GRAVEDAD ESPECIFICA @ 25 °C",
+      "unidades": "A/D",
+      "metodo": "ASTM D1298",
+      "especificacion": "0.8180 – 0.8800",
+      "valor_tipico": "0,8380"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "VISCOSIDAD CINEMATICA @ 40 °C",
+      "unidades": "mm²/seg",
+      "metodo": "ASTM D445",
+      "especificacion": "10.00 – 14.00",
+      "valor_tipico": "11,00"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "DESTILACION IBP",
+      "unidades": "°C",
+      "metodo": "ASTM D86",
+      "especificacion": "310 MIN",
+      "valor_tipico": "320"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "DESTILACION FBP",
+      "unidades": "°C",
+      "metodo": "ASTM D86",
+      "especificacion": "370 MIN",
+      "valor_tipico": "380"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "PUNTO DE INFLAMACION",
+      "unidades": "°C",
+      "metodo": "ASTM D93",
+      "especificacion": "170 MIN",
+      "valor_tipico": "179"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "PUNTO DE FLUIDEZ",
+      "unidades": "°C",
+      "metodo": "ASTM D97",
+      "especificacion": "-30 MAX",
+      "valor_tipico": "-40"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "LÍMITE DE COMPUESTOS DE AZUFRE",
+      "unidades": "N/A",
+      "metodo": "USP",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "COMPUESTOS CARBONIZABLES",
+      "unidades": "A/D",
+      "metodo": "USP",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "COMPUESTOS POLINUCLEARES",
+      "unidades": "ABS",
+      "metodo": "USP",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "ESPECTRO INFRARROJO",
+      "unidades": "N/A",
+      "metodo": "ASTM E1252",
+      "especificacion": "IGUAL AL ESTANDAR",
+      "valor_tipico": "IGUAL AL ESTANDAR"
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "ACIDEZ",
+      "unidades": "A/D",
+      "metodo": "USP",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "PARAFINA SÓLIDA",
+      "unidades": "N/A",
+      "metodo": "USP",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 14,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALOR TÍPICO"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ CRYSTALGUARD 70",
+    "part_id_fuente": "",
+    "part_id_final": "21700005",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "81700013",
+        "descripcion": "SCHUTZ CRYSTALGUARD 70"
+      },
+      {
+        "part_id": "21700005",
+        "descripcion": "SCHUTZ CRYSTALGUARD 70"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21700005"
+    ],
+    "nombre_catalogo": "SCHUTZ CRYSTALGUARD 70",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2677,
+      "part_id": "21700005",
+      "descripcion": "SCHUTZ CRYSTALGUARD 70",
+      "part_id_clave": "21700005",
+      "descripcion_clave": "SCHUTZ CRYSTALGUARD 70"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ CRYSTALGUARD 70.docx",
+  "hash_sha256_origen": "042e0ea31a1d304d695cfb7174ad877327775b89e763ed2d7ea38dd7bb28c9cb",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:36:40",
+  "archivo_json": "21700005 SIN_REVISION_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:45:19",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 4,
+      "revision": 4,
+      "sin_coincidencia": 6
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "APARIENCIA",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "61",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "fila_segunda_opcion": "64",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "TRANSPARENTE",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5213,
+        "puntaje_nombre": 0.7667,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "TRANSPARENTE",
+          "valor_tipico": "TRANSPARENTE"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "COLOR SAYBOLT",
+        "metodo_original": "ASTM D156",
+        "nombre_maestro_propuesto": "COLOR SAYBOLT",
+        "nombre_maestro_ingles_propuesto": "SAYBOLT COLOR",
+        "metodo_original_normalizado": "ASTM D156",
+        "metodo_maestro_fuente": "ASTM D156",
+        "metodo_maestro_propuesto": "ASTM D156",
+        "referencias_astm_originales": [
+          "D156"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D156"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "14",
+        "nombre_segunda_opcion": "COLOR",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "80",
+        "margen_puntaje": 0.592,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": ">+30",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR SAYBOLT",
+          "unidades": "N/A",
+          "metodo": "ASTM D156",
+          "especificacion": "30 MINIMO",
+          "valor_tipico": ">+30"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "GRAVEDAD ESPECIFICA @ 25°C",
+        "metodo_original": "ASTM D1298",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "RELATIVE DENSITY AT 20 °C/4 °C",
+        "metodo_original_normalizado": "ASTM D1298",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017) / NMX-J-123-ANCE-2019 P 6,3",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "126",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1298 - 12b (2017)",
+        "fila_segunda_opcion": "122",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "0.8380",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.4922,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "GRAVEDAD ESPECIFICA @ 25°C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D1298",
+          "especificacion": "0.8180 – 0.8800",
+          "valor_tipico": "0,8380"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMATICA @ 40 ºC",
+        "metodo_original": "ASTM D445",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "140",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "143",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm²/seg",
+        "valor_tipico_original": "11.00",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6226,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMATICA @ 40 ºC",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "10.00 – 14.00",
+          "valor_tipico": "11,00"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "DESTILACION IBP",
+        "metodo_original": "ASTM D86",
+        "nombre_maestro_propuesto": "REACCIÓN",
+        "nombre_maestro_ingles_propuesto": "REQACTION",
+        "metodo_original_normalizado": "ASTM D86",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [
+          "D86"
+        ],
+        "referencias_astm_no_encontradas": [
+          "D86"
+        ],
+        "mensaje_astm_no_encontradas": "Prueba 5 (DESTILACION IBP): Referencias no encontradas en la lista maestra: ASTM D86.",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "71",
+        "nombre_segunda_opcion": "RESIDUO DE LA IGNICIÓN",
+        "metodo_segunda_opcion": "USP (281) / FEUM (MGA 0751)",
+        "fila_segunda_opcion": "90",
+        "margen_puntaje": 0.024,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "320",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3548,
+        "puntaje_nombre": 0.5217,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "REACCIÓN",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "310 MIN",
+          "valor_tipico": "320"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "DESTILACION FBP",
+        "metodo_original": "ASTM D86",
+        "nombre_maestro_propuesto": "REACCIÓN",
+        "nombre_maestro_ingles_propuesto": "REQACTION",
+        "metodo_original_normalizado": "ASTM D86",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [
+          "D86"
+        ],
+        "referencias_astm_no_encontradas": [
+          "D86"
+        ],
+        "mensaje_astm_no_encontradas": "Prueba 6 (DESTILACION FBP): Referencias no encontradas en la lista maestra: ASTM D86.",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "71",
+        "nombre_segunda_opcion": "DESTILACIÓN POR CROMATOGRAFÍA DE GASES (GC), \"X\" %",
+        "metodo_segunda_opcion": "ASTM D2887",
+        "fila_segunda_opcion": "89",
+        "margen_puntaje": 0.032,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "380",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3548,
+        "puntaje_nombre": 0.5217,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "REACCIÓN",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "370 MIN",
+          "valor_tipico": "380"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PUNTO DE INFLAMACION",
+        "metodo_original": "ASTM D93",
+        "nombre_maestro_propuesto": "PUNTO DE INFLAMACIÓN COPA CERRADA (LT/HT)",
+        "nombre_maestro_ingles_propuesto": "FLASH POINT CLOSED CUP (LT/HT)",
+        "metodo_original_normalizado": "ASTM D93",
+        "metodo_maestro_fuente": "ASTM D56",
+        "metodo_maestro_propuesto": "ASTM D56",
+        "referencias_astm_originales": [
+          "D93"
+        ],
+        "referencias_astm_no_encontradas": [
+          "D93"
+        ],
+        "mensaje_astm_no_encontradas": "Prueba 7 (PUNTO DE INFLAMACION): Referencias no encontradas en la lista maestra: ASTM D93.",
+        "referencias_astm_maestras": [
+          "D56"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "35",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "ASTM D127",
+        "fila_segunda_opcion": "7",
+        "margen_puntaje": 0.0836,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "179",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.4829,
+        "puntaje_nombre": 0.7102,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACIÓN COPA CERRADA (LT/HT)",
+          "unidades": "°C",
+          "metodo": "ASTM D56",
+          "especificacion": "170 MIN",
+          "valor_tipico": "179"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PUNTO DE FLUIDEZ",
+        "metodo_original": "ASTM D97",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "LOWER POUR POINT",
+        "metodo_original_normalizado": "ASTM D97",
+        "metodo_maestro_fuente": "ASTM D97 - 17b",
+        "metodo_maestro_propuesto": "ASTM D97",
+        "referencias_astm_originales": [
+          "D97"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D97"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "186",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D97 - 17b",
+        "fila_segunda_opcion": "184",
+        "margen_puntaje": 0.0245,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "-40",
+        "unidades_maestras_propuestas": "°C, °F",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5537,
+        "puntaje_nombre": 0.3438,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FLUIDEZ",
+          "unidades": "°C, °F",
+          "metodo": "ASTM D97",
+          "especificacion": "-30 MAX",
+          "valor_tipico": "-40"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "ALINEADO",
+        "nombre_original": "LIMITE DE COMPUESTOS DE AZUFRE",
+        "metodo_original": "USP",
+        "nombre_maestro_propuesto": "LÍMITE DE COMPUESTOS DE AZUFRE",
+        "nombre_maestro_ingles_propuesto": "LIMIT OF SULFUR COMPOUNDS",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "72",
+        "nombre_segunda_opcion": "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICO",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "73",
+        "margen_puntaje": 0.3561,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "LÍMITE DE COMPUESTOS DE AZUFRE",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "COMPUESTOS CARBONIZABLES",
+        "metodo_original": "USP",
+        "nombre_maestro_propuesto": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+        "nombre_maestro_ingles_propuesto": "READILY CARBONIZABLE SUBSTANCES",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP (271) / FEUM (MGA. 0881)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "76",
+        "nombre_segunda_opcion": "LÍMITE DE COMPUESTOS DE AZUFRE",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "72",
+        "margen_puntaje": 0.0548,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.7321,
+        "puntaje_nombre": 0.6296,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "COMPUESTOS POLINUCLEARES",
+        "metodo_original": "USP",
+        "nombre_maestro_propuesto": "LÍMITE DE COMPUESTOS DE AZUFRE",
+        "nombre_maestro_ingles_propuesto": "LIMIT OF SULFUR COMPOUNDS",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "72",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "79",
+        "margen_puntaje": 0.093,
+        "unidades_originales": "ABS",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.6962,
+        "puntaje_nombre": 0.5533,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "LÍMITE DE COMPUESTOS DE AZUFRE",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 12,
+        "estado": "ALINEADO",
+        "nombre_original": "INFRARROJO",
+        "metodo_original": "ASTM E1252",
+        "nombre_maestro_propuesto": "ESPECTRO INFRARROJO",
+        "nombre_maestro_ingles_propuesto": "INFRARED SPECTRUM",
+        "metodo_original_normalizado": "ASTM E1252",
+        "metodo_maestro_fuente": "ASTM E 1252",
+        "metodo_maestro_propuesto": "ASTM E1252",
+        "referencias_astm_originales": [
+          "E1252"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "E1252"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "44",
+        "nombre_segunda_opcion": "ESPECTROSCOPÍA INFRARROJA CUALITATIVA (FTIR)",
+        "metodo_segunda_opcion": "ASTM E1252",
+        "fila_segunda_opcion": "45",
+        "margen_puntaje": 0.265,
+        "unidades_originales": "N/A",
+        "valor_tipico_original": "IGUAL AL ESTANDAR",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.7207,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ESPECTRO INFRARROJO",
+          "unidades": "N/A",
+          "metodo": "ASTM E1252",
+          "especificacion": "IGUAL AL ESTANDAR",
+          "valor_tipico": "IGUAL AL ESTANDAR"
+        }
+      },
+      {
+        "numero_prueba": 13,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "ACIDEZ",
+        "metodo_original": "USP",
+        "nombre_maestro_propuesto": "ACIDEZ",
+        "nombre_maestro_ingles_propuesto": "ACIDITY",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "70",
+        "nombre_segunda_opcion": "ACIDEZ",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "84",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "ACIDEZ",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 14,
+        "estado": "ALINEADO",
+        "nombre_original": "PARAFINAS SOLIDAS",
+        "metodo_original": "USP",
+        "nombre_maestro_propuesto": "PARAFINA SÓLIDA",
+        "nombre_maestro_ingles_propuesto": "SOLID PARAFFIN",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "69",
+        "nombre_segunda_opcion": "ALCALINIDAD",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "81",
+        "margen_puntaje": 0.3135,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9575,
+        "puntaje_nombre": 0.9375,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PARAFINA SÓLIDA",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": [
+      "Prueba 5 (DESTILACION IBP): Referencias no encontradas en la lista maestra: ASTM D86.",
+      "Prueba 6 (DESTILACION FBP): Referencias no encontradas en la lista maestra: ASTM D86.",
+      "Prueba 7 (PUNTO DE INFLAMACION): Referencias no encontradas en la lista maestra: ASTM D93."
+    ]
+  }
+}

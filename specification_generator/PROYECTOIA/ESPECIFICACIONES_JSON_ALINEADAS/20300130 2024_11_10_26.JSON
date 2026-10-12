@@ -1,0 +1,546 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ PS PRO 350 FG IDESA"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "en",
+    "fecha_documento_normalizada": "2024-07-26"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "RESEARCH AND DEVELOPMENT",
+    "folio_apqp": "NA",
+    "folio_vap": "NA",
+    "codigo_unico_producto": "20300130",
+    "fecha": "26/07/2024",
+    "revision": "2024",
+    "revision_cliente": "",
+    "codigo_unico_producto_fuente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APPEARANCE",
+      "unidades": "NA",
+      "metodo": "VISUAL",
+      "especificacion": "CLFSM*",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "APHA COLOR",
+      "unidades": "NA",
+      "metodo": "ASTM D1209",
+      "especificacion": "10 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "DENSITY @ 20 °C",
+      "unidades": "g/cm3",
+      "metodo": "ASTM D1298 / ASTM D7042",
+      "especificacion": "0,8631",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "KINEMATIC VISCOSITY AT X °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "75,04",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "SAYBOLT VISCOSITY AT 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D2161",
+      "especificacion": "340 – 370",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "CARBONIZABLE COMPOUNDS",
+      "unidades": "NA",
+      "metodo": "USP 38",
+      "especificacion": "PASS",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+      "unidades": "°C",
+      "metodo": "ASTM D92",
+      "especificacion": "230 MIN",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "RELATIVE MOLECULAR MASS (FROM VISCOSITY)",
+      "unidades": "DIMENSIONLESS",
+      "metodo": "ASTM D2502",
+      "especificacion": "450 – 600",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "REFRACTIVE INDEX AT 20 °C",
+      "unidades": "DIMENSIONLESS",
+      "metodo": "ASTM D1218",
+      "especificacion": "1,465 – 1,480",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 9,
+    "encabezados": [
+      "TEST",
+      "UNITS",
+      "TEST METHOD",
+      "SPECIFICATION",
+      "TYPICAL RESULTS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ PS PRO 350 FG IDESA",
+    "part_id_fuente": "",
+    "part_id_final": "20300130",
+    "coincidencias_nombre": 3,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80300198",
+        "descripcion": "SCHUTZ PS PRO 350 FG IDESA"
+      },
+      {
+        "part_id": "80300197",
+        "descripcion": "SCHUTZ PS PRO 350 FG IDESA"
+      },
+      {
+        "part_id": "20300130",
+        "descripcion": "SCHUTZ PS PRO 350 FG IDESA"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20300130"
+    ],
+    "nombre_catalogo": "SCHUTZ PS PRO 350 FG IDESA",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3255,
+      "part_id": "20300130",
+      "descripcion": "SCHUTZ PS PRO 350 FG IDESA",
+      "part_id_clave": "20300130",
+      "descripcion_clave": "SCHUTZ PS PRO 350 FG IDESA"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS_ENG/SCHUTZ PS PRO 350 FG IDESA.docx",
+  "hash_sha256_origen": "5ca4d10e1f29708ec783d802af664f247b16ceac0f6a3f2cc44574aff3d1c447",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T11:22:51",
+  "archivo_json": "20300130 2024_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:41:42",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 5,
+      "revision": 2,
+      "sin_coincidencia": 2
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "APPEARANCE",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "61",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "fila_segunda_opcion": "64",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "INGLES",
+        "puntaje_total": 0.4857,
+        "puntaje_nombre": 0.7143,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "CLFSM*",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "APHA COLOR",
+        "metodo_original": "ASTM D1209",
+        "nombre_maestro_propuesto": "COLOR (PLATINO-COBALTO)/ HAZEN - APHA",
+        "nombre_maestro_ingles_propuesto": "COLOR (PLATINUM-COBALT /HAZEN- APHA",
+        "metodo_original_normalizado": "ASTM D1209",
+        "metodo_maestro_fuente": "ASTM D1209",
+        "metodo_maestro_propuesto": "ASTM D1209",
+        "referencias_astm_originales": [
+          "D1209"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1209"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "5",
+        "nombre_segunda_opcion": "COLOR",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "80",
+        "margen_puntaje": 0.1306,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "INGLES",
+        "puntaje_total": 0.6066,
+        "puntaje_nombre": 0.4214,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR (PLATINO-COBALTO)/ HAZEN - APHA",
+          "unidades": "N/A",
+          "metodo": "ASTM D1209",
+          "especificacion": "10 MAXIMO",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSITY @ 20 °C",
+        "metodo_original": "ASTM D1298 / ASTM D7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DENSITY AT X °C",
+        "metodo_original_normalizado": "ASTM D1298 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017)",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "119",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D7042 - 14",
+        "fila_segunda_opcion": "158",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "g/cm3",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "g/cm3, g/ml, kg/L, kg/m3",
+        "idioma": "INGLES",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.778,
+        "puntaje_metodo": 0.95,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DENSITY @ 20 °C",
+          "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+          "metodo": "ASTM D1298",
+          "especificacion": "0,8631",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "KINEMATIC VISCOSITY @ 38 °C",
+        "metodo_original": "ASTM D445-12 / ASTM D7042-14",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT X °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "142",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "145",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "INGLES",
+        "puntaje_total": 0.906,
+        "puntaje_nombre": 0.8853,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "KINEMATIC VISCOSITY @ 38 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "75,04",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "ALINEADO",
+        "nombre_original": "SAYBOLT VISCOSITY @ 100 °F",
+        "metodo_original": "ASTM D2161",
+        "nombre_maestro_propuesto": "VISCOSIDAD SAYBOLT A 100°F",
+        "nombre_maestro_ingles_propuesto": "SAYBOLT VISCOSITY AT 100°F",
+        "metodo_original_normalizado": "ASTM D2161",
+        "metodo_maestro_fuente": "ASTM D2161",
+        "metodo_maestro_propuesto": "ASTM D2161",
+        "referencias_astm_originales": [
+          "D2161"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2161"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "17",
+        "nombre_segunda_opcion": "VISCOSIDAD SAYBOLT A 210°F",
+        "metodo_segunda_opcion": "ASTM D2161",
+        "fila_segunda_opcion": "18",
+        "margen_puntaje": 0.0315,
+        "unidades_originales": "SUS",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "SUS",
+        "idioma": "INGLES",
+        "puntaje_total": 0.9625,
+        "puntaje_nombre": 0.9449,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD SAYBOLT A 100°F",
+          "unidades": "SUS",
+          "metodo": "ASTM D2161",
+          "especificacion": "340 – 370",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "CARBONIZABLE COMPOUNDS",
+        "metodo_original": "USP 38",
+        "nombre_maestro_propuesto": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+        "nombre_maestro_ingles_propuesto": "READILY CARBONIZABLE SUBSTANCES",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP (271) / FEUM (MGA. 0881)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "76",
+        "nombre_segunda_opcion": "LÍMITE DE COMPUESTOS DE AZUFRE",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "72",
+        "margen_puntaje": 0.0625,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "INGLES",
+        "puntaje_total": 0.7215,
+        "puntaje_nombre": 0.614,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASS",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "FLASH POINT",
+        "metodo_original": "ASTM D-92-18",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+        "metodo_original_normalizado": "ASTM D92",
+        "metodo_maestro_fuente": "ASTM D92 - 18",
+        "metodo_maestro_propuesto": "ASTM D92",
+        "referencias_astm_originales": [
+          "D92"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D92"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "163",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D92 - 18",
+        "fila_segunda_opcion": "165",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "INGLES",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.4667,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FLASH POINT",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "230 MIN",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "MOLECULAR WEIGHT",
+        "metodo_original": "ASTM D2502",
+        "nombre_maestro_propuesto": "PESO MOLECULAR RELATIVA (POR VISCOSIDAD)",
+        "nombre_maestro_ingles_propuesto": "RELATIVE MOLECULAR MASS (FROM VISCOSITY)",
+        "metodo_original_normalizado": "ASTM D2502",
+        "metodo_maestro_fuente": "ASTM D2502",
+        "metodo_maestro_propuesto": "ASTM D2502",
+        "referencias_astm_originales": [
+          "D2502"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2502"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "27",
+        "nombre_segunda_opcion": "SOLUBILIDAD",
+        "metodo_segunda_opcion": "FEUM",
+        "fila_segunda_opcion": "48",
+        "margen_puntaje": 0.5262,
+        "unidades_originales": "g/mol",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "DIMENSIONLESS",
+        "idioma": "INGLES",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.4776,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PESO MOLECULAR RELATIVA (POR VISCOSIDAD)",
+          "unidades": "DIMENSIONLESS",
+          "metodo": "ASTM D2502",
+          "especificacion": "450 – 600",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "ALINEADO",
+        "nombre_original": "REFRACTIVE INDEX @ 20 °C",
+        "metodo_original": "ASTM D1218 - 12",
+        "nombre_maestro_propuesto": "ÍNDICE DE REFRACCIÓN A 20° C",
+        "nombre_maestro_ingles_propuesto": "REFRACTIVE INDEX AT 20° C",
+        "metodo_original_normalizado": "ASTM D1218",
+        "metodo_maestro_fuente": "ASTM D1218",
+        "metodo_maestro_propuesto": "ASTM D1218",
+        "referencias_astm_originales": [
+          "D1218"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1218"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "6",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1298 - 12b (2017) / NMX-J-123-ANCE-2019 P 6,3",
+        "fila_segunda_opcion": "126",
+        "margen_puntaje": 0.5411,
+        "unidades_originales": "A",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "DIMENSIONLESS",
+        "idioma": "INGLES",
+        "puntaje_total": 0.9592,
+        "puntaje_nombre": 0.94,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ÍNDICE DE REFRACCIÓN A 20° C",
+          "unidades": "DIMENSIONLESS",
+          "metodo": "ASTM D1218",
+          "especificacion": "1,465 – 1,480",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

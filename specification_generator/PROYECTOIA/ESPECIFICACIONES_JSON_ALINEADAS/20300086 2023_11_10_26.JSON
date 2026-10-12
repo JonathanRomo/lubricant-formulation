@@ -1,0 +1,590 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ PRO LV LS S"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2023-02-28"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y desarrollo",
+    "folio_apqp": "NA",
+    "folio_vap": "VAP240223169PRO",
+    "codigo_unico_producto": "20300086",
+    "fecha": "28 Febrero 2023",
+    "revision": "2023"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA VISUAL",
+      "unidades": "A/D",
+      "metodo": "VISUAL",
+      "especificacion": "LIQUIDO OLEOSO",
+      "valor_tipico": "LIQUIDO OLEOSO"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR ASTM",
+      "unidades": "A/D",
+      "metodo": "ASTM D-1500",
+      "especificacion": "1.5 MÁXIMO",
+      "valor_tipico": "L 0,5"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "DENSIDAD @ 25 °C",
+      "unidades": "A/D",
+      "metodo": "ASTM D-1298 / ASTM D-7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "0,8475"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "VISCOSIDAD CINEÁMTICA @ 40 °C",
+      "unidades": "mm2/s (cSt)",
+      "metodo": "ASTM D-445 / ASTM D-7042",
+      "especificacion": "1.000 - 4.000",
+      "valor_tipico": "2,539"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD CINEÁMTICA @ 100 °C",
+      "unidades": "mm2/s (cSt)",
+      "metodo": "ASTM D-445 / ASTM D-7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "1,060"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "VISCOSIDAD DINÁMICA (VISCOSÍMETRO ROTACIONAL, SPINDLE 2, 100 RPM, 25 °C)",
+      "unidades": "mPa*s",
+      "metodo": "ASTM D2983",
+      "especificacion": "5 MÁXIMO",
+      "valor_tipico": "3,30"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "PUNTO DE INFLAMACIÓN",
+      "unidades": "°C",
+      "metodo": "ASTM D-92",
+      "especificacion": "65 MINIMO",
+      "valor_tipico": "70"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "PUNTO DE FLUIDEZ",
+      "unidades": "°C",
+      "metodo": "D-97",
+      "especificacion": "-9 MAXIMO",
+      "valor_tipico": "<-60"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "AZUFRE",
+      "unidades": "% w",
+      "metodo": "D 4294",
+      "especificacion": "1.0 MÁXIMO",
+      "valor_tipico": "0,0008"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+      "unidades": "mg/kg/ % en masa",
+      "metodo": "ASTM D6304",
+      "especificacion": "60 MAXIMO",
+      "valor_tipico": "16,5"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 10,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ PRO LV LS S",
+    "part_id_fuente": "20300086",
+    "part_id_final": "20300086",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80300117",
+        "descripcion": "SCHUTZ PRO LV LS S"
+      },
+      {
+        "part_id": "20300086",
+        "descripcion": "SCHUTZ PRO LV LS S"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20300086"
+    ],
+    "nombre_catalogo": "SCHUTZ PRO LV LS S",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3299,
+      "part_id": "20300086",
+      "descripcion": "SCHUTZ PRO LV LS S",
+      "part_id_clave": "20300086",
+      "descripcion_clave": "SCHUTZ PRO LV LS S"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ PRO LV LS S  ESPAÑOL.doc",
+  "hash_sha256_origen": "56fec33e7edaabb33ab40d220fda89692d760709bd2e62277d70cf6f6d6ca0e9",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:57:40",
+  "archivo_json": "20300086 2023_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:41:16",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 2,
+      "revision": 5,
+      "sin_coincidencia": 3
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "APARIENCIA VISUAL",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "61",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "fila_segunda_opcion": "64",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "LIQUIDO OLEOSO",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.68,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "LIQUIDO OLEOSO",
+          "valor_tipico": "LIQUIDO OLEOSO"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "COLOR ASTM",
+        "metodo_original": "ASTM D-1500",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "ASTM COLOR",
+        "metodo_original_normalizado": "ASTM D1500",
+        "metodo_maestro_fuente": "ASTM D1500 - 12 (2017)",
+        "metodo_maestro_propuesto": "ASTM D1500",
+        "referencias_astm_originales": [
+          "D1500"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1500"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "128",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1500 - 12 (2017) / NMX-J-123-ANCE-2019 P 6,2",
+        "fila_segunda_opcion": "129",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "L 0.5",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.625,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR ASTM",
+          "unidades": "N/A",
+          "metodo": "ASTM D1500",
+          "especificacion": "1.5 MÁXIMO",
+          "valor_tipico": "L 0,5"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD @ 25°C",
+        "metodo_original": "ASTM D-1298 / ASTM D-7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DENSITY AT X °C",
+        "metodo_original_normalizado": "ASTM D1298 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017)",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "119",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D7042 - 14",
+        "fila_segunda_opcion": "158",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "0.8475",
+        "unidades_maestras_propuestas": "g/cm3, g/ml, kg/L, kg/m3",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6481,
+        "puntaje_metodo": 0.95,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DENSIDAD @ 25°C",
+          "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+          "metodo": "ASTM D1298",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "0,8475"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEÁMTICA @ 40 °C",
+        "metodo_original": "ASTM D-445 / ASTM D-7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DYNAMIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D7042 - 14",
+        "metodo_maestro_propuesto": "ASTM D7042",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D7042"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "155",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "fila_segunda_opcion": "140",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s (cSt)",
+        "valor_tipico_original": "2.539",
+        "unidades_maestras_propuestas": "mPa*s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6176,
+        "puntaje_metodo": 0.95,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEÁMTICA @ 40 °C",
+          "unidades": "mPa*s",
+          "metodo": "ASTM D7042",
+          "especificacion": "1.000 - 4.000",
+          "valor_tipico": "2,539"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEÁMTICA @ 100 °C",
+        "metodo_original": "ASTM D-445 / ASTM D-7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DYNAMIC VISCOSITY AT 100 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D7042 - 14",
+        "metodo_maestro_propuesto": "ASTM D7042",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D7042"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "156",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "fila_segunda_opcion": "141",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s (cSt)",
+        "valor_tipico_original": "1.060",
+        "unidades_maestras_propuestas": "mPa*s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6321,
+        "puntaje_metodo": 0.95,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEÁMTICA @ 100 °C",
+          "unidades": "mPa*s",
+          "metodo": "ASTM D7042",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "1,060"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSIDAD BROOKFIELD A 25°C, 20 RPM, AGUJA # 61",
+        "metodo_original": "ASTM D-2983",
+        "nombre_maestro_propuesto": "VISCOSIDAD DINÁMICA (VISCOSÍMETRO ROTACIONAL, SPINDLE 2, 100 RPM, 25°C)",
+        "nombre_maestro_ingles_propuesto": "DYNAMIC VISCOSITY (ROTATIONAL VISCOMETER, SPINDLE 2, 100 RPM, 25°C)",
+        "metodo_original_normalizado": "ASTM D2983",
+        "metodo_maestro_fuente": "ASTM D2983 MODIF-03",
+        "metodo_maestro_propuesto": "ASTM D2983",
+        "referencias_astm_originales": [
+          "D2983"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2983"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "32",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D2983 - 09",
+        "fila_segunda_opcion": "139",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "cP",
+        "valor_tipico_original": "3.30",
+        "unidades_maestras_propuestas": "mPa*s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5049,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD DINÁMICA (VISCOSÍMETRO ROTACIONAL, SPINDLE 2, 100 RPM, 25°C)",
+          "unidades": "mPa*s",
+          "metodo": "ASTM D2983",
+          "especificacion": "5 MÁXIMO",
+          "valor_tipico": "3,30"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PUNTO DE INFLAMACIÓN",
+        "metodo_original": "ASTM D-92",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+        "metodo_original_normalizado": "ASTM D92",
+        "metodo_maestro_fuente": "ASTM D92 - 18",
+        "metodo_maestro_propuesto": "ASTM D92",
+        "referencias_astm_originales": [
+          "D92"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D92"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "163",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D92 - 18",
+        "fila_segunda_opcion": "165",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "70",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5305,
+        "puntaje_nombre": 0.3095,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACIÓN",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "65 MINIMO",
+          "valor_tipico": "70"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PUNTO DE FLUIDEZ",
+        "metodo_original": "D-97",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "LOWER POUR POINT",
+        "metodo_original_normalizado": "ASTM D97",
+        "metodo_maestro_fuente": "ASTM D97 - 17b",
+        "metodo_maestro_propuesto": "ASTM D97",
+        "referencias_astm_originales": [
+          "D97"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D97"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "186",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D97 - 17b",
+        "fila_segunda_opcion": "184",
+        "margen_puntaje": 0.0245,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "<-60",
+        "unidades_maestras_propuestas": "°C, °F",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5537,
+        "puntaje_nombre": 0.3438,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FLUIDEZ",
+          "unidades": "°C, °F",
+          "metodo": "ASTM D97",
+          "especificacion": "-9 MAXIMO",
+          "valor_tipico": "<-60"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "AZUFRE",
+        "metodo_original": "D 4294",
+        "nombre_maestro_propuesto": "AZUFRE TOTAL POR EDXRF",
+        "nombre_maestro_ingles_propuesto": "TOTAL SULFUR BY EDXRF",
+        "metodo_original_normalizado": "ASTM D4294",
+        "metodo_maestro_fuente": "ASTM D4294",
+        "metodo_maestro_propuesto": "ASTM D4294",
+        "referencias_astm_originales": [
+          "D4294"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D4294"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "99",
+        "nombre_segunda_opcion": "AZUFRE TOTAL POR EDXRF",
+        "metodo_segunda_opcion": "ASTM D4294 / NMX-J-123 ANCE-2019 P 6,9",
+        "fila_segunda_opcion": "109",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "% w",
+        "valor_tipico_original": "0.0008",
+        "unidades_maestras_propuestas": "% m/m (>0.01 %) / mg/kg (≤0.01 %)",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.4857,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "AZUFRE TOTAL POR EDXRF",
+          "unidades": "% m/m (>0,01 %) / mg/kg (≤0,01 %)",
+          "metodo": "ASTM D4294",
+          "especificacion": "1.0 MÁXIMO",
+          "valor_tipico": "0,0008"
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "ALINEADO",
+        "nombre_original": "CONTENIDO DE AGUA",
+        "metodo_original": "D 6304",
+        "nombre_maestro_propuesto": "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+        "nombre_maestro_ingles_propuesto": "WATER CONTENT BY KARL FISCHER (COULOMETRIC)",
+        "metodo_original_normalizado": "ASTM D6304",
+        "metodo_maestro_fuente": "ASTM D6304",
+        "metodo_maestro_propuesto": "ASTM D6304",
+        "referencias_astm_originales": [
+          "D6304"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D6304"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "36",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "ASTM D937",
+        "fila_segunda_opcion": "40",
+        "margen_puntaje": 0.4731,
+        "unidades_originales": "ppm",
+        "valor_tipico_original": "16.5",
+        "unidades_maestras_propuestas": "mg/kg/ % en masa",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5781,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+          "unidades": "mg/kg/ % en masa",
+          "metodo": "ASTM D6304",
+          "especificacion": "60 MAXIMO",
+          "valor_tipico": "16,5"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

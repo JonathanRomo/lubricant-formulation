@@ -1,0 +1,569 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "ELECTROSCHUTZ KV ITII"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2022-04-10"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "INVESTIGACIÓN Y DESARROLLO",
+    "folio_apqp": "------",
+    "folio_vap": "------",
+    "codigo_unico_producto": "20400002",
+    "fecha": "10/04/2022",
+    "revision": "",
+    "nombre_cliente": "STC “METRO”",
+    "revision_cliente": "NA",
+    "codigo_unico_producto_fuente": "------"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA",
+      "unidades": "NA",
+      "metodo": "VISUAL",
+      "especificacion": "CLARO Y BRILLANTE",
+      "valor_tipico": "CLARO Y BRILLANTE"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR ASTM",
+      "unidades": "NA",
+      "metodo": "ASTM D-1500 NMX-J 123-ANCE-2019",
+      "especificacion": "0.5 MÁXIMO",
+      "valor_tipico": "<0,5"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "DENSIDAD RELATIVA A 20 °C/4 °C",
+      "unidades": "A/D",
+      "metodo": "ASTM D-1298 NMX-J 123-ANCE-2019",
+      "especificacion": "0.85 a 0.89",
+      "valor_tipico": "0,8665"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "PUNTO DE INFLAMACIÓN",
+      "unidades": "°C",
+      "metodo": "ASTM D-92 NMX-J 123-ANCE-2019",
+      "especificacion": "140 MÍNIMO",
+      "valor_tipico": "150"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "TENSIÓN DE RUPTURA DIELÉCTRICA ELECTRODOS PLANOS (2,54 MM)",
+      "unidades": "kV",
+      "metodo": "ASTM D-877 NMX-J 123-ANCE-2019",
+      "especificacion": "30 MÍNIMO",
+      "valor_tipico": "62,9"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "FACTOR DE POTENCIA @ 25 °C",
+      "unidades": "%",
+      "metodo": "ASTM D-924 NMX-J 123-ANCE-2019",
+      "especificacion": "0.050 MÁXIMO",
+      "valor_tipico": "0,01"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "FACTOR DE POTENCIA @ 100 °C",
+      "unidades": "%",
+      "metodo": "ASTM D-924 NMX-J 123-ANCE-2019",
+      "especificacion": "0.300 MÁXIMO",
+      "valor_tipico": "0,09"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "VISCOSIDAD SAYBOLT A 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D2161",
+      "especificacion": "37.8 a 59",
+      "valor_tipico": "57,2"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "DENSIDAD API",
+      "unidades": "A/D",
+      "metodo": "ASTM D1298 - 12 b",
+      "especificacion": "27.4 a 34.2",
+      "valor_tipico": "31,02"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 9,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "ELECTROSCHUTZ KV ITII",
+    "part_id_fuente": "------",
+    "part_id_final": "20400002",
+    "coincidencias_nombre": 9,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80400037",
+        "descripcion": "ELECTROSCHUTZ KV ITII"
+      },
+      {
+        "part_id": "80400035",
+        "descripcion": "ELECTROSCHUTZ KV ITII"
+      },
+      {
+        "part_id": "80400030",
+        "descripcion": "ELECTROSCHUTZ KV ITII"
+      },
+      {
+        "part_id": "80400029",
+        "descripcion": "ELECTROSCHUTZ KV ITII"
+      },
+      {
+        "part_id": "80400021",
+        "descripcion": "ELECTROSCHUTZ KV ITII"
+      },
+      {
+        "part_id": "80400018",
+        "descripcion": "ELECTROSCHUTZ KV ITII"
+      },
+      {
+        "part_id": "80400008",
+        "descripcion": "ELECTROSCHUTZ KV ITII"
+      },
+      {
+        "part_id": "80400007",
+        "descripcion": "ELECTROSCHUTZ KV ITII"
+      },
+      {
+        "part_id": "20400002",
+        "descripcion": "ELECTROSCHUTZ KV ITII"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20400002"
+    ],
+    "nombre_catalogo": "ELECTROSCHUTZ KV ITII",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3206,
+      "part_id": "20400002",
+      "descripcion": "ELECTROSCHUTZ KV ITII",
+      "part_id_clave": "20400002",
+      "descripcion_clave": "ELECTROSCHUTZ KV ITII"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ELECTROSCHUTZ KV ITII STC METRO.doc",
+  "hash_sha256_origen": "f2761c594211aae498ec26a0fb49552fc0ef6b6998638c9792740fb90524971c",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "02",
+  "fecha_creacion_json": "2026-10-11T01:23:41",
+  "archivo_json": "20400002 SIN_REVISION_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:42:21",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 1,
+      "revision": 6,
+      "sin_coincidencia": 2
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "APARIENCIA",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "61",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "fila_segunda_opcion": "64",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "CLARO Y BRILLANTE",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5213,
+        "puntaje_nombre": 0.7667,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "CLARO Y BRILLANTE",
+          "valor_tipico": "CLARO Y BRILLANTE"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "COLOR ASTM",
+        "metodo_original": "ASTM D-1500 NMX-J 123-ANCE-2019",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "ASTM COLOR",
+        "metodo_original_normalizado": "ASTM D1500",
+        "metodo_maestro_fuente": "ASTM D1500 - 12 (2017)",
+        "metodo_maestro_propuesto": "ASTM D1500",
+        "referencias_astm_originales": [
+          "D1500"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1500"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "128",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1500 - 12 (2017) / NMX-J-123-ANCE-2019 P 6,2",
+        "fila_segunda_opcion": "129",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "<0.5",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.625,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR ASTM",
+          "unidades": "N/A",
+          "metodo": "ASTM D1500",
+          "especificacion": "0.5 MÁXIMO",
+          "valor_tipico": "<0,5"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD RELATIVA A 20°C/4°C",
+        "metodo_original": "ASTM D-1298 NMX-J 123-ANCE-2019",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "RELATIVE DENSITY AT 20 °C/4 °C",
+        "metodo_original_normalizado": "ASTM D1298",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017) / NMX-J-123-ANCE-2019 P 6,3",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "126",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1298 - 12b (2017)",
+        "fila_segunda_opcion": "121",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "0.8665",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6953,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DENSIDAD RELATIVA A 20°C/4°C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D1298",
+          "especificacion": "0.85 a 0.89",
+          "valor_tipico": "0,8665"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PUNTO DE INFLAMACIÓN",
+        "metodo_original": "ASTM D-92 NMX-J 123-ANCE-2019",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+        "metodo_original_normalizado": "ASTM D92",
+        "metodo_maestro_fuente": "ASTM D92 - 18",
+        "metodo_maestro_propuesto": "ASTM D92",
+        "referencias_astm_originales": [
+          "D92"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D92"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "163",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D92 - 18",
+        "fila_segunda_opcion": "165",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "150",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5305,
+        "puntaje_nombre": 0.3095,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACIÓN",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "140 MÍNIMO",
+          "valor_tipico": "150"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "TENSIÓN DE RUPTURA DIELÉCTRICA ELECTRODOS PLANOS (2,54MM)",
+        "metodo_original": "ASTM D-877 NMX-J 123-ANCE-2019",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DIELECTRIC BREAKDOWN VOLTAGE, DISK ELECTRODES (2,54 mm) PROCEDURE A",
+        "metodo_original_normalizado": "ASTM D877",
+        "metodo_maestro_fuente": "ASTM D877 / D877M - 13",
+        "metodo_maestro_propuesto": "ASTM D877 / ASTM D877M",
+        "referencias_astm_originales": [
+          "D877"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D877",
+          "D877M"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "159",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D877 / D877M - 13",
+        "fila_segunda_opcion": "160",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "kV",
+        "valor_tipico_original": "62.9",
+        "unidades_maestras_propuestas": "kV",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN DE RUPTURA DIELÉCTRICA ELECTRODOS PLANOS (2,54MM)",
+          "unidades": "kV",
+          "metodo": "ASTM D877 / ASTM D877M",
+          "especificacion": "30 MÍNIMO",
+          "valor_tipico": "62,9"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "FACTOR DE POTENCIA @ 25 °C",
+        "metodo_original": "ASTM D-924 NMX-J 123-ANCE-2019",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "POWER FACTOR, 60 Hz, 25 °C",
+        "metodo_original_normalizado": "ASTM D924",
+        "metodo_maestro_fuente": "ASTM D924 - 15",
+        "metodo_maestro_propuesto": "ASTM D924",
+        "referencias_astm_originales": [
+          "D924"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D924"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "169",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D924 - 15 / NMX-J-123-ANCE-2019 P 6,16",
+        "fila_segunda_opcion": "177",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "%",
+        "valor_tipico_original": "0.01",
+        "unidades_maestras_propuestas": "%",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5913,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FACTOR DE POTENCIA @ 25 °C",
+          "unidades": "%",
+          "metodo": "ASTM D924",
+          "especificacion": "0.050 MÁXIMO",
+          "valor_tipico": "0,01"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "FACTOR DE POTENCIA @ 100 °C",
+        "metodo_original": "ASTM D-924 NMX-J 123-ANCE-2019",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "POWER FACTOR, 60 Hz,100 °C",
+        "metodo_original_normalizado": "ASTM D924",
+        "metodo_maestro_fuente": "ASTM D924 - 15",
+        "metodo_maestro_propuesto": "ASTM D924",
+        "referencias_astm_originales": [
+          "D924"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D924"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "170",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D924 - 15 / NMX-J-123-ANCE-2019 P 6,16",
+        "fila_segunda_opcion": "178",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "%",
+        "valor_tipico_original": "0.09",
+        "unidades_maestras_propuestas": "%",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6083,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FACTOR DE POTENCIA @ 100 °C",
+          "unidades": "%",
+          "metodo": "ASTM D924",
+          "especificacion": "0.300 MÁXIMO",
+          "valor_tipico": "0,09"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSIDAD SAYBOLT A 37.8°C",
+        "metodo_original": "ASTM D2161 - 10",
+        "nombre_maestro_propuesto": "VISCOSIDAD SAYBOLT A 100°F",
+        "nombre_maestro_ingles_propuesto": "SAYBOLT VISCOSITY AT 100°F",
+        "metodo_original_normalizado": "ASTM D2161",
+        "metodo_maestro_fuente": "ASTM D2161",
+        "metodo_maestro_propuesto": "ASTM D2161",
+        "referencias_astm_originales": [
+          "D2161"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2161"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "17",
+        "nombre_segunda_opcion": "VISCOSIDAD SAYBOLT A 210°F",
+        "metodo_segunda_opcion": "ASTM D2161",
+        "fila_segunda_opcion": "18",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "SUS",
+        "valor_tipico_original": "57.2",
+        "unidades_maestras_propuestas": "SUS",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8872,
+        "puntaje_nombre": 0.8341,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD SAYBOLT A 100°F",
+          "unidades": "SUS",
+          "metodo": "ASTM D2161",
+          "especificacion": "37.8 a 59",
+          "valor_tipico": "57,2"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD API",
+        "metodo_original": "ASTM D1298 - 12 b",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DENSITY AT X °C",
+        "metodo_original_normalizado": "ASTM D1298",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017)",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "119",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1298 - 12b (2017)",
+        "fila_segunda_opcion": "120",
+        "margen_puntaje": 0.24,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "31.02",
+        "unidades_maestras_propuestas": "g/cm3, g/ml, kg/L, kg/m3",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5385,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DENSIDAD API",
+          "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+          "metodo": "ASTM D1298",
+          "especificacion": "27.4 a 34.2",
+          "valor_tipico": "31,02"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

@@ -1,0 +1,385 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SOL VR 70",
+    "nombre_fuente": "SCHUTZ SOL VR 70 SZ"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "codigo_formato": "R01-PRO-VAP-01",
+    "revision_formato": "00",
+    "fecha_documento_normalizada": "2014-05-30"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Validación de Producto",
+    "folio_apqp": "VAP220514052SOL",
+    "fecha": "30/05/14",
+    "revision": "01",
+    "nombre_cliente": "TINTAS SANCHEZ",
+    "revision_cliente": "-----",
+    "codigo_unico_producto_fuente": "",
+    "codigo_unico_producto": "Z0000033"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "DENSIDAD @ 25 °C",
+      "unidades": "A/D",
+      "metodo": "D1298",
+      "especificacion": "REPORTAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "VISCOSIDAD CINEMATICA @ 40 °C",
+      "unidades": "mm²/seg (cSt)",
+      "metodo": "D445",
+      "especificacion": "1.000 -1.500",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "CURVA DE DESTILACIÓN",
+      "unidades": "°C",
+      "metodo": "D86",
+      "especificacion": "100 °C – 298 °C",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "COLOR SAYBOLT",
+      "unidades": "N/A",
+      "metodo": "ASTM D156",
+      "especificacion": "+ 19 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "OLOR",
+      "unidades": "N/A",
+      "metodo": "ORGANOLÉPTICO",
+      "especificacion": "PATRON DE ACUERDO A ANEXO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "HUMEDAD",
+      "unidades": "A/D",
+      "metodo": "INS-CCA-07",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 14.5 Carretera a San Luis Potosí, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Oficina: Av. Universidad 1001 Piso 10 Interior 11, Torre Plaza Bosques, Aguascalientes, Ags. C.P. 20127. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 6,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_RECUPERADO_DESDE_CONTENIDO",
+    "prefijo_archivo": "&&& ",
+    "nombre_fuente": "SCHUTZ SOL VR 70 SZ",
+    "part_id_fuente": "",
+    "part_id_final": "Z0000033",
+    "coincidencias_nombre": 0,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "Z0000033",
+        "descripcion": "SOL VR 70"
+      }
+    ],
+    "candidatos_codigo_200": [],
+    "nombre_catalogo": "SOL VR 70",
+    "resolucion_nombre": "COINCIDENCIA_UNICA_DE_CATALOGO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 96,
+      "part_id": "Z0000033",
+      "descripcion": "SOL VR 70",
+      "part_id_clave": "Z0000033",
+      "descripcion_clave": "SOL VR 70"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ SOL VR 70 SZ SPECS REV  01  JUN 2014.doc",
+  "hash_sha256_origen": "2693d4e6f71ffe6c9681d5918afdc98d6b3af3fca97eba8a728c820d51c24134",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "03",
+  "fecha_creacion_json": "2026-10-11T11:24:58",
+  "archivo_json": "Z0000033 01_11_10_26_01.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:46:48",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 2,
+      "revision": 2,
+      "sin_coincidencia": 2
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD @ 25ºC",
+        "metodo_original": "D1298",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DENSITY AT X °C",
+        "metodo_original_normalizado": "ASTM D1298",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017)",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "119",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1298 - 12b (2017)",
+        "fila_segunda_opcion": "120",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "g/cm3, g/ml, kg/L, kg/m3",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6481,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DENSIDAD @ 25ºC",
+          "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+          "metodo": "ASTM D1298",
+          "especificacion": "REPORTAR",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMATICA @ 40 ºC",
+        "metodo_original": "D445",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "140",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "143",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm²/seg (cSt)",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6226,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMATICA @ 40 ºC",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "1.000 -1.500",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "CURVA DE DESTILACIÓN",
+        "metodo_original": "D86",
+        "nombre_maestro_propuesto": "NÚMERO DE SAPONIFICACIÓN",
+        "nombre_maestro_ingles_propuesto": "SAPONIFICATION NUMBER",
+        "metodo_original_normalizado": "ASTM D86",
+        "metodo_maestro_fuente": "ASTM D94",
+        "metodo_maestro_propuesto": "ASTM D94",
+        "referencias_astm_originales": [
+          "D86"
+        ],
+        "referencias_astm_no_encontradas": [
+          "D86"
+        ],
+        "mensaje_astm_no_encontradas": "Prueba 3 (CURVA DE DESTILACIÓN): Referencias no encontradas en la lista maestra: ASTM D86.",
+        "referencias_astm_maestras": [
+          "D94"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "42",
+        "nombre_segunda_opcion": "REACCIÓN",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "71",
+        "margen_puntaje": 0.0525,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "mgKOH/g",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3925,
+        "puntaje_nombre": 0.5773,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "NÚMERO DE SAPONIFICACIÓN",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D94",
+          "especificacion": "100 °C – 298 °C",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "COLOR SAYBOLT",
+        "metodo_original": "D156",
+        "nombre_maestro_propuesto": "COLOR SAYBOLT",
+        "nombre_maestro_ingles_propuesto": "SAYBOLT COLOR",
+        "metodo_original_normalizado": "ASTM D156",
+        "metodo_maestro_fuente": "ASTM D156",
+        "metodo_maestro_propuesto": "ASTM D156",
+        "referencias_astm_originales": [
+          "D156"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D156"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "14",
+        "nombre_segunda_opcion": "COLOR",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "80",
+        "margen_puntaje": 0.592,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR SAYBOLT",
+          "unidades": "N/A",
+          "metodo": "ASTM D156",
+          "especificacion": "+ 19 MINIMO",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "ALINEADO",
+        "nombre_original": "OLOR ◊",
+        "metodo_original": "ORGANOLEPTICO",
+        "nombre_maestro_propuesto": "OLOR",
+        "nombre_maestro_ingles_propuesto": "ODOR",
+        "metodo_original_normalizado": "ORGANOLEPTICO",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "63",
+        "nombre_segunda_opcion": "COLOR",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "80",
+        "margen_puntaje": 0.3956,
+        "unidades_originales": "PERSPECTIVO",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "OLOR",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "PATRON DE ACUERDO A ANEXO",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "HUMEDAD",
+        "metodo_original": "INS-CCA-07",
+        "nombre_maestro_propuesto": "HUMEDAD POR CREPITACIÓN",
+        "nombre_maestro_ingles_propuesto": "Moisture by crackle test",
+        "metodo_original_normalizado": "INS-CCA-07",
+        "metodo_maestro_fuente": "MÉTODO INTERNO (91300029)",
+        "metodo_maestro_propuesto": "MÉTODO INTERNO (91300029)",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "52",
+        "nombre_segunda_opcion": "SOLUBILIDAD",
+        "metodo_segunda_opcion": "FEUM",
+        "fila_segunda_opcion": "48",
+        "margen_puntaje": 0.0514,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3536,
+        "puntaje_nombre": 0.52,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "HUMEDAD POR CREPITACIÓN",
+          "unidades": "N/A",
+          "metodo": "MÉTODO INTERNO (91300029)",
+          "especificacion": "NEGATIVA",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": [
+      "Prueba 3 (CURVA DE DESTILACIÓN): Referencias no encontradas en la lista maestra: ASTM D86."
+    ]
+  }
+}

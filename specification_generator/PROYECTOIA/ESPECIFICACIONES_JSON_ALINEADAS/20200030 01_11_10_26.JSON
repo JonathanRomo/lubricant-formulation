@@ -1,0 +1,602 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FG 70"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2012-10-12"
+  },
+  "control_documental": {
+    "folio_apqp": "VAP12J277",
+    "fecha": "12/10/12",
+    "revision": "01",
+    "nombre_cliente": "ESTILO Y VANIDAD S.A. DE C.V.",
+    "revision_cliente": "----",
+    "codigo_unico_producto_fuente": "",
+    "codigo_unico_producto": "20200030"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA",
+      "unidades": "A/D",
+      "metodo": "VISUAL",
+      "especificacion": "LIQUIDO ACEITOSO, TRANPARENTE, INCOLORO, LIBRE DE FLUORESCENCIAS, INODORO E INSABORO CUANDO ESTA FRIO, EL ACEITE NO DEBE PRESENTAR TURBIDEZ, MATERIAS EXTRAÑAS NI AGUA INCORPORADA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "GRAVEDAD ESPECIFICA A 25 °C",
+      "unidades": "A/D",
+      "metodo": "D-1298",
+      "especificacion": "0.833 – 0.861",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "VISCOSIDAD CINEMATICA A 40 °C",
+      "unidades": "cSt",
+      "metodo": "D-445",
+      "especificacion": "10.8 – 13.6",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "VISCOSIDAD SAYBOLT A 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D2161",
+      "especificacion": "65 - 75",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "CONTENIDO DE AGUA",
+      "unidades": "PPM",
+      "metodo": "KARL FISHER",
+      "especificacion": "35",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "COMPUESTOS POLINUCLEARES",
+      "unidades": "nm -3",
+      "metodo": "USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "COMPUESTOS CARBONIZABLES",
+      "unidades": "A/D",
+      "metodo": "USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "CUENTA TOTAL MICROBIANA",
+      "unidades": "UFC/gr",
+      "metodo": "NOM-110-SSA1-1994",
+      "especificacion": "MENOR A 2000",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "HONGOS Y LEVADURAS",
+      "unidades": "UFC/gr",
+      "metodo": "NOM-110-SSA1-1194",
+      "especificacion": "MENOR A 200",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "PARAFINA SÓLIDA",
+      "unidades": "N/A",
+      "metodo": "USP",
+      "especificacion": "PASA",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Oficina: Av. Universidad 1001 Piso 10 Int. 11 Torre Plaza Bosques, C.P. 20127, Aguascalientes, Ags. Planta: Carretera a San Luis Potosí Km 14.5, C.P. 20337, El Llano, Aguascalientes. Tel 01(449)2.35.25.75 contacto@schutzoil.com, www.schutzlubricants.com"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 10,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FG 70",
+    "part_id_fuente": "",
+    "part_id_final": "20200030",
+    "coincidencias_nombre": 7,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80200102",
+        "descripcion": "SCHUTZ FG 70"
+      },
+      {
+        "part_id": "80200094",
+        "descripcion": "SCHUTZ FG 70"
+      },
+      {
+        "part_id": "80200088",
+        "descripcion": "SCHUTZ FG 70"
+      },
+      {
+        "part_id": "80200079",
+        "descripcion": "SCHUTZ FG 70"
+      },
+      {
+        "part_id": "80200067",
+        "descripcion": "SCHUTZ FG 70"
+      },
+      {
+        "part_id": "80200058",
+        "descripcion": "SCHUTZ FG 70"
+      },
+      {
+        "part_id": "20200030",
+        "descripcion": "SCHUTZ FG 70"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20200030"
+    ],
+    "nombre_catalogo": "SCHUTZ FG 70",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3415,
+      "part_id": "20200030",
+      "descripcion": "SCHUTZ FG 70",
+      "part_id_clave": "20200030",
+      "descripcion_clave": "SCHUTZ FG 70"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ FG 70 EVSACORP.doc",
+  "hash_sha256_origen": "cf0ea9fc62b74beac75437d21f106a8f508041dd5ad4846efae2158299043004",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "02",
+  "fecha_creacion_json": "2026-10-11T01:41:16",
+  "archivo_json": "20200030 01_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:40:10",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 2,
+      "revision": 3,
+      "sin_coincidencia": 5
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "APARIENCIA",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "61",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "fila_segunda_opcion": "64",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5213,
+        "puntaje_nombre": 0.7667,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "LIQUIDO ACEITOSO, TRANPARENTE, INCOLORO, LIBRE DE FLUORESCENCIAS, INODORO E INSABORO CUANDO ESTA FRIO, EL ACEITE NO DEBE PRESENTAR TURBIDEZ, MATERIAS EXTRAÑAS NI AGUA INCORPORADA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "GRAVEDAD ESPECIFICA A 25 °C",
+        "metodo_original": "D-1298",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "SPECIFIC GRAVITY AT X °C/X °C",
+        "metodo_original_normalizado": "ASTM D1298",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017)",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "122",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1298 - 12b (2017) / NMX-J-123-ANCE-2019 P 6,3",
+        "fila_segunda_opcion": "126",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.527,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "GRAVEDAD ESPECIFICA A 25 °C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D1298",
+          "especificacion": "0.833 – 0.861",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMATICA A 40 °C",
+        "metodo_original": "D-445",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "140",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "143",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "cSt",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6182,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMATICA A 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "10.8 – 13.6",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSIDAD A 100 °F",
+        "metodo_original": "D-2161",
+        "nombre_maestro_propuesto": "VISCOSIDAD SAYBOLT A 100°F",
+        "nombre_maestro_ingles_propuesto": "SAYBOLT VISCOSITY AT 100°F",
+        "metodo_original_normalizado": "ASTM D2161",
+        "metodo_maestro_fuente": "ASTM D2161",
+        "metodo_maestro_propuesto": "ASTM D2161",
+        "referencias_astm_originales": [
+          "D2161"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2161"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "17",
+        "nombre_segunda_opcion": "VISCOSIDAD SAYBOLT A 210°F",
+        "metodo_segunda_opcion": "ASTM D2161",
+        "fila_segunda_opcion": "18",
+        "margen_puntaje": 0.0363,
+        "unidades_originales": "SUS",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "SUS",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8887,
+        "puntaje_nombre": 0.8364,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD SAYBOLT A 100°F",
+          "unidades": "SUS",
+          "metodo": "ASTM D2161",
+          "especificacion": "65 - 75",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "CONTENIDO DE AGUA",
+        "metodo_original": "KARL FISHER",
+        "nombre_maestro_propuesto": "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+        "nombre_maestro_ingles_propuesto": "WATER CONTENT BY KARL FISCHER (COULOMETRIC)",
+        "metodo_original_normalizado": "KARL FISHER",
+        "metodo_maestro_fuente": "ASTM D6304",
+        "metodo_maestro_propuesto": "ASTM D6304",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D6304"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "36",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "ASTM D937",
+        "fila_segunda_opcion": "40",
+        "margen_puntaje": 0.0262,
+        "unidades_originales": "PPM",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "mg/kg/ % en masa",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3931,
+        "puntaje_nombre": 0.5781,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+          "unidades": "mg/kg/ % en masa",
+          "metodo": "ASTM D6304",
+          "especificacion": "35",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "COMPUESTOS POLINUCLEARES",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "LÍMITE DE COMPUESTOS DE AZUFRE",
+        "nombre_maestro_ingles_propuesto": "LIMIT OF SULFUR COMPOUNDS",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "72",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "79",
+        "margen_puntaje": 0.093,
+        "unidades_originales": "nm -3",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.6962,
+        "puntaje_nombre": 0.5533,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "LÍMITE DE COMPUESTOS DE AZUFRE",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "PASA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "COMPUESTOS CARBONIZABLES",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+        "nombre_maestro_ingles_propuesto": "READILY CARBONIZABLE SUBSTANCES",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP (271) / FEUM (MGA. 0881)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "76",
+        "nombre_segunda_opcion": "LÍMITE DE COMPUESTOS DE AZUFRE",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "72",
+        "margen_puntaje": 0.0548,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.7321,
+        "puntaje_nombre": 0.6296,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "CUENTA TOTAL MICROBIANA",
+        "metodo_original": "NOM-110-SSA1-1994",
+        "nombre_maestro_propuesto": "LIMITES MICROBIANOS",
+        "nombre_maestro_ingles_propuesto": "MICROBIAL LIMITS",
+        "metodo_original_normalizado": "NOM-110-SSA1-1994",
+        "metodo_maestro_fuente": "FEUM (MGA 0571)",
+        "metodo_maestro_propuesto": "FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [
+          "FEUM"
+        ],
+        "fila_maestro": "106",
+        "nombre_segunda_opcion": "LIMITES MICROBIANOS: MOHOS",
+        "metodo_segunda_opcion": "FEUM (MGA 0571)",
+        "fila_segunda_opcion": "103",
+        "margen_puntaje": 0.0385,
+        "unidades_originales": "UFC/gr",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "UFC/g",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3643,
+        "puntaje_nombre": 0.5357,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "LIMITES MICROBIANOS",
+          "unidades": "UFC/g",
+          "metodo": "FEUM",
+          "especificacion": "MENOR A 2000",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "HONGOS Y LEVADURAS",
+        "metodo_original": "NOM-110-SSA1-1194",
+        "nombre_maestro_propuesto": "LIMITES MICROBIANOS: LEVADURAS",
+        "nombre_maestro_ingles_propuesto": "MICROBIAL LIMITS: YEASTS",
+        "metodo_original_normalizado": "NOM-110-SSA1-1194",
+        "metodo_maestro_fuente": "FEUM (MGA 0571)",
+        "metodo_maestro_propuesto": "FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [
+          "FEUM"
+        ],
+        "fila_maestro": "105",
+        "nombre_segunda_opcion": "GRADO DE VISCOSIDAD ISO DE LUBRICANTE",
+        "metodo_segunda_opcion": "ASTM D2422",
+        "fila_segunda_opcion": "25",
+        "margen_puntaje": 0.1059,
+        "unidades_originales": "UFC/gr",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "UFC/g",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3926,
+        "puntaje_nombre": 0.5773,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "LIMITES MICROBIANOS: LEVADURAS",
+          "unidades": "UFC/g",
+          "metodo": "FEUM",
+          "especificacion": "MENOR A 200",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "ALINEADO",
+        "nombre_original": "PARAFINAS SOLIDAS",
+        "metodo_original": "USP 32",
+        "nombre_maestro_propuesto": "PARAFINA SÓLIDA",
+        "nombre_maestro_ingles_propuesto": "SOLID PARAFFIN",
+        "metodo_original_normalizado": "USP",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "69",
+        "nombre_segunda_opcion": "ALCALINIDAD",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "81",
+        "margen_puntaje": 0.3135,
+        "unidades_originales": "A/D",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9575,
+        "puntaje_nombre": 0.9375,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PARAFINA SÓLIDA",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "PASA",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

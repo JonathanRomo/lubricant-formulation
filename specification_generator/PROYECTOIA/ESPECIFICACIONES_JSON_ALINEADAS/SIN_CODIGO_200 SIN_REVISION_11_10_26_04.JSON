@@ -1,0 +1,65 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "NOMBRE DEL PRODUCTO"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": ""
+  },
+  "control_documental": {
+    "fecha": "",
+    "revision": "",
+    "nombre_cliente": "",
+    "revision_cliente": ""
+  },
+  "pruebas": [],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Oficina: Av. Universidad 1001 Piso 10 Int. 11 Torre Plaza Bosques, C.P. 20127, Aguascalientes, Ags. Planta: Carretera a San Luis Potosí Km 14.5, C.P. 20337, El Llano, Aguascalientes. Tel 01(449)2.35.25.75 contacto@schutzoil.com, www.schutzlubricants.com"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 0,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NO_ENCONTRADO_EN_CATALOGO",
+    "prefijo_archivo": "--- ",
+    "nombre_fuente": "NOMBRE DEL PRODUCTO",
+    "part_id_fuente": "",
+    "part_id_final": "",
+    "coincidencias_nombre": 0,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [],
+    "candidatos_codigo_200": []
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/F-VAP-01 Formato de Especificaciones para Clientes (REV  00).doc",
+  "hash_sha256_origen": "0b915a776856d924158f4f12f031b7da9562c3f45118a976368ef9c09270a1ed",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:30:39",
+  "archivo_json": "SIN_CODIGO_200 SIN_REVISION_11_10_26_04.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:46:42",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 0,
+      "revision": 0,
+      "sin_coincidencia": 0
+    },
+    "detalle": [],
+    "mensajes_astm_no_encontradas": []
+  }
+}

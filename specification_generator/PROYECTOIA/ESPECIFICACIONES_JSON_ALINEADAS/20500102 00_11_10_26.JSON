@@ -1,0 +1,648 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "REDUSCHUTZ SYN PAO ISO 320"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-08-27"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "VAP2106240661LUB",
+    "codigo_unico_producto": "20500102",
+    "fecha": "27/08/26",
+    "revision": "00",
+    "nombre_cliente": "-",
+    "revision_cliente": "-"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "GRADO DE VISCOSIDAD ISO DE LUBRICANTE",
+      "unidades": "N/A",
+      "metodo": "ASTM D2422",
+      "especificacion": "320",
+      "valor_tipico": "320"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D445/ASTM D 7042",
+      "especificacion": "288,00 – 352,00",
+      "valor_tipico": "312,3"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D445/ASTM D 7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "35,31"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "ÍNDICE DE VISCOSIDAD",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D2270",
+      "especificacion": "130 MÍNIMO",
+      "valor_tipico": "159"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "DENSIDAD A 25 °C",
+      "unidades": "g/cm3",
+      "metodo": "ASTM D1298/ASTM D7042",
+      "especificacion": "0,98 – 1,02",
+      "valor_tipico": "0,8475"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa COPA ABIERTA CLEVELAND",
+      "unidades": "°C",
+      "metodo": "ASTM D92",
+      "especificacion": "220 MÍNIMO",
+      "valor_tipico": "246"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "NÚMERO ÁCIDO",
+      "unidades": "mg KOH/g",
+      "metodo": "ASTM D974",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "0,95"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "SEPARABILIDAD AGUA-ACEITE A X °C",
+      "unidades": "mL/mL/mL(min)",
+      "metodo": "ASTM D1401",
+      "especificacion": "60 MÁXIMO1",
+      "valor_tipico": "43-37-0 (20)"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "HUMEDAD POR CREPITACIÓN",
+      "unidades": "N/A",
+      "metodo": "MÉTODO INTERNO (91300029)",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": "NEGATIVA"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892",
+      "especificacion": "50/0 MÁXIMO",
+      "valor_tipico": "20/0"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "unidades": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "metodo": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 11,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "REDUSCHUTZ SYN PAO ISO 320",
+    "part_id_fuente": "20500102",
+    "part_id_final": "20500102",
+    "coincidencias_nombre": 4,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80500350",
+        "descripcion": "REDUSCHUTZ SYN PAO ISO 320"
+      },
+      {
+        "part_id": "80500163",
+        "descripcion": "REDUSCHUTZ SYN PAO ISO 320"
+      },
+      {
+        "part_id": "80500122",
+        "descripcion": "REDUSCHUTZ SYN PAO ISO 320"
+      },
+      {
+        "part_id": "20500102",
+        "descripcion": "REDUSCHUTZ SYN PAO ISO 320"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20500102"
+    ],
+    "nombre_catalogo": "REDUSCHUTZ SYN PAO ISO 320",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3094,
+      "part_id": "20500102",
+      "descripcion": "REDUSCHUTZ SYN PAO ISO 320",
+      "part_id_clave": "20500102",
+      "descripcion_clave": "REDUSCHUTZ SYN PAO ISO 320"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/91600060 ESPECIFICACION REDUSCHUTZ SYN PAO ISO 320.docx",
+  "hash_sha256_origen": "d04f25c03b468cbf5a38a55339355f7a9ab0a7a38709835c79f7592bb5300341",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:21:14",
+  "archivo_json": "20500102 00_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:43:14",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 4,
+      "revision": 6,
+      "sin_coincidencia": 1
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "ALINEADO",
+        "nombre_original": "GRADO DE VISCOSIDAD ISO DE LUBRICANTE",
+        "metodo_original": "ASTM D2422",
+        "nombre_maestro_propuesto": "GRADO DE VISCOSIDAD ISO DE LUBRICANTE",
+        "nombre_maestro_ingles_propuesto": "ISO VISCOSITY GRADE OF LUBRICANTS",
+        "metodo_original_normalizado": "ASTM D2422",
+        "metodo_maestro_fuente": "ASTM D2422",
+        "metodo_maestro_propuesto": "ASTM D2422",
+        "referencias_astm_originales": [
+          "D2422"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2422"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "25",
+        "nombre_segunda_opcion": "PENETRACIÓN DE CONO EN GRASAS LUBRICANTES",
+        "metodo_segunda_opcion": "ASTM D217",
+        "fila_segunda_opcion": "20",
+        "margen_puntaje": 0.601,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "320",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "GRADO DE VISCOSIDAD ISO DE LUBRICANTE",
+          "unidades": "N/A",
+          "metodo": "ASTM D2422",
+          "especificacion": "320",
+          "valor_tipico": "320"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "metodo_original": "ASTM D445/ASTM D 7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "140",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "143",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "valor_tipico_original": "312,3",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6182,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "288,00 – 352,00",
+          "valor_tipico": "312,3"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 100 °C",
+        "metodo_original": "ASTM D445/ASTM D 7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 100 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "141",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "144",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "valor_tipico_original": "35,31",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6316,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "35,31"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "ÍNDICE DE VISCOSIDAD",
+        "metodo_original": "ASTM D2270",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "VISCOSITY INDEX",
+        "metodo_original_normalizado": "ASTM D2270",
+        "metodo_maestro_fuente": "ASTM D2270 - 10 (2016)",
+        "metodo_maestro_propuesto": "ASTM D2270",
+        "referencias_astm_originales": [
+          "D2270"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2270"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "133",
+        "nombre_segunda_opcion": "GRADO DE VISCOSIDAD ISO DE LUBRICANTE",
+        "metodo_segunda_opcion": "ASTM D2422",
+        "fila_segunda_opcion": "25",
+        "margen_puntaje": 0.4536,
+        "unidades_originales": "ADIMENSIONAL",
+        "valor_tipico_original": "159",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5143,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ÍNDICE DE VISCOSIDAD",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D2270",
+          "especificacion": "130 MÍNIMO",
+          "valor_tipico": "159"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD A 25 °C",
+        "metodo_original": "ASTM D1298/ASTM D7042",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DENSITY AT X °C",
+        "metodo_original_normalizado": "ASTM D1298 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017)",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "119",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D7042 - 14",
+        "fila_segunda_opcion": "158",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "g/cm3",
+        "valor_tipico_original": "0,8475",
+        "unidades_maestras_propuestas": "g/cm3, g/ml, kg/L, kg/m3",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6724,
+        "puntaje_metodo": 0.95,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DENSIDAD A 25 °C",
+          "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+          "metodo": "ASTM D1298",
+          "especificacion": "0,98 – 1,02",
+          "valor_tipico": "0,8475"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "PUNTO DE INFLAMACIÓN A 101,3 kPa COPA ABIERTA CLEVELAND",
+        "metodo_original": "ASTM D92",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+        "metodo_original_normalizado": "ASTM D92",
+        "metodo_maestro_fuente": "ASTM D92 - 18",
+        "metodo_maestro_propuesto": "ASTM D92",
+        "referencias_astm_originales": [
+          "D92"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D92"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "163",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D92 - 18 / NMX-J-123-ANCE- 2019 P 6,5",
+        "fila_segunda_opcion": "167",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "246",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5857,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa COPA ABIERTA CLEVELAND",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "220 MÍNIMO",
+          "valor_tipico": "246"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "NÚMERO ÁCIDO",
+        "metodo_original": "ASTM D974",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "ACID NUMBER",
+        "metodo_original_normalizado": "ASTM D974",
+        "metodo_maestro_fuente": "ASTM D974 - 14 e^2",
+        "metodo_maestro_propuesto": "ASTM D974",
+        "referencias_astm_originales": [
+          "D974"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D974"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "188",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D974 - 14 e^2",
+        "fila_segunda_opcion": "189",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mg KOH/g",
+        "valor_tipico_original": "0,95",
+        "unidades_maestras_propuestas": "mgKOH/g",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5435,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "NÚMERO ÁCIDO",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D974",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "0,95"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "SEPARABILIDAD AGUA-ACEITE A 82 °C",
+        "metodo_original": "ASTM D1401",
+        "nombre_maestro_propuesto": "SEPARABILIDAD AGUA-ACEITE A X °C",
+        "nombre_maestro_ingles_propuesto": "WATER-OIL SEPARABILITY AT X °C",
+        "metodo_original_normalizado": "ASTM D1401",
+        "metodo_maestro_fuente": "ASTM D1401",
+        "metodo_maestro_propuesto": "ASTM D1401",
+        "referencias_astm_originales": [
+          "D1401"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1401"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "10",
+        "nombre_segunda_opcion": "ESTABILIDAD A LA OXIDACIÓN , LODOS",
+        "metodo_segunda_opcion": "ASTM D2440",
+        "fila_segunda_opcion": "96",
+        "margen_puntaje": 0.6307,
+        "unidades_originales": "ml-ml-ml (min)",
+        "valor_tipico_original": "43-37-0 (20)",
+        "unidades_maestras_propuestas": "mL/mL/mL(min)",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.9654,
+        "puntaje_nombre": 0.949,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "SEPARABILIDAD AGUA-ACEITE A X °C",
+          "unidades": "mL/mL/mL(min)",
+          "metodo": "ASTM D1401",
+          "especificacion": "60 MÁXIMO1",
+          "valor_tipico": "43-37-0 (20)"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "ALINEADO",
+        "nombre_original": "HUMEDAD POR CREPITACIÓN",
+        "metodo_original": "MÉTODO INTERNO (91300029)",
+        "nombre_maestro_propuesto": "HUMEDAD POR CREPITACIÓN",
+        "nombre_maestro_ingles_propuesto": "Moisture by crackle test",
+        "metodo_original_normalizado": "MÉTODO INTERNO (91300029)",
+        "metodo_maestro_fuente": "MÉTODO INTERNO (91300029)",
+        "metodo_maestro_propuesto": "MÉTODO INTERNO (91300029)",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "52",
+        "nombre_segunda_opcion": "NÚMERO DE SAPONIFICACIÓN",
+        "metodo_segunda_opcion": "ASTM D94",
+        "fila_segunda_opcion": "42",
+        "margen_puntaje": 0.66,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "NEGATIVA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "HUMEDAD POR CREPITACIÓN",
+          "unidades": "N/A",
+          "metodo": "MÉTODO INTERNO (91300029)",
+          "especificacion": "NEGATIVA",
+          "valor_tipico": "NEGATIVA"
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "ALINEADO",
+        "nombre_original": "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+        "metodo_original": "ASTM D892",
+        "nombre_maestro_propuesto": "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+        "nombre_maestro_ingles_propuesto": "FOAMING CHARACTERISTICS (SEQUENCE I)",
+        "metodo_original_normalizado": "ASTM D892",
+        "metodo_maestro_fuente": "ASTM D892",
+        "metodo_maestro_propuesto": "ASTM D892",
+        "referencias_astm_originales": [
+          "D892"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D892"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "37",
+        "nombre_segunda_opcion": "FORMACIÓN DE ESPUMA (SECUENCIA II)",
+        "metodo_segunda_opcion": "ASTM D892",
+        "fila_segunda_opcion": "38",
+        "margen_puntaje": 0.0108,
+        "unidades_originales": "ml/ml",
+        "valor_tipico_original": "20/0",
+        "unidades_maestras_propuestas": "ml/ml",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+          "unidades": "ml/ml",
+          "metodo": "ASTM D892",
+          "especificacion": "50/0 MÁXIMO",
+          "valor_tipico": "20/0"
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "nombre_maestro_propuesto": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "nombre_maestro_ingles_propuesto": "INTERFACIAL TENSION BY THE RING METHOD",
+        "metodo_original_normalizado": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_maestro_fuente": "ASTM D971",
+        "metodo_maestro_propuesto": "ASTM D971",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D971"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "94",
+        "nombre_segunda_opcion": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "metodo_segunda_opcion": "ASTM D 971-20 / NMX-J-123-ANCE-2019 P 6,6",
+        "fila_segunda_opcion": "110",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "valor_tipico_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "unidades_maestras_propuestas": "mN/m",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3043,
+        "puntaje_nombre": 0.4475,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+          "unidades": "mN/m",
+          "metodo": "ASTM D971",
+          "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+          "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

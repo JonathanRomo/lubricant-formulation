@@ -1,0 +1,300 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "MICROCRYSTALLINE WAX"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "en",
+    "fecha_documento_normalizada": "2016-12-01"
+  },
+  "control_documental": {
+    "fecha": "01/12/16"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "unidades": "NA",
+      "metodo": "VISUAL",
+      "especificacion": "WHITE",
+      "prueba": "",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "unidades": "°C",
+      "metodo": "ASTM D-127",
+      "especificacion": "70 - 80",
+      "prueba": "",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "unidades": "NA",
+      "metodo": "ASTM D-156",
+      "especificacion": "+28 MINIMUM",
+      "prueba": "",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "unidades": "mm/10",
+      "metodo": "ASTM D-937",
+      "especificacion": "10 - 30",
+      "prueba": "",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "unidades": "% W",
+      "metodo": "SUPPLIER METHOD",
+      "especificacion": "0 – 2.5",
+      "prueba": "",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 5,
+    "encabezados": [
+      "TESTS",
+      "UNITS",
+      "METHOD",
+      "SPECIFICATION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NO_ENCONTRADO_EN_CATALOGO",
+    "prefijo_archivo": "--- ",
+    "nombre_fuente": "MICROCRYSTALLINE WAX",
+    "part_id_fuente": "",
+    "part_id_final": "",
+    "coincidencias_nombre": 0,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [],
+    "candidatos_codigo_200": []
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS_ENG/PARAFINA MICRO.doc",
+  "hash_sha256_origen": "20a60aeaeb6e5abdc2cf563ee1cee69a47c10f8bf437d91ffbaaba1865d4742f",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T01:35:06",
+  "archivo_json": "SIN_CODIGO_200 SIN_REVISION_11_10_26_15.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:46:45",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 0,
+      "revision": 0,
+      "sin_coincidencia": 5
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "",
+        "idioma": "INGLES",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "NA",
+          "metodo": "VISUAL",
+          "especificacion": "WHITE",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "ASTM D-127",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "",
+        "idioma": "INGLES",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "70 - 80",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "ASTM D-156",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D156",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [
+          "D156"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "",
+        "idioma": "INGLES",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "NA",
+          "metodo": "ASTM D156",
+          "especificacion": "+28 MINIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "ASTM D-937",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D937",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [
+          "D937"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm/10",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "",
+        "idioma": "INGLES",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "mm/10",
+          "metodo": "ASTM D937",
+          "especificacion": "10 - 30",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "",
+        "metodo_original": "SUPPLIER METHOD",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "SUPPLIER METHOD",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "% W",
+        "valor_tipico_original": "",
+        "unidades_maestras_propuestas": "",
+        "idioma": "INGLES",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "",
+          "unidades": "% W",
+          "metodo": "SUPPLIER METHOD",
+          "especificacion": "0 – 2.5",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

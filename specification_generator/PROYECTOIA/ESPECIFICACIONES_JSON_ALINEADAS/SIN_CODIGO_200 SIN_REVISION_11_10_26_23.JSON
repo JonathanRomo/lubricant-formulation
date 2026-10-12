@@ -1,0 +1,646 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ VAS PEARL CARE"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2023-09-07"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y desarrollo",
+    "folio_apqp": "------------",
+    "folio_vap": "",
+    "codigo_unico_producto": "",
+    "fecha": "07 septiembre 2023",
+    "revision": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "DESCRIPCIÓN",
+      "metodo": "VISUAL",
+      "especificacion": "MASA UNTUOSA BLANCA O LIGERAMENTE AMARILLENTA",
+      "valor_tipico": "MASA UNTUOSA BLANCA O LIGERAMENTE AMARILLENTA",
+      "unidades": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+      "metodo": "ASTM D127",
+      "especificacion": "55 - 65",
+      "valor_tipico": "60",
+      "unidades": "°C"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "COLOR LOVIBOND EN CELDA DE 2 “",
+      "metodo": "LOVIBOND",
+      "especificacion": "1.0 Y MÁXIMO",
+      "valor_tipico": "0,8 Y",
+      "unidades": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "GRAVEDAD ESPECÍFICA A X °C/X °C",
+      "metodo": "USP",
+      "especificacion": "0.815 – 0.860",
+      "valor_tipico": "0,823",
+      "unidades": "ADIMENSIONAL"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "CONSISTENCIA DE PETROLATOS",
+      "metodo": "ASTM D937",
+      "especificacion": "150 -190",
+      "valor_tipico": "155",
+      "unidades": "1/10 mm"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "ACIDEZ",
+      "metodo": "USP 32/FEUM 12",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA",
+      "unidades": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "ALCALINIDAD",
+      "metodo": "USP / FEUM",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA",
+      "unidades": "N/A"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "RESIDUO DE LA IGNICIÓN",
+      "metodo": "USP / FEUM",
+      "especificacion": "0.05 % MAX",
+      "valor_tipico": "0,03 %",
+      "unidades": "% EN MASA"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "ÁCIDOS ORGÁNICOS",
+      "metodo": "USP / FEUM",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA",
+      "unidades": "N/A"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "ACEITES FIJOS, GRASAS Y RESINA",
+      "metodo": "USP / FEUM",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA",
+      "unidades": "N/A"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "CÓDIGO DE PRODUCTO",
+      "metodo": "----",
+      "especificacion": "",
+      "valor_tipico": "81 800 003",
+      "unidades": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 11,
+    "encabezados": [
+      "PRUEBA",
+      "METODO",
+      "ESPECIFICACION",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "CONFLICTO_NOMBRE_AMBIGUO",
+    "prefijo_archivo": "--- ",
+    "nombre_fuente": "SCHUTZ VAS PEARL CARE",
+    "part_id_fuente": "",
+    "part_id_final": "",
+    "coincidencias_nombre": 5,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "81800031",
+        "descripcion": "SCHUTZ VAS PEARL CARE"
+      },
+      {
+        "part_id": "81800023",
+        "descripcion": "SCHUTZ VAS PEARL CARE +"
+      },
+      {
+        "part_id": "81800003",
+        "descripcion": "SCHUTZ VAS PEARL CARE"
+      },
+      {
+        "part_id": "21800023",
+        "descripcion": "SCHUTZ VAS PEARL CARE +"
+      },
+      {
+        "part_id": "21800003",
+        "descripcion": "SCHUTZ VAS PEARL CARE"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21800003",
+      "21800023"
+    ]
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ VAS PEARL CARE.doc",
+  "hash_sha256_origen": "452add015321a05bb53a3aba56b0cbba9858761ce0e365da3976e5aa213b9f44",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-11T11:28:07",
+  "archivo_json": "SIN_CODIGO_200 SIN_REVISION_11_10_26_23.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:46:47",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 7,
+      "revision": 1,
+      "sin_coincidencia": 3
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "DESCRIPCIÓN",
+        "metodo_original": "VISUAL",
+        "nombre_maestro_propuesto": "REACCIÓN",
+        "nombre_maestro_ingles_propuesto": "REQACTION",
+        "metodo_original_normalizado": "VISUAL",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "71",
+        "nombre_segunda_opcion": "YODOMÉTRICO",
+        "metodo_segunda_opcion": "AZUFRE",
+        "fila_segunda_opcion": "86",
+        "margen_puntaje": 0.0586,
+        "unidades_originales": "",
+        "valor_tipico_original": "MASA UNTUOSA BLANCA O LIGERAMENTE AMARILLENTA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.4295,
+        "puntaje_nombre": 0.6316,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "REACCIÓN",
+          "unidades": "N/A",
+          "metodo": "USP",
+          "especificacion": "MASA UNTUOSA BLANCA O LIGERAMENTE AMARILLENTA",
+          "valor_tipico": "MASA UNTUOSA BLANCA O LIGERAMENTE AMARILLENTA"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE FUSIÓN, °C",
+        "metodo_original": "ASTM D-127",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "ASTM D127",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [
+          "D127"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "USP (741) / FEUM (MGA 0471)",
+        "fila_segunda_opcion": "77",
+        "margen_puntaje": 0.341,
+        "unidades_originales": "",
+        "valor_tipico_original": "60",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.7338,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "55 - 65",
+          "valor_tipico": "60"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "COLOR LOVIBOND EN CELDA DE 2 “",
+        "metodo_original": "LOVIBOND",
+        "nombre_maestro_propuesto": "COLOR LOVIBOND RYBN",
+        "nombre_maestro_ingles_propuesto": "LOVIBOND COLOR RYBN",
+        "metodo_original_normalizado": "LOVIBOND",
+        "metodo_maestro_fuente": "IP17 A",
+        "metodo_maestro_propuesto": "IP17 A",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "51",
+        "nombre_segunda_opcion": "COLOR ESCALA GARDNER",
+        "metodo_segunda_opcion": "ASTM D1544",
+        "fila_segunda_opcion": "13",
+        "margen_puntaje": 0.1172,
+        "unidades_originales": "",
+        "valor_tipico_original": "0.8 Y",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.4657,
+        "puntaje_nombre": 0.6848,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR LOVIBOND RYBN",
+          "unidades": "N/A",
+          "metodo": "IP17 A",
+          "especificacion": "1.0 Y MÁXIMO",
+          "valor_tipico": "0,8 Y"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "GRAVEDAD ESPECIFICA @ 60 °C",
+        "metodo_original": "USP 32/FEUM 12",
+        "nombre_maestro_propuesto": "GRAVEDAD ESPECÍFICA A X °C/X °C",
+        "nombre_maestro_ingles_propuesto": "SPECIFIC GRAVITY AT X °C/X °C",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP",
+        "metodo_maestro_propuesto": "USP",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP"
+        ],
+        "fila_maestro": "75",
+        "nombre_segunda_opcion": "DENSIDAD RELATIVA X °C (PICNÓMETRO)",
+        "metodo_segunda_opcion": "USP (841) / FEUM (MGA 0251)",
+        "fila_segunda_opcion": "78",
+        "margen_puntaje": 0.2823,
+        "unidades_originales": "",
+        "valor_tipico_original": "0.823",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8755,
+        "puntaje_nombre": 0.8405,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "GRAVEDAD ESPECÍFICA A X °C/X °C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "USP",
+          "especificacion": "0.815 – 0.860",
+          "valor_tipico": "0,823"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "ALINEADO",
+        "nombre_original": "CONSISTENCIA",
+        "metodo_original": "ASTM D-937",
+        "nombre_maestro_propuesto": "CONSISTENCIA DE PETROLATOS",
+        "nombre_maestro_ingles_propuesto": "CONSISTENCY OF PETROLATUMS",
+        "metodo_original_normalizado": "ASTM D937",
+        "metodo_maestro_fuente": "ASTM D937",
+        "metodo_maestro_propuesto": "ASTM D937",
+        "referencias_astm_originales": [
+          "D937"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D937"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "40",
+        "nombre_segunda_opcion": "CONSISTENCIA DE PETROLATOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "79",
+        "margen_puntaje": 0.3855,
+        "unidades_originales": "",
+        "valor_tipico_original": "155",
+        "unidades_maestras_propuestas": "1/10mm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6684,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CONSISTENCIA DE PETROLATOS",
+          "unidades": "1/10 mm",
+          "metodo": "ASTM D937",
+          "especificacion": "150 -190",
+          "valor_tipico": "155"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "ACIDEZ",
+        "metodo_original": "USP 32/FEUM 12",
+        "nombre_maestro_propuesto": "ACIDEZ",
+        "nombre_maestro_ingles_propuesto": "ACIDITY",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "84",
+        "nombre_segunda_opcion": "ACIDEZ",
+        "metodo_segunda_opcion": "USP",
+        "fila_segunda_opcion": "70",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "ACIDEZ",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "ALCALINIDAD",
+        "metodo_original": "USP 32/FEUM 12",
+        "nombre_maestro_propuesto": "ALCALINIDAD",
+        "nombre_maestro_ingles_propuesto": "ALKALINITY",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "81",
+        "nombre_segunda_opcion": "SOLUBILIDAD",
+        "metodo_segunda_opcion": "FEUM",
+        "fila_segunda_opcion": "48",
+        "margen_puntaje": 0.3251,
+        "unidades_originales": "",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ALCALINIDAD",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "RESIDUO DE LA IGNICIÓN",
+        "metodo_original": "USP 32/FEUM 12",
+        "nombre_maestro_propuesto": "RESIDUO DE LA IGNICIÓN",
+        "nombre_maestro_ingles_propuesto": "RESIDUE ON IGNITION",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP (281) / FEUM (MGA 0751)",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "90",
+        "nombre_segunda_opcion": "ÁCIDOS ORGÁNICOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "82",
+        "margen_puntaje": 0.3668,
+        "unidades_originales": "",
+        "valor_tipico_original": "0.03 %",
+        "unidades_maestras_propuestas": "% EN MASA",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "RESIDUO DE LA IGNICIÓN",
+          "unidades": "% EN MASA",
+          "metodo": "USP / FEUM",
+          "especificacion": "0.05 % MAX",
+          "valor_tipico": "0,03 %"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "ALINEADO",
+        "nombre_original": "ÁCIDOS ORGÁNICOS",
+        "metodo_original": "USP 32/FEUM 12",
+        "nombre_maestro_propuesto": "ÁCIDOS ORGÁNICOS",
+        "nombre_maestro_ingles_propuesto": "ORGANIC ACIDS",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "82",
+        "nombre_segunda_opcion": "RESIDUO DE LA IGNICIÓN",
+        "metodo_segunda_opcion": "USP (281) / FEUM (MGA 0751)",
+        "fila_segunda_opcion": "90",
+        "margen_puntaje": 0.3668,
+        "unidades_originales": "",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ÁCIDOS ORGÁNICOS",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "ALINEADO",
+        "nombre_original": "ACEITES FIJOS, GRASAS Y RESINA",
+        "metodo_original": "USP 32/FEUM 12",
+        "nombre_maestro_propuesto": "ACEITES FIJOS, GRASAS Y RESINA",
+        "nombre_maestro_ingles_propuesto": "FIXED OILS, FATS, AND RESINS",
+        "metodo_original_normalizado": "USP / FEUM",
+        "metodo_maestro_fuente": "USP / FEUM",
+        "metodo_maestro_propuesto": "USP / FEUM",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [
+          "USP",
+          "FEUM"
+        ],
+        "referencias_farmacopea_maestras": [
+          "USP",
+          "FEUM"
+        ],
+        "fila_maestro": "83",
+        "nombre_segunda_opcion": "ÁCIDOS ORGÁNICOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "82",
+        "margen_puntaje": 0.408,
+        "unidades_originales": "",
+        "valor_tipico_original": "PASA",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ACEITES FIJOS, GRASAS Y RESINA",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "CÓDIGO DE PRODUCTO",
+        "metodo_original": "----",
+        "nombre_maestro_propuesto": "PUNTO DE FUSIÓN DE PETROLATO",
+        "nombre_maestro_ingles_propuesto": "MELTING POINT OF PETROLATUM",
+        "metodo_original_normalizado": "----",
+        "metodo_maestro_fuente": "ASTM D127",
+        "metodo_maestro_propuesto": "ASTM D127",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D127"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "7",
+        "nombre_segunda_opcion": "PUNTO DE FUSIÓN DE PETROLATO",
+        "metodo_segunda_opcion": "USP (741) / FEUM (MGA 0471)",
+        "fila_segunda_opcion": "77",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "",
+        "valor_tipico_original": "81800003",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.375,
+        "puntaje_nombre": 0.5515,
+        "puntaje_metodo": 0.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FUSIÓN DE PETROLATO",
+          "unidades": "°C",
+          "metodo": "ASTM D127",
+          "especificacion": "",
+          "valor_tipico": "81 800 003"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}

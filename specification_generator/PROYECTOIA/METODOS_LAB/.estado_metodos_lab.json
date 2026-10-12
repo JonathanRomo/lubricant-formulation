@@ -1,0 +1,17 @@
+{
+  "version": "3.0.0",
+  "archivos": {
+    "METODOS-ASTM-FEUM-USP No acreditados REV2.xlsx": {
+      "hash": "83dadb4bea75b3069b39a3b9b2d4084a759c6b403a04b8499f8a32bf0d6d7ef3",
+      "filas": 84
+    },
+    "MÉTODOS 3RIA.xlsx": {
+      "hash": "af41fcd5fe92709e11c80f167aca0b0af8ebe1052e19d3e851da0a1f4669e128",
+      "filas": 31
+    },
+    "LISTAS DE MÉTODOS ACREDITADOS.xlsx": {
+      "hash": "affb433e84bbfb3403a3d7493ede4d5f284ec0acbae89ceb92511b5f33687554",
+      "filas": 78
+    }
+  }
+}

@@ -1,0 +1,1339 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "ELECTROSCHUTZ KV ITI"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-09-15"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "-",
+    "codigo_unico_producto": "20400001",
+    "fecha": "15/09/26",
+    "revision": "00",
+    "nombre_cliente": "-",
+    "revision_cliente": "-"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA VISUAL",
+      "unidades": "N/A",
+      "metodo": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+      "especificacion": "BRILLANTE Y TRANSPARENTE SIN SEDIMENTOS NI SÓLIDOS EN SUSPENSIÓN",
+      "valor_tipico": "BRILLANTE Y TRANSPARENTE"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR ASTM",
+      "unidades": "NA",
+      "metodo": "ASTM D1500 / NMX-J-123-ANCE",
+      "especificacion": "0,5 MÁXIMO",
+      "valor_tipico": "L 0,5"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "DENSIDAD RELATIVA A 20 °C/4 °C",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D1298 / NMX-J-123-ANCE",
+      "especificacion": "0,906 MÁXIMO",
+      "valor_tipico": "0,8950"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+      "unidades": "°C",
+      "metodo": "ASTM D92 / NMX-J-123-ANCE",
+      "especificacion": "145 MÍNIMO",
+      "valor_tipico": "153"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445 / NMX-J-123-ANCE",
+      "especificacion": "12 MÁXIMO",
+      "valor_tipico": "10,20"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PUNTO DE FLUIDEZ / PUNTO DE ESCURRIMIENTO",
+      "unidades": "°C",
+      "metodo": "ASTM D97 / NMX-J-123-ANCE",
+      "especificacion": "-40 MÁXIMO",
+      "valor_tipico": "-51"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+      "unidades": "mN/m",
+      "metodo": "ASTM D971",
+      "especificacion": "40 MÍNIMO",
+      "valor_tipico": "44"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "CONTENIDO DE AGUA POR KARL FISCHER (LIQUIDOS AISLANTES)",
+      "unidades": "mg/kg (ppm)",
+      "metodo": "ASTM D1533",
+      "especificacion": "30 MÁXIMO",
+      "valor_tipico": "10"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "NÚMERO ÁCIDO / NÚMERO DE NEUTRALIZACIÓN",
+      "unidades": "mgKOH/g",
+      "metodo": "ASTM D974 / NMX-J-123-ANCE",
+      "especificacion": "0,030 MÁXIMO",
+      "valor_tipico": "<0,02"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "AZUFRE CORROSIVO EN ACEITES AISLANTES",
+      "unidades": "N/A",
+      "metodo": "ASTM D1275",
+      "especificacion": "NO CORROSIVO",
+      "valor_tipico": "NO CORROSIVO"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "AZUFRE TOTAL POR EDXRF",
+      "unidades": "% masa",
+      "metodo": "ASTM D4294 / NMX-J-123-ANCE",
+      "especificacion": "0,10 MÁXIMO",
+      "valor_tipico": "0,003"
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "CLORUROS Y SULFATOS EN ACEITES AISLANTES",
+      "unidades": "PARÁMETRO / REPORTE CLORUROS PRESENTE / AUSENTE SULFATOS PRESENTE / AUSENTE LÍMITE DE DETECCIÓN / /PPM",
+      "metodo": "ASTM D878",
+      "especificacion": "NEGATIVOS",
+      "valor_tipico": "NEGATIVOS"
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "BIFENILOS POLICLORADOS (PCB)",
+      "unidades": "mg/kg",
+      "metodo": "ASTM D4059",
+      "especificacion": "NO DETECTABLE",
+      "valor_tipico": "NO DETECTABLE"
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "DETERMINACIÓN CUANTITATIVA DE INHIBIDORES",
+      "unidades": "% masa",
+      "metodo": "ASTM D2668 / NMX-J-123-ANCE",
+      "especificacion": "0,08 MÁXIMO",
+      "valor_tipico": "<0,08"
+    },
+    {
+      "numero": 15,
+      "fila_origen": 16,
+      "prueba": "COMPUESTOS FURÁNICOS POR HPLC",
+      "unidades": "µg/L",
+      "metodo": "ASTM D5837",
+      "especificacion": "5 MÁXIMO",
+      "valor_tipico": "<1"
+    },
+    {
+      "numero": 16,
+      "fila_origen": 17,
+      "prueba": "DETERMINACIÓN CUANTITATIVA DE DIBENCIL DISULFURO (DBDS)",
+      "unidades": "mg/kg",
+      "metodo": "IEC 62697 / NMX-J-123-ANCE",
+      "especificacion": "NO DETECTABLE",
+      "valor_tipico": "NO DETECTABLE"
+    },
+    {
+      "numero": 17,
+      "fila_origen": 18,
+      "prueba": "ESTABILIDAD A LA OXIDACIÓN MÉTODO B -NÚMERO DE NEUTRALIZACIÓN",
+      "unidades": "mg KOH/g",
+      "metodo": "ASTM D2440",
+      "especificacion": "0,600 MÁXIMO",
+      "valor_tipico": "0,08"
+    },
+    {
+      "numero": 18,
+      "fila_origen": 19,
+      "prueba": "ESTABILIDAD A LA OXIDACIÓN MÉTODO B, LODO",
+      "unidades": "% en masa",
+      "metodo": "ASTM D2440",
+      "especificacion": "0,30 MÁXIMO",
+      "valor_tipico": "0,01"
+    },
+    {
+      "numero": 19,
+      "fila_origen": 20,
+      "prueba": "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS PLANOS (2,54 mm) PROCEDIMIENTO A",
+      "unidades": "kV",
+      "metodo": "ASTM D877 / D877M / NMX-J-123-ANCE",
+      "especificacion": "30 MÍNIMO",
+      "valor_tipico": "59"
+    },
+    {
+      "numero": 20,
+      "fila_origen": 21,
+      "prueba": "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS SEMIESFÉRICOS",
+      "unidades": "kV",
+      "metodo": "ASTM D1816 / NMX-J-123-ANCE",
+      "especificacion": "35 MÍNIMO",
+      "valor_tipico": "50"
+    },
+    {
+      "numero": 21,
+      "fila_origen": 22,
+      "prueba": "FACTOR DE POTENCIA, 60 Hz A 25 °C",
+      "unidades": "%",
+      "metodo": "ASTM D924 / NMX-J-123-ANCE",
+      "especificacion": "0,050 MÁXIMO",
+      "valor_tipico": "0,02"
+    },
+    {
+      "numero": 22,
+      "fila_origen": 23,
+      "prueba": "FACTOR DE POTENCIA, 60 Hz A 100 °C",
+      "unidades": "%",
+      "metodo": "ASTM D924 / NMX-J-123-ANCE",
+      "especificacion": "0,300 MÁXIMO",
+      "valor_tipico": "0,09"
+    },
+    {
+      "numero": 23,
+      "fila_origen": 24,
+      "prueba": "TENDENCIA A LA GASIFICACIÓN A 10 kV, 50 min A 80 °C CON H2",
+      "unidades": "µL/min",
+      "metodo": "ASTM D2300 / NMX-J-123-ANCE",
+      "especificacion": "+30 MÁXIMO",
+      "valor_tipico": "20"
+    },
+    {
+      "numero": 24,
+      "fila_origen": 25,
+      "prueba": "RESISTIVIDAD, PROCEDIMIENTO DE RUTINA 0HZ A 25 °C",
+      "unidades": "x10^12 -cm",
+      "metodo": "ASTM D1169",
+      "especificacion": "250x10^6 Mínimo",
+      "valor_tipico": "270,50x10^7"
+    },
+    {
+      "numero": 25,
+      "fila_origen": 26,
+      "prueba": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "unidades": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "metodo": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 25,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "ELECTROSCHUTZ KV ITI",
+    "part_id_fuente": "20400001",
+    "part_id_final": "20400001",
+    "coincidencias_nombre": 3,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80400006",
+        "descripcion": "ELECTROSCHUTZ KV ITI"
+      },
+      {
+        "part_id": "80400005",
+        "descripcion": "ELECTROSCHUTZ KV ITI"
+      },
+      {
+        "part_id": "20400001",
+        "descripcion": "ELECTROSCHUTZ KV ITI"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20400001"
+    ],
+    "nombre_catalogo": "ELECTROSCHUTZ KV ITI",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3207,
+      "part_id": "20400001",
+      "descripcion": "ELECTROSCHUTZ KV ITI",
+      "part_id_clave": "20400001",
+      "descripcion_clave": "ELECTROSCHUTZ KV ITI"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/91600060 ESPECIFICACION ELECTROSCHUTZ KV ITI.docx",
+  "hash_sha256_origen": "48539890e635a6215dbdc8cbd4f21a17006fba856a3d46c89163ae9afa4f2d59",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "01",
+  "fecha_creacion_json": "2026-10-11T01:21:13",
+  "archivo_json": "20400001 00_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "1.6.0",
+    "fecha": "2026-10-11T21:42:15",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 9,
+      "revision": 14,
+      "sin_coincidencia": 2
+    },
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "ALINEADO",
+        "nombre_original": "APARIENCIA VISUAL",
+        "metodo_original": "ORGANOLÉPTICO / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "ORGANOLÉPTICO / NMX-J-123-ANCE",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "64",
+        "nombre_segunda_opcion": "APARIENCIA VISUAL",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO",
+        "fila_segunda_opcion": "61",
+        "margen_puntaje": 0.32,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "BRILLANTE Y TRANSPARENTE",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "N/A",
+          "metodo": "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+          "especificacion": "BRILLANTE Y TRANSPARENTE SIN SEDIMENTOS NI SÓLIDOS EN SUSPENSIÓN",
+          "valor_tipico": "BRILLANTE Y TRANSPARENTE"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "COLOR ASTM",
+        "metodo_original": "ASTM D1500 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "ASTM COLOR",
+        "metodo_original_normalizado": "ASTM D1500",
+        "metodo_maestro_fuente": "ASTM D1500 - 12 (2017)",
+        "metodo_maestro_propuesto": "ASTM D1500",
+        "referencias_astm_originales": [
+          "D1500"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1500"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "128",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1500 - 12 (2017) / NMX-J-123-ANCE-2019 P 6,2",
+        "fila_segunda_opcion": "129",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "L 0,5",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.625,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR ASTM",
+          "unidades": "N/A",
+          "metodo": "ASTM D1500",
+          "especificacion": "0,5 MÁXIMO",
+          "valor_tipico": "L 0,5"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD RELATIVA A 20 °C/4 °C",
+        "metodo_original": "ASTM D1298 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "RELATIVE DENSITY AT 20 °C/4 °C",
+        "metodo_original_normalizado": "ASTM D1298",
+        "metodo_maestro_fuente": "ASTM D1298 - 12b (2017) / NMX-J-123-ANCE-2019 P 6,3",
+        "metodo_maestro_propuesto": "ASTM D1298",
+        "referencias_astm_originales": [
+          "D1298"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "126",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1298 - 12b (2017)",
+        "fila_segunda_opcion": "121",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "ADIMENSIONAL",
+        "valor_tipico_original": "0,8950",
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6953,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DENSIDAD RELATIVA A 20 °C/4 °C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D1298",
+          "especificacion": "0,906 MÁXIMO",
+          "valor_tipico": "0,8950"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+        "metodo_original": "ASTM D92 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+        "metodo_original_normalizado": "ASTM D92",
+        "metodo_maestro_fuente": "ASTM D92 - 18",
+        "metodo_maestro_propuesto": "ASTM D92",
+        "referencias_astm_originales": [
+          "D92"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D92"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "163",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D92 - 18 / NMX-J-123-ANCE- 2019 P 6,5",
+        "fila_segunda_opcion": "167",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "153",
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5857,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "145 MÍNIMO",
+          "valor_tipico": "153"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "metodo_original": "ASTM D445 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445",
+        "metodo_maestro_fuente": "ASTM D445 - 17 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445",
+        "referencias_astm_originales": [
+          "D445"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "140",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D445 -17",
+        "fila_segunda_opcion": "143",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm²/s",
+        "valor_tipico_original": "10,20",
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6182,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "12 MÁXIMO",
+          "valor_tipico": "10,20"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "PUNTO DE FLUIDEZ / PUNTO DE ESCURRIMIENTO",
+        "metodo_original": "ASTM D97 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "LOWER POUR POINT",
+        "metodo_original_normalizado": "ASTM D97",
+        "metodo_maestro_fuente": "ASTM D97 - 17b",
+        "metodo_maestro_propuesto": "ASTM D97",
+        "referencias_astm_originales": [
+          "D97"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D97"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "186",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D97 - 17b",
+        "fila_segunda_opcion": "185",
+        "margen_puntaje": 0.0044,
+        "unidades_originales": "°C",
+        "valor_tipico_original": "-51",
+        "unidades_maestras_propuestas": "°C, °F",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.5625,
+        "puntaje_nombre": 0.3566,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FLUIDEZ / PUNTO DE ESCURRIMIENTO",
+          "unidades": "°C, °F",
+          "metodo": "ASTM D97",
+          "especificacion": "-40 MÁXIMO",
+          "valor_tipico": "-51"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "metodo_original": "ASTM D971 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "nombre_maestro_ingles_propuesto": "INTERFACIAL TENSION BY THE RING METHOD",
+        "metodo_original_normalizado": "ASTM D971",
+        "metodo_maestro_fuente": "ASTM D971",
+        "metodo_maestro_propuesto": "ASTM D971",
+        "referencias_astm_originales": [
+          "D971"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D971"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "94",
+        "nombre_segunda_opcion": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "metodo_segunda_opcion": "ASTM D 971-20 / NMX-J-123-ANCE-2019 P 6,6",
+        "fila_segunda_opcion": "110",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mN/m",
+        "valor_tipico_original": "44",
+        "unidades_maestras_propuestas": "mN/m",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+          "unidades": "mN/m",
+          "metodo": "ASTM D971",
+          "especificacion": "40 MÍNIMO",
+          "valor_tipico": "44"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "CONTENIDO DE AGUA POR KARL FISCHER (LIQUIDOS AISLANTES)",
+        "metodo_original": "ASTM D1533 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "CONTENIDO DE AGUA POR KARL FISCHER (LIQUIDOS AISLANTES)",
+        "nombre_maestro_ingles_propuesto": "WATER CONTENT BY KARL FISCHER (INSULATING LIQUIDS)",
+        "metodo_original_normalizado": "ASTM D1533",
+        "metodo_maestro_fuente": "ASTM D1533",
+        "metodo_maestro_propuesto": "ASTM D1533",
+        "referencias_astm_originales": [
+          "D1533"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1533"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "11",
+        "nombre_segunda_opcion": "CONTENIDO DE AGUA POR KARL FISCHER (LIQUIDOS AISLANTES)",
+        "metodo_segunda_opcion": "ASTM D1533/ NMX-J-123-ANCE-2019 P 6,11",
+        "fila_segunda_opcion": "12",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mg/kg",
+        "valor_tipico_original": "10",
+        "unidades_maestras_propuestas": "mg/kg (ppm)",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CONTENIDO DE AGUA POR KARL FISCHER (LIQUIDOS AISLANTES)",
+          "unidades": "mg/kg (ppm)",
+          "metodo": "ASTM D1533",
+          "especificacion": "30 MÁXIMO",
+          "valor_tipico": "10"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "NÚMERO ÁCIDO / NÚMERO DE NEUTRALIZACIÓN",
+        "metodo_original": "ASTM D974 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "ACID NUMBER / NEUTRALIZATION NUMBER",
+        "metodo_original_normalizado": "ASTM D974",
+        "metodo_maestro_fuente": "ASTM D974 - 14 eᶺ2 / NMX-J-123-ANCE-2019 P 6,14",
+        "metodo_maestro_propuesto": "ASTM D974",
+        "referencias_astm_originales": [
+          "D974"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D974"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "191",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D974 - 14 e^2",
+        "fila_segunda_opcion": "189",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mgKOH/g",
+        "valor_tipico_original": "<0,02",
+        "unidades_maestras_propuestas": "mgKOH/g",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.7286,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "NÚMERO ÁCIDO / NÚMERO DE NEUTRALIZACIÓN",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D974",
+          "especificacion": "0,030 MÁXIMO",
+          "valor_tipico": "<0,02"
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "ALINEADO",
+        "nombre_original": "AZUFRE CORROSIVO EN ACEITES AISLANTES",
+        "metodo_original": "ASTM D1275 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "AZUFRE CORROSIVO EN ACEITES AISLANTES",
+        "nombre_maestro_ingles_propuesto": "CORROSIVE SULFUR IN ELECTRICAL INSULATING LIQUIDS",
+        "metodo_original_normalizado": "ASTM D1275",
+        "metodo_maestro_fuente": "ASTM 1275 / NMX-J-123-ANCE-2019 P 6,8",
+        "metodo_maestro_propuesto": "ASTM D1275",
+        "referencias_astm_originales": [
+          "D1275"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1275"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "2",
+        "nombre_segunda_opcion": "CLORUROS Y SULFATOS EN ACEITES AISLANTES",
+        "metodo_segunda_opcion": "ASTM D878 / NMX-J-123-ANCE-2019 A. H",
+        "fila_segunda_opcion": "98",
+        "margen_puntaje": 0.5081,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "NO CORROSIVO",
+        "unidades_maestras_propuestas": "N/A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "AZUFRE CORROSIVO EN ACEITES AISLANTES",
+          "unidades": "N/A",
+          "metodo": "ASTM D1275",
+          "especificacion": "NO CORROSIVO",
+          "valor_tipico": "NO CORROSIVO"
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "AZUFRE TOTAL POR EDXRF",
+        "metodo_original": "ASTM D4294 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "AZUFRE TOTAL POR EDXRF",
+        "nombre_maestro_ingles_propuesto": "TOTAL SULFUR BY EDXRF",
+        "metodo_original_normalizado": "ASTM D4294",
+        "metodo_maestro_fuente": "ASTM D4294",
+        "metodo_maestro_propuesto": "ASTM D4294",
+        "referencias_astm_originales": [
+          "D4294"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D4294"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "99",
+        "nombre_segunda_opcion": "AZUFRE TOTAL POR EDXRF",
+        "metodo_segunda_opcion": "ASTM D4294 / NMX-J-123 ANCE-2019 P 6,9",
+        "fila_segunda_opcion": "109",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "% masa",
+        "valor_tipico_original": "0,003",
+        "unidades_maestras_propuestas": "% m/m (>0.01 %) / mg/kg (≤0.01 %)",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "AZUFRE TOTAL POR EDXRF",
+          "unidades": "% m/m (>0,01 %) / mg/kg (≤0,01 %)",
+          "metodo": "ASTM D4294",
+          "especificacion": "0,10 MÁXIMO",
+          "valor_tipico": "0,003"
+        }
+      },
+      {
+        "numero_prueba": 12,
+        "estado": "ALINEADO",
+        "nombre_original": "CLORUROS Y SULFATOS EN ACEITES AISLANTES",
+        "metodo_original": "ASTM D878 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "CLORUROS Y SULFATOS EN ACEITES AISLANTES",
+        "nombre_maestro_ingles_propuesto": "CHLORIDES & SULFATES IN INSULATING OILS",
+        "metodo_original_normalizado": "ASTM D878",
+        "metodo_maestro_fuente": "ASTM D878 / NMX-J-123-ANCE-2019 A. H",
+        "metodo_maestro_propuesto": "ASTM D878",
+        "referencias_astm_originales": [
+          "D878"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D878"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "98",
+        "nombre_segunda_opcion": "AZUFRE CORROSIVO EN ACEITES AISLANTES",
+        "metodo_segunda_opcion": "ASTM 1275 / NMX-J-123-ANCE-2019 P 6,8",
+        "fila_segunda_opcion": "2",
+        "margen_puntaje": 0.5081,
+        "unidades_originales": "NA",
+        "valor_tipico_original": "NEGATIVOS",
+        "unidades_maestras_propuestas": "PARÁMETRO / REPORTE CLORUROS PRESENTE / AUSENTE SULFATOS PRESENTE / AUSENTE LÍMITE DE DETECCIÓN / /PPM",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "CLORUROS Y SULFATOS EN ACEITES AISLANTES",
+          "unidades": "PARÁMETRO / REPORTE CLORUROS PRESENTE / AUSENTE SULFATOS PRESENTE / AUSENTE LÍMITE DE DETECCIÓN / /PPM",
+          "metodo": "ASTM D878",
+          "especificacion": "NEGATIVOS",
+          "valor_tipico": "NEGATIVOS"
+        }
+      },
+      {
+        "numero_prueba": 13,
+        "estado": "ALINEADO",
+        "nombre_original": "BIFENILOS POLICLORADOS (PCB)",
+        "metodo_original": "ASTM D4059 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "BIFENILOS POLICLORADOS (PCB)",
+        "nombre_maestro_ingles_propuesto": "POLYCHLORINATED BIPHENYLS (PCB)",
+        "metodo_original_normalizado": "ASTM D4059",
+        "metodo_maestro_fuente": "ASTM D4059",
+        "metodo_maestro_propuesto": "ASTM D4059",
+        "referencias_astm_originales": [
+          "D4059"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D4059"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "100",
+        "nombre_segunda_opcion": "BIFENILOS POLICLORADOS (PCB)",
+        "metodo_segunda_opcion": "ASTM D4059 / NMX-J-123- ANCE-2019 P 6,15",
+        "fila_segunda_opcion": "113",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mg/kg",
+        "valor_tipico_original": "NO DETECTABLE",
+        "unidades_maestras_propuestas": "mg/kg",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "BIFENILOS POLICLORADOS (PCB)",
+          "unidades": "mg/kg",
+          "metodo": "ASTM D4059",
+          "especificacion": "NO DETECTABLE",
+          "valor_tipico": "NO DETECTABLE"
+        }
+      },
+      {
+        "numero_prueba": 14,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DETERMINACIÓN CUANTITATIVA DE INHIBIDORES",
+        "metodo_original": "ASTM D2668 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "DETERMINACIÓN CUANTITATIVA DE INHIBIDORES",
+        "nombre_maestro_ingles_propuesto": "QUANTITATIVE DETERMINATION OF INHIBITORS",
+        "metodo_original_normalizado": "ASTM D2668",
+        "metodo_maestro_fuente": "ASTM D2668",
+        "metodo_maestro_propuesto": "ASTM D2668",
+        "referencias_astm_originales": [
+          "D2668"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2668"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "93",
+        "nombre_segunda_opcion": "DETERMINACIÓN CUANTITATIVA DE INHIBIDORES",
+        "metodo_segunda_opcion": "ASTM D2668 − 07 (Reapproved 2021) / NMX-J-123- ANCE-2019 P 6,12",
+        "fila_segunda_opcion": "111",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "% masa",
+        "valor_tipico_original": "<0,08",
+        "unidades_maestras_propuestas": "A",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DETERMINACIÓN CUANTITATIVA DE INHIBIDORES",
+          "unidades": "A",
+          "metodo": "ASTM D2668",
+          "especificacion": "0,08 MÁXIMO",
+          "valor_tipico": "<0,08"
+        }
+      },
+      {
+        "numero_prueba": 15,
+        "estado": "ALINEADO",
+        "nombre_original": "COMPUESTOS FURÁNICOS POR HPLC",
+        "metodo_original": "ASTM D5837",
+        "nombre_maestro_propuesto": "COMPUESTOS FURÁNICOS POR HPLC",
+        "nombre_maestro_ingles_propuesto": "FURANIC COMPOUNDS BY HPLC",
+        "metodo_original_normalizado": "ASTM D5837",
+        "metodo_maestro_fuente": "ASTM D5837",
+        "metodo_maestro_propuesto": "ASTM D5837",
+        "referencias_astm_originales": [
+          "D5837"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D5837"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "97",
+        "nombre_segunda_opcion": "ÁCIDOS ORGÁNICOS",
+        "metodo_segunda_opcion": "USP / FEUM",
+        "fila_segunda_opcion": "82",
+        "margen_puntaje": 0.6676,
+        "unidades_originales": "µg/L",
+        "valor_tipico_original": "<1",
+        "unidades_maestras_propuestas": "µg/L",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COMPUESTOS FURÁNICOS POR HPLC",
+          "unidades": "µg/L",
+          "metodo": "ASTM D5837",
+          "especificacion": "5 MÁXIMO",
+          "valor_tipico": "<1"
+        }
+      },
+      {
+        "numero_prueba": 16,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DETERMINACIÓN CUANTITATIVA DE DIBENCIL DISULFURO (DBDS)",
+        "metodo_original": "IEC 62697 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "DETERMINACIÓN CUANTITATIVA DE DIBENCIL DISULFURO (DBDS)",
+        "nombre_maestro_ingles_propuesto": "QUANTITATIVE DETERMINATION OF DIBENZYL DISULFIDE (DBDS)",
+        "metodo_original_normalizado": "IEC 62697 / NMX-J-123-ANCE",
+        "metodo_maestro_fuente": "IEC 62697-1:2012/ NMX-J-123- ANCE-2019 P 6,10",
+        "metodo_maestro_propuesto": "IEC 62697-1:2012/ NMX-J-123- ANCE-2019 P 6,10",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "112",
+        "nombre_segunda_opcion": "DETERMINACIÓN CUANTITATIVA DE DIBENCIL DISULFURO (DBDS)",
+        "metodo_segunda_opcion": "IEC 62697-1:2012",
+        "fila_segunda_opcion": "91",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "mg/kg",
+        "valor_tipico_original": "NO DETECTABLE",
+        "unidades_maestras_propuestas": "mg/kg",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": true,
+        "valores_alineados": {
+          "prueba": "DETERMINACIÓN CUANTITATIVA DE DIBENCIL DISULFURO (DBDS)",
+          "unidades": "mg/kg",
+          "metodo": "IEC 62697-1:2012/ NMX-J-123- ANCE-2019 P 6,10",
+          "especificacion": "NO DETECTABLE",
+          "valor_tipico": "NO DETECTABLE"
+        }
+      },
+      {
+        "numero_prueba": 17,
+        "estado": "ALINEADO",
+        "nombre_original": "ESTABILIDAD A LA OXIDACIÓN MÉTODO B – NÚMERO DE NEUTRALIZACIÓN",
+        "metodo_original": "ASTM D2440 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "ESTABILIDAD A LA OXIDACIÓN MÉTODO B -NÚMERO DE NEUTRALIZACIÓN",
+        "nombre_maestro_ingles_propuesto": "OXIDATION STABILITY METHOD B, NEUTRALIZATION NUMBER",
+        "metodo_original_normalizado": "ASTM D2440",
+        "metodo_maestro_fuente": "ASTM D2440 / NMX-J-123-ANCE-2019 P 6,13,2",
+        "metodo_maestro_propuesto": "ASTM D2440",
+        "referencias_astm_originales": [
+          "D2440"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2440"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "101",
+        "nombre_segunda_opcion": "ESTABILIDAD A LA OXIDACIÓN -NÚMERO DE NEUTRALIZACIÓN",
+        "metodo_segunda_opcion": "ASTM D2440",
+        "fila_segunda_opcion": "95",
+        "margen_puntaje": 0.0496,
+        "unidades_originales": "mgKOH/g",
+        "valor_tipico_original": "0,08",
+        "unidades_maestras_propuestas": "mg KOH/g",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ESTABILIDAD A LA OXIDACIÓN MÉTODO B -NÚMERO DE NEUTRALIZACIÓN",
+          "unidades": "mg KOH/g",
+          "metodo": "ASTM D2440",
+          "especificacion": "0,600 MÁXIMO",
+          "valor_tipico": "0,08"
+        }
+      },
+      {
+        "numero_prueba": 18,
+        "estado": "ALINEADO",
+        "nombre_original": "ESTABILIDAD A LA OXIDACIÓN MÉTODO B – LODO",
+        "metodo_original": "ASTM D2440 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "ESTABILIDAD A LA OXIDACIÓN MÉTODO B, LODO",
+        "nombre_maestro_ingles_propuesto": "OXIDATION STABILITY METHOD B SLUDGE",
+        "metodo_original_normalizado": "ASTM D2440",
+        "metodo_maestro_fuente": "ASTM D2440 / NMX-J-123-ANCE-2019 P 6,13,2",
+        "metodo_maestro_propuesto": "ASTM D2440",
+        "referencias_astm_originales": [
+          "D2440"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2440"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "102",
+        "nombre_segunda_opcion": "ESTABILIDAD A LA OXIDACIÓN , LODOS",
+        "metodo_segunda_opcion": "ASTM D2440",
+        "fila_segunda_opcion": "96",
+        "margen_puntaje": 0.092,
+        "unidades_originales": "% masa",
+        "valor_tipico_original": "0,01",
+        "unidades_maestras_propuestas": "% en masa",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ESTABILIDAD A LA OXIDACIÓN MÉTODO B, LODO",
+          "unidades": "% en masa",
+          "metodo": "ASTM D2440",
+          "especificacion": "0,30 MÁXIMO",
+          "valor_tipico": "0,01"
+        }
+      },
+      {
+        "numero_prueba": 19,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS PLANOS (2,54 mm) PROCEDIMIENTO A",
+        "metodo_original": "ASTM D877 / D877M / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DIELECTRIC BREAKDOWN VOLTAGE, DISK ELECTRODES (2,54 mm) PROCEDURE A",
+        "metodo_original_normalizado": "ASTM D877 / ASTM D877M",
+        "metodo_maestro_fuente": "ASTM D877 / D877M - 13",
+        "metodo_maestro_propuesto": "ASTM D877 / ASTM D877M",
+        "referencias_astm_originales": [
+          "D877",
+          "D877M"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D877",
+          "D877M"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "159",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D877 / D877M - 13 / NMX-J-123-ANCE-2019 A. I",
+        "fila_segunda_opcion": "161",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "kV",
+        "valor_tipico_original": "59",
+        "unidades_maestras_propuestas": "kV",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5919,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS PLANOS (2,54 mm) PROCEDIMIENTO A",
+          "unidades": "kV",
+          "metodo": "ASTM D877 / ASTM D877M",
+          "especificacion": "30 MÍNIMO",
+          "valor_tipico": "59"
+        }
+      },
+      {
+        "numero_prueba": 20,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS SEMIESFÉRICOS",
+        "metodo_original": "ASTM D1816 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "DIELECTRIC BREAKDOWN VOLTAGE, VDE ELECTRODES",
+        "metodo_original_normalizado": "ASTM D1816",
+        "metodo_maestro_fuente": "ASTM D1816 - 12",
+        "metodo_maestro_propuesto": "ASTM D1816",
+        "referencias_astm_originales": [
+          "D1816"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1816"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "130",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D1816 - 12 / NMX-J-123-ANCE-2019 P 6,17",
+        "fila_segunda_opcion": "131",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "kV",
+        "valor_tipico_original": "50",
+        "unidades_maestras_propuestas": "kV",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.4745,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS SEMIESFÉRICOS",
+          "unidades": "kV",
+          "metodo": "ASTM D1816",
+          "especificacion": "35 MÍNIMO",
+          "valor_tipico": "50"
+        }
+      },
+      {
+        "numero_prueba": 21,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "FACTOR DE POTENCIA, 60 Hz A 25 °C",
+        "metodo_original": "ASTM D924 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "POWER FACTOR, 60 Hz, 25 °C",
+        "metodo_original_normalizado": "ASTM D924",
+        "metodo_maestro_fuente": "ASTM D924 - 15",
+        "metodo_maestro_propuesto": "ASTM D924",
+        "referencias_astm_originales": [
+          "D924"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D924"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "169",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D924 - 15 / NMX-J-123-ANCE-2019 P 6,16",
+        "fila_segunda_opcion": "177",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "%",
+        "valor_tipico_original": "0,02",
+        "unidades_maestras_propuestas": "%",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6739,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FACTOR DE POTENCIA, 60 Hz A 25 °C",
+          "unidades": "%",
+          "metodo": "ASTM D924",
+          "especificacion": "0,050 MÁXIMO",
+          "valor_tipico": "0,02"
+        }
+      },
+      {
+        "numero_prueba": 22,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "FACTOR DE POTENCIA, 60 Hz A 100 °C",
+        "metodo_original": "ASTM D924 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "POWER FACTOR, 60 Hz,100 °C",
+        "metodo_original_normalizado": "ASTM D924",
+        "metodo_maestro_fuente": "ASTM D924 - 15",
+        "metodo_maestro_propuesto": "ASTM D924",
+        "referencias_astm_originales": [
+          "D924"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D924"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "170",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D924 - 15 / NMX-J-123-ANCE-2019 P 6,16",
+        "fila_segunda_opcion": "178",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "%",
+        "valor_tipico_original": "0,09",
+        "unidades_maestras_propuestas": "%",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6857,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "FACTOR DE POTENCIA, 60 Hz A 100 °C",
+          "unidades": "%",
+          "metodo": "ASTM D924",
+          "especificacion": "0,300 MÁXIMO",
+          "valor_tipico": "0,09"
+        }
+      },
+      {
+        "numero_prueba": 23,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "TENDENCIA A LA GASIFICACIÓN A 10 kV, 50 min A 80 °C CON H2",
+        "metodo_original": "ASTM D2300 / NMX-J-123-ANCE",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "TENDENCY TO GASIFICATION AT 10 kV, 50 min AT 80 °C WITH H2",
+        "metodo_original_normalizado": "ASTM D2300",
+        "metodo_maestro_fuente": "ASTM D2300 - 08 (2017)",
+        "metodo_maestro_propuesto": "ASTM D2300",
+        "referencias_astm_originales": [
+          "D2300"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2300"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "136",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "ASTM D2300 - 08 (2017) / NMX-J-123-ANCE-2019 P 6,18",
+        "fila_segunda_opcion": "137",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "µL/min",
+        "valor_tipico_original": "20",
+        "unidades_maestras_propuestas": "µL/min",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8766,
+        "puntaje_nombre": 0.8185,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENDENCIA A LA GASIFICACIÓN A 10 kV, 50 min A 80 °C CON H2",
+          "unidades": "µL/min",
+          "metodo": "ASTM D2300",
+          "especificacion": "+30 MÁXIMO",
+          "valor_tipico": "20"
+        }
+      },
+      {
+        "numero_prueba": 24,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "RESISTIVIDAD, PROCEDIMIENTO DE RUTINA 0HZ A 25 °C",
+        "metodo_original": "ASTM D1169",
+        "nombre_maestro_propuesto": "",
+        "nombre_maestro_ingles_propuesto": "RESISTIVITY, ROUTINE PROCEDURE, 0 Hz AT X °C",
+        "metodo_original_normalizado": "ASTM D1169",
+        "metodo_maestro_fuente": "ASTM D1169 - 19a",
+        "metodo_maestro_propuesto": "ASTM D1169",
+        "referencias_astm_originales": [
+          "D1169"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1169"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "118",
+        "nombre_segunda_opcion": "VISCOSIDAD DINÁMICA (VISCOSÍMETRO ROTACIONAL, RV2, 25°C)",
+        "metodo_segunda_opcion": "ASTM D2983 MODIF-01",
+        "fila_segunda_opcion": "30",
+        "margen_puntaje": 0.4966,
+        "unidades_originales": "x10^12 -cm",
+        "valor_tipico_original": "270,50x10^7",
+        "unidades_maestras_propuestas": "x10^12 Ω*cm",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6307,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "RESISTIVIDAD, PROCEDIMIENTO DE RUTINA 0HZ A 25 °C",
+          "unidades": "x10^12 Ω*cm",
+          "metodo": "ASTM D1169",
+          "especificacion": "250x10^6 Mínimo",
+          "valor_tipico": "270,50x10^7"
+        }
+      },
+      {
+        "numero_prueba": 25,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "nombre_maestro_propuesto": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "nombre_maestro_ingles_propuesto": "INTERFACIAL TENSION BY THE RING METHOD",
+        "metodo_original_normalizado": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "metodo_maestro_fuente": "ASTM D971",
+        "metodo_maestro_propuesto": "ASTM D971",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D971"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "94",
+        "nombre_segunda_opcion": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+        "metodo_segunda_opcion": "ASTM D 971-20 / NMX-J-123-ANCE-2019 P 6,6",
+        "fila_segunda_opcion": "110",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "valor_tipico_original": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+        "unidades_maestras_propuestas": "mN/m",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.3043,
+        "puntaje_nombre": 0.4475,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+          "unidades": "mN/m",
+          "metodo": "ASTM D971",
+          "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+          "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  }
+}
