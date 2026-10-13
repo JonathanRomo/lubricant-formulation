@@ -28,6 +28,7 @@ from docx.opc.exceptions import PackageNotFoundError
 from alinear_especificaciones_json import (
     COLUMNAS_MAESTRO,
     MAESTRO,
+    VERSION as VERSION_ALINEADOR,
     cargar_maestro,
     metodo_maestro_canonico,
     metodo_maestro_para_idioma,
@@ -44,6 +45,7 @@ from interfaz_seleccion_especificaciones import (
 )
 
 
+VERSION = "1.0.0"
 BASE = Path(__file__).resolve().parent
 RUTAS_PREDETERMINADAS = {
     "especificaciones_viejas": BASE / "ESPECIFICACIONES_VIEJAS",
@@ -57,6 +59,7 @@ CAMPOS_TABLA = ("prueba", "unidades", "metodo", "especificacion", "valor_tipico"
 CAMPO_PERIODICIDAD = "PERIODIDICAD DE ANALISIS"
 SIMBOLOS_PERIODICIDAD = ("◊", "▶", "C", "I", "P", "♦", "Q", "●")
 MAX_SIMBOLOS_PERIODICIDAD = 4
+PERIODICIDAD_PREDETERMINADA = "▶"
 LEYENDA_PERIODICIDAD = {
     "es": (
         ("◊", "Prueba crítica"),
@@ -350,8 +353,13 @@ def _datos_generador_desde_json(datos: dict[str, Any]) -> dict[str, Any]:
             campo: str(alineados.get(campo, fila.get(campo, "")) or "")
             for campo in CAMPOS_TABLA
         }
-        periodicidad = fila.get(CAMPO_PERIODICIDAD, fila.get("periodicidad", ""))
-        fila_generador["periodicidad"] = str(periodicidad or "")
+        periodicidad = next(
+            (str(objeto.get(campo)) for objeto in (fila, alineados)
+             for campo in (CAMPO_PERIODICIDAD, "periodicidad", "periodicidad_analisis")
+             if str(objeto.get(campo) or "").strip()),
+            PERIODICIDAD_PREDETERMINADA,
+        )
+        fila_generador["periodicidad"] = periodicidad
         filas_generador.append(fila_generador)
 
     notas = datos.get("notas", [])
@@ -1734,10 +1742,14 @@ class GeneradorEspecificacion:
         app: "AplicacionEspecificaciones",
         archivo_inicial: Path | None = None,
         destino_inicial: Path | None = None,
+        idioma_destino: str | None = None,
+        al_guardar: Callable[[Path], None] | None = None,
     ):
         self.app = app
         self.archivo_inicial = archivo_inicial
         self.destino_inicial = destino_inicial
+        self.al_guardar = al_guardar
+        self.idioma_destino = idioma_destino
         self.datos_originales: dict[str, Any] | None = None
         self.maestro = cargar_maestro(BASE / MAESTRO)
         self.codigos_part_id = _cargar_catalogo_part_ids()
@@ -1986,6 +1998,14 @@ class GeneradorEspecificacion:
         self._actualizar_validacion_codigo()
         if archivo_inicial is not None:
             self._cargar_especificacion(archivo_inicial)
+        if idioma_destino is not None:
+            self._idioma.set("English" if idioma_destino == "en" else "Español")
+            self._actualizar_idioma()
+            self.traduccion_revisada = tk.BooleanVar(value=False)
+            ttk.Checkbutton(self.ventana,
+                text="He revisado y completado la traducción de pruebas, especificaciones, notas y control documental",
+                variable=self.traduccion_revisada).pack(fill="x", padx=12, pady=6)
+            self.ventana.title("Completar traducción de especificación")
 
     def _cargar_especificacion(self, ruta: Path) -> None:
         try:
@@ -2515,7 +2535,7 @@ class GeneradorEspecificacion:
         if iid == "nueva":
             self.pruebas.append(
                 {
-                    nombre: ""
+                    nombre: PERIODICIDAD_PREDETERMINADA if nombre == "periodicidad" else ""
                     for nombre in (*CAMPOS_TABLA, "periodicidad")
                 }
             )
@@ -2635,7 +2655,7 @@ class GeneradorEspecificacion:
         )
         valores = [simbolo for simbolo in valores if simbolo]
         if not valores:
-            valores = [""]
+            valores = [PERIODICIDAD_PREDETERMINADA]
         for simbolo in valores[:MAX_SIMBOLOS_PERIODICIDAD]:
             self._agregar_selector_periodicidad(simbolo)
         return marco
@@ -2840,6 +2860,12 @@ class GeneradorEspecificacion:
         self._actualizar_tabla()
 
     def guardar(self) -> None:
+        if self.idioma_destino is not None:
+            if not self.traduccion_revisada.get() or ("en" if self._idioma.get() == "English" else "es") != self.idioma_destino:
+                messagebox.showerror("Traducción pendiente",
+                    "Completa la traducción en el idioma solicitado y marca la casilla de revisión antes de guardar.",
+                    parent=self.ventana)
+                return
         self._cerrar_editor_celda(guardar=True)
         ingles = self._idioma.get() == "English"
         idioma = "en" if ingles else "es"
@@ -2941,6 +2967,8 @@ class GeneradorEspecificacion:
             ),
             parent=self.ventana,
         )
+        if self.al_guardar is not None:
+            self.al_guardar(destino)
 
 
 class EditorJson:
@@ -3331,6 +3359,7 @@ class AplicacionEspecificaciones:
             ("GENERAR ESPEC", self.generar_especificacion),
             ("SELECCIONAR SPEC", self.seleccionar_especificacion),
             ("COMPARAR ESPECS", self.comparar_especificaciones),
+            ("GENERAR HII", self.generar_hii),
         ):
             tk.Button(
                 acciones,
@@ -3350,9 +3379,17 @@ class AplicacionEspecificaciones:
             self.raiz,
             background=color_pie,
             padx=12,
-            pady=8,
+            pady=4,
         )
         self._barra_progreso_carga.pack(side="bottom", fill="x")
+        self._barra_progreso_carga.columnconfigure(0, weight=1)
+        tk.Label(
+            self._barra_progreso_carga,
+            text=f"Interfaz v{VERSION} | Alineador v{VERSION_ALINEADOR}",
+            anchor="e",
+            background=color_pie,
+            font=("Segoe UI", 9),
+        ).grid(row=1, column=1, sticky="se", padx=(12, 0))
         self._estado_progreso_carga = tk.Label(
             self._barra_progreso_carga,
             text="Listo.",
@@ -3360,12 +3397,14 @@ class AplicacionEspecificaciones:
             background=color_pie,
             font=("Segoe UI", 9),
         )
-        self._estado_progreso_carga.pack(anchor="center", pady=(0, 3))
+        self._estado_progreso_carga.grid(
+            row=0, column=0, columnspan=2, pady=(0, 2)
+        )
         controles_progreso = tk.Frame(
             self._barra_progreso_carga,
             background=color_pie,
         )
-        controles_progreso.pack(anchor="center")
+        controles_progreso.grid(row=1, column=0)
         self._indicador_progreso_carga = ttk.Progressbar(
             controles_progreso,
             mode="determinate",
@@ -3727,6 +3766,11 @@ class AplicacionEspecificaciones:
             "\n".join(lineas),
             parent=self.raiz,
         )
+
+    def generar_hii(self) -> None:
+        from generador_hii import GeneradorHII
+
+        GeneradorHII(self.raiz, self.rutas["formatos"], self.rutas["json_alineadas"], app=self)
 
     def generar_especificacion(self) -> None:
         try:

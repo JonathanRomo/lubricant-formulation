@@ -600,6 +600,7 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
         raise ValueError("La raiz del JSON debe ser un objeto.")
     resultado = deepcopy(datos)
     resultado["FECHA DE REANALISIS"] = ""
+    resultado["Desarrollador"] = ""
     pruebas = resultado.get("pruebas")
     if not isinstance(pruebas, list):
         raise ValueError("El JSON no contiene una lista 'pruebas'.")
