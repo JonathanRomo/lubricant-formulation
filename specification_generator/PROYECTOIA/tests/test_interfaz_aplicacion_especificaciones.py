@@ -8,7 +8,11 @@ from unittest.mock import patch
 
 from docx import Document
 
-from generador_especs_hii import _llenar_pruebas
+from generador_especs_hii import (
+    _escribir_notas,
+    _llenar_pruebas,
+    _separar_notas_de_pruebas,
+)
 from interfaz_aplicacion_especificaciones import (
     CAMPO_PERIODICIDAD,
     LEYENDA_PERIODICIDAD,
@@ -31,6 +35,9 @@ from interfaz_aplicacion_especificaciones import (
     _procesar_carga_especificaciones,
     _datos_generador_desde_json,
     _integrar_edicion_json,
+    _actualizar_comentarios_celda,
+    _agregar_comentario_a_celda,
+    _guardar_celda_con_comentario,
     crear_documento_alineado_manual,
     crear_datos_especificacion_nueva,
     crear_json_temporal_comparacion,
@@ -38,6 +45,7 @@ from interfaz_aplicacion_especificaciones import (
     _guardar_cambios_maestro,
     _consultar_tabla_historico,
     _exportar_tabla_historico_excel,
+    alinear_filas_generador,
 )
 
 
@@ -316,6 +324,7 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
                 ]
             },
             "notas": ["Nota existente"],
+            "Desarrollador": "Equipo de Desarrollo",
         }
 
         cargados = _datos_generador_desde_json(origen)
@@ -337,6 +346,7 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
             ],
         )
         self.assertEqual(cargados["notas"], ["Nota existente"])
+        self.assertEqual(cargados["desarrollador"], "Equipo de Desarrollo")
 
     def test_integrar_edicion_preserva_metadatos_y_fecha_reanalisis(self):
         origen = {
@@ -347,6 +357,7 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
             },
             "FECHA DE REANALISIS": "12/10/26",
             "campo_futuro": {"valor": 1},
+            "Desarrollador": "Anterior",
         }
         actualizado = {
             "esquema": "especificacion_producto_es_v3",
@@ -359,6 +370,7 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
             "pruebas": [],
             "notas": [],
             "alineacion_metodos_lab": {"detalle": []},
+            "Desarrollador": "Nuevo",
         }
 
         resultado = _integrar_edicion_json(origen, actualizado)
@@ -372,6 +384,7 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
         )
         self.assertEqual(resultado["FECHA DE REANALISIS"], "12/10/26")
         self.assertEqual(resultado["campo_futuro"], {"valor": 1})
+        self.assertEqual(resultado["Desarrollador"], "Nuevo")
 
     def test_traduce_nombres_de_prueba_al_cambiar_idioma(self):
         self.assertEqual(
@@ -452,11 +465,13 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
                 }
             ],
             ["Nota de prueba"],
+            "Investigación y desarrollo",
         )
 
         self.assertEqual(datos["documento"]["idioma"], "es")
         self.assertEqual(datos["producto"]["nombre"], "Aceite de prueba")
         self.assertEqual(datos["FECHA DE REANALISIS"], "")
+        self.assertEqual(datos["Desarrollador"], "Investigación y desarrollo")
         self.assertEqual(datos["pruebas"][0]["PERIODIDICAD DE ANALISIS"], "◊▶")
         self.assertEqual(
             datos["alineacion_metodos_lab"]["detalle"][0]["valores_alineados"][
@@ -506,6 +521,35 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
         )
         self.assertEqual(datos["notas"], [NOTAS_PLANTILLA["es"]])
 
+    def test_el_generador_omite_filas_de_encabezado_en_espanol_e_ingles(self):
+        filas = [
+            {
+                "prueba": "PRUEBA",
+                "metodo": "MÉTODO",
+                "especificacion": "ESPECIFICACIÓN",
+            },
+            {
+                "prueba": "TEST",
+                "metodo": "METHOD",
+                "especificacion": "SPECIFICATION",
+            },
+            {
+                "prueba": "PRUEBA MÉTODO",
+                "metodo": "",
+                "especificacion": "ESPECIFICACIÓN",
+            },
+            {
+                "prueba": "Viscosidad",
+                "metodo": "ASTM D445",
+                "especificacion": "MÍNIMO",
+            },
+        ]
+
+        validas, notas = _separar_notas_de_pruebas(filas)
+
+        self.assertEqual([fila["prueba"] for fila in validas], ["Viscosidad"])
+        self.assertEqual(notas, [])
+
     def test_exige_nombre_de_producto_y_al_menos_una_prueba_nombrada(self):
         with self.assertRaisesRegex(ValueError, "nombre del producto"):
             crear_datos_especificacion_nueva("", "es", {}, [{"prueba": "Color"}], [])
@@ -527,8 +571,194 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
         )
         self.assertEqual(len(resultado["pruebas"]), 1)
 
+    def test_alinear_generador_reusa_reglas_y_conserva_superindices(self):
+        maestro = [
+            {
+                "METODO": "ASTM D445",
+                "NOMBRE IQM": "Viscosidad cinemática",
+                "NOMBRE IQM INGLES": "Kinematic viscosity",
+                "UNIDADES": "cSt, mm²/s",
+                "UNITS": "mm²/s, cSt",
+            }
+        ]
+        pruebas = [
+            {
+                "prueba": "Viscosidad cinemática ¹",
+                "unidades": "mm²/s",
+                "metodo": "ASTM D445 ²",
+                "especificacion": "30 max",
+                "valor_tipico": "typical",
+                "periodicidad": "▶",
+            }
+        ]
+
+        alineadas, conteo = alinear_filas_generador(pruebas, maestro, "es")
+
+        self.assertEqual(conteo, {"alineados": 1, "revision": 0, "sin_coincidencia": 0})
+        self.assertEqual(alineadas[0]["prueba"], "Viscosidad cinemática ¹")
+        self.assertEqual(alineadas[0]["metodo"], "ASTM D445 ²")
+        self.assertEqual(alineadas[0]["unidades"], "mm²/s")
+        self.assertEqual(alineadas[0]["especificacion"], "30 MÁXIMO")
+        self.assertEqual(alineadas[0]["valor_tipico"], "TYPICAL")
+        self.assertEqual(alineadas[0]["periodicidad"], "▶")
+        self.assertEqual(pruebas[0]["especificacion"], "30 max")
+
+    def test_alinear_generador_no_cuenta_filas_vacias_con_periodicidad(self):
+        fila_vacia = {
+            "prueba": "",
+            "unidades": "",
+            "metodo": "",
+            "especificacion": "",
+            "valor_tipico": "",
+            "periodicidad": "▶",
+        }
+
+        filas, conteo = alinear_filas_generador(
+            [fila_vacia],
+            [{"METODO": "ASTM D445", "NOMBRE IQM": "Color"}],
+            "es",
+        )
+
+        self.assertEqual(filas, [fila_vacia])
+        self.assertEqual(conteo, {"alineados": 0, "revision": 0, "sin_coincidencia": 0})
+
 
 class DocumentoAlineadoManualTests(unittest.TestCase):
+    def test_comentarios_metodo_se_numeran_segun_orden_de_filas(self):
+        pruebas = [
+            {"metodo": "ASTM D445"},
+            {"metodo": "ASTM D7042"},
+        ]
+
+        notas = _actualizar_comentarios_celda(
+            pruebas,
+            "Nota existente",
+            "metodo",
+            1,
+        )
+        notas = notas.replace("¹ ", "¹ Comentario segunda fila")
+        notas = _actualizar_comentarios_celda(pruebas, notas, "metodo", 0)
+
+        self.assertEqual(pruebas[0]["metodo"], "ASTM D445 ¹")
+        self.assertEqual(pruebas[1]["metodo"], "ASTM D7042 ²")
+        self.assertEqual(
+            notas,
+            "Nota existente\n¹ \n² Comentario segunda fila",
+        )
+
+    def test_comentarios_de_prueba_y_metodo_se_numeran_en_orden_de_fila(self):
+        pruebas = [
+            {"prueba": "Viscosidad", "metodo": "ASTM D445"},
+        ]
+
+        notas = _actualizar_comentarios_celda(pruebas, "", "metodo", 0)
+        notas = _actualizar_comentarios_celda(
+            pruebas,
+            notas.replace("¹ ", "¹ Nota del método"),
+            "prueba",
+            0,
+        )
+
+        self.assertEqual(pruebas[0]["prueba"], "Viscosidad ¹")
+        self.assertEqual(pruebas[0]["metodo"], "ASTM D445 ²")
+        self.assertEqual(notas, "¹ \n² Nota del método")
+
+    def test_agregar_comentario_a_prueba_no_reemplaza_su_valor_con_el_metodo(self):
+        pruebas = [
+            {"prueba": "ASTM D2265", "metodo": "ASTM D2265"},
+        ]
+
+        notas = _agregar_comentario_a_celda(
+            pruebas,
+            "",
+            0,
+            "prueba",
+            "ASTM D2265",
+        )
+
+        self.assertEqual(pruebas[0]["prueba"], "ASTM D2265 ¹")
+        self.assertEqual(pruebas[0]["metodo"], "ASTM D2265")
+        self.assertEqual(notas, "¹ ")
+
+    def test_borrar_superindice_quita_comentario_y_renumera_los_siguientes(self):
+        pruebas = [
+            {"prueba": "Prueba 1 ¹", "metodo": ""},
+            {"prueba": "Prueba 2 ²", "metodo": ""},
+        ]
+        notas = "¹ Comentario que se elimina\n² Comentario que permanece"
+
+        notas = _guardar_celda_con_comentario(
+            pruebas,
+            notas,
+            0,
+            "prueba",
+            "Prueba 1",
+        )
+
+        self.assertEqual(pruebas[0]["prueba"], "Prueba 1")
+        self.assertEqual(pruebas[1]["prueba"], "Prueba 2 ¹")
+        self.assertEqual(notas, "¹ Comentario que permanece")
+
+    def test_borrar_metodo_quita_su_comentario_y_renumera_los_restantes(self):
+        pruebas = [
+            {"prueba": "Prueba 1", "metodo": "Método 1"},
+            {"prueba": "Prueba 2", "metodo": "Método 2"},
+        ]
+        notas = _actualizar_comentarios_celda(pruebas, "", "metodo", 0)
+        notas = _actualizar_comentarios_celda(
+            pruebas,
+            notas.replace("¹ ", "¹ Comentario a quitar"),
+            "metodo",
+            1,
+        )
+        notas = notas.replace("² ", "² Comentario que queda")
+
+        pruebas[0]["metodo"] = ""
+        notas = _actualizar_comentarios_celda(
+            pruebas,
+            notas,
+            remover_numero="1",
+        )
+
+        self.assertEqual(pruebas[0]["metodo"], "")
+        self.assertEqual(pruebas[1]["metodo"], "Método 2 ¹")
+        self.assertEqual(notas, "¹ Comentario que queda")
+
+    def test_borrar_fila_quita_todos_sus_comentarios_en_una_sola_renumeracion(self):
+        pruebas = [
+            {"prueba": "Prueba 1", "metodo": "Método 1"},
+            {"prueba": "Prueba 2", "metodo": "Método 2"},
+        ]
+        notas = _actualizar_comentarios_celda(pruebas, "", "prueba", 0)
+        notas = _actualizar_comentarios_celda(pruebas, notas, "metodo", 0)
+        notas = _actualizar_comentarios_celda(pruebas, notas, "metodo", 1)
+        notas = notas.replace("¹ ", "¹ Comentario prueba 1")
+        notas = notas.replace("² ", "² Comentario método 1")
+        notas = notas.replace("³ ", "³ Comentario método 2")
+
+        marcadores_eliminados = {"1", "2"}
+        del pruebas[0]
+        notas = _actualizar_comentarios_celda(
+            pruebas,
+            notas,
+            remover_numero=marcadores_eliminados,
+        )
+
+        self.assertEqual(pruebas[0]["metodo"], "Método 2 ¹")
+        self.assertEqual(notas, "¹ Comentario método 2")
+
+    def test_comentario_metodo_se_escribe_en_nueva_linea_de_notas_word(self):
+        documento = Document()
+        tabla = documento.add_table(rows=3, cols=2)
+        tabla.rows[2].cells[0].text = "Notas: Nota de plantilla"
+
+        _escribir_notas(tabla, ["¹ Comentario del método", "Nota adicional"])
+
+        self.assertEqual(
+            tabla.rows[2].cells[0].text,
+            "Notas: Nota de plantilla\n¹ Comentario del método\nNota adicional",
+        )
+
     def test_periodicidad_json_no_se_escribe_en_la_tabla_word(self):
         documento = Document()
         tabla = documento.add_table(rows=3, cols=5)

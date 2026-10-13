@@ -25,7 +25,7 @@ except ModuleNotFoundError as exc:
         ) from None
     raise
 
-VERSION = "1.6.0"
+VERSION = "1.12.0"
 PYTHON_REQUERIDO = (3, 11)
 ENTRADA = "ESPECIFICACIONES_JSON"
 SALIDA = "ESPECIFICACIONES_JSON_ALINEADAS"
@@ -60,13 +60,39 @@ ENTERO_CON_MILES = re.compile(
 CAMPOS_CONTENIDO_TABLA = (
     "prueba", "nombre", "unidades", "metodo", "especificacion", "valor_tipico"
 )
+NOTAS_ESTANDARIZADAS = (
+    (
+        re.compile(
+            r"(?<!\w)(?:Notas?\s*:\s*)?La\s+versi[oó]n\s+vigente\s+del\s+"
+            r"m[eé]todo\s+aplicable\s+corresponder[aá]\s+a\s+la\s+"
+            r"versi[oó]n\s+emitida\s+proporcionada\s+por\s+el\s+"
+            r"laboratorio\.?(?!\w)",
+            re.IGNORECASE,
+        ),
+        "La versión vigente del método aplicable corresponderá a la "
+        "versión emitida proporcionada por el laboratorio.",
+    ),
+    (
+        re.compile(
+            r"(?<!\w)(?:Notes?\s*:\s*)?The\s+active\s+version\s+of\s+the\s+"
+            r"applicable\s+method\s+shall\s+be\s+the\s+version\s+"
+            r"issued\s+and\s+provided\s+by\s+the\s+laboratory\.?(?!\w)",
+            re.IGNORECASE,
+        ),
+        "The active version of the applicable method shall be the "
+        "version issued and provided by the laboratory.",
+    ),
+)
 UNIDADES_RECONOCIDAS = (
     "mPa·s", "mPa.s", "mg/kg", "mg/L", "g/L", "mL/min", "mm²/s", "mm2/s",
-    "cm-1", "cm³", "cm3", "cm²", "cm2", "mm²", "mm2", "µL", "μL", "uL",
-    "mL", "ml", "µm", "μm", "um", "kg", "mg", "µg", "μg", "ug", "mm",
-    "cm", "km", "m", "sec", "secs", "min", "mins", "hr", "hrs", "rpm",
-    "cSt", "cP", "kPa", "MPa", "Pa", "bar", "mol", "ppm", "ppb", "N",
-    "A", "K", "cd", "V", "W", "J", "kJ", "s", "h", "d", "L", "l", "%",
+    "kg/m³", "kg/m3", "kg/m^3", "m/s", "N·m", "N.m", "N*m", "Pa·s",
+    "Pa.s", "Pa*s", "s⁻¹", "s-1", "s^-1", "cm-1", "cm³", "cm3", "cm^3",
+    "cm²", "cm2", "cm^2", "mm³", "mm3", "mm^3", "mm²", "mm2", "mm^2",
+    "µL", "μL", "uL", "mL", "ml", "µm", "μm", "um", "kg", "kgs", "mg",
+    "mgs", "µg", "μg", "ug", "mm", "cm", "km", "m", "sec", "secs", "min",
+    "mins", "hr", "hrs", "rpm", "cSt", "cP", "kPa", "MPa", "Pa", "bar",
+    "mol", "ppm", "ppb", "N", "A", "K", "cd", "V", "W", "J", "kJ", "s",
+    "h", "d", "L", "l", "%",
 )
 UNIDAD_ADYACENTE_A_NUMERO = re.compile(
     r"(?P<numero>(?<!\w)[+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))\s*"
@@ -79,6 +105,80 @@ UNIDAD_ADYACENTE_A_NUMERO = re.compile(
         )
     )
     + r")(?![A-Za-zµμ])",
+    re.IGNORECASE,
+)
+MAXIMO_ESPECIFICACION = re.compile(
+    r"(?<!\w)M[ÁA]X(?:IMO)?\.?(?!\w)",
+    re.IGNORECASE,
+)
+MINIMO_ESPECIFICACION_COMPLETO = re.compile(
+    r"(?<!\w)M[IÍ]NIMO(?!\w)",
+    re.IGNORECASE,
+)
+MINIMO_ESPECIFICACION_ABREVIADO = re.compile(
+    r"(?<!\w)M[IÍ]N\.?(?!\w)"
+)
+TERMINOS_TIPICO_ES = re.compile(
+    r"(?<!\w)T[IÍ]PIC[OA]S?(?!\w)",
+    re.IGNORECASE,
+)
+TERMINOS_TIPICO_EN = re.compile(
+    r"(?<!\w)TYPICALS?(?!\w)",
+    re.IGNORECASE,
+)
+TERMINOS_PASA_ES = re.compile(
+    r"(?<!\w)PAS(?:A|AN|[OÓ]|ARON|ANDO|AD[OA]S?)(?!\w)",
+    re.IGNORECASE,
+)
+TERMINOS_PASS_EN = re.compile(
+    r"(?<!\w)(?:PASSES|PASSED|PASSING|PASS)(?!\w)",
+    re.IGNORECASE,
+)
+TERMINOS_REPORTAR_ES = re.compile(
+    r"(?<!\w)REPORT(?:AR|A|AN|[OÓ]|ARON|ANDO|AD[OA]S?)(?!\w)",
+    re.IGNORECASE,
+)
+TERMINOS_REPORT_EN = re.compile(
+    r"(?<!\w)REPORT(?:S|ED|ING)?(?!\w)",
+    re.IGNORECASE,
+)
+TERMINOS_NEGATIVO_ES = re.compile(
+    r"(?<!\w)NEGATIV[OA]S?(?!\w)",
+    re.IGNORECASE,
+)
+TERMINOS_NEGATIVE_EN = re.compile(
+    r"(?<!\w)NEGATIVES?(?!\w)",
+    re.IGNORECASE,
+)
+FRAGMENTOS_PROTEGIDOS_MEDICION = re.compile(
+    r"(?<!\w)(?:\d{1,4}[./-]\d{1,2}[./-]\d{1,4})(?![\w.,])"
+    r"|(?<!\w)(?:\d{1,3}\.){3}\d{1,3}(?!\w)"
+    r"|(?<!\w)(?:v(?:er(?:sion)?)?\s*\d+(?:\.\d+)+|"
+    r"\d{1,4}\.\d{1,2}\.\d{1,2})(?!\w)"
+    r"|(?<!\w)(?:ASTM|ISO|IEC|NMX|USP|FEUM|EN|DIN|IP|SAE|API|JASO|MIL)"
+    r"\s*(?:[A-Z]\s*)?\d+(?:[./-][A-Z0-9]+)*(?!\w)"
+    r"|(?<!\w)(?!(?:cm|mm|kg|mg)-\d)(?=[A-Z0-9_-]*\d)"
+    r"[A-Z]{2,}[A-Z0-9]*(?:[-_][A-Z0-9]+)+(?!\w)"
+    r"|(?<!\w)(?:SN|S/N|ID|SERIAL(?:\s+NO\.?)?)\s*[:#-]?\s*"
+    r"[A-Z0-9][A-Z0-9._/-]*(?!\w)",
+    re.IGNORECASE,
+)
+NUMERO_AMBIGUO_MEDICION = re.compile(
+    r"(?<![\w.,])(?P<valor>[+-]?\d+(?:[ \u00a0\u2009\u202f]\d{3})*)"
+    r"[.,]\d{3}(?![\w.,])"
+)
+NUMERO_MEDICION = re.compile(
+    r"(?<!\w)(?P<signo>[+−-]?)"
+    r"(?P<valor>(?:\d[\d., \u00a0\u2009\u202f]*\d|\d|[.,]\d+))"
+    r"(?!\w)"
+)
+NOTACION_CIENTIFICA_E = re.compile(
+    r"(?<!\w)(?P<coef>[+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))"
+    r"\s*[eE]\s*(?P<exp>[+-]?\d+)(?!\w)"
+)
+NOTACION_CIENTIFICA_X = re.compile(
+    r"(?<!\w)(?P<coef>[+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))"
+    r"\s*[x×]\s*10(?:\s*\^\s*|\s*)(?P<exp>[+-]?\d+)(?!\w)",
     re.IGNORECASE,
 )
 
@@ -227,11 +327,283 @@ def normalizar_espacio_unidades(valor: Any) -> str:
     return UNIDAD_ADYACENTE_A_NUMERO.sub(separar_unidad, salida)
 
 
+def normalizar_especificacion(valor: Any) -> str:
+    """Normaliza máximo/mínimo sin confundir «min» minúscula con minutos."""
+    salida = "" if valor is None else str(valor)
+    salida = MAXIMO_ESPECIFICACION.sub("MÁXIMO", salida)
+    salida = MINIMO_ESPECIFICACION_COMPLETO.sub("MÍNIMO", salida)
+    return MINIMO_ESPECIFICACION_ABREVIADO.sub("MÍNIMO", salida)
+
+
+def normalizar_terminos_especificacion(valor: Any) -> str:
+    """Corrige términos frecuentes en especificaciones y valores típicos."""
+    salida = texto(valor)
+
+    def normalizar_tipico_es(coincidencia: re.Match[str]) -> str:
+        palabra = coincidencia.group(0).upper()
+        return "TÍ" + palabra[2:]
+
+    salida = TERMINOS_NEGATIVO_ES.sub("NEGATIVA", salida)
+    salida = TERMINOS_NEGATIVE_EN.sub("NEGATIVE", salida)
+    for patron in (
+        TERMINOS_TIPICO_ES,
+        TERMINOS_TIPICO_EN,
+        TERMINOS_PASA_ES,
+        TERMINOS_PASS_EN,
+        TERMINOS_REPORTAR_ES,
+        TERMINOS_REPORT_EN,
+    ):
+        if patron is TERMINOS_TIPICO_ES:
+            salida = patron.sub(normalizar_tipico_es, salida)
+        else:
+            salida = patron.sub(
+                lambda coincidencia: coincidencia.group(0).upper(), salida
+            )
+    return salida
+
+
+def _normalizar_simbolos_unidades(valor: str) -> str:
+    compuestas = (
+        (r"mPa\s*[.*·]\s*s", "mPa·s", 0),
+        (r"mPa", "mPa", 0),
+        (r"kg\s*/\s*m(?:\s*\^\s*|\s*)3|kg\s*/\s*m³", "kg/m³", re.IGNORECASE),
+        (r"mg\s*/\s*l(?:iter|itre)?s?", "mg/L", re.IGNORECASE),
+        (r"m\s*/\s*s(?:ec(?:ond)?s?)?", "m/s", re.IGNORECASE),
+        (r"N\s*[.*·]\s*m", "N·m", re.IGNORECASE),
+        (r"Pa\s*[.*·]\s*s", "Pa·s", re.IGNORECASE),
+        (r"s\s*(?:\^\s*-?1|-1|⁻¹)", "s⁻¹", re.IGNORECASE),
+        (r"cm\s*(?:\^\s*-1|-1|⁻¹)", "cm⁻¹", re.IGNORECASE),
+        (r"(?:mm)\s*(?:\^\s*2|2|²)", "mm²", re.IGNORECASE),
+        (r"(?:mm)\s*(?:\^\s*3|3|³)", "mm³", re.IGNORECASE),
+        (r"(?:cm)\s*(?:\^\s*2|2|²)", "cm²", re.IGNORECASE),
+        (r"(?:cm)\s*(?:\^\s*3|3|³)", "cm³", re.IGNORECASE),
+        (r"m\s*(?:\^\s*2|2|²)", "m²", re.IGNORECASE),
+        (r"m\s*(?:\^\s*3|3|³)", "m³", re.IGNORECASE),
+        (r"º\s*C|°\s*C|deg(?:ree)?s?\s+C(?:elsius)?", "°C", re.IGNORECASE),
+        (r"megapascals?", "MPa", re.IGNORECASE),
+        (r"MPa", "MPa", 0),
+        (r"MPA", "MPa", 0),
+        (r"kilopascals?", "kPa", re.IGNORECASE),
+        (r"kPa", "kPa", 0),
+        (r"pascals?|pa", "Pa", re.IGNORECASE),
+        (r"kilograms?|kgs?", "kg", re.IGNORECASE),
+        (r"milligrams?|mgs?", "mg", re.IGNORECASE),
+        (r"micrograms?|mcgs?|[µμ]g|ugs?", "µg", re.IGNORECASE),
+        (r"millilit(?:er|re)s?|mls?", "mL", re.IGNORECASE),
+        (r"microliters?|microlitres?|[µμ]ls?|uls?", "µL", re.IGNORECASE),
+        (r"liters?|litres?|lts?", "L", re.IGNORECASE),
+        (r"l", "L", 0),
+        (r"kilometers?|kilometres?|kms?", "km", re.IGNORECASE),
+        (r"millimeters?|millimetres?", "mm", re.IGNORECASE),
+        (r"centimeters?|centimetres?", "cm", re.IGNORECASE),
+        (r"meters?|metres?", "m", re.IGNORECASE),
+        (r"m", "m", re.IGNORECASE),
+        (r"grams?|gs?", "g", re.IGNORECASE),
+        (r"seconds?|secs?", "s", re.IGNORECASE),
+        (r"minutes?|mins?", "min", re.IGNORECASE),
+        (r"hours?|hrs?", "h", re.IGNORECASE),
+    )
+    salida = valor
+    for patron, simbolo, flags in compuestas:
+        salida = re.sub(
+            rf"(?<![^\W\d_])(?:{patron})\.?(?![^\W\d_])",
+            simbolo,
+            salida,
+            flags=flags,
+        )
+    return salida
+
+
+def _agrupar_entero(digitos: str) -> str:
+    digitos = re.sub(r"\D", "", digitos)
+    if not digitos:
+        return "0"
+    primer_grupo = len(digitos) % 3 or 3
+    grupos = [digitos[:primer_grupo]]
+    grupos.extend(
+        digitos[indice : indice + 3]
+        for indice in range(primer_grupo, len(digitos), 3)
+    )
+    return " ".join(grupos)
+
+
+def _formatear_coeficiente_cientifico(coeficiente: str) -> str:
+    signo = ""
+    if coeficiente[:1] in "+-−":
+        signo, coeficiente = coeficiente[0], coeficiente[1:]
+    if coeficiente.startswith((".", ",")):
+        coeficiente = "0" + coeficiente
+    if "." in coeficiente or "," in coeficiente:
+        entero, fraccion = re.split(r"[.,]", coeficiente, maxsplit=1)
+        numero = f"{_agrupar_entero(entero)},{fraccion}"
+    else:
+        numero = _agrupar_entero(coeficiente)
+    if signo == "-":
+        signo = "−"
+    return f"{signo} {numero}" if signo else numero
+
+
+def _exponente_superindice(exponente: str) -> str:
+    traduccion = str.maketrans("0123456789+-", "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻")
+    return exponente.translate(traduccion)
+
+
+def _formatear_numero_medicion(numero: str) -> tuple[str, bool]:
+    compacto = re.sub(r"[ \u00a0\u2009\u202f]", "", numero)
+    separadores = [
+        (indice, caracter)
+        for indice, caracter in enumerate(compacto)
+        if caracter in ".,"
+    ]
+    if not separadores:
+        return _agrupar_entero(compacto), False
+
+    tipos = {caracter for _, caracter in separadores}
+    if len(tipos) > 1:
+        indice_decimal = separadores[-1][0]
+        parte_entera = compacto[:indice_decimal]
+        fraccion = compacto[indice_decimal + 1 :]
+        if not fraccion.isdigit():
+            return numero, True
+        digitos_entero = re.sub(r"[.,]", "", parte_entera)
+        if not digitos_entero.isdigit():
+            return numero, True
+        return f"{_agrupar_entero(digitos_entero)},{fraccion}", False
+
+    separador = separadores[0][1]
+    partes = compacto.split(separador)
+    if len(partes) > 2:
+        if len(partes[0]) not in range(1, 4) or any(
+            len(parte) != 3 or not parte.isdigit() for parte in partes[1:]
+        ):
+            return numero, True
+        return _agrupar_entero("".join(partes)), False
+
+    parte_entera, fraccion = partes
+    if not fraccion.isdigit():
+        return numero, True
+    return f"{_agrupar_entero(parte_entera)},{fraccion}", False
+
+
+def normalizar_valor_medicion(valor: Any) -> tuple[str, list[str]]:
+    """Normaliza mediciones y conserva valores ambiguos para revisión."""
+    original = texto(valor)
+    if not original:
+        return original, []
+
+    protegidos: list[str] = []
+
+    def guardar_fragmento(coincidencia: re.Match[str]) -> str:
+        indice = len(protegidos)
+        protegidos.append(coincidencia.group(0))
+        return f"QZPROTEGIDO{indice}QZ"
+
+    salida = FRAGMENTOS_PROTEGIDOS_MEDICION.sub(guardar_fragmento, original)
+    salida = _normalizar_simbolos_unidades(salida)
+    salida = normalizar_espacio_unidades(salida)
+    salida = RANGO_NUMERICO.sub(
+        lambda coincidencia: (
+            f"{coincidencia.group('izquierdo')} - "
+            f"{coincidencia.group('derecho')}"
+        ),
+        salida,
+    )
+    salida = re.sub(
+        r"(?<!\w)-(?=(?:\d|[.,]\d))",
+        "− ",
+        salida,
+    )
+    salida = re.sub(
+        r"(?<=\d)\s*([−+±<>≤≥])\s*(?=[+\-−]?(?:\d|[.,]\d))",
+        r" \1 ",
+        salida,
+    )
+    salida = re.sub(
+        r"([−+±<>≤≥])\s*(?=(?:\d|[.,]\d))",
+        r"\1 ",
+        salida,
+    )
+
+    ambiguos: list[str] = []
+
+    def guardar_ambiguo(coincidencia: re.Match[str]) -> str:
+        indice = len(ambiguos)
+        ambiguos.append(coincidencia.group(0))
+        return f"QZAMBIGUO{indice}QZ"
+
+    salida = NUMERO_AMBIGUO_MEDICION.sub(guardar_ambiguo, salida)
+
+    def normalizar_cientifico(coincidencia: re.Match[str]) -> str:
+        coeficiente = _formatear_coeficiente_cientifico(
+            coincidencia.group("coef")
+        )
+        exponente = _exponente_superindice(coincidencia.group("exp"))
+        return f"{coeficiente} × 10{exponente}"
+
+    salida = NOTACION_CIENTIFICA_E.sub(normalizar_cientifico, salida)
+    salida = NOTACION_CIENTIFICA_X.sub(normalizar_cientifico, salida)
+
+    def normalizar_numero(coincidencia: re.Match[str]) -> str:
+        numero, ambiguo = _formatear_numero_medicion(
+            coincidencia.group("valor")
+        )
+        if ambiguo:
+            ambiguos.append(coincidencia.group(0))
+        signo = coincidencia.group("signo")
+        if signo == "-":
+            signo = "− "
+        elif signo:
+            signo += " "
+        return f"{signo}{numero}"
+
+    salida = NUMERO_MEDICION.sub(normalizar_numero, salida)
+    for indice, numero in enumerate(ambiguos):
+        salida = salida.replace(f"QZAMBIGUO{indice}QZ", numero)
+    for indice, fragmento in enumerate(protegidos):
+        salida = salida.replace(f"QZPROTEGIDO{indice}QZ", fragmento)
+    return salida, ambiguos
+
+
 def normalizar(valor: Any) -> str:
     salida = texto(valor).upper()
     salida = "".join(c for c in unicodedata.normalize("NFD", salida) if unicodedata.category(c) != "Mn")
     salida = salida.replace("×", "X")
     return re.sub(r"\s+", " ", re.sub(r"[^A-Z0-9%]+", " ", salida)).strip()
+
+
+def limpiar_notas_estandarizadas(
+    pruebas: list[Any], notas: list[Any]
+) -> tuple[list[Any], list[Any]]:
+    """Separa las notas estándar de las filas y campos de pruebas."""
+    claves_notas = {
+        normalizar(canonica)
+        for nota in notas
+        if isinstance(nota, str)
+        for patron, canonica in NOTAS_ESTANDARIZADAS
+        if patron.search(nota)
+    }
+    pruebas_limpias = []
+    for prueba in pruebas:
+        if not isinstance(prueba, dict):
+            pruebas_limpias.append(prueba)
+            continue
+        for campo in CAMPOS_CONTENIDO_TABLA:
+            valor = prueba.get(campo)
+            if not isinstance(valor, str):
+                continue
+            for patron, canonica in NOTAS_ESTANDARIZADAS:
+                if not patron.search(valor):
+                    continue
+                clave_nota = normalizar(canonica)
+                if clave_nota not in claves_notas:
+                    notas.append(canonica)
+                    claves_notas.add(clave_nota)
+                valor = patron.sub("", valor)
+            valor = re.sub(r"\s+([.,;:])", r"\1", valor)
+            prueba[campo] = valor.strip(" \t\r\n,;:")
+        if any(texto(prueba.get(campo)) for campo in CAMPOS_CONTENIDO_TABLA):
+            pruebas_limpias.append(prueba)
+    return pruebas_limpias, notas
 
 
 def similitud_texto(a: Any, b: Any) -> float:
@@ -531,15 +903,22 @@ def unidad_original_esta_entre_alternativas(
     original = normalizar(normalizar_espacio_unidades(unidad_original))
     if not original:
         return False
-    alternativas = re.split(
-        r"\s+/\s+|\s+(?:o|or)\s+",
-        texto(unidad_maestra),
-        flags=re.IGNORECASE,
-    )
     return any(
         original == normalizar(normalizar_espacio_unidades(alternativa))
-        for alternativa in alternativas
+        for alternativa in alternativas_unidades(unidad_maestra)
     )
+
+
+def alternativas_unidades(unidades: Any) -> list[str]:
+    return [
+        alternativa.strip()
+        for alternativa in re.split(
+            r"\s*,\s*|\s+/\s+|\s+(?:o|or)\s+",
+            texto(unidades),
+            flags=re.IGNORECASE,
+        )
+        if alternativa.strip()
+    ]
 
 
 def registros_ambiguos(a: dict[str, str], b: dict[str, str], idioma: str) -> bool:
@@ -552,7 +931,14 @@ def registros_ambiguos(a: dict[str, str], b: dict[str, str], idioma: str) -> boo
     return (
         bool(normalizar(nombre_a))
         and normalizar(nombre_a) == normalizar(nombre_b)
-        and normalizar(unidades_a) != normalizar(unidades_b)
+        and {
+            normalizar(alternativa)
+            for alternativa in alternativas_unidades(unidades_a)
+        }
+        != {
+            normalizar(alternativa)
+            for alternativa in alternativas_unidades(unidades_b)
+        }
     )
 
 
@@ -611,6 +997,14 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
             normalizar_espacio_unidades(nota) if isinstance(nota, str) else nota
             for nota in notas
         ]
+    elif notas is None:
+        resultado["notas"] = []
+    else:
+        resultado["notas"] = [notas]
+    resultado["pruebas"], resultado["notas"] = limpiar_notas_estandarizadas(
+        pruebas, resultado["notas"]
+    )
+    pruebas = resultado["pruebas"]
     conteo = {"alineados": 0, "revision": 0, "sin_coincidencia": 0}
     auditoria = []
     mensajes_astm_no_encontradas = []
@@ -628,6 +1022,25 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
         metodo_original = texto(prueba.get("metodo"))
         unidades_originales = texto(prueba.get("unidades"))
         valor_tipico_original = texto(prueba.get("valor_tipico"))
+        limpieza_especificacion, ambiguos_especificacion = normalizar_valor_medicion(
+            normalizar_terminos_especificacion(
+                normalizar_especificacion(prueba.get("especificacion"))
+            )
+        )
+        limpieza_valor_tipico, ambiguos_valor_tipico = normalizar_valor_medicion(
+            normalizar_terminos_especificacion(prueba.get("valor_tipico"))
+        )
+        observaciones_limpieza = []
+        if ambiguos_especificacion:
+            observaciones_limpieza.append(
+                "Separador numérico ambiguo en especificacion: "
+                + ", ".join(ambiguos_especificacion)
+            )
+        if ambiguos_valor_tipico:
+            observaciones_limpieza.append(
+                "Separador numérico ambiguo en valor_tipico: "
+                + ", ".join(ambiguos_valor_tipico)
+            )
         astm_no_encontradas = referencias_astm_fuera_maestro(
             metodo_original, referencias_maestras
         )
@@ -653,11 +1066,16 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
             metodo_maestro = metodo_referencias_canonico(metodo_original)
         if match["estado"] == "ALINEADO" and not nombre_maestro:
             match["estado"] = "REVISION_REQUERIDA"
-        unidades_limpias = unidad_maestra
+        if observaciones_limpieza:
+            match["estado"] = "REVISION_REQUERIDA"
+        alternativas_maestras = alternativas_unidades(unidad_maestra)
+        unidades_limpias = (
+            alternativas_maestras[0] if alternativas_maestras else unidad_maestra
+        )
         if match["estado"] == "ALINEADO":
             prueba["prueba"] = nombre_maestro
             prueba["metodo"] = metodo_maestro
-            if unidad_maestra:
+            if unidades_limpias:
                 if unidad_original_esta_entre_alternativas(
                     unidades_originales, unidad_maestra
                 ):
@@ -670,12 +1088,19 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
             conteo["revision"] += 1
         else:
             conteo["sin_coincidencia"] += 1
+        if prueba.get("especificacion") is not None:
+            prueba["especificacion"] = limpieza_especificacion
+        if prueba.get("valor_tipico") is not None:
+            prueba["valor_tipico"] = limpieza_valor_tipico
         for campo in CAMPOS_CONTENIDO_TABLA:
             valor_celda = prueba.get(campo)
             if isinstance(valor_celda, str):
-                if campo in {"unidades", "valor_tipico"}:
+                if campo == "unidades":
                     valor_celda = normalizar_formato_numerico(valor_celda)
-                prueba[campo] = normalizar_espacio_unidades(valor_celda)
+                    valor_celda = normalizar_espacio_unidades(valor_celda)
+                    prueba[campo] = valor_celda
+                elif campo not in {"especificacion", "valor_tipico"}:
+                    prueba[campo] = normalizar_espacio_unidades(valor_celda)
         valores_alineados = {
             "prueba": texto(registro.get("NOMBRE IQM")) or nombre_original,
             "unidades": (
@@ -725,6 +1150,7 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
             "margen_puntaje": match["margen"],
             "unidades_originales": unidades_originales,
             "valor_tipico_original": valor_tipico_original,
+            "observaciones_limpieza": observaciones_limpieza,
             "unidades_maestras_propuestas": unidad_maestra, "idioma": idioma,
             "puntaje_total": match["puntaje"], "puntaje_nombre": match["puntaje_nombre"],
             "puntaje_metodo": match["puntaje_metodo"], "ambiguo": match["ambiguo"],
@@ -767,27 +1193,70 @@ def ejecutar(
     base: Path,
     archivos_seleccionados: list[Path] | None = None,
     al_progreso: Callable[[int, int, str], None] | None = None,
+    carpeta_entrada: Path | None = None,
+    carpeta_salida: Path | None = None,
+    destinos_seleccionados: list[Path] | None = None,
 ) -> dict[str, int]:
-    entrada, salida, maestro_path = base / ENTRADA, base / SALIDA, base / MAESTRO
+    entrada = carpeta_entrada or base / ENTRADA
+    salida = carpeta_salida or base / SALIDA
+    maestro_path = base / MAESTRO
     if not entrada.is_dir():
         raise FileNotFoundError(f"No existe la carpeta de entrada: {entrada}")
     maestro = cargar_maestro(maestro_path)
-    archivos = (
-        listar_json(entrada)
-        if archivos_seleccionados is None
-        else sorted(
-            (path for path in archivos_seleccionados
-             if path.is_file() and path.suffix.lower() == EXTENSION),
-            key=lambda path: str(path),
-        )
-    )
+    if destinos_seleccionados is not None and archivos_seleccionados is None:
+        raise ValueError("Los destinos seleccionados requieren archivos de entrada.")
+    if (
+        destinos_seleccionados is not None
+        and len(destinos_seleccionados) != len(archivos_seleccionados or ())
+    ):
+        raise ValueError("Cada archivo de entrada debe tener un destino alineado.")
+    if archivos_seleccionados is None:
+        archivos = [(path, None) for path in listar_json(entrada)]
+    elif destinos_seleccionados is None:
+        archivos = [
+            (path, None)
+            for path in archivos_seleccionados
+            if path.is_file() and path.suffix.lower() == EXTENSION
+        ]
+        archivos.sort(key=lambda par: str(par[0]))
+    else:
+        archivos = [
+            (origen, destino)
+            for origen, destino in zip(
+                archivos_seleccionados, destinos_seleccionados
+            )
+            if origen.is_file() and origen.suffix.lower() == EXTENSION
+        ]
+        archivos.sort(key=lambda par: str(par[0]))
     if not archivos:
         raise FileNotFoundError(f"No se encontraron JSON en {entrada}")
+    archivos_relativos = []
+    for origen, destino_seleccionado in archivos:
+        try:
+            origen.relative_to(entrada)
+        except ValueError as exc:
+            raise ValueError(
+                f"El archivo seleccionado no pertenece a la carpeta de entrada: {origen}"
+            ) from exc
+        if destino_seleccionado is None:
+            relativo_salida = origen.relative_to(entrada)
+        else:
+            try:
+                relativo_salida = destino_seleccionado.relative_to(salida)
+            except ValueError as exc:
+                raise ValueError(
+                    "El destino seleccionado no pertenece a la carpeta de salida: "
+                    f"{destino_seleccionado}"
+                ) from exc
+            if ".." in relativo_salida.parts:
+                raise ValueError(
+                    f"El destino seleccionado no es válido: {destino_seleccionado}"
+                )
+        archivos_relativos.append((origen, relativo_salida))
     salida.mkdir(parents=True, exist_ok=True)
     total = {"archivos": 0, "alineados": 0, "revision": 0, "sin_coincidencia": 0, "errores": 0}
     lineas = [f"REPORTE DE ALINEACION {datetime.now().isoformat(timespec='seconds')}", "=" * 72]
-    for indice, origen in enumerate(archivos, 1):
-        rel = origen.relative_to(entrada)
+    for indice, (origen, rel) in enumerate(archivos_relativos, 1):
         if al_progreso is not None:
             al_progreso(indice - 1, len(archivos), str(rel))
         destino = salida / rel

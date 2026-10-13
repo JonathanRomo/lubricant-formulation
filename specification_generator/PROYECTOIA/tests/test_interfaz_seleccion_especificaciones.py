@@ -1,4 +1,5 @@
 import json
+import queue
 import tempfile
 import unittest
 from types import SimpleNamespace
@@ -7,14 +8,53 @@ from unittest.mock import Mock, patch
 
 from interfaz_seleccion_especificaciones import (
     Especificacion,
+    OrdenadorColumnasTreeview,
     SelectorEspecificaciones,
     buscar_especificaciones,
     buscar_contraparte,
     cargar_catalogo,
+    especificaciones_pendientes_realineacion,
     encabezados_tabla,
     preparar_vista_previa,
     preparar_vista_previa_alineada,
+    requiere_realineacion,
+    VERSION_ALINEADOR,
 )
+
+
+class TreeviewFalso:
+    def __init__(self, elementos, valores):
+        self.elementos = list(elementos)
+        self.valores = valores
+        self.encabezados = {}
+
+    def cget(self, opcion):
+        return "Treeview" if opcion == "style" else ""
+
+    def column(self, _columna, opcion):
+        return 360 if opcion == "width" else ""
+
+    def bind(self, *_args, **_kwargs):
+        return "bind-id"
+
+    def winfo_exists(self):
+        return True
+
+    def get_children(self, _padre=""):
+        return tuple(self.elementos)
+
+    def heading(self, columna, **opciones):
+        self.encabezados[columna] = opciones
+
+    def set(self, elemento, columna):
+        return self.valores[elemento][columna]
+
+    def move(self, elemento, _padre, indice):
+        self.elementos.remove(elemento)
+        self.elementos.insert(indice, elemento)
+
+    def exists(self, elemento):
+        return elemento in self.elementos
 
 
 def json_especificacion(
@@ -48,6 +88,329 @@ def json_especificacion(
 
 
 class SelectorEspecificacionesTests(unittest.TestCase):
+    def test_ordenar_una_columna_y_volver_al_orden_original(self):
+        tabla = TreeviewFalso(
+            ("0", "1", "2", "3"),
+            {
+                "0": {"prueba": "Zinc"},
+                "1": {"prueba": "Ácido"},
+                "2": {"prueba": "Boro"},
+                "3": {"prueba": "Azul"},
+            },
+        )
+        fuente = SimpleNamespace(measure=lambda texto: len(texto) * 8)
+        with (
+            patch(
+                "interfaz_seleccion_especificaciones.ttk.Style",
+                return_value=Mock(lookup=Mock(return_value="TkDefaultFont")),
+            ),
+            patch(
+                "interfaz_seleccion_especificaciones.tkfont.Font",
+                return_value=fuente,
+            ),
+        ):
+            ordenador = OrdenadorColumnasTreeview(tabla, {"prueba": "Prueba"})
+
+            ordenador.alternar("prueba")
+
+            self.assertEqual(tabla.elementos, ["1", "3", "2", "0"])
+            texto_encabezado = tabla.encabezados["prueba"]["text"]
+            self.assertIn("▲", texto_encabezado)
+            self.assertGreater(texto_encabezado.index("▲"), len("Prueba") + 1)
+            self.assertEqual(tabla.encabezados["prueba"]["anchor"], "e")
+
+            ordenador.alternar("prueba")
+
+        self.assertEqual(tabla.elementos, ["0", "1", "2", "3"])
+        self.assertIn("▼", tabla.encabezados["prueba"]["text"])
+
+    def test_cambiar_columna_reemplaza_el_orden_activo_sin_perder_original(self):
+        tabla = TreeviewFalso(
+            ("0", "1", "2"),
+            {
+                "0": {"prueba": "Zinc", "metodo": "ASTM D1"},
+                "1": {"prueba": "Ácido", "metodo": "ASTM D3"},
+                "2": {"prueba": "Boro", "metodo": "ASTM D2"},
+            },
+        )
+        fuente = SimpleNamespace(measure=lambda texto: len(texto) * 8)
+        with (
+            patch(
+                "interfaz_seleccion_especificaciones.ttk.Style",
+                return_value=Mock(lookup=Mock(return_value="TkDefaultFont")),
+            ),
+            patch(
+                "interfaz_seleccion_especificaciones.tkfont.Font",
+                return_value=fuente,
+            ),
+        ):
+            ordenador = OrdenadorColumnasTreeview(
+                tabla,
+                {"prueba": "Prueba", "metodo": "Método"},
+            )
+
+            ordenador.alternar("prueba")
+            ordenador.alternar("metodo")
+
+            self.assertEqual(tabla.elementos, ["0", "2", "1"])
+            ordenador.alternar("metodo")
+
+        self.assertEqual(tabla.elementos, ["0", "1", "2"])
+
+    def test_versiones_del_alineador_determinan_si_se_debe_realinear(self):
+        self.assertTrue(requiere_realineacion("1.5.9", "1.6.0"))
+        self.assertTrue(requiere_realineacion("", "1.6.0"))
+        self.assertFalse(requiere_realineacion("1.6", "1.6.0"))
+        self.assertFalse(requiere_realineacion("1.7.0", "1.6.0"))
+
+    def test_catalogo_lee_la_version_del_alineador_guardada_en_el_json(self):
+        with tempfile.TemporaryDirectory() as temporal:
+            carpeta = Path(temporal)
+            datos = json_especificacion()
+            datos["alineacion_metodos_lab"] = {"version_programa": "1.5.2"}
+            (carpeta / "producto.json").write_text(
+                json.dumps(datos, ensure_ascii=False),
+                encoding="utf-8",
+            )
+
+            catalogo = cargar_catalogo(carpeta)
+
+        self.assertEqual(
+            catalogo.especificaciones[0].version_alineador,
+            "1.5.2",
+        )
+
+    def test_seleccion_mixta_solo_realinea_archivos_con_version_anterior(self):
+        origen_viejo = Especificacion(
+            ruta=Path("origen/viejo.json"),
+            nombre_producto="Producto viejo",
+            codigo="P-1",
+            cliente="Cliente",
+            revision="00",
+            busqueda="",
+        )
+        origen_actual = Especificacion(
+            ruta=Path("origen/actual.json"),
+            nombre_producto="Producto actual",
+            codigo="P-2",
+            cliente="Cliente",
+            revision="00",
+            busqueda="",
+        )
+        alineada_vieja = Especificacion(
+            ruta=Path("alineadas/viejo.json"),
+            nombre_producto="Producto viejo",
+            codigo="P-1",
+            cliente="Cliente",
+            revision="00",
+            busqueda="",
+            version_alineador="1.5.0",
+        )
+        alineada_actual = Especificacion(
+            ruta=Path("alineadas/actual.json"),
+            nombre_producto="Producto actual",
+            codigo="P-2",
+            cliente="Cliente",
+            revision="00",
+            busqueda="",
+            version_alineador=VERSION_ALINEADOR,
+        )
+        selector = SimpleNamespace(
+            paneles={
+                "nuevas": SimpleNamespace(
+                    catalogo=SimpleNamespace(
+                        especificaciones=[alineada_vieja, alineada_actual]
+                    ),
+                    documentos_marcados={
+                        alineada_vieja.ruta,
+                        alineada_actual.ruta,
+                    },
+                ),
+                "anteriores": SimpleNamespace(
+                    catalogo=SimpleNamespace(
+                        especificaciones=[origen_viejo, origen_actual]
+                    )
+                ),
+            },
+            raiz=Mock(),
+            _alinear_especificaciones=Mock(),
+        )
+
+        SelectorEspecificaciones._realinear_seleccionadas(selector, "nuevas")
+
+        selector._alinear_especificaciones.assert_called_once_with(
+            [origen_viejo.ruta],
+            destinos_seleccionados=[alineada_vieja.ruta],
+        )
+
+    def test_boton_realinear_se_deshabilita_si_no_hay_versiones_pendientes(self):
+        boton = Mock()
+        especificacion = Especificacion(
+            ruta=Path("alineadas/actual.json"),
+            nombre_producto="Producto",
+            codigo="P-1",
+            cliente="Cliente",
+            revision="00",
+            busqueda="",
+            version_alineador=VERSION_ALINEADOR,
+        )
+        selector = SimpleNamespace(
+            paneles={
+                "nuevas": SimpleNamespace(
+                    catalogo=SimpleNamespace(especificaciones=[especificacion]),
+                    documentos_marcados={especificacion.ruta},
+                    boton_realinear=boton,
+                )
+            }
+        )
+
+        SelectorEspecificaciones._actualizar_estado_accion(selector, "nuevas")
+
+        boton.configure.assert_called_once_with(state="disabled")
+
+    def test_worker_entrega_los_destinos_seleccionados_al_alineador(self):
+        selector = SimpleNamespace(
+            _etiqueta_progreso_alineacion=None,
+            _barra_progreso_alineacion=None,
+            _cola_alineacion=queue.Queue(),
+            carpetas_json={
+                "anteriores": Path("origen"),
+                "nuevas": Path("alineadas"),
+            },
+        )
+        origen = Path("origen/producto.json")
+        destino = Path("alineadas/producto_actualizado.json")
+
+        with (
+            patch(
+                "interfaz_seleccion_especificaciones.ejecutar_alineacion",
+                return_value={"archivos": 1},
+            ) as alinear,
+            patch("interfaz_seleccion_especificaciones.threading.Thread") as thread,
+        ):
+            SelectorEspecificaciones._ejecutar_tarea_alineacion(
+                selector,
+                [origen],
+                [destino],
+            )
+            thread.call_args.kwargs["target"]()
+
+        alinear.assert_called_once()
+        self.assertEqual(
+            alinear.call_args.kwargs["destinos_seleccionados"],
+            [destino],
+        )
+
+    def test_boton_bulk_alinea_solo_las_especificaciones_marcadas(self):
+        marcada = Path("anteriores/marcada.json")
+        especificacion_marcada = Especificacion(
+            ruta=marcada,
+            nombre_producto="Especificación marcada",
+            codigo="20100001",
+            cliente="Cliente",
+            revision="00",
+            busqueda="",
+        )
+        actual_no_marcada = Especificacion(
+            ruta=Path("anteriores/actual.json"),
+            nombre_producto="Otra especificación",
+            codigo="20100002",
+            cliente="Cliente",
+            revision="00",
+            busqueda="",
+        )
+        selector = SimpleNamespace(
+            paneles={
+                "anteriores": SimpleNamespace(
+                    catalogo=SimpleNamespace(
+                        especificaciones=[especificacion_marcada]
+                    ),
+                    documentos_marcados={marcada},
+                    especificacion_actual=actual_no_marcada,
+                )
+            },
+            _alinear_especificaciones=Mock(),
+        )
+
+        SelectorEspecificaciones._alinear_seleccionadas(selector, "anteriores")
+
+        selector._alinear_especificaciones.assert_called_once_with([marcada])
+
+    def test_marcar_una_especificacion_no_inicia_alineacion(self):
+        ruta = Path("anteriores/producto.json")
+        especificacion = Especificacion(
+            ruta=ruta,
+            nombre_producto="Aceite Hidráulico",
+            codigo="20100001",
+            cliente="Cliente",
+            revision="00",
+            busqueda="",
+        )
+        lista = SimpleNamespace(
+            nearest=Mock(return_value=0),
+            yview=Mock(return_value=(0.0, 1.0)),
+            yview_moveto=Mock(),
+            selection_set=Mock(),
+            activate=Mock(),
+        )
+        selector = SimpleNamespace(
+            paneles={
+                "anteriores": SimpleNamespace(
+                    documentos_marcados=set(),
+                    lista=lista,
+                    sugerencias=[especificacion],
+                )
+            },
+            _actualizar_sugerencias=Mock(),
+            _actualizar_estado_accion=Mock(),
+            _mostrar_previa=Mock(),
+            _alinear_especificaciones=Mock(),
+        )
+
+        SelectorEspecificaciones._clic_en_lista(
+            selector, "anteriores", SimpleNamespace(x=0, y=1)
+        )
+
+        selector._alinear_especificaciones.assert_not_called()
+
+    def test_desmarcar_una_especificacion_no_vuelve_a_alinearla(self):
+        ruta = Path("anteriores/producto.json")
+        especificacion = Especificacion(
+            ruta=ruta,
+            nombre_producto="Aceite Hidráulico",
+            codigo="20100001",
+            cliente="Cliente",
+            revision="00",
+            busqueda="",
+        )
+        lista = SimpleNamespace(
+            nearest=Mock(return_value=0),
+            yview=Mock(return_value=(0.0, 1.0)),
+            yview_moveto=Mock(),
+            selection_set=Mock(),
+            activate=Mock(),
+        )
+        selector = SimpleNamespace(
+            paneles={
+                "anteriores": SimpleNamespace(
+                    documentos_marcados={ruta},
+                    lista=lista,
+                    sugerencias=[especificacion],
+                )
+            },
+            _actualizar_sugerencias=Mock(),
+            _actualizar_estado_accion=Mock(),
+            _mostrar_previa=Mock(),
+            _alinear_especificaciones=Mock(),
+        )
+
+        SelectorEspecificaciones._clic_en_lista(
+            selector, "anteriores", SimpleNamespace(x=0, y=1)
+        )
+
+        self.assertNotIn(ruta, selector.paneles["anteriores"].documentos_marcados)
+        selector._alinear_especificaciones.assert_not_called()
+
     def test_editar_abre_la_especificacion_actual_en_el_callback(self):
         especificacion = Especificacion(
             ruta=Path("alineadas/producto.json"),

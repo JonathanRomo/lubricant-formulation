@@ -2,18 +2,23 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import pandas as pd
 
 from alinear_especificaciones_json import (
     cargar_maestro,
+    ejecutar,
     limpiar_marca_acreditacion,
     metodo_maestro_canonico,
     metodo_maestro_para_idioma,
     metodos_maestros,
     mejor_coincidencia,
+    normalizar_especificacion,
     normalizar_espacio_unidades,
     normalizar_formato_numerico,
+    normalizar_terminos_especificacion,
+    normalizar_valor_medicion,
     procesar_json,
     referencias_astm,
     referencias_astm_fuera_maestro,
@@ -34,6 +39,77 @@ MAESTRO = {
 
 
 class AlineacionEspecificacionesTests(unittest.TestCase):
+    def test_ejecutar_acepta_carpetas_configuradas_de_entrada_y_salida(self):
+        with tempfile.TemporaryDirectory() as temporal:
+            base = Path(temporal)
+            entrada = base / "origen"
+            salida = base / "alineadas"
+            archivo = entrada / "producto.json"
+            entrada.mkdir()
+            archivo.write_text("{}", encoding="utf-8")
+
+            with (
+                patch(
+                    "alinear_especificaciones_json.cargar_maestro",
+                    return_value=[MAESTRO],
+                ),
+                patch(
+                    "alinear_especificaciones_json.procesar_json",
+                    return_value={
+                        "alineados": 1,
+                        "revision": 0,
+                        "sin_coincidencia": 0,
+                    },
+                ) as procesar_json_mock,
+            ):
+                resultado = ejecutar(
+                    base,
+                    archivos_seleccionados=[archivo],
+                    carpeta_entrada=entrada,
+                    carpeta_salida=salida,
+                )
+
+            procesar_json_mock.assert_called_once_with(
+                archivo, salida / "producto.json", [MAESTRO]
+            )
+            self.assertEqual(resultado["archivos"], 1)
+            self.assertTrue((salida / "REPORTE_ALINEACION.txt").is_file())
+
+    def test_ejecutar_realinea_sobre_los_destinos_seleccionados(self):
+        with tempfile.TemporaryDirectory() as temporal:
+            base = Path(temporal)
+            entrada = base / "origen"
+            salida = base / "alineadas"
+            origen = entrada / "producto_original.json"
+            destino = salida / "producto_alineado.json"
+            entrada.mkdir()
+            salida.mkdir()
+            origen.write_text("{}", encoding="utf-8")
+
+            with (
+                patch(
+                    "alinear_especificaciones_json.cargar_maestro",
+                    return_value=[MAESTRO],
+                ),
+                patch(
+                    "alinear_especificaciones_json.procesar_json",
+                    return_value={
+                        "alineados": 1,
+                        "revision": 0,
+                        "sin_coincidencia": 0,
+                    },
+                ) as procesar_json_mock,
+            ):
+                ejecutar(
+                    base,
+                    archivos_seleccionados=[origen],
+                    carpeta_entrada=entrada,
+                    carpeta_salida=salida,
+                    destinos_seleccionados=[destino],
+                )
+
+            procesar_json_mock.assert_called_once_with(origen, destino, [MAESTRO])
+
     def test_usa_el_metodo_del_maestro_en_el_idioma_del_json(self):
         maestro_bilingue = {
             **MAESTRO,
@@ -105,6 +181,147 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
     def test_preserva_decimales_ambiguos_como_decimales(self):
         self.assertEqual(normalizar_formato_numerico("3,351"), "3,351")
         self.assertEqual(normalizar_formato_numerico("7.500"), "7,500")
+
+    def test_normaliza_variaciones_de_minimo_y_maximo_en_especificaciones(self):
+        casos = (
+            ("30 mínimo", "30 MÍNIMO"),
+            ("30 minimo", "30 MÍNIMO"),
+            ("30 MINIMO", "30 MÍNIMO"),
+            ("30 MÍNIMO", "30 MÍNIMO"),
+            ("30 MIN", "30 MÍNIMO"),
+            ("30 MÍN.", "30 MÍNIMO"),
+            ("30 min", "30 min"),
+            ("30 min de agitación", "30 min de agitación"),
+            ("30 max", "30 MÁXIMO"),
+            ("30 MAXIMO", "30 MÁXIMO"),
+            ("30 máximo", "30 MÁXIMO"),
+            ("30 Máx.", "30 MÁXIMO"),
+            ("30 MAX.", "30 MÁXIMO"),
+        )
+        for entrada, esperado in casos:
+            with self.subTest(entrada=entrada):
+                self.assertEqual(normalizar_especificacion(entrada), esperado)
+
+    def test_normaliza_minimo_maximo_sin_confundirlos_con_metros(self):
+        casos = (
+            ("149 mínimo", "149 MÍNIMO", []),
+            ("− 45 máximo", "− 45 MÁXIMO", []),
+            ("10 MIN", "10 MÍNIMO", []),
+            ("10 min", "10 min", []),
+            ("1.000 mínimo", "1.000 MÍNIMO", ["1.000"]),
+        )
+        for entrada, esperado, ambiguos_esperados in casos:
+            with self.subTest(entrada=entrada):
+                especificacion = normalizar_especificacion(entrada)
+                valor, ambiguos = normalizar_valor_medicion(especificacion)
+                self.assertEqual(valor, esperado)
+                self.assertEqual(ambiguos, ambiguos_esperados)
+
+    def test_normaliza_terminos_frecuentes_en_especificacion_y_valor_tipico(self):
+        casos = (
+            ("Típico", "TÍPICO"),
+            ("tipica", "TÍPICA"),
+            ("typical", "TYPICAL"),
+            ("Pasa", "PASA"),
+            ("pass", "PASS"),
+            ("reportar", "REPORTAR"),
+            ("Report", "REPORT"),
+            ("reported", "REPORTED"),
+            ("negativo", "NEGATIVA"),
+            ("NEGATIVA", "NEGATIVA"),
+            ("negativos", "NEGATIVA"),
+            ("NEGATIVAS", "NEGATIVA"),
+            ("negative", "NEGATIVE"),
+            ("NEGATIVE", "NEGATIVE"),
+            ("negatives", "NEGATIVE"),
+        )
+        for entrada, esperado in casos:
+            with self.subTest(entrada=entrada):
+                self.assertEqual(normalizar_terminos_especificacion(entrada), esperado)
+
+    def test_normaliza_valores_y_unidades_segun_reglas_de_limpieza(self):
+        casos = (
+            ("10000", "10 000", []),
+            ("1234.56", "1 234,56", []),
+            (".25", "0,25", []),
+            ("25°C", "25 °C", []),
+            ("100mg/L", "100 mg/L", []),
+            ("10 kgs", "10 kg", []),
+            ("kg/m3", "kg/m³", []),
+            ("3.2e5", "3,2 × 10⁵", []),
+            ("3.2e-5", "3,2 × 10⁻⁵", []),
+            ("<0.05mg/L", "< 0,05 mg/L", []),
+            ("10±2", "10 ± 2", []),
+            ("10<20", "10 < 20", []),
+            ("-0.25", "− 0,25", []),
+            ("N.m", "N·m", []),
+            ("Pa.s", "Pa·s", []),
+            ("mPa.s", "mPa·s", []),
+            ("MPa", "MPa", []),
+            ("10 MPA", "10 MPa", []),
+            ("10 M", "10 m", []),
+            ("100 l, 10 secs", "100 L, 10 s", []),
+            ("cm-1", "cm⁻¹", []),
+            ("m2, m^3, s-1", "m², m³, s⁻¹", []),
+            ("1.234.567,89", "1 234 567,89", []),
+            ("1,234,567", "1 234 567", []),
+            ("10 min", "10 min", []),
+            ("10 kg.", "10 kg", []),
+            ("N/A", "N/A", []),
+            ("ND", "ND", []),
+            ("2026-10-13", "2026-10-13", []),
+            ("ASTM D445", "ASTM D445", []),
+            ("ID: 10000", "ID: 10000", []),
+            ("SN-1234", "SN-1234", []),
+            ("1.2.3", "1.2.3", []),
+            ("192.168.1.10", "192.168.1.10", []),
+            ("7.500", "7.500", ["7.500"]),
+        )
+        for entrada, esperado, ambiguos in casos:
+            with self.subTest(entrada=entrada):
+                self.assertEqual(
+                    normalizar_valor_medicion(entrada),
+                    (esperado, ambiguos),
+                )
+
+    def test_valor_ambiguo_se_conserva_y_marca_la_prueba_para_revision(self):
+        with tempfile.TemporaryDirectory() as temporal:
+            origen = Path(temporal) / "entrada.json"
+            destino = Path(temporal) / "salida.json"
+            origen.write_text(
+                json.dumps(
+                    {
+                        "documento": {"idioma": "es"},
+                        "pruebas": [
+                            {
+                                "prueba": "Viscosidad cinemática",
+                                "metodo": "ASTM D445",
+                                "especificacion": "7.500 mg/L",
+                                "valor_tipico": "1,234",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            conteo = procesar_json(origen, destino, [MAESTRO])
+            salida = json.loads(destino.read_text(encoding="utf-8"))
+            prueba = salida["pruebas"][0]
+            detalle = salida["alineacion_metodos_lab"]["detalle"][0]
+
+            self.assertEqual(conteo["revision"], 1)
+            self.assertEqual(conteo["alineados"], 0)
+            self.assertEqual(prueba["especificacion"], "7.500 mg/L")
+            self.assertEqual(prueba["valor_tipico"], "1,234")
+            self.assertEqual(detalle["estado"], "REVISION_REQUERIDA")
+            self.assertEqual(
+                detalle["observaciones_limpieza"],
+                [
+                    "Separador numérico ambiguo en especificacion: 7.500",
+                    "Separador numérico ambiguo en valor_tipico: 1,234",
+                ],
+            )
 
     def test_separa_cantidad_y_unidad_en_celdas_de_tabla(self):
         casos = (
@@ -268,7 +485,7 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
                 ["Mantener a 40 °C con 0,6 mL de muestra."],
             )
             self.assertEqual(alineada["unidades"], "mL NaOH 0,01 N")
-            self.assertEqual(alineada["valor_tipico"], "0,25 - 7\u202f500,50")
+            self.assertEqual(alineada["valor_tipico"], "0,25 - 7 500,50")
             self.assertEqual(alineada["especificacion"], "40 °C / 0,6 mL")
             self.assertEqual(sin_coincidencia["unidades"], "5,0 mL")
             self.assertEqual(sin_coincidencia["valor_tipico"], "50 - 70")
@@ -282,8 +499,193 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
                     "unidades": "mL NaOH 0,01 N",
                     "metodo": "ASTM D445",
                     "especificacion": "40 °C / 0,6 mL",
-                    "valor_tipico": "0,25 - 7\u202f500,50",
+                    "valor_tipico": "0,25 - 7 500,50",
                 },
+            )
+
+    def test_unidades_maestras_separadas_por_comas_son_alternativas(self):
+        maestro_unidades = {
+            **MAESTRO,
+            "UNIDADES": "mm²/s, g/cm³, kg/L",
+            "UNITS": "mm²/s, g/ml, kg/L",
+        }
+        casos = (
+            (
+                "es",
+                "Viscosidad cinemática",
+                "g/cm³",
+                "Pa",
+                "g/cm³",
+                "mm²/s",
+            ),
+            (
+                "en",
+                "Kinematic viscosity",
+                "g/ml",
+                "Pa",
+                "g/ml",
+                "mm²/s",
+            ),
+        )
+        with tempfile.TemporaryDirectory() as temporal:
+            for (
+                idioma,
+                nombre,
+                unidad_valida,
+                unidad_invalida,
+                esperada_valida,
+                esperada_invalida,
+            ) in casos:
+                with self.subTest(idioma=idioma):
+                    origen = Path(temporal) / f"entrada_unidades_{idioma}.json"
+                    destino = Path(temporal) / f"salida_unidades_{idioma}.json"
+                    origen.write_text(
+                        json.dumps(
+                            {
+                                "documento": {"idioma": idioma},
+                                "pruebas": [
+                                    {
+                                        "prueba": nombre,
+                                        "metodo": "ASTM D445",
+                                        "unidades": unidad_valida,
+                                    },
+                                    {
+                                        "prueba": nombre,
+                                        "metodo": "ASTM D445",
+                                        "unidades": unidad_invalida,
+                                    },
+                                ],
+                            }
+                        ),
+                        encoding="utf-8",
+                    )
+
+                    conteo = procesar_json(origen, destino, [maestro_unidades])
+                    salida = json.loads(destino.read_text(encoding="utf-8"))
+                    detalle = salida["alineacion_metodos_lab"]["detalle"]
+
+                    self.assertEqual(conteo["alineados"], 2)
+                    self.assertEqual(
+                        [prueba["unidades"] for prueba in salida["pruebas"]],
+                        [esperada_valida, esperada_invalida],
+                    )
+                    self.assertEqual(
+                        [
+                            valores["valores_alineados"]["unidades"]
+                            for valores in detalle
+                        ],
+                        [esperada_valida, esperada_invalida],
+                    )
+
+    def test_separa_notas_estandarizadas_de_las_pruebas_en_espanol_e_ingles(self):
+        casos = (
+            (
+                "es",
+                "Viscosidad cinemática",
+                "ASTM D445",
+                "Notas: La versión vigente del método aplicable "
+                "corresponderá a la versión emitida proporcionada por el laboratorio.",
+                True,
+                "La versión vigente del método aplicable corresponderá a la "
+                "versión emitida proporcionada por el laboratorio.",
+            ),
+            (
+                "en",
+                "Kinematic viscosity Notes: The active version of the applicable "
+                "method shall be the version issued and provided by the laboratory.",
+                "ASTM D445",
+                "",
+                False,
+                "The active version of the applicable method shall be the "
+                "version issued and provided by the laboratory.",
+            ),
+        )
+        with tempfile.TemporaryDirectory() as temporal:
+            for idioma, nombre, metodo, nota, fila_nota, nota_canonica in casos:
+                with self.subTest(idioma=idioma):
+                    origen = Path(temporal) / f"entrada_{idioma}.json"
+                    destino = Path(temporal) / f"salida_{idioma}.json"
+                    pruebas = [
+                        {
+                            "prueba": nombre,
+                            "metodo": metodo,
+                            "unidades": "cSt",
+                        }
+                    ]
+                    notas = []
+                    if fila_nota:
+                        pruebas.append(
+                            {
+                                campo: nota
+                                for campo in (
+                                    "prueba",
+                                    "unidades",
+                                    "metodo",
+                                    "especificacion",
+                                    "valor_tipico",
+                                )
+                            }
+                        )
+                    origen.write_text(
+                        json.dumps(
+                            {
+                                "documento": {"idioma": idioma},
+                                "notas": notas,
+                                "pruebas": pruebas,
+                            }
+                        ),
+                        encoding="utf-8",
+                    )
+
+                    conteo = procesar_json(origen, destino, [MAESTRO])
+                    salida = json.loads(destino.read_text(encoding="utf-8"))
+
+                    self.assertEqual(conteo["alineados"], 1)
+                    self.assertEqual(len(salida["pruebas"]), 1)
+                    self.assertEqual(
+                        salida["pruebas"][0]["prueba"],
+                        "Viscosidad cinemática"
+                        if idioma == "es"
+                        else "Kinematic viscosity",
+                    )
+                    self.assertEqual(salida["notas"], [nota_canonica])
+                    self.assertEqual(
+                        salida["alineacion_metodos_lab"]["version_programa"],
+                        "1.12.0",
+                    )
+
+    def test_normaliza_terminos_en_especificacion_y_valor_tipico_alineados(self):
+        with tempfile.TemporaryDirectory() as temporal:
+            origen = Path(temporal) / "entrada.json"
+            destino = Path(temporal) / "salida.json"
+            origen.write_text(
+                json.dumps(
+                    {
+                        "documento": {"idioma": "es"},
+                        "pruebas": [
+                            {
+                                "prueba": "Viscosidad cinemática",
+                                "metodo": "ASTM D445",
+                                "unidades": "cSt",
+                                "especificacion": "típico / pasa / reportar / negativo",
+                                "valor_tipico": "typical / pass / report / negative",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            procesar_json(origen, destino, [MAESTRO])
+            prueba = json.loads(destino.read_text(encoding="utf-8"))["pruebas"][0]
+
+            self.assertEqual(
+                prueba["especificacion"],
+                "TÍPICO / PASA / REPORTAR / NEGATIVA",
+            )
+            self.assertEqual(
+                prueba["valor_tipico"],
+                "TYPICAL / PASS / REPORT / NEGATIVE",
             )
 
     def test_quita_asteriscos_de_acreditacion_al_inicio_del_nombre_maestro(self):
@@ -374,6 +776,7 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
             self.assertEqual(prueba["prueba"], "Kinematic viscosity")
             self.assertEqual(prueba["metodo"], "ASTM D445")
             self.assertEqual(prueba["unidades"], "mm2/s")
+            self.assertEqual(prueba["especificacion"], "10 min")
             self.assertEqual(prueba["campo_extra"], "preservar")
             self.assertEqual(
                 salida["alineacion_metodos_lab"]["detalle"][0]["idioma"], "INGLES"
@@ -734,6 +1137,24 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
 
         self.assertEqual(resultado["estado"], "REVISION_REQUERIDA")
         self.assertTrue(resultado["ambiguo"])
+
+    def test_orden_de_alternativas_no_provoca_ambiguedad_de_unidades(self):
+        unidades_primera_opcion = {
+            **MAESTRO,
+            "UNIDADES": "cSt, g/cm³",
+        }
+        unidad_en_orden_distinto = {
+            **MAESTRO,
+            "UNIDADES": "g/cm³, cSt",
+        }
+        resultado = mejor_coincidencia(
+            "Viscosidad cinemática",
+            "ASTM D445",
+            [unidades_primera_opcion, unidad_en_orden_distinto],
+        )
+
+        self.assertEqual(resultado["estado"], "ALINEADO")
+        self.assertFalse(resultado["ambiguo"])
 
     def test_no_vacia_nombre_si_falta_traduccion_maestra(self):
         sin_traduccion = {**MAESTRO, "NOMBRE IQM": ""}

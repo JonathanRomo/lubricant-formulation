@@ -29,15 +29,25 @@ from alinear_especificaciones_json import (
     COLUMNAS_MAESTRO,
     MAESTRO,
     VERSION as VERSION_ALINEADOR,
+    alternativas_unidades,
     cargar_maestro,
     metodo_maestro_canonico,
     metodo_maestro_para_idioma,
+    metodo_referencias_canonico,
     metodos_maestros,
+    mejor_coincidencia,
+    normalizar_espacio_unidades,
+    normalizar_especificacion,
+    normalizar_formato_numerico,
+    normalizar_terminos_especificacion,
+    normalizar_valor_medicion,
     nombres_canonicos,
     normalizar,
     referencias_astm,
+    unidad_original_esta_entre_alternativas,
 )
 from interfaz_seleccion_especificaciones import (
+    OrdenadorColumnasTreeview,
     crear_divisor_redimensionable,
     encabezados_tabla,
     preparar_vista_previa,
@@ -60,6 +70,8 @@ CAMPO_PERIODICIDAD = "PERIODIDICAD DE ANALISIS"
 SIMBOLOS_PERIODICIDAD = ("◊", "▶", "C", "I", "P", "♦", "Q", "●")
 MAX_SIMBOLOS_PERIODICIDAD = 4
 PERIODICIDAD_PREDETERMINADA = "▶"
+DIGITOS_SUPERINDICE = "⁰¹²³⁴⁵⁶⁷⁸⁹"
+DIGITOS_SUPERINDICE_A_ENTERO = str.maketrans(DIGITOS_SUPERINDICE, "0123456789")
 LEYENDA_PERIODICIDAD = {
     "es": (
         ("◊", "Prueba crítica"),
@@ -263,6 +275,7 @@ def crear_datos_especificacion_nueva(
     control: dict[str, str],
     pruebas: list[dict[str, str]],
     notas: list[str],
+    desarrollador: str = "",
 ) -> dict[str, Any]:
     """Construye el JSON alineado que usa la vista previa y la generación Word."""
     nombre = nombre_producto.strip()
@@ -320,10 +333,122 @@ def crear_datos_especificacion_nueva(
         },
         "control_documental": control_documental,
         "FECHA DE REANALISIS": "",
+        "Desarrollador": desarrollador.strip(),
         "pruebas": pruebas_json,
         "notas": notas_especificacion,
     }
     return crear_documento_alineado_manual(datos)
+
+
+def alinear_filas_generador(
+    pruebas: list[dict[str, str]],
+    maestro: list[dict[str, str]],
+    idioma: str,
+    al_progreso: Callable[[int, int], None] | None = None,
+) -> tuple[list[dict[str, str]], dict[str, int]]:
+    """Aplica las reglas del alineador sin tocar notas ni comentarios de celda."""
+    if idioma not in {"es", "en"}:
+        raise ValueError("Selecciona Español o English.")
+    if not maestro:
+        raise ValueError("La lista maestra no contiene registros.")
+
+    filas = copy.deepcopy(pruebas)
+    filas_con_datos = [
+        fila for fila in filas
+        if any(str(fila.get(campo, "") or "").strip() for campo in CAMPOS_TABLA)
+    ]
+    total = len(filas_con_datos)
+    conteo = {"alineados": 0, "revision": 0, "sin_coincidencia": 0}
+    idioma_maestro = "INGLES" if idioma == "en" else "ESPANOL"
+    referencias_maestras = {
+        referencia
+        for registro in maestro
+        for metodo in metodos_maestros(registro)
+        for referencia in referencias_astm(metodo)
+    }
+    procesadas = 0
+
+    for fila in filas:
+        if not any(
+            str(fila.get(campo, "") or "").strip() for campo in CAMPOS_TABLA
+        ):
+            continue
+
+        originales = {
+            campo: str(fila.get(campo, "") or "").strip()
+            for campo in ("prueba", "metodo", "unidades", "especificacion", "valor_tipico")
+        }
+        nombres_sin_comentario: dict[str, str] = {}
+        for campo in ("prueba", "metodo"):
+            coincidencia = re.search(
+                rf"\s+([{DIGITOS_SUPERINDICE}]+)$",
+                originales[campo],
+            )
+            nombres_sin_comentario[campo] = (
+                originales[campo][:coincidencia.start()].rstrip()
+                if coincidencia
+                else originales[campo]
+            )
+
+        especificacion, ambiguos_especificacion = normalizar_valor_medicion(
+            normalizar_terminos_especificacion(
+                normalizar_especificacion(originales["especificacion"])
+            )
+        )
+        valor_tipico, ambiguos_valor_tipico = normalizar_valor_medicion(
+            normalizar_terminos_especificacion(originales["valor_tipico"])
+        )
+        match = mejor_coincidencia(
+            nombres_sin_comentario["prueba"],
+            nombres_sin_comentario["metodo"],
+            maestro,
+            idioma_maestro,
+        )
+        registro = match["registro"]
+        nombre_maestro, unidad_maestra = nombres_canonicos(registro, idioma_maestro)
+        metodo_maestro_fuente = metodo_maestro_para_idioma(registro, idioma_maestro)
+        metodo_maestro = metodo_maestro_canonico(metodo_maestro_fuente)
+        if len(referencias_astm(nombres_sin_comentario["metodo"])) > len(
+            referencias_astm(metodo_maestro_fuente)
+        ):
+            metodo_maestro = metodo_referencias_canonico(
+                nombres_sin_comentario["metodo"]
+            )
+        if match["estado"] == "ALINEADO" and not nombre_maestro:
+            match["estado"] = "REVISION_REQUERIDA"
+        if ambiguos_especificacion or ambiguos_valor_tipico:
+            match["estado"] = "REVISION_REQUERIDA"
+
+        alternativas = alternativas_unidades(unidad_maestra)
+        unidades_alineadas = alternativas[0] if alternativas else unidad_maestra
+        if match["estado"] == "ALINEADO":
+            for campo, valor_base in (
+                ("prueba", nombre_maestro),
+                ("metodo", metodo_maestro),
+            ):
+                marcador = originales[campo][len(nombres_sin_comentario[campo]):].strip()
+                fila[campo] = " ".join(parte for parte in (valor_base, marcador) if parte)
+            if unidades_alineadas:
+                if unidad_original_esta_entre_alternativas(
+                    originales["unidades"], unidad_maestra
+                ):
+                    unidades_alineadas = originales["unidades"]
+                fila["unidades"] = normalizar_formato_numerico(unidades_alineadas)
+            conteo["alineados"] += 1
+        elif match["estado"] == "REVISION_REQUERIDA":
+            conteo["revision"] += 1
+        else:
+            conteo["sin_coincidencia"] += 1
+
+        fila["especificacion"] = especificacion
+        fila["valor_tipico"] = valor_tipico
+        for campo in ("prueba", "metodo", "unidades"):
+            fila[campo] = normalizar_espacio_unidades(fila.get(campo, ""))
+        if al_progreso is not None:
+            procesadas += 1
+            al_progreso(procesadas, total)
+
+    return filas, conteo
 
 
 def _datos_generador_desde_json(datos: dict[str, Any]) -> dict[str, Any]:
@@ -377,14 +502,181 @@ def _datos_generador_desde_json(datos: dict[str, Any]) -> dict[str, Any]:
         "pruebas": filas_generador,
         "notas": [str(nota) for nota in notas if nota is not None],
         "fecha_reanalisis": str(datos.get("FECHA DE REANALISIS", "") or ""),
+        "desarrollador": str(datos.get("Desarrollador", "") or ""),
     }
+
+
+def _marcador_comentario_celda(valor: str) -> str | None:
+    coincidencia = re.search(rf"\s+([{DIGITOS_SUPERINDICE}]+)$", valor)
+    if coincidencia is None:
+        return None
+    digitos = coincidencia.group(1).translate(DIGITOS_SUPERINDICE_A_ENTERO)
+    return str(int(digitos))
+
+
+def _formatear_superindice(numero: int) -> str:
+    return str(numero).translate(str.maketrans("0123456789", DIGITOS_SUPERINDICE))
+
+
+def _actualizar_comentarios_celda(
+    pruebas: list[dict[str, str]],
+    texto_notas: str,
+    campo_nuevo: str | None = None,
+    indice_nuevo: int | None = None,
+    remover_numero: str | set[str] | None = None,
+) -> str:
+    if campo_nuevo is not None:
+        if campo_nuevo not in {"prueba", "metodo"}:
+            raise ValueError("Los comentarios solo se pueden asociar a prueba o método.")
+        if indice_nuevo is None or not 0 <= indice_nuevo < len(pruebas):
+            raise ValueError("No se encontró la fila seleccionada para agregar el comentario.")
+        if _marcador_comentario_celda(
+            pruebas[indice_nuevo].get(campo_nuevo, "")
+        ):
+            raise ValueError("Esta celda ya tiene un comentario.")
+        if not pruebas[indice_nuevo].get(campo_nuevo, "").strip():
+            instruccion = (
+                "Agrega primero un método"
+                if campo_nuevo == "metodo"
+                else "Agrega primero una prueba"
+            )
+            raise ValueError(f"{instruccion} antes de añadirle un comentario.")
+
+    numeros_a_remover = (
+        {remover_numero}
+        if isinstance(remover_numero, str)
+        else remover_numero or set()
+    )
+    comentarios_por_numero: dict[str, list[str]] = {}
+    notas_base = []
+    comentario_actual: str | None = None
+    for linea in texto_notas.splitlines():
+        coincidencia = re.match(
+            rf"^([{DIGITOS_SUPERINDICE}]+)(?:\s+(.*))?$",
+            linea,
+        )
+        if coincidencia:
+            comentario_actual = str(
+                int(coincidencia.group(1).translate(DIGITOS_SUPERINDICE_A_ENTERO))
+            )
+            comentarios_por_numero[comentario_actual] = (
+                [coincidencia.group(2)] if coincidencia.group(2) else []
+            )
+        elif comentario_actual is None:
+            notas_base.append(linea)
+        else:
+            comentarios_por_numero[comentario_actual].append(linea)
+
+    filas_con_comentario: list[tuple[int, str, str]] = []
+    for indice, prueba in enumerate(pruebas):
+        for campo in ("prueba", "metodo"):
+            marcador = _marcador_comentario_celda(prueba.get(campo, ""))
+            if marcador is not None and marcador not in numeros_a_remover:
+                filas_con_comentario.append((indice, campo, marcador))
+    if campo_nuevo is not None and indice_nuevo is not None:
+        filas_con_comentario.append((indice_nuevo, campo_nuevo, "nuevo"))
+    filas_con_comentario.sort(
+        key=lambda elemento: (elemento[0], 0 if elemento[1] == "prueba" else 1)
+    )
+
+    comentarios_ordenados = []
+    for numero, (indice, campo, marcador_anterior) in enumerate(
+        filas_con_comentario, 1
+    ):
+        texto_celda = pruebas[indice].get(campo, "").rstrip()
+        texto_celda = re.sub(
+            rf"\s+[{DIGITOS_SUPERINDICE}]+$",
+            "",
+            texto_celda,
+        )
+        marcador = _formatear_superindice(numero)
+        pruebas[indice][campo] = f"{texto_celda} {marcador}"
+        contenido = (
+            []
+            if marcador_anterior == "nuevo"
+            else comentarios_por_numero.get(marcador_anterior, [])
+        )
+        comentarios_ordenados.append((marcador, contenido))
+
+    lineas_resultado = list(notas_base)
+    for marcador, contenido in comentarios_ordenados:
+        lineas_resultado.append(
+            marcador + (f" {contenido[0]}" if contenido else " ")
+        )
+        lineas_resultado.extend(contenido[1:])
+    return "\n".join(lineas_resultado)
+
+
+def _guardar_celda_con_comentario(
+    pruebas: list[dict[str, str]],
+    texto_notas: str,
+    indice: int,
+    campo: str,
+    valor: str,
+) -> str:
+    marcador_anterior = _marcador_comentario_celda(
+        pruebas[indice].get(campo, "")
+    )
+    marcador_editado = _marcador_comentario_celda(valor)
+    if marcador_anterior is not None and marcador_editado == marcador_anterior:
+        texto_celda = re.sub(
+            rf"\s+[{DIGITOS_SUPERINDICE}]+$",
+            "",
+            valor,
+        ).rstrip()
+        valor = f"{texto_celda} {_formatear_superindice(int(marcador_anterior))}"
+    elif marcador_anterior is not None:
+        valor = re.sub(rf"\s+[{DIGITOS_SUPERINDICE}]+$", "", valor).rstrip()
+
+    pruebas[indice][campo] = valor
+    if marcador_anterior is not None and marcador_editado != marcador_anterior:
+        texto_notas = _actualizar_comentarios_celda(
+            pruebas,
+            texto_notas,
+            remover_numero=marcador_anterior,
+        )
+    return texto_notas
+
+
+def _agregar_comentario_a_celda(
+    pruebas: list[dict[str, str]],
+    texto_notas: str,
+    indice: int,
+    campo: str,
+    valor: str,
+) -> str:
+    marcador_previo = _marcador_comentario_celda(
+        pruebas[indice].get(campo, "")
+    )
+    if marcador_previo is not None and _marcador_comentario_celda(valor) is None:
+        valor = (
+            f"{valor} {_formatear_superindice(int(marcador_previo))}"
+            if valor
+            else ""
+        )
+    pruebas[indice][campo] = valor
+    return _actualizar_comentarios_celda(
+        pruebas,
+        texto_notas,
+        campo,
+        indice,
+    )
 
 
 def _integrar_edicion_json(
     original: dict[str, Any], actualizado: dict[str, Any]
 ) -> dict[str, Any]:
     resultado = copy.deepcopy(original)
-    for clave in ("esquema", "producto", "documento", "control_documental", "pruebas", "notas", "alineacion_metodos_lab"):
+    for clave in (
+        "esquema",
+        "producto",
+        "documento",
+        "control_documental",
+        "pruebas",
+        "notas",
+        "alineacion_metodos_lab",
+        "Desarrollador",
+    ):
         valor_actualizado = actualizado.get(clave)
         valor_original = resultado.get(clave)
         if clave in {"producto", "documento", "control_documental"} and isinstance(
@@ -986,8 +1278,10 @@ def _consultar_tabla_historico(
     conexion = sqlite3.connect(
         ruta.resolve().as_uri() + "?mode=ro",
         uri=True,
+        timeout=30,
     )
     try:
+        conexion.execute("PRAGMA busy_timeout=30000")
         tablas = {
             nombre
             for (nombre,) in conexion.execute(
@@ -1204,8 +1498,10 @@ class VisorHistorico:
         conexion = sqlite3.connect(
             self.ruta.resolve().as_uri() + "?mode=ro",
             uri=True,
+            timeout=30,
         )
         try:
+            conexion.execute("PRAGMA busy_timeout=30000")
             return tuple(
                 str(fila[0])
                 for fila in conexion.execute(
@@ -1431,6 +1727,14 @@ def mostrar_vista_json(contenedor: tk.Misc, ruta: Path, zoom: float = 1.0) -> No
     barra_tabla_x.grid(row=3, column=0, sticky="ew")
     for prueba in previa.pruebas:
         tabla.insert("", tk.END, values=tuple(str(prueba.get(campo, "")) for campo in CAMPOS_TABLA))
+    OrdenadorColumnasTreeview(
+        tabla,
+        {
+            campo: titulo
+            for titulo, campo in encabezados_tabla(previa.idioma)
+            if campo in {"prueba", "metodo"}
+        },
+    )
 
     canvas = tk.Canvas(area_detalles, highlightthickness=0, background="#f4f6f8")
     vertical = ttk.Scrollbar(area_detalles, orient="vertical", command=canvas.yview)
@@ -1762,6 +2066,8 @@ class GeneradorEspecificacion:
         self._periodicidad_editores: list[ttk.Combobox] = []
         self._periodicidad_marco: ttk.Frame | None = None
         self._periodicidad_boton_mas: ttk.Button | None = None
+        self._comentario_marco: ttk.Frame | None = None
+        self._comentario_boton_mas: ttk.Button | None = None
         self._popup_sugerencias: tk.Toplevel | None = None
         self._lista_sugerencias: tk.Listbox | None = None
         self._entrada_sugerencias: ttk.Combobox | None = None
@@ -1780,6 +2086,7 @@ class GeneradorEspecificacion:
         }
         self._etiquetas: dict[str, ttk.Label] = {}
         self._idioma = tk.StringVar(value="Español")
+        self.desarrollador = tk.StringVar()
 
         encabezado = ttk.Frame(self.ventana, padding=(12, 10, 12, 4))
         encabezado.pack(fill="x")
@@ -1888,6 +2195,25 @@ class GeneradorEspecificacion:
             self.entradas_control[clave] = entrada
         self.marco_control.columnconfigure(1, weight=1)
         self.marco_control.columnconfigure(3, weight=1)
+        self.etiqueta_desarrollador = ttk.Label(self.marco_control)
+        self.etiqueta_desarrollador.grid(
+            row=(len(CAMPOS_CONTROL_GENERADOR) + 1) // 2,
+            column=0,
+            sticky="w",
+            padx=(0, 6),
+            pady=3,
+        )
+        self.entrada_desarrollador = ttk.Entry(
+            self.marco_control,
+            textvariable=self.desarrollador,
+        )
+        self.entrada_desarrollador.grid(
+            row=(len(CAMPOS_CONTROL_GENERADOR) + 1) // 2,
+            column=1,
+            columnspan=3,
+            sticky="ew",
+            pady=3,
+        )
 
         self.marco_pruebas = ttk.LabelFrame(self.ventana, padding=8)
         self.marco_pruebas.pack(fill="both", expand=True, padx=12, pady=(0, 8))
@@ -1932,6 +2258,16 @@ class GeneradorEspecificacion:
                 minwidth=75,
                 stretch=True,
             )
+        self._ordenador_pruebas = OrdenadorColumnasTreeview(
+            self.tabla_pruebas,
+            {
+                campo: encabezado
+                for campo, encabezado in zip(
+                    CAMPOS_TABLA, ETIQUETAS_TABLA_GENERADOR["es"]
+                )
+                if campo in {"prueba", "metodo"}
+            },
+        )
         self.tabla_pruebas.column(
             "periodicidad", width=245, minwidth=230, stretch=False
         )
@@ -1971,8 +2307,13 @@ class GeneradorEspecificacion:
         )
         acciones_pruebas = ttk.Frame(self.marco_pruebas)
         acciones_pruebas.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(8, 0))
-        self.ayuda_tabla = ttk.Label(acciones_pruebas)
-        self.ayuda_tabla.pack(side="left")
+        self.boton_ayuda_tabla = ttk.Button(
+            acciones_pruebas,
+            text="ⓘ",
+            width=3,
+            command=self._mostrar_ayuda_tabla,
+        )
+        self.boton_ayuda_tabla.pack(side="left")
         self.boton_eliminar = ttk.Button(
             acciones_pruebas,
             command=self._eliminar_seleccionada,
@@ -1993,6 +2334,11 @@ class GeneradorEspecificacion:
         self.boton_guardar.pack(side="right")
         self.boton_cancelar = ttk.Button(pie, command=self.ventana.destroy)
         self.boton_cancelar.pack(side="right", padx=(0, 8))
+        self.boton_alinear = ttk.Button(
+            pie,
+            command=self._alinear_especificaciones,
+        )
+        self.boton_alinear.pack(side="right", padx=(0, 8))
         self._actualizar_idioma()
         self._actualizar_tabla()
         self._actualizar_validacion_codigo()
@@ -2030,6 +2376,7 @@ class GeneradorEspecificacion:
         self._actualizar_idioma()
         for clave, valor in contenido["control"].items():
             self.variables_control[clave].set(valor)
+        self.desarrollador.set(contenido["desarrollador"])
         self.pruebas = contenido["pruebas"]
         self.notas.delete("1.0", tk.END)
         self.notas.insert("1.0", "\n".join(contenido["notas"]))
@@ -2293,6 +2640,24 @@ class GeneradorEspecificacion:
             parent=self.ventana,
         )
 
+    def _mostrar_ayuda_tabla(self) -> None:
+        ingles = self._idioma.get() == "English"
+        mensaje = (
+            "Click an empty cell to add a row; click any cell to edit it. "
+            "Gray suggestions can be clicked to accept them. Enter 1–4 "
+            "symbols with the periodicity dropdown. Press Delete to clear a cell."
+            if ingles
+            else "Haz clic en una celda vacía para agregar una fila y en "
+            "cualquier celda para editarla. Puedes hacer clic en una sugerencia "
+            "gris para aceptarla. Selecciona de 1 a 4 símbolos en el desplegable "
+            "de periodicidad. Presiona Suprimir para borrar una celda."
+        )
+        messagebox.showinfo(
+            "Table help" if ingles else "Ayuda de la tabla",
+            mensaje,
+            parent=self.ventana,
+        )
+
     def _limpiar_sugerencia(self) -> None:
         self._sugerencia_actual = None
         self.etiqueta_sugerencia.configure(text="")
@@ -2392,6 +2757,9 @@ class GeneradorEspecificacion:
         self.etiqueta_producto.configure(
             text="Product name:" if ingles else "Nombre del producto:"
         )
+        self.etiqueta_desarrollador.configure(
+            text="Developer:" if ingles else "Desarrollador:"
+        )
         self.marco_control.configure(
             text="Document control" if ingles else "Control documental"
         )
@@ -2404,26 +2772,26 @@ class GeneradorEspecificacion:
             CAMPOS_TABLA, ETIQUETAS_TABLA_GENERADOR[idioma]
         ):
             self.tabla_pruebas.heading(campo, text=encabezado)
+        self._ordenador_pruebas.establecer_encabezados(
+            {
+                campo: encabezado
+                for campo, encabezado in zip(
+                    CAMPOS_TABLA, ETIQUETAS_TABLA_GENERADOR[idioma]
+                )
+                if campo in {"prueba", "metodo"}
+            }
+        )
         self.tabla_pruebas.heading(
             "periodicidad",
             text=f"{ETIQUETA_PERIODICIDAD[idioma]} ⓘ",
             command=self._mostrar_leyenda_periodicidad,
         )
-        self.ayuda_tabla.configure(
-            text=(
-                "Click an empty cell to add a row; click any cell to edit it. "
-                "Gray suggestions can be clicked to accept them. Enter 1–4 "
-                "symbols with the periodicity dropdown. Press Delete to clear a cell."
-                if ingles
-                else "Haz clic en una celda vacía para agregar una fila y en "
-                "cualquier celda para editarla. Puedes hacer clic en una sugerencia "
-                "gris para aceptarla. Selecciona de 1 a 4 símbolos en el desplegable "
-                "de periodicidad. Presiona Suprimir para borrar una celda."
-            )
-        )
         if self.etiqueta_codigo_invalido is not None:
             self._actualizar_validacion_codigo()
         self.boton_eliminar.configure(text="Remove row" if ingles else "Eliminar fila")
+        self.boton_alinear.configure(
+            text="Align specifications" if ingles else "Alinear especificaciones"
+        )
         self.etiqueta_notas.configure(text="Notes:" if ingles else "Notas:")
         self.boton_guardar.configure(text="Save JSON" if ingles else "Guardar JSON")
         self.boton_cancelar.configure(text="Cancel" if ingles else "Cancelar")
@@ -2456,6 +2824,9 @@ class GeneradorEspecificacion:
             tk.END,
             iid="nueva",
             values=("", "", "", "", "", ""),
+        )
+        self._ordenador_pruebas.registrar_orden_original(
+            [*(str(indice) for indice in range(len(self.pruebas))), "nueva"]
         )
         self.boton_eliminar.configure(state="disabled")
 
@@ -2557,7 +2928,32 @@ class GeneradorEspecificacion:
             editor = self._crear_editor_periodicidad(
                 x, y, ancho, alto, valor
             )
-        elif campo in {"prueba", "unidades", "metodo"}:
+        elif campo in {"prueba", "metodo"}:
+            marco_comentario = ttk.Frame(self.tabla_pruebas)
+            marco_comentario.place(x=x, y=y, width=ancho, height=alto)
+            editor = ttk.Combobox(marco_comentario, values=sugerencias)
+            editor.set(valor)
+            editor.pack(side="left", fill="both", expand=True)
+            self._comentario_marco = marco_comentario
+            self._comentario_boton_mas = ttk.Button(
+                marco_comentario,
+                text="+",
+                width=2,
+                command=lambda fila=iid, celda=campo, entrada=editor: (
+                    self._agregar_comentario_celda(fila, celda, entrada)
+                ),
+            )
+            self._comentario_boton_mas.pack(side="right")
+            editor.bind(
+                "<KeyRelease>",
+                lambda e, c=campo, r=iid: self._filtrar_sugerencias(e, c, r),
+            )
+            editor.bind("<Down>", self._enfocar_sugerencias)
+            editor.bind(
+                "<<ComboboxSelected>>",
+                lambda _e: self._cerrar_editor_celda(guardar=True),
+            )
+        elif campo == "unidades":
             editor: ttk.Entry | ttk.Combobox = ttk.Combobox(
                 self.tabla_pruebas,
                 values=sugerencias,
@@ -2569,7 +2965,7 @@ class GeneradorEspecificacion:
         else:
             editor = ttk.Entry(self.tabla_pruebas)
             editor.insert(0, valor)
-        if campo != "periodicidad":
+        if campo not in {"periodicidad", "prueba", "metodo"}:
             editor.place(x=x, y=y, width=ancho, height=alto)
             editor.focus_set()
             if valor:
@@ -2581,6 +2977,13 @@ class GeneradorEspecificacion:
             [*self._periodicidad_editores]
             + ([self._periodicidad_boton_mas] if campo == "periodicidad" else [])
             if campo == "periodicidad"
+            else [editor]
+            + (
+                [self._comentario_boton_mas]
+                if self._comentario_boton_mas is not None
+                else []
+            )
+            if campo in {"prueba", "metodo"}
             else [editor]
         )
         for control in controles:
@@ -2741,7 +3144,16 @@ class GeneradorEspecificacion:
             if self._editor_celda is not editor:
                 return
             foco = self.ventana.focus_get()
-            if foco is not None and str(foco).startswith(str(editor)):
+            marco = (
+                self._comentario_marco
+                if self._celda_editada is not None
+                and self._celda_editada[1] in {"prueba", "metodo"}
+                else None
+            )
+            if foco is not None and (
+                str(foco).startswith(str(editor))
+                or marco is not None and str(foco).startswith(str(marco))
+            ):
                 return
             self._cerrar_editor_celda(guardar=True)
 
@@ -2770,7 +3182,20 @@ class GeneradorEspecificacion:
         iid, campo = self._celda_activa
         if iid == "nueva":
             return "break"
+        marcador = _marcador_comentario_celda(
+            self.pruebas[int(iid)].get(campo, "")
+        ) if campo in {"prueba", "metodo"} else None
         self.pruebas[int(iid)][campo] = ""
+        if marcador is not None:
+            self.notas.delete("1.0", tk.END)
+            self.notas.insert(
+                "1.0",
+                _actualizar_comentarios_celda(
+                    self.pruebas,
+                    self.notas.get("1.0", "end-1c"),
+                    remover_numero=marcador,
+                ),
+            )
         self._actualizar_tabla()
         self.tabla_pruebas.selection_set(iid)
         self._actualizar_sugerencia_contextual(iid)
@@ -2788,7 +3213,15 @@ class GeneradorEspecificacion:
         if not bbox:
             self._cerrar_editor_celda(guardar=True)
             return
-        self._editor_celda.place(x=bbox[0], y=bbox[1], width=bbox[2], height=bbox[3])
+        marco = (
+            self._comentario_marco
+            if campo in {"prueba", "metodo"}
+            else self._periodicidad_marco
+            if campo == "periodicidad"
+            else self._editor_celda
+        )
+        if marco is not None:
+            marco.place(x=bbox[0], y=bbox[1], width=bbox[2], height=bbox[3])
 
     def _cerrar_editor_celda(self, guardar: bool) -> None:
         editor = self._editor_celda
@@ -2809,14 +3242,31 @@ class GeneradorEspecificacion:
         else:
             valor = editor.get().strip()
         self._ocultar_lista_sugerencias()
-        editor.destroy()
+        if campo in {"prueba", "metodo"} and self._comentario_marco is not None:
+            self._comentario_marco.destroy()
+        else:
+            editor.destroy()
         self._periodicidad_editores = []
         self._periodicidad_marco = None
         self._periodicidad_boton_mas = None
+        self._comentario_marco = None
+        self._comentario_boton_mas = None
         if not guardar:
             return
         fila = self.pruebas[int(iid)]
-        fila[campo] = valor
+        if campo in {"prueba", "metodo"}:
+            notas_actualizadas = _guardar_celda_con_comentario(
+                self.pruebas,
+                self.notas.get("1.0", "end-1c"),
+                int(iid),
+                campo,
+                valor,
+            )
+            if notas_actualizadas != self.notas.get("1.0", "end-1c"):
+                self.notas.delete("1.0", tk.END)
+                self.notas.insert("1.0", notas_actualizadas)
+        else:
+            fila[campo] = valor
         if campo == "prueba" and valor:
             idioma = "en" if self._idioma.get() == "English" else "es"
             for nombre_campo, valor_default in _valores_prueba_predeterminados(
@@ -2835,6 +3285,34 @@ class GeneradorEspecificacion:
         if iid != "nueva":
             self.tabla_pruebas.selection_set(iid)
             self._actualizar_sugerencia_contextual(iid)
+
+    def _agregar_comentario_celda(
+        self, iid: str, campo: str, editor: ttk.Combobox
+    ) -> None:
+        try:
+            fila_indice = int(iid)
+            texto_notas = self.notas.get("1.0", "end-1c")
+            notas_actualizadas = _agregar_comentario_a_celda(
+                self.pruebas,
+                texto_notas,
+                fila_indice,
+                campo,
+                editor.get().strip(),
+            )
+        except (IndexError, ValueError) as exc:
+            ingles = self._idioma.get() == "English"
+            messagebox.showwarning(
+                "Method comment" if ingles else "Comentario de método",
+                str(exc),
+                parent=self.ventana,
+            )
+            return
+
+        self.notas.delete("1.0", tk.END)
+        self.notas.insert("1.0", notas_actualizadas)
+        editor.set(self.pruebas[fila_indice][campo])
+        self.notas.mark_set(tk.INSERT, tk.END)
+        self.notas.focus_set()
 
     def _actualizar_boton_eliminar(self, _evento: tk.Event | None = None) -> None:
         seleccion = self._seleccion()
@@ -2855,9 +3333,121 @@ class GeneradorEspecificacion:
         )
         if not confirmar:
             return
+        marcadores_eliminados = {
+            marcador
+            for campo in ("prueba", "metodo")
+            if (
+                marcador := _marcador_comentario_celda(
+                    self.pruebas[indice].get(campo, "")
+                )
+            )
+        }
         del self.pruebas[indice]
+        texto_notas = self.notas.get("1.0", "end-1c")
+        if marcadores_eliminados:
+            texto_notas = _actualizar_comentarios_celda(
+                self.pruebas,
+                texto_notas,
+                remover_numero=marcadores_eliminados,
+            )
+        self.notas.delete("1.0", tk.END)
+        self.notas.insert("1.0", texto_notas)
         self._nombres_sugeridos_por_fila.clear()
         self._actualizar_tabla()
+
+    def _alinear_especificaciones(self) -> None:
+        self._cerrar_editor_celda(guardar=True)
+        ingles = self._idioma.get() == "English"
+        idioma = "en" if ingles else "es"
+        cantidad = sum(
+            any(str(fila.get(campo, "") or "").strip() for campo in CAMPOS_TABLA)
+            for fila in self.pruebas
+        )
+        if not cantidad:
+            messagebox.showinfo(
+                "Align specifications" if ingles else "Alinear especificaciones",
+                (
+                    "Add at least one test before aligning."
+                    if ingles
+                    else "Agrega al menos una prueba antes de alinear."
+                ),
+                parent=self.ventana,
+            )
+            return
+
+        progreso = tk.Toplevel(self.ventana)
+        progreso.title("Aligning specifications" if ingles else "Alineando especificaciones")
+        progreso.transient(self.ventana)
+        progreso.resizable(False, False)
+        progreso.protocol("WM_DELETE_WINDOW", lambda: None)
+        contenido = ttk.Frame(progreso, padding=14)
+        contenido.pack(fill="both", expand=True)
+        estado = ttk.Label(
+            contenido,
+            text=(
+                f"Aligning 0 of {cantidad} tests..."
+                if ingles
+                else f"Alineando 0 de {cantidad} pruebas..."
+            ),
+        )
+        estado.pack(anchor="w", pady=(0, 8))
+        barra = ttk.Progressbar(
+            contenido,
+            mode="determinate",
+            maximum=cantidad,
+            length=340,
+        )
+        barra.pack(fill="x")
+        progreso.grab_set()
+        progreso.update_idletasks()
+
+        def actualizar_progreso(completadas: int, total: int) -> None:
+            barra.configure(value=completadas)
+            estado.configure(
+                text=(
+                    f"Aligning {completadas} of {total} tests..."
+                    if ingles
+                    else f"Alineando {completadas} de {total} pruebas..."
+                )
+            )
+            progreso.update_idletasks()
+
+        error_alineacion: str | None = None
+        try:
+            filas_alineadas, conteo = alinear_filas_generador(
+                self.pruebas,
+                self.maestro,
+                idioma,
+                al_progreso=actualizar_progreso,
+            )
+        except ValueError as exc:
+            error_alineacion = str(exc)
+        finally:
+            progreso.grab_release()
+            progreso.destroy()
+        if error_alineacion is not None:
+            messagebox.showerror(
+                "Could not align specifications" if ingles else "No se pudieron alinear",
+                error_alineacion,
+                parent=self.ventana,
+            )
+            return
+
+        self.pruebas = filas_alineadas
+        self._nombres_sugeridos_por_fila.clear()
+        self._actualizar_tabla()
+        messagebox.showinfo(
+            "Alignment complete" if ingles else "Alineación completada",
+            (
+                f"Aligned: {conteo['alineados']} | Review: {conteo['revision']} | "
+                f"No match: {conteo['sin_coincidencia']}"
+                if ingles
+                else f"Alineadas: {conteo['alineados']} | Requieren revisión: "
+                f"{conteo['revision']} | Sin coincidencia: "
+                f"{conteo['sin_coincidencia']}"
+            ),
+            parent=self.ventana,
+        )
 
     def guardar(self) -> None:
         if self.idioma_destino is not None:
@@ -2892,6 +3482,7 @@ class GeneradorEspecificacion:
                 },
                 self.pruebas,
                 self.notas.get("1.0", "end-1c").splitlines(),
+                self.desarrollador.get(),
             )
             if self.datos_originales is not None:
                 datos = _integrar_edicion_json(self.datos_originales, datos)
@@ -3357,7 +3948,7 @@ class AplicacionEspecificaciones:
         for texto, accion in (
             ("SUBIR ESPEC", self.subir_especificacion),
             ("GENERAR ESPEC", self.generar_especificacion),
-            ("SELECCIONAR SPEC", self.seleccionar_especificacion),
+            ("SELECCIONAR ESPEC", self.seleccionar_especificacion),
             ("COMPARAR ESPECS", self.comparar_especificaciones),
             ("GENERAR HII", self.generar_hii),
         ):

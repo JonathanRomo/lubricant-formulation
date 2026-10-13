@@ -9,31 +9,35 @@ from generador_especs_hii import clave_texto, leer_idioma_datos
 
 @contextmanager
 def conectar(ruta):
-    con = sqlite3.connect(ruta)
-    con.row_factory = sqlite3.Row
-    con.execute("PRAGMA foreign_keys=ON")
-    con.executescript("""
-        CREATE TABLE IF NOT EXISTS hii_especificaciones (
-            ruta TEXT PRIMARY KEY, codigo TEXT NOT NULL, revision TEXT NOT NULL,
-            cliente TEXT NOT NULL, idioma TEXT NOT NULL);
-        CREATE TABLE IF NOT EXISTS hii_traducciones (
-            origen TEXT NOT NULL REFERENCES hii_especificaciones(ruta),
-            destino TEXT NOT NULL REFERENCES hii_especificaciones(ruta),
-            PRIMARY KEY(origen, destino));
-        CREATE TABLE IF NOT EXISTS hii_generadas (
-            ruta TEXT PRIMARY KEY, especificacion TEXT NOT NULL REFERENCES hii_especificaciones(ruta),
-            idioma TEXT NOT NULL, fecha TEXT NOT NULL);
-        CREATE VIEW IF NOT EXISTS hii_versiones_idiomas AS
-            SELECT a.ruta AS hii_origen, a.idioma AS idioma_origen,
-                   b.ruta AS hii_traduccion, b.idioma AS idioma_traduccion,
-                   a.especificacion AS especificacion_origen,
-                   b.especificacion AS especificacion_traduccion
-            FROM hii_generadas a JOIN hii_generadas b
-            JOIN hii_traducciones t ON
-                (a.especificacion=t.origen AND b.especificacion=t.destino) OR
-                (a.especificacion=t.destino AND b.especificacion=t.origen);
-    """)
+    con = sqlite3.connect(ruta, timeout=30)
     try:
+        con.row_factory = sqlite3.Row
+        con.execute("PRAGMA busy_timeout=30000")
+        con.execute("PRAGMA foreign_keys=ON")
+        modo_journal = con.execute("PRAGMA journal_mode").fetchone()[0]
+        if str(modo_journal).lower() != "wal":
+            con.execute("PRAGMA journal_mode=WAL")
+        con.executescript("""
+            CREATE TABLE IF NOT EXISTS hii_especificaciones (
+                ruta TEXT PRIMARY KEY, codigo TEXT NOT NULL, revision TEXT NOT NULL,
+                cliente TEXT NOT NULL, idioma TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS hii_traducciones (
+                origen TEXT NOT NULL REFERENCES hii_especificaciones(ruta),
+                destino TEXT NOT NULL REFERENCES hii_especificaciones(ruta),
+                PRIMARY KEY(origen, destino));
+            CREATE TABLE IF NOT EXISTS hii_generadas (
+                ruta TEXT PRIMARY KEY, especificacion TEXT NOT NULL REFERENCES hii_especificaciones(ruta),
+                idioma TEXT NOT NULL, fecha TEXT NOT NULL);
+            CREATE VIEW IF NOT EXISTS hii_versiones_idiomas AS
+                SELECT a.ruta AS hii_origen, a.idioma AS idioma_origen,
+                       b.ruta AS hii_traduccion, b.idioma AS idioma_traduccion,
+                       a.especificacion AS especificacion_origen,
+                       b.especificacion AS especificacion_traduccion
+                FROM hii_generadas a JOIN hii_generadas b
+                JOIN hii_traducciones t ON
+                    (a.especificacion=t.origen AND b.especificacion=t.destino) OR
+                    (a.especificacion=t.destino AND b.especificacion=t.origen);
+        """)
         with con:
             yield con
     finally:

@@ -48,6 +48,19 @@ COLUMNAS_PRUEBAS = {
     "TYPICAL VALUE": "valor_tipico",
     "TYPICAL VALUES": "valor_tipico",
 }
+ENCABEZADOS_FILA_PRUEBA = {"PRUEBA", "TEST"}
+ENCABEZADOS_FILA_METODO = {
+    "METODO",
+    "METHOD",
+    "PRUEBA METODO",
+    "TEST METHOD",
+}
+ENCABEZADOS_FILA_PRUEBA_METODO = {"PRUEBA METODO", "TEST METHOD"}
+ENCABEZADOS_FILA_ESPECIFICACION = {
+    "ESPECIFICACION",
+    "SPECIFICATION",
+    "SPECIFICATIONS",
+}
 ETIQUETAS_CONTROL = {
     "ELABORO Y APROBO": "elaboro_y_aprobo",
     "ELABORADO Y APROBADO POR": "elaboro_y_aprobo",
@@ -289,12 +302,31 @@ def _normalizar_nota(texto: str) -> str:
     return clave_texto(texto)
 
 
+def _es_fila_encabezado_pruebas(prueba: dict) -> bool:
+    encabezado_prueba = clave_texto(str(prueba.get("prueba", "") or ""))
+    encabezado_metodo = clave_texto(str(prueba.get("metodo", "") or ""))
+    encabezado_especificacion = clave_texto(
+        str(prueba.get("especificacion", "") or "")
+    )
+    tiene_especificacion = encabezado_especificacion in ENCABEZADOS_FILA_ESPECIFICACION
+    if not tiene_especificacion:
+        return False
+    if encabezado_prueba in ENCABEZADOS_FILA_PRUEBA_METODO:
+        return True
+    return (
+        encabezado_prueba in ENCABEZADOS_FILA_PRUEBA
+        and encabezado_metodo in ENCABEZADOS_FILA_METODO
+    )
+
+
 def _separar_notas_de_pruebas(pruebas: list[dict]) -> tuple[list[dict], list[str]]:
     pruebas_validas = []
     notas = []
     marcador_nota = re.compile(r"^(?:Notas?|Notes?)\s*:\s*(.*)$", re.IGNORECASE)
     campos = ("prueba", "unidades", "metodo", "especificacion", "valor_tipico")
     for prueba in pruebas:
+        if _es_fila_encabezado_pruebas(prueba):
+            continue
         valores = [
             str(prueba.get(campo, "") or "").strip()
             for campo in campos
@@ -334,8 +366,9 @@ def _escribir_notas(tabla, notas: list) -> None:
         valores.append(re.sub(r"^(?:Notas?|Notes?)\s*:\s*", "", nota_texto, flags=re.IGNORECASE))
     if not valores:
         return
-    separador = "; " if texto_plantilla else ""
-    _poner_texto(celda.paragraphs[0], f"{texto_plantilla}{separador}{'; '.join(valores)}")
+    separador = "\n" if texto_plantilla else ""
+    notas_adicionales = "\n".join(valores)
+    _poner_texto(celda.paragraphs[0], f"{texto_plantilla}{separador}{notas_adicionales}")
     for parrafo in celda.paragraphs[1:]:
         _poner_texto(parrafo, "")
 

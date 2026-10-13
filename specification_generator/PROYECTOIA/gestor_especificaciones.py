@@ -6,12 +6,17 @@ import argparse
 import hashlib
 import html
 import json
+import multiprocessing
+import os
+import queue
 import re
+import signal
 import shutil
 import sqlite3
 import subprocess
 import sys
 import tempfile
+import time
 import unicodedata
 from collections import defaultdict
 from datetime import date, datetime
@@ -31,6 +36,9 @@ REVISAR = "REVISAR"
 CATALOGO = "CODIGOS_200.xlsx"
 DB = "especificaciones.db"
 EXTENSIONES = {".doc", ".docx", ".docm"}
+TIEMPO_LIMITE_CONVERSION_WORD = 30
+_PROCESOS_WORD_PREEXISTENTES: set[int] | None = None
+_ERROR_INICIO_WORD: str | None = None
 
 COLUMNAS = {
     "PRUEBA": "prueba", "UNIDAD": "unidades", "UNIDADES": "unidades",
@@ -134,11 +142,15 @@ def sha256(path: Path) -> str:
 
 
 def conectar(path: Path) -> sqlite3.Connection:
-    con = sqlite3.connect(path)
-    con.row_factory = sqlite3.Row
-    con.execute("PRAGMA foreign_keys=ON")
-    con.execute("PRAGMA journal_mode=WAL")
-    con.executescript("""
+    con = sqlite3.connect(path, timeout=30)
+    try:
+        con.row_factory = sqlite3.Row
+        con.execute("PRAGMA busy_timeout=30000")
+        con.execute("PRAGMA foreign_keys=ON")
+        modo_journal = con.execute("PRAGMA journal_mode").fetchone()[0]
+        if str(modo_journal).lower() != "wal":
+            con.execute("PRAGMA journal_mode=WAL")
+        con.executescript("""
     CREATE TABLE IF NOT EXISTS archivos(
       id INTEGER PRIMARY KEY, ruta_relativa TEXT UNIQUE NOT NULL,
       nombre_archivo TEXT NOT NULL, hash_actual TEXT NOT NULL,
@@ -177,28 +189,31 @@ def conectar(path: Path) -> sqlite3.Connection:
       fecha_lectura TEXT NOT NULL, total_registros INTEGER NOT NULL);
     CREATE INDEX IF NOT EXISTS idx_archivos_hash_catalogo_estado
       ON archivos(hash_actual,hash_catalogo,estado);
-    """)
-    # Migracion no destructiva desde versiones previas.
-    requeridas_archivos = {
-        "hash_catalogo": "TEXT", "part_id_fuente": "TEXT", "part_id_final": "TEXT",
-        "nombre_fuente": "TEXT", "resolucion_nombre": "TEXT",
-        "validacion_catalogo": "TEXT", "revision_especificacion": "TEXT",
-        "codigo_formato": "TEXT", "revision_formato": "TEXT", "formato_origen": "TEXT",
-        "idioma": "TEXT",
-    }
-    existentes = {r["name"] for r in con.execute("PRAGMA table_info(archivos)")}
-    for nombre, tipo in requeridas_archivos.items():
-        if nombre not in existentes:
-            con.execute(f"ALTER TABLE archivos ADD COLUMN {nombre} {tipo}")
-    requeridas_versiones = {k: v for k, v in requeridas_archivos.items() if k != "formato_origen"}
-    requeridas_versiones["formato_origen"] = "TEXT"
-    requeridas_versiones["fecha_documento"] = "TEXT"
-    existentes = {r["name"] for r in con.execute("PRAGMA table_info(versiones)")}
-    for nombre, tipo in requeridas_versiones.items():
-        if nombre not in existentes:
-            con.execute(f"ALTER TABLE versiones ADD COLUMN {nombre} {tipo}")
-    con.commit()
-    return con
+        """)
+        # Migracion no destructiva desde versiones previas.
+        requeridas_archivos = {
+            "hash_catalogo": "TEXT", "part_id_fuente": "TEXT", "part_id_final": "TEXT",
+            "nombre_fuente": "TEXT", "resolucion_nombre": "TEXT",
+            "validacion_catalogo": "TEXT", "revision_especificacion": "TEXT",
+            "codigo_formato": "TEXT", "revision_formato": "TEXT", "formato_origen": "TEXT",
+            "idioma": "TEXT",
+        }
+        existentes = {r["name"] for r in con.execute("PRAGMA table_info(archivos)")}
+        for nombre, tipo in requeridas_archivos.items():
+            if nombre not in existentes:
+                con.execute(f"ALTER TABLE archivos ADD COLUMN {nombre} {tipo}")
+        requeridas_versiones = {k: v for k, v in requeridas_archivos.items() if k != "formato_origen"}
+        requeridas_versiones["formato_origen"] = "TEXT"
+        requeridas_versiones["fecha_documento"] = "TEXT"
+        existentes = {r["name"] for r in con.execute("PRAGMA table_info(versiones)")}
+        for nombre, tipo in requeridas_versiones.items():
+            if nombre not in existentes:
+                con.execute(f"ALTER TABLE versiones ADD COLUMN {nombre} {tipo}")
+        con.commit()
+        return con
+    except BaseException:
+        con.close()
+        raise
 
 
 def leer_catalogo(path: Path) -> tuple[list[dict], str]:
@@ -275,40 +290,223 @@ def archivo_bloqueado_word(path: Path) -> Path | None:
     return None
 
 
+def _convertir_word_com_worker(path: str, destino: str, resultados) -> None:
+    import pythoncom
+    import win32com.client
+    import win32process
+
+    resultados.put(("stage", "iniciar automatización COM"))
+    pythoncom.CoInitialize()
+    word = None
+    documento = None
+    try:
+        resultados.put(("stage", "iniciar Microsoft Word"))
+        word = win32com.client.DispatchEx("Word.Application")
+        word.Visible = False
+        word.DisplayAlerts = 0
+        _, pid_word = win32process.GetWindowThreadProcessId(word.Hwnd)
+        resultados.put(("word_pid", pid_word))
+        resultados.put(("stage", "abrir documento .doc"))
+        documento = word.Documents.Open(
+            path,
+            ConfirmConversions=False,
+            ReadOnly=True,
+            AddToRecentFiles=False,
+            Visible=False,
+            OpenAndRepair=False,
+            NoEncodingDialog=True,
+        )
+        resultados.put(("stage", "guardar documento temporal .docx"))
+        documento.SaveAs2(destino, FileFormat=16)
+        resultados.put(("stage", "cerrar documento"))
+        documento.Close(False)
+        documento = None
+        resultados.put(("stage", "cerrar Microsoft Word"))
+        word.Quit()
+        word = None
+        resultados.put(("ok", None))
+    except Exception as exc:
+        resultados.put(("error", f"{type(exc).__name__}: {exc}"))
+    finally:
+        if documento is not None:
+            resultados.put(("stage", "cerrar documento tras error"))
+            documento.Close(False)
+        if word is not None:
+            resultados.put(("stage", "cerrar Microsoft Word tras error"))
+            word.Quit()
+        resultados.put(("stage", "finalizar automatización COM"))
+        pythoncom.CoUninitialize()
+
+
+def _terminar_proceso_word(pid: int) -> None:
+    try:
+        os.kill(pid, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+
+
+def _procesos_word_automatizacion() -> set[int]:
+    consulta = (
+        "$p = @(Get-CimInstance Win32_Process | "
+        "Where-Object { $_.Name -eq 'WINWORD.EXE' -and "
+        "$_.CommandLine -match '(?i)/automation' } | "
+        "Select-Object -ExpandProperty ProcessId); "
+        "ConvertTo-Json -InputObject $p -Compress"
+    )
+    resultado = subprocess.run(
+        ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", consulta],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        check=False,
+    )
+    if resultado.returncode:
+        raise RuntimeError(
+            "No se pudieron inspeccionar las instancias automatizadas de Word: "
+            f"{resultado.stderr.strip() or resultado.stdout.strip()}"
+        )
+    datos = json.loads(resultado.stdout.strip() or "[]")
+    if not isinstance(datos, list):
+        datos = [datos]
+    return {int(pid) for pid in datos}
+
+
+def _limpiar_word_iniciado(
+    procesos_preexistentes: set[int],
+    pid_word: int | None,
+) -> None:
+    actuales = _procesos_word_automatizacion()
+    procesos_nuevos = actuales - procesos_preexistentes
+    if pid_word is not None and pid_word not in procesos_preexistentes:
+        procesos_nuevos.add(pid_word)
+    for pid in sorted(procesos_nuevos):
+        _terminar_proceso_word(pid)
+
+
+def _restablecer_error_inicio_word() -> None:
+    global _ERROR_INICIO_WORD
+    _ERROR_INICIO_WORD = None
+
+
+def _convertir_word_com(
+    path: Path,
+    destino: Path,
+    *,
+    worker=_convertir_word_com_worker,
+) -> None:
+    global _ERROR_INICIO_WORD, _PROCESOS_WORD_PREEXISTENTES
+    if _ERROR_INICIO_WORD is not None:
+        raise RuntimeError(
+            "Se omitió el intento con Microsoft Word porque ya falló su inicio "
+            f"en esta carga: {_ERROR_INICIO_WORD}"
+        )
+    if _PROCESOS_WORD_PREEXISTENTES is None:
+        _PROCESOS_WORD_PREEXISTENTES = _procesos_word_automatizacion()
+    procesos_word_antes = set(_PROCESOS_WORD_PREEXISTENTES)
+    contexto = multiprocessing.get_context("spawn")
+    resultados = contexto.Queue()
+    proceso = contexto.Process(
+        target=worker,
+        args=(str(path.resolve()), str(destino.resolve()), resultados),
+    )
+    pid_word = None
+    resultado = None
+    etapa = "iniciar el proceso de conversión"
+    iniciado = False
+    try:
+        proceso.start()
+        iniciado = True
+        limite = time.monotonic() + TIEMPO_LIMITE_CONVERSION_WORD
+        while resultado is None:
+            restante = limite - time.monotonic()
+            if restante <= 0:
+                break
+            try:
+                tipo, valor = resultados.get(timeout=min(0.1, restante))
+            except queue.Empty:
+                if not proceso.is_alive():
+                    break
+                continue
+            if tipo == "word_pid":
+                pid_word = valor
+            elif tipo == "stage":
+                etapa = valor
+            else:
+                resultado = (tipo, valor)
+
+        if resultado is None and time.monotonic() >= limite:
+            proceso.terminate()
+            proceso.join(timeout=5)
+            if proceso.is_alive():
+                proceso.kill()
+                proceso.join()
+            _limpiar_word_iniciado(procesos_word_antes, pid_word)
+            mensaje = (
+                f"Microsoft Word se bloqueó al intentar {etapa}; excedió el límite de "
+                f"{TIEMPO_LIMITE_CONVERSION_WORD} segundos."
+            )
+            if etapa == "iniciar Microsoft Word":
+                _ERROR_INICIO_WORD = mensaje
+            raise TimeoutError(
+                mensaje
+            )
+
+        proceso.join(timeout=5)
+        if proceso.is_alive():
+            proceso.terminate()
+            proceso.join()
+            if resultado is None or resultado[0] != "ok":
+                if pid_word is not None:
+                    _terminar_proceso_word(pid_word)
+        if resultado is None:
+            raise RuntimeError(
+                f"El proceso de conversión de Word terminó sin resultado "
+                f"(código {proceso.exitcode})."
+            )
+        if resultado[0] != "ok":
+            if pid_word is not None:
+                _terminar_proceso_word(pid_word)
+            raise RuntimeError(f"Microsoft Word no pudo convertir el documento: {resultado[1]}")
+    finally:
+        if iniciado and proceso.is_alive():
+            proceso.terminate()
+            proceso.join()
+        resultados.close()
+        resultados.cancel_join_thread()
+
+
 def convertir_word_legacy(path: Path, tmp: Path) -> Path:
     destino = tmp / f"{path.stem}.docx"
+    error_word = None
     if sys.platform == "win32":
-        word = None
         try:
-            import win32com.client
-            word = win32com.client.DispatchEx("Word.Application")
-            word.Visible = False
-            word.DisplayAlerts = 0
-            doc = word.Documents.Open(
-                str(path.resolve()),
-                ConfirmConversions=False,
-                ReadOnly=True,
-                AddToRecentFiles=False,
-                Visible=False,
-                OpenAndRepair=False,
-                NoEncodingDialog=True,
-            )
-            doc.SaveAs2(str(destino.resolve()), FileFormat=16)
-            doc.Close(False)
-            word.Quit()
+            _convertir_word_com(path, destino)
             if destino.exists():
                 return destino
-        except Exception:
-            if word:
-                try: word.Quit()
-                except Exception: pass
+        except Exception as exc:
+            error_word = str(exc)
     exe = shutil.which("soffice") or shutil.which("libreoffice")
     if exe:
-        subprocess.run([exe, "--headless", "--convert-to", "docx", "--outdir", str(tmp), str(path)],
-                       capture_output=True, timeout=120, check=False)
+        try:
+            subprocess.run(
+                [exe, "--headless", "--convert-to", "docx", "--outdir", str(tmp), str(path)],
+                capture_output=True,
+                timeout=TIEMPO_LIMITE_CONVERSION_WORD,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise TimeoutError(
+                f"LibreOffice no terminó la conversión en "
+                f"{TIEMPO_LIMITE_CONVERSION_WORD} segundos."
+            ) from exc
         if destino.exists():
             return destino
-    raise RuntimeError("No se pudo convertir el archivo .doc o .docm. Instala pywin32 con Microsoft Word o LibreOffice.")
+    detalle = f" Error de Microsoft Word: {error_word}" if error_word else ""
+    raise RuntimeError(
+        "No se pudo convertir el archivo .doc o .docm. "
+        "Revisa Microsoft Word y pywin32, o usa LibreOffice como alternativa."
+        f"{detalle}"
+    )
 
 
 def preparar(path: Path, tmp: Path) -> tuple[Path, bool]:
@@ -1004,6 +1202,7 @@ def procesar(
     al_progreso: Callable[[int, int, str], None] | None = None,
     json_generados: list[Path] | None = None,
 ) -> dict:
+    _restablecer_error_inicio_word()
     entrada, entrada_eng, salida = base / ENTRADA, base / ENTRADA_ENG, base / SALIDA
     entrada.mkdir(exist_ok=True)
     entrada_eng.mkdir(exist_ok=True)
@@ -1309,4 +1508,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()
     raise SystemExit(main())

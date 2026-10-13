@@ -3,10 +3,16 @@
 from __future__ import annotations
 
 import json
+import os
+import queue
+import re
 import subprocess
 import sys
+import threading
 import tkinter as tk
 import tkinter.font as tkfont
+import unicodedata
+import webbrowser
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -15,7 +21,9 @@ from typing import Any, Callable
 
 from alinear_especificaciones_json import (
     MAESTRO,
+    VERSION as VERSION_ALINEADOR,
     cargar_maestro,
+    ejecutar as ejecutar_alineacion,
     metodos_maestros,
     referencias_astm,
     referencias_astm_fuera_maestro,
@@ -79,6 +87,7 @@ class Especificacion:
     revision: str
     busqueda: str
     idioma: str = "ESPANOL"
+    version_alineador: str = ""
 
     @property
     def etiqueta(self) -> str:
@@ -113,6 +122,102 @@ class VistaPrevia:
 
 def encabezados_tabla(idioma: str) -> tuple[tuple[str, str], ...]:
     return CAMPOS_PRUEBA_INGLES if idioma == "INGLES" else CAMPOS_PRUEBA
+
+
+class OrdenadorColumnasTreeview:
+    def __init__(self, tabla: ttk.Treeview, encabezados: dict[str, str]):
+        self.tabla = tabla
+        self.encabezados = dict(encabezados)
+        self.orden_original: tuple[str, ...] = ()
+        self.columna_ordenada: str | None = None
+        self.registrar_orden_original()
+        self._actualizar_encabezados()
+        self.tabla.bind("<Configure>", self._al_cambiar_tamano, add="+")
+        self.tabla.bind("<ButtonRelease-1>", self._al_cambiar_tamano, add="+")
+
+    def establecer_encabezados(self, encabezados: dict[str, str]) -> None:
+        self.encabezados = dict(encabezados)
+        self._actualizar_encabezados()
+
+    def registrar_orden_original(
+        self, elementos: tuple[str, ...] | list[str] | None = None
+    ) -> None:
+        self.orden_original = tuple(
+            self.tabla.get_children("") if elementos is None else elementos
+        )
+        if self.columna_ordenada is not None:
+            self._aplicar_orden(self.columna_ordenada)
+
+    def _actualizar_encabezados(self) -> None:
+        estilo = ttk.Style(self.tabla)
+        estilo_tabla = str(self.tabla.cget("style")) or "Treeview"
+        fuente = tkfont.Font(
+            self.tabla,
+            font=estilo.lookup(f"{estilo_tabla}.Heading", "font")
+            or "TkDefaultFont",
+        )
+        ancho_espacio = max(1, fuente.measure(" "))
+        for columna, titulo in self.encabezados.items():
+            indicador = "▲" if self.columna_ordenada == columna else "▼"
+            ancho = int(self.tabla.column(columna, "width"))
+            hueco = max(
+                1,
+                round(
+                    (
+                        ancho / 2
+                        - fuente.measure(titulo) / 2
+                        - fuente.measure(indicador)
+                        - 6
+                    )
+                    / ancho_espacio
+                ),
+            )
+            self.tabla.heading(
+                columna,
+                text=f"{titulo}{' ' * hueco}{indicador}",
+                anchor="e",
+                command=lambda c=columna: self.alternar(c),
+            )
+
+    def _al_cambiar_tamano(self, _evento: tk.Event | None = None) -> None:
+        if self.encabezados and self.tabla.winfo_exists():
+            self._actualizar_encabezados()
+
+    def _aplicar_orden(self, columna: str) -> None:
+        elementos = self.tabla.get_children("")
+
+        def clave_alfabetica(elemento: str) -> str:
+            normalizado = unicodedata.normalize(
+                "NFKD", str(self.tabla.set(elemento, columna))
+            )
+            sin_acentos = "".join(
+                caracter
+                for caracter in normalizado
+                if unicodedata.category(caracter) != "Mn"
+            )
+            return sin_acentos.casefold()
+
+        nuevos = sorted(
+            (elemento for elemento in elementos if elemento != "nueva"),
+            key=clave_alfabetica,
+        )
+        if "nueva" in elementos:
+            nuevos.append("nueva")
+        for indice, elemento in enumerate(nuevos):
+            self.tabla.move(elemento, "", indice)
+
+    def alternar(self, columna: str) -> None:
+        if columna not in self.encabezados:
+            return
+        if self.columna_ordenada == columna:
+            for indice, elemento in enumerate(self.orden_original):
+                if self.tabla.exists(elemento):
+                    self.tabla.move(elemento, "", indice)
+            self.columna_ordenada = None
+        else:
+            self.columna_ordenada = columna
+            self._aplicar_orden(columna)
+        self._actualizar_encabezados()
 
 
 def etiqueta_control(campo: str, etiqueta: str, idioma: str) -> str:
@@ -152,6 +257,8 @@ class PanelEspecificaciones:
     tabla_pruebas: ttk.Treeview | None = None
     boton_contraparte: ttk.Button | None = None
     boton_editar: ttk.Button | None = None
+    boton_alinear: ttk.Button | None = None
+    boton_realinear: ttk.Button | None = None
     zoom_previa: float = 1.0
     especificacion_actual: Especificacion | None = None
 
@@ -270,6 +377,9 @@ def cargar_catalogo(carpeta: Path) -> Catalogo:
             codigo = _texto(control.get("codigo_unico_producto"))
             cliente = _texto(control.get("nombre_cliente"))
             revision = _texto(control.get("revision"))
+            alineacion = datos.get("alineacion_metodos_lab")
+            alineacion = alineacion if isinstance(alineacion, dict) else {}
+            version_alineador = _texto(alineacion.get("version_programa"))
             pruebas = datos.get("pruebas")
             nombres_pruebas = (
                 " ".join(
@@ -298,6 +408,7 @@ def cargar_catalogo(carpeta: Path) -> Catalogo:
                     revision=revision,
                     busqueda=clave_texto(" ".join(campos)),
                     idioma=idioma,
+                    version_alineador=version_alineador,
                 )
             )
         except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
@@ -395,6 +506,35 @@ def buscar_contraparte(
         if candidata not in mismo_nombre and compatibles(candidata)
     ]
     return coincidencias_metadatos[0] if len(coincidencias_metadatos) == 1 else None
+
+
+def requiere_realineacion(version_guardada: str, version_actual: str = VERSION_ALINEADOR) -> bool:
+    def componentes(version: str) -> tuple[int, ...] | None:
+        coincidencia = re.fullmatch(r"\s*[vV]?(\d+(?:\.\d+)*)\s*", version)
+        if coincidencia is None:
+            return None
+        return tuple(int(parte) for parte in coincidencia.group(1).split("."))
+
+    guardada = componentes(version_guardada)
+    actual = componentes(version_actual)
+    if actual is None:
+        raise ValueError(f"Versión actual del alineador inválida: {version_actual!r}")
+    if guardada is None:
+        return True
+    longitud = max(len(guardada), len(actual))
+    guardada += (0,) * (longitud - len(guardada))
+    actual += (0,) * (longitud - len(actual))
+    return guardada < actual
+
+
+def especificaciones_pendientes_realineacion(
+    seleccionadas: list[Especificacion],
+) -> list[Especificacion]:
+    return [
+        especificacion
+        for especificacion in seleccionadas
+        if requiere_realineacion(especificacion.version_alineador)
+    ]
 
 
 def preparar_vista_previa(ruta: Path) -> VistaPrevia:
@@ -547,6 +687,16 @@ class SelectorEspecificaciones:
         self.paneles: dict[str, PanelEspecificaciones] = {}
         self.zoom_aplicacion = 1.0
         self._escala_tk_base = float(self.raiz.tk.call("tk", "scaling"))
+        self._alineacion_en_proceso = False
+        self._cola_alineacion: queue.Queue[tuple[str, Any]] | None = None
+        self._ventana_progreso_alineacion: tk.Toplevel | None = None
+        self._etiqueta_progreso_alineacion: ttk.Label | None = None
+        self._barra_progreso_alineacion: ttk.Progressbar | None = None
+        self._lotes_pendientes_alineacion: list[
+            tuple[list[Path], list[Path] | None]
+        ] = []
+        self._archivos_actuales_alineacion: set[Path] = set()
+        self._resumen_alineacion: dict[str, int] = {}
         self._configurar_ventana()
         self._crear_interfaz()
         self.recargar_catalogos()
@@ -566,7 +716,7 @@ class SelectorEspecificaciones:
         estilo.configure("Treeview", rowheight=25, font=("Segoe UI", 9))
         estilo.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
 
-        encabezado = tk.Frame(self.raiz, background="#0752b9", padx=24, pady=15)
+        encabezado = tk.Frame(self.raiz, background="#0752b9", padx=24, pady=10)
         encabezado.pack(fill="x")
         controles_zoom = ttk.Frame(encabezado)
         controles_zoom.pack(side="right", padx=(12, 0))
@@ -590,7 +740,7 @@ class SelectorEspecificaciones:
         ).pack(anchor="w", pady=(3, 0))
 
         self.pestanas = ttk.Notebook(self.raiz)
-        self.pestanas.pack(fill="both", expand=True, padx=18, pady=16)
+        self.pestanas.pack(fill="both", expand=True, padx=18, pady=(0, 10))
         for clave, titulo in (
             ("anteriores", "Anteriores · JSON extraídos"),
             ("nuevas", "Nuevas · JSON alineados"),
@@ -642,6 +792,32 @@ class SelectorEspecificaciones:
         ).pack(fill="x", pady=(10, 0))
         estado = ttk.Label(panel_busqueda, text="", wraplength=280)
         estado.pack(anchor="w", pady=(8, 0))
+        boton_alinear = None
+        boton_realinear = None
+        if clave == "anteriores":
+            acciones_alinear = ttk.Frame(panel_busqueda)
+            acciones_alinear.pack(fill="x", pady=(12, 3))
+            boton_alinear = ttk.Button(
+                acciones_alinear,
+                text="Alinear especificaciones",
+                command=lambda c=clave: self._alinear_seleccionadas(c),
+                state="disabled",
+            )
+            boton_alinear.pack(side="left", fill="x", expand=True)
+            ttk.Button(
+                acciones_alinear,
+                text="ⓘ",
+                width=3,
+                command=self.abrir_resumen_alineador,
+            ).pack(side="left", padx=(5, 0))
+        else:
+            boton_realinear = ttk.Button(
+                panel_busqueda,
+                text="Realinear a versión vigente",
+                command=lambda c=clave: self._realinear_seleccionadas(c),
+                state="disabled",
+            )
+            boton_realinear.pack(fill="x", pady=(12, 0))
 
         barra_vista = ttk.Frame(panel_previa)
         barra_vista.pack(fill="x", pady=(0, 9))
@@ -697,14 +873,6 @@ class SelectorEspecificaciones:
             wraplength=650,
         ).pack(fill="both", expand=True)
 
-        acciones_previa = ttk.Frame(panel_previa)
-        acciones_previa.pack(fill="x", pady=(10, 0))
-        ttk.Button(
-            acciones_previa,
-            text="Actualizar especificación",
-            command=lambda c=clave: self._actualizar_especificacion(c),
-        ).pack(side="right")
-
         self.paneles[clave] = PanelEspecificaciones(
             catalogo=Catalogo((), ()),
             sugerencias=[],
@@ -716,7 +884,10 @@ class SelectorEspecificaciones:
             marco_previa=marco_previa,
             boton_contraparte=boton_contraparte,
             boton_editar=boton_editar,
+            boton_alinear=boton_alinear,
+            boton_realinear=boton_realinear,
         )
+        self._actualizar_estado_accion(clave)
         entrada.bind("<KeyRelease>", lambda _evento, c=clave: self._actualizar_sugerencias(c))
         entrada.bind("<Return>", lambda _evento, c=clave: self._seleccionar_primera_sugerencia(c))
         entrada.bind("<Down>", lambda _evento, c=clave: self._enfocar_sugerencias(c))
@@ -730,6 +901,7 @@ class SelectorEspecificaciones:
             except (OSError, ValueError) as exc:
                 panel.catalogo = Catalogo((), ())
                 panel.estado_catalogo.configure(text=f"No se pudo cargar:\n{exc}")
+                self._actualizar_estado_accion(clave)
                 continue
             self._actualizar_sugerencias(clave)
             disponibles = len(panel.catalogo.especificaciones)
@@ -743,6 +915,7 @@ class SelectorEspecificaciones:
             panel.estado_catalogo.configure(text=texto_estado)
         for clave in self.paneles:
             self._actualizar_boton_contraparte(clave)
+            self._actualizar_estado_accion(clave)
 
     def _actualizar_sugerencias(self, clave: str) -> None:
         panel = self.paneles[clave]
@@ -780,6 +953,24 @@ class SelectorEspecificaciones:
         panel.lista.selection_set(indice)
         panel.lista.activate(indice)
         self._mostrar_previa(clave, especificacion)
+        self._actualizar_estado_accion(clave)
+
+    def _actualizar_estado_accion(self, clave: str) -> None:
+        panel = self.paneles[clave]
+        if clave == "anteriores" and panel.boton_alinear is not None:
+            panel.boton_alinear.configure(
+                state="normal" if panel.documentos_marcados else "disabled"
+            )
+        if clave == "nuevas" and panel.boton_realinear is not None:
+            seleccionadas = [
+                especificacion
+                for especificacion in panel.catalogo.especificaciones
+                if especificacion.ruta in panel.documentos_marcados
+            ]
+            pendientes = especificaciones_pendientes_realineacion(seleccionadas)
+            panel.boton_realinear.configure(
+                state="normal" if pendientes else "disabled"
+            )
 
     def _seleccionar_primera_sugerencia(self, clave: str) -> str:
         panel = self.paneles[clave]
@@ -925,6 +1116,10 @@ class SelectorEspecificaciones:
                 tk.END,
                 values=tuple(_texto(prueba.get(campo)) for campo in columnas),
             )
+        OrdenadorColumnasTreeview(
+            tabla,
+            {campo: encabezados[campo] for campo in ("prueba", "metodo")},
+        )
 
         if previa.idioma == "INGLES":
             ttk.Label(
@@ -1163,6 +1358,269 @@ class SelectorEspecificaciones:
                 )
             return
         self.al_actualizar(seleccionadas[0])
+
+    def abrir_resumen_alineador(self) -> None:
+        ruta = BASE / "RESUMEN_ALINEADOR_ESPECIFICACIONES.md"
+        try:
+            abrir_en_windows = getattr(os, "startfile", None)
+            if callable(abrir_en_windows):
+                abrir_en_windows(str(ruta))
+            elif not webbrowser.open(ruta.resolve().as_uri()):
+                raise OSError("No hay una aplicación disponible para abrir el resumen.")
+        except OSError as exc:
+            messagebox.showerror(
+                "No se pudo abrir el resumen del alineador",
+                str(exc),
+                parent=self.raiz,
+            )
+
+    def _alinear_seleccionadas(self, clave: str) -> None:
+        if clave != "anteriores":
+            return
+        panel = self.paneles[clave]
+        archivos = [
+            especificacion.ruta
+            for especificacion in panel.catalogo.especificaciones
+            if especificacion.ruta in panel.documentos_marcados
+        ]
+        if not archivos:
+            messagebox.showinfo(
+                "Selecciona una especificación",
+                "Marca una o más especificaciones de origen para alinearlas.",
+                parent=self.raiz,
+            )
+            return
+        self._alinear_especificaciones(archivos)
+
+    def _realinear_seleccionadas(self, clave: str) -> None:
+        if clave != "nuevas":
+            return
+        panel = self.paneles[clave]
+        seleccionadas = [
+            especificacion
+            for especificacion in panel.catalogo.especificaciones
+            if especificacion.ruta in panel.documentos_marcados
+        ]
+        pendientes = especificaciones_pendientes_realineacion(seleccionadas)
+        if not pendientes:
+            return
+
+        originales = self.paneles["anteriores"].catalogo.especificaciones
+        archivos_origen: list[Path] = []
+        archivos_destino: list[Path] = []
+        sin_original = []
+        for alineada in pendientes:
+            original = buscar_contraparte(alineada, originales)
+            if original is None:
+                sin_original.append(alineada.ruta.name)
+                continue
+            archivos_origen.append(original.ruta)
+            archivos_destino.append(alineada.ruta)
+
+        if sin_original:
+            messagebox.showwarning(
+                "No se encontró el origen",
+                "No se pueden realinear estos JSON porque no se encontró su "
+                "especificación de origen:\n" + "\n".join(sin_original),
+                parent=self.raiz,
+            )
+        if archivos_origen:
+            self._alinear_especificaciones(
+                archivos_origen,
+                destinos_seleccionados=archivos_destino,
+            )
+
+    def _alinear_especificaciones(
+        self,
+        archivos: list[Path],
+        destinos_seleccionados: list[Path] | None = None,
+    ) -> None:
+        if destinos_seleccionados is not None and len(archivos) != len(
+            destinos_seleccionados
+        ):
+            raise ValueError("Cada origen debe tener su destino alineado.")
+        if destinos_seleccionados is None:
+            pares = [(ruta, None) for ruta in archivos]
+        else:
+            pares = list(zip(archivos, destinos_seleccionados))
+        archivos_en_espera = {
+            ruta
+            for lote, _destinos in self._lotes_pendientes_alineacion
+            for ruta in lote
+        }
+        pares_nuevos = []
+        vistos: set[Path] = set()
+        for ruta, destino in pares:
+            if (
+                ruta in vistos
+                or ruta in self._archivos_actuales_alineacion
+                or ruta in archivos_en_espera
+            ):
+                continue
+            vistos.add(ruta)
+            pares_nuevos.append((ruta, destino))
+        archivos_nuevos = [ruta for ruta, _destino in pares_nuevos]
+        destinos_nuevos = (
+            [destino for _ruta, destino in pares_nuevos if destino is not None]
+            if destinos_seleccionados is not None
+            else None
+        )
+        if not archivos_nuevos:
+            return
+        if self._alineacion_en_proceso:
+            self._lotes_pendientes_alineacion.append(
+                (archivos_nuevos, destinos_nuevos)
+            )
+            return
+
+        self._alineacion_en_proceso = True
+        self._archivos_actuales_alineacion = set(archivos_nuevos)
+        self._lotes_pendientes_alineacion.clear()
+        self._resumen_alineacion = {
+            "archivos": 0,
+            "alineados": 0,
+            "revision": 0,
+            "sin_coincidencia": 0,
+            "errores": 0,
+        }
+        self._cola_alineacion = queue.Queue()
+        ventana = tk.Toplevel(self.raiz)
+        self._ventana_progreso_alineacion = ventana
+        ventana.title("Alineando especificaciones")
+        ventana.transient(self.raiz)
+        ventana.resizable(False, False)
+        ventana.geometry("430x130")
+        ventana.protocol("WM_DELETE_WINDOW", lambda: None)
+        marco = ttk.Frame(ventana, padding=16)
+        marco.pack(fill="both", expand=True)
+        self._etiqueta_progreso_alineacion = ttk.Label(
+            marco, text="Preparando alineación…", wraplength=390
+        )
+        self._etiqueta_progreso_alineacion.pack(anchor="w", pady=(0, 10))
+        self._barra_progreso_alineacion = ttk.Progressbar(
+            marco, mode="determinate", maximum=len(archivos_nuevos)
+        )
+        self._barra_progreso_alineacion.pack(fill="x")
+        self._ejecutar_tarea_alineacion(archivos_nuevos, destinos_nuevos)
+        self.raiz.after(100, self._revisar_progreso_alineacion)
+
+    def _ejecutar_tarea_alineacion(
+        self,
+        archivos: list[Path],
+        destinos_seleccionados: list[Path] | None = None,
+    ) -> None:
+        if self._etiqueta_progreso_alineacion is not None:
+            self._etiqueta_progreso_alineacion.configure(
+                text=f"Alineando {len(archivos)} especificación(es)…"
+            )
+        if self._barra_progreso_alineacion is not None:
+            self._barra_progreso_alineacion.configure(
+                maximum=max(1, len(archivos)), value=0
+            )
+        cola = self._cola_alineacion
+        if cola is None:
+            raise RuntimeError("No está disponible la cola de progreso del alineador.")
+
+        def trabajar() -> None:
+            try:
+                resumen = ejecutar_alineacion(
+                    BASE,
+                    archivos_seleccionados=archivos,
+                    destinos_seleccionados=destinos_seleccionados,
+                    al_progreso=lambda completados, total, nombre: cola.put(
+                        ("progreso", (completados, total, nombre))
+                    ),
+                    carpeta_entrada=self.carpetas_json["anteriores"],
+                    carpeta_salida=self.carpetas_json["nuevas"],
+                )
+            except Exception as exc:
+                cola.put(("error", str(exc)))
+            else:
+                cola.put(("resultado", resumen))
+
+        threading.Thread(
+            target=trabajar,
+            name="alineacion-especificaciones",
+            daemon=True,
+        ).start()
+
+    def _revisar_progreso_alineacion(self) -> None:
+        cola = self._cola_alineacion
+        if cola is None:
+            return
+        while True:
+            try:
+                tipo, dato = cola.get_nowait()
+            except queue.Empty:
+                break
+            if tipo == "progreso":
+                completados, total, nombre = dato
+                if self._barra_progreso_alineacion is not None:
+                    self._barra_progreso_alineacion.configure(
+                        maximum=max(1, total), value=completados
+                    )
+                if self._etiqueta_progreso_alineacion is not None:
+                    self._etiqueta_progreso_alineacion.configure(
+                        text=f"Alineando {completados} de {total}: {Path(nombre).name}"
+                    )
+            elif tipo == "error":
+                self._cerrar_progreso_alineacion()
+                messagebox.showerror(
+                    "No se pudo alinear la especificación",
+                    str(dato),
+                    parent=self.raiz,
+                )
+                return
+            elif tipo == "resultado":
+                for campo, cantidad in dato.items():
+                    self._resumen_alineacion[campo] = (
+                        self._resumen_alineacion.get(campo, 0) + cantidad
+                    )
+                if self._lotes_pendientes_alineacion:
+                    lote_pendiente = self._lotes_pendientes_alineacion.pop(0)
+                    archivos_pendientes, destinos_pendientes = lote_pendiente
+                    self._archivos_actuales_alineacion = set(archivos_pendientes)
+                    self._ejecutar_tarea_alineacion(
+                        archivos_pendientes,
+                        destinos_pendientes,
+                    )
+                    continue
+                resumen = self._resumen_alineacion
+                self._cerrar_progreso_alineacion()
+                self.recargar_catalogos()
+                mostrar = (
+                    messagebox.showwarning
+                    if resumen.get("errores", 0)
+                    else messagebox.showinfo
+                )
+                mostrar(
+                    "Alineación terminada con errores"
+                    if resumen.get("errores", 0)
+                    else "Alineación terminada",
+                    (
+                        f"Archivos procesados: {resumen.get('archivos', 0)}\n"
+                        f"Pruebas alineadas: {resumen.get('alineados', 0)}\n"
+                        f"Para revisión: {resumen.get('revision', 0)}\n"
+                        f"Sin coincidencia: {resumen.get('sin_coincidencia', 0)}\n"
+                        f"Errores: {resumen.get('errores', 0)}"
+                    ),
+                    parent=self.raiz,
+                )
+                return
+        if self._alineacion_en_proceso:
+            self.raiz.after(100, self._revisar_progreso_alineacion)
+
+    def _cerrar_progreso_alineacion(self) -> None:
+        ventana = self._ventana_progreso_alineacion
+        self._ventana_progreso_alineacion = None
+        self._etiqueta_progreso_alineacion = None
+        self._barra_progreso_alineacion = None
+        self._cola_alineacion = None
+        self._archivos_actuales_alineacion.clear()
+        self._lotes_pendientes_alineacion.clear()
+        self._alineacion_en_proceso = False
+        if ventana is not None and ventana.winfo_exists():
+            ventana.destroy()
 
     def _editar_especificacion(self, clave: str) -> None:
         especificacion = self.paneles[clave].especificacion_actual
