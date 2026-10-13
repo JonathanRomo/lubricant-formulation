@@ -5,11 +5,12 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
-VERSION="3.0.0"; CARPETA="METODOS_LAB"; SALIDA="METODOS_LAB_UNIFICADO.xlsx"
+VERSION="3.1.0"; CARPETA="METODOS_LAB"; SALIDA="METODOS_LAB_UNIFICADO.xlsx"
 BITACORA="CAMBIOS_METODOS_LAB.txt"; ESTADO=".estado_metodos_lab.json"
 PYTHON_REQUERIDO=(3,11)
 FUENTES={"METODOS ASTM FEUM USP NO ACREDITADOS REV2":"NORMAL","METODOS 3RIA":"NORMAL","LISTAS DE METODOS ACREDITADOS":"ACREDITADOS"}
-COLUMNAS=["METODO","NOMBRE IQM","NOMBRE IQM INGLES","UNIDADES","UNITS","ACREDITACION NOMBRE"]
+COLUMNAS=["METODO","MÉTODO INGLÉS","NOMBRE IQM","NOMBRE IQM INGLES","UNIDADES","UNITS","ACREDITACION NOMBRE"]
+CLAVE_FILA=("METODO","NOMBRE IQM","NOMBRE IQM INGLES","UNIDADES","UNITS","ACREDITACION NOMBRE")
 
 def cargar_openpyxl():
     try: import openpyxl
@@ -42,7 +43,7 @@ def digest(p):
 def archivos(carpeta):
     m={k:[] for k in FUENTES}
     for p in carpeta.iterdir():
-        if p.is_file() and p.suffix.lower() in {".xlsx",".xlsm"} and key(p.stem) in m:m[key(p.stem)].append(p)
+        if p.is_file() and not p.name.startswith("~$") and p.suffix.lower() in {".xlsx",".xlsm"} and key(p.stem) in m:m[key(p.stem)].append(p)
     errores=[]; out=[]
     for n,t in FUENTES.items():
         if len(m[n])==0:errores.append(f"Falta: {n}.xlsx")
@@ -54,7 +55,7 @@ def header_row(ws):
     best=(0,1)
     for r in range(1,min(ws.max_row,30)+1):
         ks={key(ws.cell(r,c).value) for c in range(1,ws.max_column+1)}
-        score=5*("METODO" in ks)+sum(x in ks for x in ("NOMBRE","NAME","NOMBRE IQM","NOMBRE IQM INGLES","UNIDADES","UNITS"))
+        score=5*bool({"METODO","METHOD"}&ks)+sum(x in ks for x in ("NOMBRE","NAME","NOMBRE IQM","NOMBRE IQM INGLES","UNIDADES","UNITS"))
         if score>best[0]:best=(score,r)
     if best[0]<6:raise ValueError("encabezado no reconocido")
     return best[1]
@@ -66,12 +67,60 @@ def leer(p,tipo):
         hs=[key(ws.cell(r0,c).value) for c in range(1,ws.max_column+1)]
         for r in range(r0+1,ws.max_row+1):
             d={h:txt(ws.cell(r,c+1).value) for c,h in enumerate(hs) if h}
-            metodo=clean(d.get("METODO"))
+            metodo=clean(d.get("METODO") or d.get("METHOD"))
+            metodo_ingles=clean(d.get("METODO INGLES") or d.get("ENGLISH METHOD") or d.get("METHOD ENGLISH") or d.get("METODO EN INGLES"))
             if tipo=="ACREDITADOS":nom,eng=d.get("NOMBRE",""),d.get("NAME","")
             else:nom,eng=d.get("NOMBRE IQM",""),d.get("NOMBRE IQM INGLES","")
             if not any((metodo,txt(nom),txt(eng))):continue
-            out.append({"METODO":metodo,"NOMBRE IQM":clean(nom,True),"NOMBRE IQM INGLES":clean(eng,True),"UNIDADES":clean(d.get("UNIDADES")),"UNITS":clean(d.get("UNITS")),"ACREDITACION NOMBRE":"ACREDITADO" if "*" in txt(nom) else "NO ACREDITADO","_ORIGEN":p.name})
+            out.append({"METODO":metodo,"MÉTODO INGLÉS":metodo_ingles,"_METODO_INGLES_FUENTE":bool(metodo_ingles),"NOMBRE IQM":clean(nom,True),"NOMBRE IQM INGLES":clean(eng,True),"UNIDADES":clean(d.get("UNIDADES")),"UNITS":clean(d.get("UNITS")),"ACREDITACION NOMBRE":"ACREDITADO" if "*" in txt(nom) else "NO ACREDITADO","_ORIGEN":p.name})
     wb.close();return out
+
+def claves_fila(fila):
+    return tuple(key(fila.get(columna)) for columna in CLAVE_FILA)
+
+def metodos_ingles_existentes(path):
+    if not path.is_file():return {},{}
+    wb=load_workbook(path,read_only=True,data_only=True,keep_links=False)
+    try:
+        if "METODOS" not in wb.sheetnames:return {},{}
+        ws=wb["METODOS"]
+        encabezados={key(ws.cell(1,c).value):c for c in range(1,ws.max_column+1)}
+        if not all(key(columna) in encabezados for columna in CLAVE_FILA):return {},{}
+        col_ingles=encabezados.get(key("MÉTODO INGLÉS"))
+        if col_ingles is None:return {},{}
+        resultado={};por_nombre={}
+        for r in range(2,ws.max_row+1):
+            fila={columna:txt(ws.cell(r,encabezados[key(columna)]).value) for columna in CLAVE_FILA}
+            metodo_ingles=clean(ws.cell(r,col_ingles).value)
+            if metodo_ingles:
+                resultado.setdefault(claves_fila(fila),[]).append(metodo_ingles)
+                nombre_ingles=key(fila["NOMBRE IQM INGLES"])
+                if nombre_ingles:por_nombre.setdefault(nombre_ingles,[]).append(metodo_ingles)
+        return resultado,por_nombre
+    finally:wb.close()
+
+def conservar_metodos_ingles(filas,existentes,por_nombre=None):
+    for fila in filas:
+        if not fila.pop("_METODO_INGLES_FUENTE",False):
+            traducciones=existentes.get(claves_fila(fila),[])
+            if traducciones:
+                fila["MÉTODO INGLÉS"]=traducciones.pop(0)
+            else:
+                nombre_ingles=key(fila.get("NOMBRE IQM INGLES"))
+                alternativas=[]
+                if nombre_ingles and por_nombre:
+                    alternativas=[
+                        metodo
+                        for nombre,metodos in por_nombre.items()
+                        if nombre in nombre_ingles or nombre_ingles in nombre
+                        for metodo in metodos
+                    ]
+                traducciones_unicas=tuple(dict.fromkeys(alternativas))
+                fila["MÉTODO INGLÉS"]=(
+                    traducciones_unicas[0]
+                    if len(traducciones_unicas)==1
+                    else fila["METODO"]
+                )
 def crear(path,filas):
     wb=Workbook();ws=wb.active;ws.title="METODOS";ws.append(COLUMNAS)
     for r in filas:ws.append([r[c] for c in COLUMNAS])
@@ -79,11 +128,11 @@ def crear(path,filas):
     for c in ws[1]:c.fill=blue;c.font=white;c.alignment=Alignment(horizontal="center",wrap_text=True)
     for row in ws.iter_rows(min_row=2):
         for c in row:c.alignment=Alignment(vertical="top",wrap_text=True)
-        row[5].fill=PatternFill("solid",fgColor="E2F0D9" if row[5].value=="ACREDITADO" else "FCE4D6")
-    for i,w in enumerate((25,52,52,18,18,23),1):ws.column_dimensions[get_column_letter(i)].width=w
+        row[6].fill=PatternFill("solid",fgColor="E2F0D9" if row[6].value=="ACREDITADO" else "FCE4D6")
+    for i,w in enumerate((25,25,52,52,18,18,23),1):ws.column_dimensions[get_column_letter(i)].width=w
     ws.freeze_panes="A2";ws.sheet_view.showGridLines=False
     if ws.max_row>1:
-        tab=Table(displayName="TablaMetodos",ref=f"A1:F{ws.max_row}");tab.tableStyleInfo=TableStyleInfo(name="TableStyleMedium2",showRowStripes=True);ws.add_table(tab)
+        tab=Table(displayName="TablaMetodos",ref=f"A1:G{ws.max_row}");tab.tableStyleInfo=TableStyleInfo(name="TableStyleMedium2",showRowStripes=True);ws.add_table(tab)
     rs=wb.create_sheet("RESUMEN");rs.append(["CONCEPTO","VALOR"]);rs.append(["Version",VERSION]);rs.append(["Fecha",datetime.now().isoformat(timespec="seconds")]);rs.append(["Total filas",len(filas)])
     for n,c in Counter(r["_ORIGEN"] for r in filas).items():rs.append([n,c])
     temp=path.with_suffix(".tmp.xlsx");wb.save(temp);shutil.move(temp,path)
@@ -92,10 +141,12 @@ def ejecutar(base):
     if not carpeta.exists():raise FileNotFoundError(f"No existe la carpeta {carpeta}")
     ep=carpeta/ESTADO;ant=json.loads(ep.read_text(encoding="utf-8")) if ep.exists() else {"archivos":{}}
     filas=[];actual={"version":VERSION,"archivos":{}};mensajes=[]
+    metodos_ingles,metodos_por_nombre=metodos_ingles_existentes(carpeta/SALIDA)
     for p,t in archivos(carpeta):
         datos=leer(p,t);filas+=datos;firma={"hash":digest(p),"filas":len(datos)};actual["archivos"][p.name]=firma;viejo=ant.get("archivos",{}).get(p.name)
         if viejo is None:mensajes.append(f"{p.name}: registrado por primera vez con {len(datos)} filas utiles.")
         elif viejo.get("hash")!=firma["hash"]:mensajes.append(f"{p.name}: modificado. Filas utiles {viejo.get('filas',0)} -> {len(datos)}.")
+    conservar_metodos_ingles(filas,metodos_ingles,metodos_por_nombre)
     crear(carpeta/SALIDA,filas)
     if mensajes:
         with (carpeta/BITACORA).open("a",encoding="utf-8") as f:f.write(f"\n[{datetime.now().isoformat(timespec='seconds')}]\n"+"\n".join(mensajes)+"\n")

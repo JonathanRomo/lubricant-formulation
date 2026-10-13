@@ -16,6 +16,7 @@ import unicodedata
 from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
+from typing import Callable
 from zipfile import ZipFile
 
 from docx import Document
@@ -174,6 +175,8 @@ def conectar(path: Path) -> sqlite3.Connection:
       ruta_archivo TEXT NOT NULL, hash_catalogo TEXT UNIQUE NOT NULL,
       tamano_bytes INTEGER NOT NULL, fecha_modificacion_ns INTEGER NOT NULL,
       fecha_lectura TEXT NOT NULL, total_registros INTEGER NOT NULL);
+    CREATE INDEX IF NOT EXISTS idx_archivos_hash_catalogo_estado
+      ON archivos(hash_actual,hash_catalogo,estado);
     """)
     # Migracion no destructiva desde versiones previas.
     requeridas_archivos = {
@@ -255,6 +258,23 @@ def registrar_catalogo(con: sqlite3.Connection, registros: list[dict], digest: s
     con.commit()
 
 
+def archivo_bloqueado_word(path: Path) -> Path | None:
+    nombre = path.name.casefold()
+    for temporal in path.parent.glob("~$*"):
+        nombre_temporal = temporal.name[2:].casefold()
+        if (
+            temporal.is_file()
+            and temporal.suffix.casefold() == path.suffix.casefold()
+            and len(nombre_temporal) >= 4
+            and (
+                nombre[2:].startswith(nombre_temporal)
+                or nombre.startswith(nombre_temporal)
+            )
+        ):
+            return temporal
+    return None
+
+
 def convertir_word_legacy(path: Path, tmp: Path) -> Path:
     destino = tmp / f"{path.stem}.docx"
     if sys.platform == "win32":
@@ -264,7 +284,15 @@ def convertir_word_legacy(path: Path, tmp: Path) -> Path:
             word = win32com.client.DispatchEx("Word.Application")
             word.Visible = False
             word.DisplayAlerts = 0
-            doc = word.Documents.Open(str(path.resolve()), ReadOnly=True)
+            doc = word.Documents.Open(
+                str(path.resolve()),
+                ConfirmConversions=False,
+                ReadOnly=True,
+                AddToRecentFiles=False,
+                Visible=False,
+                OpenAndRepair=False,
+                NoEncodingDialog=True,
+            )
             doc.SaveAs2(str(destino.resolve()), FileFormat=16)
             doc.Close(False)
             word.Quit()
@@ -471,15 +499,30 @@ def parsear_fecha_documento(valor: str) -> date | None:
 
 
 def reindexar_revisiones(
-    con: sqlite3.Connection, salida: Path, catalogo: list[dict]
+    con: sqlite3.Connection,
+    salida: Path,
+    catalogo: list[dict],
+    producto_claves: set[str] | None = None,
 ) -> dict[str, int]:
+    filtro = ""
+    parametros: tuple[str, ...] = ()
+    if producto_claves is not None:
+        claves_ordenadas = sorted(producto_claves)
+        if claves_ordenadas:
+            placeholders = ",".join("?" for _ in claves_ordenadas)
+            filtro = f"WHERE v.producto_clave IN ({placeholders})"
+            parametros = tuple(claves_ordenadas)
+        else:
+            filtro = "WHERE 0"
     filas = con.execute(
-        """SELECT v.id, v.archivo_id, v.producto_clave, v.revision_json,
+        f"""SELECT v.id, v.archivo_id, v.producto_clave, v.revision_json,
                   v.archivo_json, v.fecha_creacion, v.fecha_documento, a.ruta_relativa,
                   v.part_id_fuente, v.part_id_final, v.validacion_catalogo,
                   v.nombre_fuente, v.resolucion_nombre
            FROM versiones v JOIN archivos a ON a.id=v.archivo_id
-           ORDER BY v.producto_clave, v.revision_json, v.id"""
+           {filtro}
+           ORDER BY v.producto_clave, v.revision_json, v.id""",
+        parametros,
     ).fetchall()
     totales_por_producto: dict[str, int] = defaultdict(int)
     productos_con_json_invalido: set[str] = set()
@@ -955,16 +998,34 @@ def validar_catalogo(
     return resultado
 
 
-def procesar(base: Path) -> dict:
+def procesar(
+    base: Path,
+    archivos_seleccionados: list[Path] | None = None,
+    al_progreso: Callable[[int, int, str], None] | None = None,
+    json_generados: list[Path] | None = None,
+) -> dict:
     entrada, entrada_eng, salida = base / ENTRADA, base / ENTRADA_ENG, base / SALIDA
     entrada.mkdir(exist_ok=True)
     entrada_eng.mkdir(exist_ok=True)
-    archivos = sorted(
-        ((p, raiz == entrada_eng) for raiz in (entrada, entrada_eng)
-         for p in raiz.rglob("*")
-         if p.is_file() and p.suffix.lower() in EXTENSIONES and not p.name.startswith("~$")),
-        key=lambda item: str(item[0]),
-    )
+    if archivos_seleccionados is None:
+        archivos = sorted(
+            ((p, raiz == entrada_eng) for raiz in (entrada, entrada_eng)
+             for p in raiz.rglob("*")
+             if p.is_file() and p.suffix.lower() in EXTENSIONES and not p.name.startswith("~$")),
+            key=lambda item: str(item[0]),
+        )
+    else:
+        archivos = sorted(
+            (
+                (path, path.resolve().is_relative_to(entrada_eng.resolve()))
+                for path in archivos_seleccionados
+                if path.is_file()
+                and path.suffix.lower() in EXTENSIONES
+                and not path.name.startswith("~$")
+            ),
+            key=lambda item: str(item[0]),
+        )
+    total_archivos = len(archivos)
 
     salida.mkdir(exist_ok=True)
     con = conectar(base / DB)
@@ -972,18 +1033,47 @@ def procesar(base: Path) -> dict:
     catalogo, hash_catalogo = leer_catalogo(base / CATALOGO)
     ids_catalogo = {r["part_id_clave"] for r in catalogo if r["part_id_clave"]}
     registrar_catalogo(con, catalogo, hash_catalogo, ahora_inicio, base / CATALOGO)
-    resumen = {"nuevos": 0, "actualizados": 0, "ignorados": 0, "movidos_eng": 0,
+    resumen = {"nuevos": 0, "actualizados": 0, "ignorados": 0, "bloqueados": 0,
+               "movidos_eng": 0,
                "movidos_revisar": 0, "conflictos": 0, "completados": 0,
                "yves_yoi_a_revisar": 0, "errores": 0, "revisiones_reordenadas": 0}
-    for origen, ya_esta_en_ingles in archivos:
+    productos_afectados: set[str] = set()
+    archivos_json_reindexados: list[int] = []
+
+    def informar_progreso(indice: int, ruta: str) -> None:
+        if al_progreso is not None:
+            al_progreso(indice, total_archivos, ruta)
+
+    for indice_archivo, (origen, ya_esta_en_ingles) in enumerate(archivos, 1):
         rel = origen.relative_to(base).as_posix()
         ahora = datetime.now(); fecha_iso = ahora.isoformat(timespec="seconds")
         digest = ""
         stat = None
         print(f"PROCESANDO: {rel}", flush=True)
         try:
+            bloqueo = archivo_bloqueado_word(origen)
+            if bloqueo is not None:
+                resumen["bloqueados"] += 1
+                print(
+                    f"OMITIDO (Word bloqueado): {rel}; archivo de bloqueo: "
+                    f"{bloqueo.name}",
+                    flush=True,
+                )
+                informar_progreso(indice_archivo, rel)
+                continue
             digest = sha256(origen)
             stat = origen.stat()
+            registrado = con.execute(
+                """SELECT id FROM archivos
+                   WHERE hash_actual=? AND hash_catalogo=? AND estado='OK'
+                   ORDER BY id DESC LIMIT 1""",
+                (digest, hash_catalogo),
+            ).fetchone()
+            if registrado:
+                resumen["ignorados"] += 1
+                print(f"IGNORADO (sin cambios): {rel}", flush=True)
+                informar_progreso(indice_archivo, rel)
+                continue
             with tempfile.TemporaryDirectory(prefix="espec_") as td:
                 lectura, convertido = preparar(origen, Path(td))
                 menciones = menciones_yves_yoi(lectura)
@@ -1024,6 +1114,7 @@ def procesar(base: Path) -> dict:
                     resumen["movidos_revisar"] += 1
                     resumen["yves_yoi_a_revisar"] += 1
                     print(f"MOVIDO A REVISAR (Yves/YOI): {rel}", flush=True)
+                    informar_progreso(indice_archivo, rel)
                     continue
                 idioma = "en" if ya_esta_en_ingles or contiene_marcadores_ingles(lectura) else "es"
                 datos = extraer(lectura, idioma)
@@ -1047,10 +1138,6 @@ def procesar(base: Path) -> dict:
                     con.execute("UPDATE archivos SET ruta_relativa=? WHERE id=?", (rel, anterior_movido["id"]))
                     con.commit()
                     anterior = con.execute("SELECT * FROM archivos WHERE ruta_relativa=?", (rel,)).fetchone()
-            if (anterior and anterior["hash_actual"] == digest
-                    and anterior["hash_catalogo"] == hash_catalogo and anterior["estado"] == "OK"):
-                resumen["ignorados"] += 1
-                continue
             nombre = datos["producto"]["nombre"]
             part_fuente = datos["control_documental"].get("codigo_unico_producto", "")
             fecha_documento = parsear_fecha_documento(
@@ -1073,6 +1160,9 @@ def procesar(base: Path) -> dict:
                 datos["control_documental"]["codigo_unico_producto"] = part_final
             datos["validacion_codigos_200"] = validacion
             pk = clave(nombre_final)
+            productos_afectados.add(pk)
+            if anterior and anterior["producto_clave"]:
+                productos_afectados.add(anterior["producto_clave"])
             ultima = con.execute("SELECT MAX(revision_json) m FROM versiones WHERE producto_clave=?", (pk,)).fetchone()["m"]
             revision = 0 if ultima is None else ultima + 1
             rev_esp = datos["control_documental"].get("revision", "")
@@ -1125,10 +1215,12 @@ def procesar(base: Path) -> dict:
                validacion.get("resolucion_nombre", ""), rev_esp, cod_fmt, rev_fmt, origen.suffix[1:].lower(),
                idioma.upper(), fecha_documento_iso, fecha_iso, archivo_json))
             con.commit()
+            archivos_json_reindexados.append(archivo_id)
             resumen["actualizados" if anterior else "nuevos"] += 1
             if prefijo == "--- ": resumen["conflictos"] += 1
             if prefijo == "&&& ": resumen["completados"] += 1
             print(f"GENERADO: {archivo_json} [{validacion['estado']}]")
+            informar_progreso(indice_archivo, rel)
         except Exception as exc:
             con.rollback()
             ruta_original = rel
@@ -1163,10 +1255,24 @@ def procesar(base: Path) -> dict:
                stat.st_size if stat else 0, stat.st_mtime_ns if stat else 0,
                fecha_iso, fecha_iso, str(exc)))
             con.commit(); resumen["errores"] += 1; print(f"ERROR: {rel}: {exc}")
+            informar_progreso(indice_archivo, rel)
     try:
-        resumen_revisiones = reindexar_revisiones(con, salida, catalogo)
+        resumen_revisiones = reindexar_revisiones(
+            con,
+            salida,
+            catalogo,
+            productos_afectados if archivos_seleccionados is not None else None,
+        )
         resumen.update(resumen_revisiones)
         resumen["errores"] += resumen_revisiones["revisiones_historial_omitidas"]
+        if json_generados is not None and archivos_json_reindexados:
+            placeholders = ",".join("?" for _ in archivos_json_reindexados)
+            filas_generadas = con.execute(
+                f"""SELECT ultimo_json FROM archivos WHERE id IN ({placeholders})
+                    AND ultimo_json IS NOT NULL""",
+                tuple(archivos_json_reindexados),
+            ).fetchall()
+            json_generados[:] = [salida / fila["ultimo_json"] for fila in filas_generadas]
     finally:
         con.close()
     return resumen

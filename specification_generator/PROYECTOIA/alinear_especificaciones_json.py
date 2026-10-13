@@ -12,7 +12,7 @@ import unicodedata
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 try:
     import pandas as pd
@@ -87,6 +87,10 @@ UMBRAL_AUTOMATICO = 0.84
 UMBRAL_DUDOSO = 0.72
 MARGEN_AMBIGUEDAD = 0.035
 COLUMNAS_MAESTRO = (
+    "METODO", "MÉTODO INGLÉS", "NOMBRE IQM", "NOMBRE IQM INGLES",
+    "UNIDADES", "UNITS", "ACREDITACION NOMBRE",
+)
+COLUMNAS_MAESTRO_REQUERIDAS = (
     "METODO", "NOMBRE IQM", "NOMBRE IQM INGLES", "UNIDADES", "UNITS",
     "ACREDITACION NOMBRE",
 )
@@ -337,6 +341,35 @@ def metodo_maestro_canonico(valor: Any) -> str:
     return " / ".join(dict.fromkeys(referencias))
 
 
+def metodo_maestro_para_idioma(registro: dict[str, str], idioma: str) -> str:
+    """Devuelve el método del maestro en el idioma solicitado, con fallback."""
+    idioma_normalizado = normalizar(idioma).replace(" ", "")
+    if idioma_normalizado in ALIAS_IDIOMA_INGLES:
+        metodo_ingles = registro.get("MÉTODO INGLÉS", "") or registro.get(
+            "METODO INGLES", ""
+        )
+        if texto(metodo_ingles):
+            return texto(metodo_ingles)
+    return texto(registro.get("METODO", ""))
+
+
+def metodos_maestros(registro: dict[str, str]) -> tuple[str, ...]:
+    """Devuelve métodos distintos de ambos idiomas para validar referencias."""
+    return tuple(
+        dict.fromkeys(
+            metodo
+            for metodo in (
+                texto(registro.get("METODO", "")),
+                texto(
+                    registro.get("MÉTODO INGLÉS", "")
+                    or registro.get("METODO INGLES", "")
+                ),
+            )
+            if metodo
+        )
+    )
+
+
 def partes_metodo(valor: Any) -> set[str]:
     """Reconoce metodos simples o conjugados: ASTM D123 / ASTM D456, ASTM D123; ISO 10, etc."""
     referencias = referencias_astm(valor)
@@ -389,16 +422,26 @@ def cargar_maestro(path: Path) -> list[dict[str, str]]:
         clave_encabezado = normalizar(encabezado)
         if clave_encabezado:
             encabezados.setdefault(clave_encabezado, indice)
-    faltantes = [columna for columna in COLUMNAS_MAESTRO if normalizar(columna) not in encabezados]
+    faltantes = [
+        columna
+        for columna in COLUMNAS_MAESTRO_REQUERIDAS
+        if normalizar(columna) not in encabezados
+    ]
     if faltantes:
         raise ValueError("Faltan columnas en la hoja METODOS: " + ", ".join(faltantes))
 
     filas = []
     for numero, (_, fila) in enumerate(tabla.iterrows(), 2):
         registro = {
-            columna: texto(fila.iloc[encabezados[normalizar(columna)]])
+            columna: (
+                texto(fila.iloc[encabezados[normalizar(columna)]])
+                if normalizar(columna) in encabezados
+                else ""
+            )
             for columna in COLUMNAS_MAESTRO
         }
+        if not registro["MÉTODO INGLÉS"]:
+            registro["MÉTODO INGLÉS"] = registro["METODO"]
         if any(registro[columna] for columna in ("METODO", "NOMBRE IQM", "NOMBRE IQM INGLES")):
             registro["FILA_MAESTRO"] = str(numero)
             filas.append(registro)
@@ -415,7 +458,12 @@ def cargar_maestro(path: Path) -> list[dict[str, str]]:
     return registros
 
 
-def puntuar(nombre: str, metodo: str, candidato: dict[str, str]) -> tuple[float, float, float]:
+def puntuar(
+    nombre: str,
+    metodo: str,
+    candidato: dict[str, str],
+    idioma: str = "DESCONOCIDO",
+) -> tuple[float, float, float]:
     nombre_es = similitud_texto(
         nombre, limpiar_marca_acreditacion(candidato["NOMBRE IQM"])
     )
@@ -423,7 +471,8 @@ def puntuar(nombre: str, metodo: str, candidato: dict[str, str]) -> tuple[float,
         nombre, limpiar_marca_acreditacion(candidato["NOMBRE IQM INGLES"])
     )
     score_nombre = max(nombre_es, nombre_en)
-    score_metodo = similitud_metodo(metodo, candidato["METODO"])
+    metodo_candidato = metodo_maestro_para_idioma(candidato, idioma)
+    score_metodo = similitud_metodo(metodo, metodo_candidato)
     # El nombre selecciona la familia; el metodo resuelve nombres repetidos.
     if texto(metodo):
         total = 0.68 * score_nombre + 0.32 * score_metodo
@@ -431,7 +480,7 @@ def puntuar(nombre: str, metodo: str, candidato: dict[str, str]) -> tuple[float,
             total = max(total, 0.96)
         elif (
             referencias_astm(metodo)
-            and referencias_astm(candidato["METODO"])
+            and referencias_astm(metodo_candidato)
             and score_metodo >= 0.90
             and score_nombre >= 0.45
         ):
@@ -476,11 +525,28 @@ def nombres_canonicos(registro: dict[str, str], idioma: str) -> tuple[str, str]:
     )
 
 
+def unidad_original_esta_entre_alternativas(
+    unidad_original: Any, unidad_maestra: Any
+) -> bool:
+    original = normalizar(normalizar_espacio_unidades(unidad_original))
+    if not original:
+        return False
+    alternativas = re.split(
+        r"\s+/\s+|\s+(?:o|or)\s+",
+        texto(unidad_maestra),
+        flags=re.IGNORECASE,
+    )
+    return any(
+        original == normalizar(normalizar_espacio_unidades(alternativa))
+        for alternativa in alternativas
+    )
+
+
 def registros_ambiguos(a: dict[str, str], b: dict[str, str], idioma: str) -> bool:
     nombre_a, unidades_a = nombres_canonicos(a, idioma)
     nombre_b, unidades_b = nombres_canonicos(b, idioma)
-    metodo_a = metodo_maestro_canonico(a.get("METODO", ""))
-    metodo_b = metodo_maestro_canonico(b.get("METODO", ""))
+    metodo_a = metodo_maestro_canonico(metodo_maestro_para_idioma(a, idioma))
+    metodo_b = metodo_maestro_canonico(metodo_maestro_para_idioma(b, idioma))
     if normalizar(metodo_a) != normalizar(metodo_b):
         return True
     return (
@@ -507,7 +573,7 @@ def mejor_coincidencia(
 
     evaluados = []
     for registro in maestro:
-        total, sn, sm = puntuar(nombre, metodo, registro)
+        total, sn, sm = puntuar(nombre, metodo, registro, idioma)
         evaluados.append((total, sn, sm, registro))
     evaluados.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
     mejor = evaluados[0]
@@ -533,6 +599,7 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
     if not isinstance(datos, dict):
         raise ValueError("La raiz del JSON debe ser un objeto.")
     resultado = deepcopy(datos)
+    resultado["FECHA DE REANALISIS"] = ""
     pruebas = resultado.get("pruebas")
     if not isinstance(pruebas, list):
         raise ValueError("El JSON no contiene una lista 'pruebas'.")
@@ -549,11 +616,13 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
     referencias_maestras = {
         referencia
         for registro in maestro
-        for referencia in referencias_astm(registro.get("METODO", ""))
+        for metodo in metodos_maestros(registro)
+        for referencia in referencias_astm(metodo)
     }
     for indice, prueba in enumerate(pruebas, 1):
         if not isinstance(prueba, dict):
             raise ValueError(f"El elemento {indice} de 'pruebas' debe ser un objeto.")
+        prueba["PERIODIDICAD DE ANALISIS"] = ""
         nombre_original = texto(prueba.get("prueba") or prueba.get("nombre"))
         metodo_original = texto(prueba.get("metodo"))
         unidades_originales = texto(prueba.get("unidades"))
@@ -575,15 +644,24 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
         match = mejor_coincidencia(nombre_original, metodo_original, maestro, idioma)
         registro = match["registro"]
         nombre_maestro, unidad_maestra = nombres_canonicos(registro, idioma)
-        metodo_maestro_fuente = registro.get("METODO", "")
+        metodo_maestro_fuente = metodo_maestro_para_idioma(registro, idioma)
         metodo_maestro = metodo_maestro_canonico(metodo_maestro_fuente)
+        if len(referencias_astm(metodo_original)) > len(
+            referencias_astm(metodo_maestro_fuente)
+        ):
+            metodo_maestro = metodo_referencias_canonico(metodo_original)
         if match["estado"] == "ALINEADO" and not nombre_maestro:
             match["estado"] = "REVISION_REQUERIDA"
+        unidades_limpias = unidad_maestra
         if match["estado"] == "ALINEADO":
             prueba["prueba"] = nombre_maestro
             prueba["metodo"] = metodo_maestro
             if unidad_maestra:
-                prueba["unidades"] = normalizar_formato_numerico(unidad_maestra)
+                if unidad_original_esta_entre_alternativas(
+                    unidades_originales, unidad_maestra
+                ):
+                    unidades_limpias = unidades_originales
+                prueba["unidades"] = normalizar_formato_numerico(unidades_limpias)
             if "nombre" in prueba:
                 prueba["nombre"] = nombre_maestro
             conteo["alineados"] += 1
@@ -600,8 +678,10 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
         valores_alineados = {
             "prueba": texto(registro.get("NOMBRE IQM")) or nombre_original,
             "unidades": (
-                normalizar_espacio_unidades(normalizar_formato_numerico(unidad_maestra))
-                if unidad_maestra
+                normalizar_espacio_unidades(
+                    normalizar_formato_numerico(unidades_limpias)
+                )
+                if unidades_limpias
                 else "" if prueba.get("unidades") is None else str(prueba["unidades"])
             ),
             "metodo": (
@@ -637,7 +717,9 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
             ),
             "fila_maestro": registro.get("FILA_MAESTRO", ""),
             "nombre_segunda_opcion": match["segunda_opcion"].get("NOMBRE IQM", ""),
-            "metodo_segunda_opcion": match["segunda_opcion"].get("METODO", ""),
+            "metodo_segunda_opcion": metodo_maestro_para_idioma(
+                match["segunda_opcion"], idioma
+            ),
             "fila_segunda_opcion": match["segunda_opcion"].get("FILA_MAESTRO", ""),
             "margen_puntaje": match["margen"],
             "unidades_originales": unidades_originales,
@@ -680,19 +762,33 @@ def listar_json(carpeta: Path) -> list[Path]:
     )
 
 
-def ejecutar(base: Path) -> dict[str, int]:
+def ejecutar(
+    base: Path,
+    archivos_seleccionados: list[Path] | None = None,
+    al_progreso: Callable[[int, int, str], None] | None = None,
+) -> dict[str, int]:
     entrada, salida, maestro_path = base / ENTRADA, base / SALIDA, base / MAESTRO
     if not entrada.is_dir():
         raise FileNotFoundError(f"No existe la carpeta de entrada: {entrada}")
     maestro = cargar_maestro(maestro_path)
-    archivos = listar_json(entrada)
+    archivos = (
+        listar_json(entrada)
+        if archivos_seleccionados is None
+        else sorted(
+            (path for path in archivos_seleccionados
+             if path.is_file() and path.suffix.lower() == EXTENSION),
+            key=lambda path: str(path),
+        )
+    )
     if not archivos:
         raise FileNotFoundError(f"No se encontraron JSON en {entrada}")
     salida.mkdir(parents=True, exist_ok=True)
     total = {"archivos": 0, "alineados": 0, "revision": 0, "sin_coincidencia": 0, "errores": 0}
     lineas = [f"REPORTE DE ALINEACION {datetime.now().isoformat(timespec='seconds')}", "=" * 72]
-    for origen in archivos:
+    for indice, origen in enumerate(archivos, 1):
         rel = origen.relative_to(entrada)
+        if al_progreso is not None:
+            al_progreso(indice - 1, len(archivos), str(rel))
         destino = salida / rel
         try:
             r = procesar_json(origen, destino, maestro)
@@ -705,6 +801,9 @@ def ejecutar(base: Path) -> dict[str, int]:
             total["errores"] += 1
             lineas.append(f"ERROR | {rel.as_posix()} | {exc}")
             print(f"ERROR: {rel}: {exc}", file=sys.stderr)
+        finally:
+            if al_progreso is not None:
+                al_progreso(indice, len(archivos), str(rel))
     lineas.extend(["", "RESUMEN"] + [f"{k}: {v}" for k, v in total.items()])
     (salida / REPORTE).write_text("\n".join(lineas) + "\n", encoding="utf-8")
     print("\nRESUMEN")

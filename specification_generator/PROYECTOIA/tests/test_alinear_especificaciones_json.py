@@ -9,6 +9,8 @@ from alinear_especificaciones_json import (
     cargar_maestro,
     limpiar_marca_acreditacion,
     metodo_maestro_canonico,
+    metodo_maestro_para_idioma,
+    metodos_maestros,
     mejor_coincidencia,
     normalizar_espacio_unidades,
     normalizar_formato_numerico,
@@ -32,6 +34,55 @@ MAESTRO = {
 
 
 class AlineacionEspecificacionesTests(unittest.TestCase):
+    def test_usa_el_metodo_del_maestro_en_el_idioma_del_json(self):
+        maestro_bilingue = {
+            **MAESTRO,
+            "METODO": "MÉTODO INTERNO",
+            "MÉTODO INGLÉS": "INTERNAL METHOD",
+            "NOMBRE IQM": "Método interno",
+            "NOMBRE IQM INGLES": "Internal test",
+        }
+
+        with tempfile.TemporaryDirectory() as temporal:
+            for idioma, nombre, metodo in (
+                ("en", "Internal test", "INTERNAL METHOD"),
+                ("es", "Método interno", "MÉTODO INTERNO"),
+            ):
+                with self.subTest(idioma=idioma):
+                    origen = Path(temporal) / f"entrada_{idioma}.json"
+                    destino = Path(temporal) / f"salida_{idioma}.json"
+                    origen.write_text(
+                        json.dumps(
+                            {
+                                "documento": {"idioma": idioma},
+                                "pruebas": [
+                                    {"prueba": nombre, "metodo": metodo}
+                                ],
+                            }
+                        ),
+                        encoding="utf-8",
+                    )
+
+                    procesar_json(origen, destino, [maestro_bilingue])
+                    alineado = json.loads(destino.read_text(encoding="utf-8"))
+
+                    self.assertEqual(alineado["pruebas"][0]["metodo"], metodo)
+                    self.assertEqual(
+                        alineado["alineacion_metodos_lab"]["detalle"][0][
+                            "metodo_maestro_fuente"
+                        ],
+                        metodo,
+                    )
+
+        self.assertEqual(
+            metodo_maestro_para_idioma(maestro_bilingue, "ENGLISH"),
+            "INTERNAL METHOD",
+        )
+        self.assertEqual(
+            metodos_maestros(maestro_bilingue),
+            ("MÉTODO INTERNO", "INTERNAL METHOD"),
+        )
+
     def test_normaliza_rangos_decimales_y_agrupacion_de_miles(self):
         casos = (
             ("50-70", "50 - 70"),
@@ -603,6 +654,40 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
                 ["D445", "D7042"],
             )
 
+    def test_alineacion_conserva_metodos_astm_conjugados_ausentes_del_maestro(self):
+        with tempfile.TemporaryDirectory() as temporal:
+            origen = Path(temporal) / "entrada.json"
+            destino = Path(temporal) / "salida.json"
+            origen.write_text(
+                json.dumps(
+                    {
+                        "documento": {"idioma": "en"},
+                        "pruebas": [
+                            {
+                                "prueba": "Kinematic viscosity",
+                                "metodo": "ASTM D445 / ASTM D7042",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            conteo = procesar_json(origen, destino, [MAESTRO])
+            salida = json.loads(destino.read_text(encoding="utf-8"))
+
+            self.assertEqual(conteo["alineados"], 1)
+            self.assertEqual(
+                salida["pruebas"][0]["metodo"],
+                "ASTM D445 / ASTM D7042",
+            )
+            self.assertEqual(
+                salida["alineacion_metodos_lab"]["detalle"][0]["valores_alineados"][
+                    "metodo"
+                ],
+                "ASTM D445 / ASTM D7042",
+            )
+
     def test_nombre_ambiguo_se_deja_para_revision(self):
         segundo_metodo = {**MAESTRO, "METODO": "ISO 3104"}
         resultado = mejor_coincidencia(
@@ -692,6 +777,7 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
 
             self.assertEqual(len(registros), 1)
             self.assertEqual(registros[0]["FILA_MAESTRO"], "2")
+            self.assertEqual(registros[0]["MÉTODO INGLÉS"], "ASTM D445")
 
 
 if __name__ == "__main__":

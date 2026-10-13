@@ -1,17 +1,557 @@
 import unittest
 import json
+import sqlite3
 import tempfile
+from datetime import date
 from pathlib import Path
+from unittest.mock import patch
 
 from docx import Document
 
+from generador_especs_hii import _llenar_pruebas
 from interfaz_aplicacion_especificaciones import (
+    CAMPO_PERIODICIDAD,
+    LEYENDA_PERIODICIDAD,
+    NOTAS_PLANTILLA,
+    VALORES_ELABORO_APROBO,
+    _normalizar_periodicidad,
+    _nombres_maestros_para_metodo,
+    _opciones_maestro,
+    _part_id_canonico,
+    _part_id_existe,
+    _part_id_por_nombre,
+    _prueba_cercana,
+    _sugerencias_nombre_producto,
+    _sugerencias_part_id,
+    _traducir_nombre_prueba,
+    _unidad_sugerida,
+    _valores_control_predeterminados,
+    _valores_prueba_predeterminados,
+    _SalidaCarga,
+    _procesar_carga_especificaciones,
+    _datos_generador_desde_json,
+    _integrar_edicion_json,
     crear_documento_alineado_manual,
+    crear_datos_especificacion_nueva,
     crear_json_temporal_comparacion,
+    _leer_filas_maestro_editable,
+    _guardar_cambios_maestro,
+    _consultar_tabla_historico,
+    _exportar_tabla_historico_excel,
 )
 
 
+class DatosNuevaEspecificacionTests(unittest.TestCase):
+    def setUp(self):
+        self.maestro = [
+            {
+                "METODO": "ASTM D445 / ASTM D7042",
+                "NOMBRE IQM": "Viscosidad cinemática",
+                "NOMBRE IQM INGLES": "Kinematic viscosity",
+                "UNIDADES": "mm²/s",
+                "UNITS": "mm2/s",
+            },
+            {
+                "METODO": "ASTM D92",
+                "NOMBRE IQM": "Punto de inflamación",
+                "NOMBRE IQM INGLES": "Flash point",
+                "UNIDADES": "°C",
+                "UNITS": "°F",
+            },
+            {
+                "METODO": "ASTM D92",
+                "NOMBRE IQM": "Prueba de temperatura",
+                "NOMBRE IQM INGLES": "Temperature test",
+                "UNIDADES": "°C",
+                "UNITS": "°F",
+            },
+        ]
+
+    def test_sugiere_nombres_unidades_y_metodos_de_la_lista_segun_idioma(self):
+        self.assertEqual(
+            _opciones_maestro(self.maestro, "prueba", "es", "visco"),
+            ("Viscosidad cinemática",),
+        )
+        self.assertEqual(
+            _opciones_maestro(self.maestro, "prueba", "en", "kinematic"),
+            ("Kinematic viscosity",),
+        )
+        self.assertEqual(
+            _opciones_maestro(self.maestro, "unidades", "es", "°"),
+            ("°C",),
+        )
+        self.assertEqual(
+            _opciones_maestro(self.maestro, "unidades", "en", "°"),
+            ("°F",),
+        )
+        self.assertEqual(
+            _opciones_maestro(self.maestro, "metodo", "es", "ASTM D445"),
+            ("ASTM D445 / ASTM D7042",),
+        )
+
+    def test_sugiere_el_metodo_maestro_en_ingles_para_pruebas_en_ingles(self):
+        maestro_bilingue = [
+            {
+                "METODO": "MÉTODO INTERNO",
+                "MÉTODO INGLÉS": "INTERNAL METHOD",
+                "NOMBRE IQM": "Método interno",
+                "NOMBRE IQM INGLES": "Internal test",
+                "UNIDADES": "mg/kg",
+                "UNITS": "mg/kg",
+            }
+        ]
+
+        self.assertEqual(
+            _opciones_maestro(maestro_bilingue, "metodo", "en", "internal"),
+            ("INTERNAL METHOD",),
+        )
+        self.assertEqual(
+            _opciones_maestro(maestro_bilingue, "metodo", "es", "interno"),
+            ("MÉTODO INTERNO",),
+        )
+        self.assertEqual(
+            _valores_prueba_predeterminados(
+                maestro_bilingue, "Internal test", "en"
+            ),
+            {"metodo": "INTERNAL METHOD", "unidades": "mg/kg"},
+        )
+
+    def test_astm_sugiere_el_nombre_maestro_en_el_idioma_elegido(self):
+        self.assertEqual(
+            _nombres_maestros_para_metodo(
+                self.maestro, "ASTM D445", "es"
+            ),
+            ("Viscosidad cinemática",),
+        )
+        self.assertEqual(
+            _nombres_maestros_para_metodo(
+                self.maestro, "ASTM D445", "en"
+            ),
+            ("Kinematic viscosity",),
+        )
+
+    def test_no_ofrece_nombres_fuera_de_las_coincidencias_de_metodo(self):
+        self.assertEqual(
+            _opciones_maestro(
+                self.maestro,
+                "prueba",
+                "en",
+                "point",
+                _nombres_maestros_para_metodo(
+                    self.maestro, "ASTM D445", "en"
+                ),
+            ),
+            (),
+        )
+
+    def test_metodo_astm_conjugado_requiere_coincidencia_completa(self):
+        self.assertEqual(
+            _opciones_maestro(
+                self.maestro,
+                "metodo",
+                "es",
+                "ASTM D445 / ASTM D7042",
+            ),
+            ("ASTM D445 / ASTM D7042",),
+        )
+        self.assertEqual(
+            _nombres_maestros_para_metodo(
+                self.maestro, "ASTM D445 / ASTM D7042", "es"
+            ),
+            ("Viscosidad cinemática",),
+        )
+
+    def test_sugerencias_grises_y_unidad_celsius(self):
+        self.assertEqual(
+            _prueba_cercana(self.maestro, "en", "flash poin"),
+            "Flash point",
+        )
+        self.assertEqual(
+            _unidad_sugerida(
+                self.maestro,
+                "Temperature test",
+                "ASTM D92",
+                "en",
+            ),
+            "°C",
+        )
+
+    def test_prueba_exacta_propone_metodo_y_unidad_por_defecto(self):
+        self.assertEqual(
+            _valores_prueba_predeterminados(
+                self.maestro, "Viscosidad cinemática", "es"
+            ),
+            {"metodo": "ASTM D445 / ASTM D7042", "unidades": "mm²/s"},
+        )
+        self.assertEqual(
+            _valores_prueba_predeterminados(
+                self.maestro, "Punto de inflamación", "es"
+            ),
+            {"metodo": "ASTM D92", "unidades": "°C"},
+        )
+        self.assertEqual(
+            _valores_prueba_predeterminados(
+                self.maestro, "Kinematic viscosity", "en"
+            ),
+            {"metodo": "ASTM D445 / ASTM D7042", "unidades": "mm2/s"},
+        )
+        self.assertEqual(
+            _valores_prueba_predeterminados(
+                self.maestro, "Flash point", "en"
+            ),
+            {"metodo": "ASTM D92", "unidades": "°C"},
+        )
+        self.assertEqual(
+            _valores_prueba_predeterminados(
+                self.maestro, "Nombre libre", "es"
+            ),
+            {},
+        )
+
+    def test_carga_ejecuta_extraccion_antes_de_alineacion(self):
+        orden = []
+        with (
+            patch(
+                "gestor_especificaciones.procesar",
+                side_effect=lambda base: orden.append(
+                    ("extraccion", base)
+                ) or {"nuevos": 1},
+            ),
+            patch(
+                "alinear_especificaciones_json.ejecutar",
+                side_effect=lambda base: orden.append(
+                    ("alineacion", base)
+                ) or {"archivos": 1},
+            ),
+        ):
+            resultado = _procesar_carga_especificaciones(Path("."))
+
+        self.assertEqual(
+            [registro[0] for registro in orden],
+            ["extraccion", "alineacion"],
+        )
+        self.assertEqual(resultado["extraccion"], {"nuevos": 1})
+        self.assertEqual(resultado["alineacion"], {"archivos": 1})
+
+    def test_procesamiento_envia_a_ver_mas_mensajes_del_proceso(self):
+        mensajes = []
+        with (
+            patch(
+                "gestor_especificaciones.procesar",
+                side_effect=lambda _base: print("PROCESANDO: archivo.docx")
+                or {"nuevos": 1},
+            ),
+            patch(
+                "alinear_especificaciones_json.ejecutar",
+                side_effect=lambda _base: print("ALINEADO: archivo.json")
+                or {"archivos": 1},
+            ),
+        ):
+            resultado = _procesar_carga_especificaciones(
+                Path("."),
+                al_mensaje=mensajes.append,
+            )
+
+        self.assertEqual(resultado["extraccion"], {"nuevos": 1})
+        self.assertEqual(resultado["alineacion"], {"archivos": 1})
+        self.assertIn("Iniciando extracción de especificaciones.", mensajes)
+        self.assertIn("PROCESANDO: archivo.docx", mensajes)
+        self.assertIn("Iniciando alineación de especificaciones.", mensajes)
+        self.assertIn("ALINEADO: archivo.json", mensajes)
+
+    def test_salida_carga_emite_lineas_completas_y_residuo(self):
+        mensajes = []
+        salida = _SalidaCarga(mensajes.append, None)
+
+        self.assertEqual(
+            salida.write("línea uno\nlínea"),
+            len("línea uno\nlínea"),
+        )
+        salida.write(" dos")
+        salida.flush()
+
+        self.assertEqual(mensajes, ["línea uno", "línea dos"])
+
+    def test_falla_de_extraccion_no_omite_el_intento_de_alinear(self):
+        with (
+            patch(
+                "gestor_especificaciones.procesar",
+                side_effect=RuntimeError("falló extracción"),
+            ),
+            patch(
+                "alinear_especificaciones_json.ejecutar",
+                return_value={"archivos": 0},
+            ) as alinear,
+        ):
+            resultado = _procesar_carga_especificaciones(Path("."))
+
+        self.assertEqual(resultado["error_extraccion"], "falló extracción")
+        alinear.assert_called_once_with(Path("."))
+
+    def test_prepara_json_alineado_para_editar_con_valores_de_vista(self):
+        origen = {
+            "producto": {"nombre": "Aceite viejo", "nombre_fuente": "Aceite fuente"},
+            "documento": {"idioma": "en", "fecha_documento_normalizada": "2026-10-01"},
+            "control_documental": {"revision": "02", "codigo_unico_producto": "P-1"},
+            "FECHA DE REANALISIS": "12/10/26",
+            "pruebas": [
+                {
+                    "prueba": "Nombre sin limpiar",
+                    "unidades": "unidad fuente",
+                    "metodo": "método fuente",
+                    CAMPO_PERIODICIDAD: "QIP",
+                }
+            ],
+            "alineacion_metodos_lab": {
+                "detalle": [
+                    {
+                        "valores_alineados": {
+                            "prueba": "Nombre alineado",
+                            "unidades": "mm²/s",
+                            "metodo": "ASTM D445",
+                            "especificacion": "10 MIN",
+                            "valor_tipico": "12",
+                        }
+                    }
+                ]
+            },
+            "notas": ["Nota existente"],
+        }
+
+        cargados = _datos_generador_desde_json(origen)
+
+        self.assertEqual(cargados["nombre_producto"], "Aceite viejo")
+        self.assertEqual(cargados["idioma"], "en")
+        self.assertEqual(cargados["control"]["revision"], "02")
+        self.assertEqual(
+            cargados["pruebas"],
+            [
+                {
+                    "prueba": "Nombre alineado",
+                    "unidades": "mm²/s",
+                    "metodo": "ASTM D445",
+                    "especificacion": "10 MIN",
+                    "valor_tipico": "12",
+                    "periodicidad": "QIP",
+                }
+            ],
+        )
+        self.assertEqual(cargados["notas"], ["Nota existente"])
+
+    def test_integrar_edicion_preserva_metadatos_y_fecha_reanalisis(self):
+        origen = {
+            "producto": {"nombre": "Anterior", "nombre_fuente": "Original"},
+            "documento": {
+                "idioma": "es",
+                "fecha_documento_normalizada": "2026-10-01",
+            },
+            "FECHA DE REANALISIS": "12/10/26",
+            "campo_futuro": {"valor": 1},
+        }
+        actualizado = {
+            "esquema": "especificacion_producto_es_v3",
+            "producto": {"nombre": "Nuevo"},
+            "documento": {
+                "idioma": "en",
+                "fecha_documento_normalizada": "",
+            },
+            "control_documental": {"revision": "03"},
+            "pruebas": [],
+            "notas": [],
+            "alineacion_metodos_lab": {"detalle": []},
+        }
+
+        resultado = _integrar_edicion_json(origen, actualizado)
+
+        self.assertEqual(resultado["producto"]["nombre"], "Nuevo")
+        self.assertEqual(resultado["producto"]["nombre_fuente"], "Original")
+        self.assertEqual(resultado["documento"]["idioma"], "en")
+        self.assertEqual(
+            resultado["documento"]["fecha_documento_normalizada"],
+            "2026-10-01",
+        )
+        self.assertEqual(resultado["FECHA DE REANALISIS"], "12/10/26")
+        self.assertEqual(resultado["campo_futuro"], {"valor": 1})
+
+    def test_traduce_nombres_de_prueba_al_cambiar_idioma(self):
+        self.assertEqual(
+            _traducir_nombre_prueba(
+                self.maestro,
+                "Punto de inflamación",
+                "es",
+                "en",
+                "ASTM D92",
+            ),
+            "Flash point",
+        )
+        self.assertEqual(
+            _traducir_nombre_prueba(
+                self.maestro,
+                "Kinematic viscosity",
+                "en",
+                "es",
+                "ASTM D445 / ASTM D7042",
+            ),
+            "Viscosidad cinemática",
+        )
+
+    def test_campos_control_tienen_predeterminados_del_dia_y_guiones(self):
+        valores = _valores_control_predeterminados(date(2026, 10, 12))
+        self.assertEqual(valores["fecha"], "12/10/26")
+        self.assertEqual(valores["folio_vap"], "-")
+        self.assertEqual(valores["nombre_cliente"], "-")
+        self.assertEqual(valores["revision_cliente"], "-")
+
+    def test_periodicidad_requiere_de_uno_a_cuatro_simbolos_validos(self):
+        self.assertEqual(_normalizar_periodicidad("◊, ▶ I", 1), "◊▶I")
+        self.assertEqual(_normalizar_periodicidad("QIP", 1), "QIP")
+        for valor in ("", "◊ ▶ C I P", "X", "◊ ◊"):
+            with self.subTest(valor=valor), self.assertRaises(ValueError):
+                _normalizar_periodicidad(valor, 1)
+        self.assertEqual(len(LEYENDA_PERIODICIDAD["es"]), 8)
+        self.assertEqual(len(LEYENDA_PERIODICIDAD["en"]), 8)
+
+    def test_sugerencias_part_id_limitadas_a_cinco_y_validacion_exacta(self):
+        registros = [
+            {"part_id": f"AB-{i}", "descripcion": f"Aceite {i}"}
+            for i in range(8)
+        ]
+        self.assertEqual(len(_sugerencias_part_id(registros, "AB")), 5)
+        self.assertEqual(_sugerencias_part_id(registros, "Aceite 7"), ("AB-7",))
+        self.assertTrue(_part_id_existe("ab-2", registros))
+        self.assertEqual(_part_id_canonico("ab-2", registros), "AB-2")
+        self.assertFalse(_part_id_existe("aceite 2", registros))
+
+    def test_sugerencias_y_resolucion_del_catalogo_producto_part_id(self):
+        registros = [
+            {"part_id": "P-100", "descripcion": "Aceite Hidráulico"},
+            {"part_id": "P-200", "descripcion": "Aceite Hidráulico"},
+            {"part_id": "P-300", "descripcion": "Grasa EP"},
+        ]
+        self.assertEqual(
+            _sugerencias_nombre_producto(registros, "aceite"),
+            ("Aceite Hidráulico",),
+        )
+        self.assertEqual(_part_id_por_nombre("Grasa EP", registros), "P-300")
+        self.assertEqual(_part_id_por_nombre("Aceite Hidráulico", registros), "")
+        self.assertEqual(_part_id_por_nombre("Producto libre", registros), "")
+
+    def test_crea_json_espanol_con_detalle_y_campos_futuros_vacios(self):
+        datos = crear_datos_especificacion_nueva(
+            "Aceite de prueba",
+            "es",
+            {"revision": "01", "codigo_unico_producto": "P-100"},
+            [
+                {
+                    "prueba": "Viscosidad",
+                    "unidades": "mm²/s",
+                    "metodo": "ASTM D445 / ASTM D7042",
+                    "especificacion": "28,8 a 35,2",
+                    "valor_tipico": "30,23",
+                    "periodicidad": "◊, ▶",
+                }
+            ],
+            ["Nota de prueba"],
+        )
+
+        self.assertEqual(datos["documento"]["idioma"], "es")
+        self.assertEqual(datos["producto"]["nombre"], "Aceite de prueba")
+        self.assertEqual(datos["FECHA DE REANALISIS"], "")
+        self.assertEqual(datos["pruebas"][0]["PERIODIDICAD DE ANALISIS"], "◊▶")
+        self.assertEqual(
+            datos["alineacion_metodos_lab"]["detalle"][0]["valores_alineados"][
+                "metodo"
+            ],
+            "ASTM D445 / ASTM D7042",
+        )
+        self.assertEqual(datos["notas"], ["Nota de prueba"])
+        self.assertEqual(
+            datos["control_documental"]["elaboro_y_aprobo"],
+            VALORES_ELABORO_APROBO["es"],
+        )
+
+    def test_crea_json_ingles_con_estructura_de_fila_compartida(self):
+        datos = crear_datos_especificacion_nueva(
+            "Test oil",
+            "en",
+            {"revision": "02", "codigo_unico_producto": "P-200"},
+            [{"prueba": "Kinematic viscosity", "periodicidad": "P"}],
+            [],
+        )
+
+        self.assertEqual(datos["documento"]["idioma"], "en")
+        self.assertEqual(
+            datos["notas"],
+            [NOTAS_PLANTILLA["en"]],
+        )
+        self.assertEqual(
+            datos["control_documental"]["elaboro_y_aprobo"],
+            VALORES_ELABORO_APROBO["en"],
+        )
+        self.assertEqual(datos["pruebas"][0]["prueba"], "Kinematic viscosity")
+        self.assertEqual(
+            datos["alineacion_metodos_lab"]["detalle"][0]["valores_alineados"][
+                "prueba"
+            ],
+            "Kinematic viscosity",
+        )
+
+    def test_crea_json_espanol_con_notas_de_plantilla_por_defecto(self):
+        datos = crear_datos_especificacion_nueva(
+            "Producto",
+            "es",
+            {},
+            [{"prueba": "Color", "periodicidad": "I"}],
+            [],
+        )
+        self.assertEqual(datos["notas"], [NOTAS_PLANTILLA["es"]])
+
+    def test_exige_nombre_de_producto_y_al_menos_una_prueba_nombrada(self):
+        with self.assertRaisesRegex(ValueError, "nombre del producto"):
+            crear_datos_especificacion_nueva("", "es", {}, [{"prueba": "Color"}], [])
+        with self.assertRaisesRegex(ValueError, "al menos una prueba"):
+            crear_datos_especificacion_nueva("Producto", "es", {}, [], [])
+        with self.assertRaisesRegex(ValueError, "nombre de la prueba"):
+            crear_datos_especificacion_nueva(
+                "Producto", "es", {}, [{"prueba": "", "unidades": "kg"}], []
+            )
+        resultado = crear_datos_especificacion_nueva(
+            "Producto",
+            "es",
+            {},
+            [
+                {"prueba": "", "unidades": "", "metodo": ""},
+                {"prueba": "Color", "periodicidad": "C"},
+            ],
+            [],
+        )
+        self.assertEqual(len(resultado["pruebas"]), 1)
+
+
 class DocumentoAlineadoManualTests(unittest.TestCase):
+    def test_periodicidad_json_no_se_escribe_en_la_tabla_word(self):
+        documento = Document()
+        tabla = documento.add_table(rows=3, cols=5)
+        tabla.rows[2].cells[0].text = "Notas:"
+        _llenar_pruebas(
+            tabla,
+            ["prueba", "unidades", "metodo", "especificacion", "valor_tipico"],
+            [
+                {
+                    "prueba": "Viscosidad",
+                    "unidades": "mm2/s",
+                    "metodo": "ASTM D445 / ASTM D7042",
+                    "especificacion": "28.8-35.2",
+                    "valor_tipico": "30.23",
+                    CAMPO_PERIODICIDAD: "◊▶",
+                }
+            ],
+        )
+
+        valores_word = [celda.text for celda in tabla.rows[1].cells]
+        self.assertEqual(valores_word[0], "Viscosidad")
+        self.assertNotIn("◊", " ".join(valores_word))
+
     def test_crea_detalle_con_los_valores_editados_en_el_json(self):
         datos = {
             "producto": {"nombre": "Producto de prueba"},
@@ -127,6 +667,152 @@ class ComparacionTemporalWordTests(unittest.TestCase):
             self.assertEqual(datos["pruebas"][0]["metodo"], "ASTM D445")
             self.assertFalse((base / "especificaciones.db").exists())
             self.assertTrue(origen.is_file())
+
+
+class ListaMaestraEditableTests(unittest.TestCase):
+    def test_lee_y_guarda_todos_los_campos_sin_quitar_hojas(self):
+        from openpyxl import Workbook, load_workbook
+
+        with tempfile.TemporaryDirectory() as temporal:
+            ruta = Path(temporal) / "maestro.xlsx"
+            libro = Workbook()
+            hoja = libro.active
+            hoja.title = "METODOS"
+            hoja.append(
+                [
+                    "METODO",
+                    "MÉTODO INGLÉS",
+                    "NOMBRE IQM",
+                    "NOMBRE IQM INGLES",
+                    "UNIDADES",
+                    "UNITS",
+                    "ACREDITACION NOMBRE",
+                ]
+            )
+            hoja.append(
+                [
+                    "ASTM D445",
+                    "ASTM D445",
+                    "Viscosidad",
+                    "Viscosity",
+                    "mm²/s",
+                    "mm2/s",
+                    "ACREDITADO",
+                ]
+            )
+            libro.create_sheet("RESUMEN").append(["Conservado"])
+            libro.save(ruta)
+            libro.close()
+
+            filas = _leer_filas_maestro_editable(ruta)
+            self.assertEqual(filas[0][0], 2)
+            self.assertEqual(
+                filas[0][1],
+                (
+                    "ASTM D445",
+                    "ASTM D445",
+                    "Viscosidad",
+                    "Viscosity",
+                    "mm²/s",
+                    "mm2/s",
+                    "ACREDITADO",
+                ),
+            )
+
+            valores_actualizados = (
+                "ASTM D445 / ASTM D7042",
+                "ASTM D445 / ASTM D7042",
+                "Viscosidad cinemática",
+                "Kinematic viscosity",
+                "cSt",
+                "cSt",
+                "NO ACREDITADO",
+            )
+            _guardar_cambios_maestro(ruta, {2: valores_actualizados})
+
+            filas_actualizadas = _leer_filas_maestro_editable(ruta)
+            self.assertEqual(filas_actualizadas, [(2, valores_actualizados)])
+            libro_guardado = load_workbook(ruta, read_only=True)
+            self.assertIn("RESUMEN", libro_guardado.sheetnames)
+            self.assertEqual(
+                libro_guardado["RESUMEN"]["A1"].value,
+                "Conservado",
+            )
+            libro_guardado.close()
+
+
+class VisorHistoricoTests(unittest.TestCase):
+    def test_consulta_tabla_pagina_y_busqueda_sin_modificar_base(self):
+        with tempfile.TemporaryDirectory() as temporal:
+            ruta = Path(temporal) / "especificaciones.db"
+            conexion = sqlite3.connect(ruta)
+            conexion.execute(
+                "CREATE TABLE versiones (id INTEGER PRIMARY KEY, producto TEXT)"
+            )
+            conexion.executemany(
+                "INSERT INTO versiones (producto) VALUES (?)",
+                [
+                    ("Aceite hidráulico",),
+                    ("Grasa industrial",),
+                    ("Aceite motor",),
+                    ("Aceite =2+2",),
+                ],
+            )
+            conexion.executemany(
+                "INSERT INTO versiones (producto) VALUES (?)",
+                [("Aceite de prueba",) for _ in range(125)],
+            )
+            conexion.commit()
+            conexion.close()
+
+            columnas, filas, total = _consultar_tabla_historico(
+                ruta,
+                "versiones",
+                limite=2,
+                desplazamiento=1,
+            )
+            self.assertEqual(columnas, ("id", "producto"))
+            self.assertEqual(filas, [("2", "Grasa industrial"), ("3", "Aceite motor")])
+            self.assertEqual(total, 129)
+
+            columnas, filas, total = _consultar_tabla_historico(
+                ruta,
+                "versiones",
+                busqueda="ACEITE",
+            )
+            self.assertEqual(len(filas), 100)
+            self.assertEqual(total, 128)
+
+            from openpyxl import load_workbook
+
+            destino = Path(temporal) / "exportado.xlsx"
+            cantidad = _exportar_tabla_historico_excel(
+                ruta,
+                "versiones",
+                destino,
+                busqueda="ACEITE",
+            )
+            self.assertEqual(cantidad, 128)
+            libro = load_workbook(destino, data_only=False, read_only=False)
+            hoja = libro["versiones"]
+            self.assertEqual(hoja.max_row, 129)
+            self.assertEqual(hoja["B4"].value, "Aceite =2+2")
+            self.assertEqual(hoja["B4"].data_type, "s")
+            self.assertEqual(hoja.freeze_panes, "A2")
+            self.assertTrue(hoja.auto_filter.ref)
+            libro.close()
+
+            with self.assertRaises(ValueError):
+                _consultar_tabla_historico(
+                    ruta,
+                    "versiones; DROP TABLE versiones",
+                )
+            conexion = sqlite3.connect(ruta)
+            self.assertEqual(
+                conexion.execute("SELECT COUNT(*) FROM versiones").fetchone()[0],
+                129,
+            )
+            conexion.close()
 
 
 if __name__ == "__main__":

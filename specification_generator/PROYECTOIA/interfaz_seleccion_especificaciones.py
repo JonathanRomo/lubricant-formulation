@@ -16,6 +16,7 @@ from typing import Any, Callable
 from alinear_especificaciones_json import (
     MAESTRO,
     cargar_maestro,
+    metodos_maestros,
     referencias_astm,
     referencias_astm_fuera_maestro,
 )
@@ -150,6 +151,7 @@ class PanelEspecificaciones:
     canvas_previa: tk.Canvas | None = None
     tabla_pruebas: ttk.Treeview | None = None
     boton_contraparte: ttk.Button | None = None
+    boton_editar: ttk.Button | None = None
     zoom_previa: float = 1.0
     especificacion_actual: Especificacion | None = None
 
@@ -190,7 +192,8 @@ def _referencias_maestras_astm() -> frozenset[str]:
     return frozenset(
         referencia
         for registro in registros
-        for referencia in referencias_astm(registro.get("METODO", ""))
+        for metodo in metodos_maestros(registro)
+        for referencia in referencias_astm(metodo)
     )
 
 
@@ -528,13 +531,15 @@ def preparar_vista_previa_alineada(ruta: Path) -> VistaPrevia:
 class SelectorEspecificaciones:
     def __init__(
         self,
-        raiz: tk.Tk,
+        raiz: tk.Tk | tk.Toplevel,
         carpeta_json: Path = JSON_DIR_NUEVAS,
         carpeta_json_anterior: Path = JSON_DIR_ANTERIORES,
         al_actualizar: Callable[[Path], None] | None = None,
+        al_editar: Callable[[Path], None] | None = None,
     ):
         self.raiz = raiz
         self.al_actualizar = al_actualizar
+        self.al_editar = al_editar
         self.carpetas_json = {
             "anteriores": carpeta_json_anterior,
             "nuevas": carpeta_json,
@@ -645,10 +650,16 @@ class SelectorEspecificaciones:
             text=(
                 "Vista previa · Datos extraídos"
                 if clave == "anteriores"
-                else "Vista previa · JSON alineado (campos actualizados)"
+                else "Vista previa · JSON alineado"
             ),
             style="Seccion.TLabel",
         ).pack(side="left", anchor="w")
+        boton_editar = ttk.Button(
+            barra_vista,
+            text="Editar",
+            command=lambda c=clave: self._editar_especificacion(c),
+            state="disabled",
+        )
         boton_contraparte = ttk.Button(
             barra_vista,
             text="Ver alineada →" if clave == "anteriores" else "← Ver original",
@@ -656,7 +667,6 @@ class SelectorEspecificaciones:
             command=lambda c=clave: self._ir_a_contraparte(c),
             state="disabled",
         )
-        boton_contraparte.pack(side="left", padx=(10, 0))
         ttk.Button(
             barra_vista,
             text="−",
@@ -675,6 +685,8 @@ class SelectorEspecificaciones:
             width=3,
             command=lambda c=clave: self._cerrar_vista_previa(c),
         ).pack(side="right", padx=(0, 6))
+        boton_contraparte.pack(side="right", padx=(10, 0))
+        boton_editar.pack(side="right", padx=(6, 0))
         marco_previa = ttk.Frame(panel_previa)
         marco_previa.pack(fill="both", expand=True)
         ttk.Label(
@@ -685,11 +697,13 @@ class SelectorEspecificaciones:
             wraplength=650,
         ).pack(fill="both", expand=True)
 
+        acciones_previa = ttk.Frame(panel_previa)
+        acciones_previa.pack(fill="x", pady=(10, 0))
         ttk.Button(
-            panel_previa,
+            acciones_previa,
             text="Actualizar especificación",
             command=lambda c=clave: self._actualizar_especificacion(c),
-        ).pack(anchor="e", pady=(10, 0))
+        ).pack(side="right")
 
         self.paneles[clave] = PanelEspecificaciones(
             catalogo=Catalogo((), ()),
@@ -701,6 +715,7 @@ class SelectorEspecificaciones:
             estado_catalogo=estado,
             marco_previa=marco_previa,
             boton_contraparte=boton_contraparte,
+            boton_editar=boton_editar,
         )
         entrada.bind("<KeyRelease>", lambda _evento, c=clave: self._actualizar_sugerencias(c))
         entrada.bind("<Return>", lambda _evento, c=clave: self._seleccionar_primera_sugerencia(c))
@@ -793,6 +808,8 @@ class SelectorEspecificaciones:
     def _mostrar_previa(self, clave: str, especificacion: Especificacion) -> None:
         panel = self.paneles[clave]
         panel.especificacion_actual = especificacion
+        if panel.boton_editar is not None:
+            panel.boton_editar.configure(state="normal")
         self._actualizar_boton_contraparte(clave)
         try:
             preparar = (
@@ -1098,6 +1115,8 @@ class SelectorEspecificaciones:
         self._actualizar_boton_contraparte(clave)
         panel.canvas_previa = None
         panel.tabla_pruebas = None
+        if panel.boton_editar is not None:
+            panel.boton_editar.configure(state="disabled")
         for widget in panel.marco_previa.winfo_children():
             widget.destroy()
         ttk.Label(
@@ -1144,6 +1163,31 @@ class SelectorEspecificaciones:
                 )
             return
         self.al_actualizar(seleccionadas[0])
+
+    def _editar_especificacion(self, clave: str) -> None:
+        especificacion = self.paneles[clave].especificacion_actual
+        if especificacion is None:
+            return
+        if self.al_editar is None:
+            aplicacion = BASE / "interfaz_aplicacion_especificaciones.py"
+            try:
+                subprocess.Popen(
+                    [
+                        sys.executable,
+                        str(aplicacion),
+                        "--generar-json",
+                        str(especificacion.ruta),
+                    ],
+                    cwd=BASE,
+                )
+            except OSError as exc:
+                messagebox.showerror(
+                    "No se pudo abrir el generador",
+                    str(exc),
+                    parent=self.raiz,
+                )
+            return
+        self.al_editar(especificacion.ruta)
 
     def _mostrar_error(self, clave: str, mensaje: str) -> None:
         panel = self.paneles[clave]

@@ -1,11 +1,13 @@
 import json
 import tempfile
 import unittest
+from types import SimpleNamespace
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from interfaz_seleccion_especificaciones import (
     Especificacion,
+    SelectorEspecificaciones,
     buscar_especificaciones,
     buscar_contraparte,
     cargar_catalogo,
@@ -46,6 +48,27 @@ def json_especificacion(
 
 
 class SelectorEspecificacionesTests(unittest.TestCase):
+    def test_editar_abre_la_especificacion_actual_en_el_callback(self):
+        especificacion = Especificacion(
+            ruta=Path("alineadas/producto.json"),
+            nombre_producto="Aceite Hidráulico",
+            codigo="20100001",
+            cliente="Cliente",
+            revision="00",
+            busqueda="",
+        )
+        abrir_editor = Mock()
+        selector = SimpleNamespace(
+            paneles={
+                "nuevas": SimpleNamespace(especificacion_actual=especificacion)
+            },
+            al_editar=abrir_editor,
+        )
+
+        SelectorEspecificaciones._editar_especificacion(selector, "nuevas")
+
+        abrir_editor.assert_called_once_with(especificacion.ruta)
+
     def test_busca_contraparte_por_nombre_de_archivo_y_metadatos(self):
         anterior = Especificacion(
             ruta=Path("anteriores/20100001 00_11_10_26.json"),

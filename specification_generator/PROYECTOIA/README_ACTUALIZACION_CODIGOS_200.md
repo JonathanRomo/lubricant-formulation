@@ -136,8 +136,10 @@ El alineador lee `ESPECIFICACIONES_JSON` y `METODOS_LAB\METODOS_LAB_UNIFICADO.xl
 `ESPECIFICACIONES_JSON_ALINEADAS`. Usa pandas para validar/leer las columnas del
 maestro y RapidFuzz para comparar nombres; solo sustituye automaticamente una
 prueba cuando supera el umbral configurado y no hay ambiguedad. Selecciona el
-nombre de prueba y las unidades segun `documento.idioma`; si falta el nombre
-maestro para ese idioma, conserva el original y exige revision. Los asteriscos
+nombre, el método y las unidades segun `documento.idioma`; para documentos en
+ingles usa `MÉTODO INGLÉS` y recurre a `METODO` solo cuando falta una traduccion.
+Si falta el nombre maestro para ese idioma, conserva el original y exige
+revision. Los asteriscos
 al inicio de los nombres en la lista maestra son marcas de acreditacion y se
 quitan del nombre canonico que se escribe en el JSON alineado; la auditoria
 mantiene el nombre original de la lista maestra. En los campos de unidades y
@@ -201,12 +203,55 @@ solo esta misma etapa.
 
 En Windows, inicia `EJECUTAR_APLICACION_ESPECIFICACIONES.bat` para abrir el
 menú principal. `SUBIR ESPEC` permite elegir varios archivos `.doc`, `.docm` y
-`.docx` y copiarlos a `ESPECIFICACIONES_VIEJAS`. `GENERAR ESPEC` abre un editor
-JSON con validación y guardado en la carpeta de JSON alineados. `SELECCIONAR
+`.docx` y copiarlos a `ESPECIFICACIONES_VIEJAS`; los formatos no compatibles se
+omiten individualmente. La extracción y alineación se limitan a los documentos
+seleccionados, y la base de datos permite omitir los que no cambiaron. Durante
+el proceso muestra una barra lineal en un pie gris permanente; `Ver más` abre
+los mensajes de copia, extracción y alineación que también se envían a la
+terminal.
+`GENERAR ESPEC` abre un formulario para elegir idioma, capturar control
+documental y administrar las filas de pruebas antes de guardar un JSON
+compatible con la vista alineada en la carpeta correspondiente. Las sugerencias
+de pruebas y unidades aparecen en gris y se aceptan explícitamente; los métodos
+ASTM conjugados se sugieren como una combinación completa cuando existe una
+coincidencia exacta en la lista maestra. Al confirmar una prueba que coincide
+con la lista maestra, se completan automáticamente el método y la unidad si se
+pueden determinar sin ambigüedad. El formulario ofrece hasta cinco Part ID del
+catálogo y bloquea el guardado si el código no existe. También precarga las
+notas de la plantilla y «Investigación y desarrollo» (traducido al inglés
+cuando corresponde).
+La periodicidad es obligatoria por fila: se elige de uno a cuatro símbolos
+distintos en desplegables separados; el JSON los concatena en un mismo valor
+(por ejemplo, `QIP`) y el encabezado abre su leyenda localizada.
+Ese campo se conserva en `PERIODIDICAD DE ANALISIS` dentro del JSON y no se
+agrega a las columnas de la tabla Word. `SELECCIONAR
 SPEC` abre el selector y permite enviar una especificación marcada al editor.
-`COMPARAR ESPECS` abre dos paneles de comparación;
-cada panel tiene zoom independiente y puede abrir su vista en una ventana
-emergente (hasta seis ventanas flotantes). En las vistas, la tabla de pruebas
+El botón «Editar» en el selector o en cada panel del comparador abre esa
+especificación en el generador con sus datos cargados; al guardar, permite
+confirmar la actualización del mismo JSON. Si se abrió un Word solo para
+compararlo, «Editar» carga su extracción temporal en el generador para crear un
+JSON persistente.
+La fecha inicial usa la fecha local del sistema en formato `DD/MM/YY`; Folio
+VAP, nombre de cliente y revisión del cliente empiezan con `-`. En la tabla se
+puede pulsar Suprimir para vaciar la celda; el desplegable de periodicidad
+agrega símbolos de uno en uno y permite hasta cuatro. Las sugerencias de
+pruebas, unidades, códigos y nombres de producto se actualizan al escribir y se
+pueden elegir con el ratón o el teclado; los campos conservan la escritura
+manual. Elegir un Part ID completa el nombre del catálogo, y escribir o elegir
+un nombre con una relación única completa el código. Un nombre que no exista en
+el catálogo se puede conservar como texto libre. Al cambiar el idioma, los
+nombres de prueba que tengan traducción única en la lista maestra se traducen
+automáticamente.
+`ACTUALIZAR MÉTODOS` permite consultar y editar las siete columnas de la lista
+maestra, abrir la ubicación del Excel o reconstruirlo desde los archivos
+fuente. Al reconstruir, conserva los métodos ingleses ya guardados cuando puede
+asociarlos con una fila de origen; si no existe una traducción, usa el método
+original como fallback.
+`COMPARAR ESPECS` abre dos paneles de comparación, distribuidos inicialmente
+con el mismo ancho. El botón «＋ Agregar especificación» permite añadir un
+tercer panel; cada panel tiene zoom independiente y puede abrir su vista en una
+ventana emergente (hasta seis ventanas flotantes). Al añadir el tercer panel,
+los tres se distribuyen con el mismo ancho. En las vistas, la tabla de pruebas
 aparece antes que los datos complementarios del producto; el botón «×» de un
 panel limpia esa visualización sin cerrar la ventana de comparación. El divisor
 horizontal de cada vista permite ajustar verticalmente el espacio de la tabla
@@ -221,9 +266,15 @@ El JSON y las conversiones auxiliares viven en una carpeta temporal: se eliminan
 al limpiar ese panel o cerrar el comparador. Si se abrió una vista emergente de
 un Word temporal, sus datos se conservan hasta cerrar también esa ventana.
 
-La aplicación también permite abrir el histórico, copiar plantillas Word a
-`FORMATOS`, ejecutar la actualización de la lista maestra y configurar las
-carpetas usadas por la interfaz. Los controles `A−` y `A+` ajustan el zoom
+`VER HISTÓRICO` permite consultar las tablas de `especificaciones.db` desde la
+interfaz, buscar en todos los campos y recorrer los resultados por páginas; la
+base se abre en modo de solo lectura. Desde esa ventana también se puede abrir
+la carpeta de documentos generados o exportar la tabla seleccionada a un archivo
+Excel `.xlsx` en la ruta que elija el usuario; si hay una búsqueda activa, se
+exportan todos los registros coincidentes, no solo la página visible. La
+aplicación permite además copiar
+plantillas Word a `FORMATOS`, ejecutar la actualización de la lista maestra y
+configurar las carpetas usadas por la interfaz. Los controles `A−` y `A+` ajustan el zoom
 general; los controles `−` y `+` de cada panel ajustan solo esa vista previa.
 El selector y la comparación incluyen JSON en español e inglés; las vistas
 inglesas se identifican como «English version» y muestran en inglés los
