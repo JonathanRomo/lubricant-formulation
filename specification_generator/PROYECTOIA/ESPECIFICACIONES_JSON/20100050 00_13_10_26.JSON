@@ -1,0 +1,207 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL AW HD"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-10-02"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "-",
+    "codigo_unico_producto": "20100050",
+    "fecha": "02/10/2026",
+    "revision": "00",
+    "nombre_cliente": "",
+    "revision_cliente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "DENSIDAD A 15 °C",
+      "unidades": "kg/m3",
+      "metodo": "ASTM D1298/ ASTM D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "852"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445/ ASTM D7042",
+      "especificacion": "2,90 MÍNIMO",
+      "valor_tipico": "3351"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445/ ASTM D7042",
+      "especificacion": "11,00 – 14,50",
+      "valor_tipico": "13,76"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "ÍNDICE DE VISCOSIDAD",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D2270",
+      "especificacion": "115 MÍNIMO",
+      "valor_tipico": "116"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD DINÁMICA BROOKFIELD A -40 °C",
+      "unidades": "mPa*s",
+      "metodo": "ASTM D2983",
+      "especificacion": "6 500 MÁXIMO",
+      "valor_tipico": "3 608"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PUNTO DE FLUIDEZ",
+      "unidades": "°C",
+      "metodo": "ASTM D97",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "-54"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+      "unidades": "°C",
+      "metodo": "ASTM D92",
+      "especificacion": "154 MÍNIMO",
+      "valor_tipico": "187"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "MÉTODO DE 4 BOLAS DESGASTE (600 rpm /40 kg /93 °C)",
+      "unidades": "mm",
+      "metodo": "ASTM D4172",
+      "especificacion": "0,47 MÁXIMO",
+      "valor_tipico": "0,392"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892",
+      "especificacion": "100/0 MÁXIMO",
+      "valor_tipico": "70/0"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "FORMACIÓN DE ESPUMA (SECUENCIA II)",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892",
+      "especificacion": "50/0 MÁXIMO",
+      "valor_tipico": "30/0"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "FORMACIÓN DE ESPUMA (SECUENCIA III)",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892",
+      "especificacion": "100/0 MÁXIMO",
+      "valor_tipico": "50/0"
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "HUMEDAD POR CREPITACIÓN",
+      "unidades": "NA",
+      "metodo": "MÉTODO INTERNO (91300029)",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": "NEGATIVA"
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+      "unidades": "mg/kg",
+      "metodo": "ASTM D6304",
+      "especificacion": "100 MÁXIMO",
+      "valor_tipico": "26,80"
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "unidades": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "metodo": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 14,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FILL AW HD",
+    "part_id_fuente": "20100050",
+    "part_id_final": "20100050",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "20100050",
+        "descripcion": "SCHUTZ FILL AW HD"
+      },
+      {
+        "part_id": "20100040",
+        "descripcion": "SCHUTZ FILL AW HD+"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20100040",
+      "20100050"
+    ],
+    "nombre_catalogo": "SCHUTZ FILL AW HD",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3449,
+      "part_id": "20100050",
+      "descripcion": "SCHUTZ FILL AW HD",
+      "part_id_clave": "20100050",
+      "descripcion_clave": "SCHUTZ FILL AW HD"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ESPECIFICACION SCHUTZ FILL AW HD.docx",
+  "hash_sha256_origen": "d43f81b1e882a0f7829403823656d8ee260c1c96ca9df432442ccc8316c5b2a6",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-13T10:19:37",
+  "archivo_json": "20100050 00_13_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

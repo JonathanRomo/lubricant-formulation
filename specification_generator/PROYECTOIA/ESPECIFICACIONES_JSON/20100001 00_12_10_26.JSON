@@ -1,0 +1,241 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL 1086"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2012-02-24"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Validación de Producto",
+    "folio_apqp": "--------",
+    "fecha": "24-02-12",
+    "revision": "00",
+    "nombre_cliente": "SACHS BOGE DE MÉXICO S. A. DE C.V.",
+    "revision_cliente": "0 09/02/04",
+    "codigo_unico_producto_fuente": "",
+    "codigo_unico_producto": "20100001"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "COLOR",
+      "unidades": "A/D",
+      "metodo": "D1500",
+      "especificacion": "4.0 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "PUREZA DE PARTICULA",
+      "unidades": "4µm/6µm/14µm",
+      "metodo": "ISO 4406",
+      "especificacion": "18/15",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "PESO ESPECIFICO A 15°C",
+      "unidades": "gr/cm³",
+      "metodo": "D1298",
+      "especificacion": "0.865 – 0.900",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "VISCOSIDAD CINEMATICA @ 100 ºC",
+      "unidades": "mm²/seg (cSt)",
+      "metodo": "D445",
+      "especificacion": "2.5 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD CINEMATICA @ 40 ºC",
+      "unidades": "mm²/seg (cSt)",
+      "metodo": "D445",
+      "especificacion": "REPORTAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "VISCOSIDAD CINEMATICA A 20°C",
+      "unidades": "mm²/seg (cSt)",
+      "metodo": "D445",
+      "especificacion": "20 - 22",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "VISCOSIDAD BROOKFIELD – 40°C",
+      "unidades": "cP",
+      "metodo": "D2983",
+      "especificacion": "3 000 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "PUNTO DE ESCURRIMIENTO,DESPUES DE MANTENER 24 Hr @ -45°C",
+      "unidades": "°C",
+      "metodo": "D97",
+      "especificacion": "DEBE FLUIR EN MENOS DE 5 SEG",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "AGUA Y SEDIMENTOS, W",
+      "unidades": "%",
+      "metodo": "D96",
+      "especificacion": "0 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "CORROSION AL COBRE 3 Hr, 100°C",
+      "unidades": "A/D",
+      "metodo": "D130",
+      "especificacion": "1 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "PERDIDA POR EVAPORACIÓN 120°C, W",
+      "unidades": "%",
+      "metodo": "DIN 51 581",
+      "especificacion": "5,0 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "CARACTERISTICAS DE ESPUMADO DESPUES DE MANTENER 24 Hr @ 120°C",
+      "unidades": "",
+      "metodo": "",
+      "especificacion": "",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "SEC I, TENDENCIA/ESTABILIDAD",
+      "unidades": "ml/ml",
+      "metodo": "D 892",
+      "especificacion": "100 ml Max/ 60 seg Max",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "SEC II, TENDENCIA/ESTABILIDAD",
+      "unidades": "ml/ml",
+      "metodo": "D 892",
+      "especificacion": "100 ml Max/ 60 seg Max",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 15,
+      "fila_origen": 16,
+      "prueba": "INDICE DE VISCOSIDAD",
+      "unidades": "A/D",
+      "metodo": "",
+      "especificacion": "95 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 16,
+      "fila_origen": 17,
+      "prueba": "PUNTO DE ANILINA",
+      "unidades": "°C",
+      "metodo": "",
+      "especificacion": "75.0 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 17,
+      "fila_origen": 18,
+      "prueba": "ESPECTRO INFRARROJO",
+      "unidades": "% Transmitancia/cm-1",
+      "metodo": "",
+      "especificacion": "ANEXAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 18,
+      "fila_origen": 19,
+      "prueba": "PESO ESPECIFICO A 25°C",
+      "unidades": "",
+      "metodo": "",
+      "especificacion": "REPORTAR",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Oficina: Av. Universidad 1001 Piso 10 Int. 11 Torre Plaza Bosques, C.P. 20127, Aguascalientes, Ags. Planta: Carretera a San Luis Potosí Km 14.5, C.P. 20337, El Llano, Aguascalientes. Tel 01(449)2.35.25.75 contacto@schutzoil.com, www.schutzlubricants.com"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 3,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 18,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FILL 1086",
+    "part_id_fuente": "",
+    "part_id_final": "20100001",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80100001",
+        "descripcion": "SCHUTZ FILL 1086"
+      },
+      {
+        "part_id": "20100001",
+        "descripcion": "SCHUTZ FILL 1086"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20100001"
+    ],
+    "nombre_catalogo": "SCHUTZ FILL 1086",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3497,
+      "part_id": "20100001",
+      "descripcion": "SCHUTZ FILL 1086",
+      "part_id_clave": "20100001",
+      "descripcion_clave": "SCHUTZ FILL 1086"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ESPECIFICACION 1086 ZF ultima rev.doc",
+  "hash_sha256_origen": "2573b1a9d95636f89290f6fff348ed4768bbcba0fb3c8f21687b9850ca163ab4",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-12T21:19:32",
+  "archivo_json": "20100001 00_12_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

@@ -1,0 +1,214 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL AW 430011"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2012-02-24"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Validación de Producto",
+    "folio_apqp": "--------",
+    "fecha": "24-02-12",
+    "revision": "00",
+    "nombre_cliente": "RIDE CONTROL MEXICANA, S. DE RL DE C.V.",
+    "revision_cliente": "02-05-93",
+    "codigo_unico_producto_fuente": "",
+    "codigo_unico_producto": "20100002"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "CLARO BRILLANTE",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "VERDE",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "DENSIDAD A 15°C",
+      "unidades": "Kg/m³",
+      "metodo": "D 1298",
+      "especificacion": "864 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "INDICE DE VISCOSIDAD",
+      "unidades": "A/D",
+      "metodo": "D 2270",
+      "especificacion": "90 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD BROOKFIELD – 40°C",
+      "unidades": "cP",
+      "metodo": "D 2983",
+      "especificacion": "3 610 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "VISCOSIDAD A 100°F",
+      "unidades": "SUS",
+      "metodo": "D 445/2161",
+      "especificacion": "70 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "VISCOSIDAD A 210°F",
+      "unidades": "SUS",
+      "metodo": "D 445/2161",
+      "especificacion": "35 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "PUNTO DE ANILINA",
+      "unidades": "°C",
+      "metodo": "D 611",
+      "especificacion": "81,8 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "FOSFORO",
+      "unidades": "% Masa",
+      "metodo": "AA",
+      "especificacion": "0,130 – 0,200",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "PUNTO DE INFLAMACION",
+      "unidades": "°C",
+      "metodo": "D 92",
+      "especificacion": "149 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "PUNTO DE ESCURRIMIENTO",
+      "unidades": "°C",
+      "metodo": "D 97",
+      "especificacion": "-45 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "VISCOSIDAD CINEMATICA A 40°C",
+      "unidades": "cSt",
+      "metodo": "D 445",
+      "especificacion": "9,6 – 12,3",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "VISCOSIDAD CINEMATICA A 100°C",
+      "unidades": "cSt",
+      "metodo": "D 445",
+      "especificacion": "2,59 – 2,96",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "No. SAPONIFICACION",
+      "unidades": "mgKOH",
+      "metodo": "D 94",
+      "especificacion": "5 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 15,
+      "fila_origen": 16,
+      "prueba": "AGUA",
+      "unidades": "N/A",
+      "metodo": "INS-CCA-07",
+      "especificacion": "SECO",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Oficina: Av. Universidad 1001 Piso 10 Int. 11 Torre Plaza Bosques, C.P. 20127, Aguascalientes, Ags. Planta: Carretera a San Luis Potosí Km 14.5, C.P. 20337, El Llano, Aguascalientes. Tel 01(449)2.35.25.75 contacto@schutzoil.com, www.schutzlubricants.com"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 15,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FILL AW 430011",
+    "part_id_fuente": "",
+    "part_id_final": "20100002",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80100002",
+        "descripcion": "SCHUTZ FILL AW 430011"
+      },
+      {
+        "part_id": "20100002",
+        "descripcion": "SCHUTZ FILL AW 430011"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20100002"
+    ],
+    "nombre_catalogo": "SCHUTZ FILL AW 430011",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3496,
+      "part_id": "20100002",
+      "descripcion": "SCHUTZ FILL AW 430011",
+      "part_id_clave": "20100002",
+      "descripcion_clave": "SCHUTZ FILL AW 430011"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ESPEC AW 430011.doc",
+  "hash_sha256_origen": "17599973d2a004d961e4905fbf7ee805ec41b1aa5592c220b693acea05a3592d",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "01",
+  "fecha_creacion_json": "2026-10-12T21:18:07",
+  "archivo_json": "20100002 00_12_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

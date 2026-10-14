@@ -1,0 +1,192 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FG 55 AV"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2024-04-15"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "INVESTIGACIÓN Y DESARROLLO",
+    "folio_apqp": "------",
+    "folio_vap": "------",
+    "codigo_unico_producto": "20200001",
+    "fecha": "15/04/2024",
+    "revision": "2024",
+    "nombre_cliente": "LABORATORIOS AVILAB",
+    "revision_cliente": "NA"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA",
+      "unidades": "NA",
+      "metodo": "VISUAL",
+      "especificacion": "LIQUIDO LIGERO Y TRANSPARENTE",
+      "valor_tipico": "LIQUIDO LIGERO Y TRANSPARENTE"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR SAYBOLT",
+      "unidades": "NA",
+      "metodo": "ASTM D156",
+      "especificacion": "30 MINIMO",
+      "valor_tipico": "+30"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "OLOR",
+      "unidades": "NA",
+      "metodo": "ORGANOLEPTICO",
+      "especificacion": "INOLORO",
+      "valor_tipico": "INOLORO"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "DENSIDAD RELATIVA A 15/15°C",
+      "unidades": "AD",
+      "metodo": "ASTM D1298 / ASTM D7042",
+      "especificacion": "0.828 – 0.838",
+      "valor_tipico": "0.8282"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "DENSIDAD A 20 °C",
+      "unidades": "g/cm3",
+      "metodo": "ASTM D1298 / ASTM D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "0.8239"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C ◊",
+      "unidades": "mm2/s (cSt)",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "7,000 – 8.000",
+      "valor_tipico": "7,423"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "unidades": "mm2/s (cSt)",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "2.219"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "ESPECTRO INFRARROJO",
+      "unidades": "NA",
+      "metodo": "E1252",
+      "especificacion": "ANEXAR",
+      "valor_tipico": "ANEXO"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS ◊",
+      "unidades": "A",
+      "metodo": "USP 32",
+      "especificacion": "PASA (0.1 MAXIMO)",
+      "valor_tipico": "0.032"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+      "unidades": "NA",
+      "metodo": "USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "HUMEDAD POR CREPITACIÓN",
+      "unidades": "NA",
+      "metodo": "91300092",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": "NEGATIVA"
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "PUNTO DE FLUIDEZ",
+      "unidades": "°C",
+      "metodo": "ASTM D97",
+      "especificacion": "- 6 MAXIMO",
+      "valor_tipico": "- 45"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 12,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FG 55 AV",
+    "part_id_fuente": "20200001",
+    "part_id_final": "20200001",
+    "coincidencias_nombre": 3,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80200115",
+        "descripcion": "SCHUTZ FG 55 AV"
+      },
+      {
+        "part_id": "80200002",
+        "descripcion": "SCHUTZ FG 55 AV"
+      },
+      {
+        "part_id": "20200001",
+        "descripcion": "SCHUTZ FG 55 AV"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20200001"
+    ],
+    "nombre_catalogo": "SCHUTZ FG 55 AV",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3444,
+      "part_id": "20200001",
+      "descripcion": "SCHUTZ FG 55 AV",
+      "part_id_clave": "20200001",
+      "descripcion_clave": "SCHUTZ FG 55 AV"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ FG 55 AV (2024).docx",
+  "hash_sha256_origen": "ffb73e29984e46027632ea075df5fbd1cc19466fdf2b2c6d470071c599bcc2e0",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "02",
+  "fecha_creacion_json": "2026-10-12T21:59:39",
+  "archivo_json": "20200001 2024_12_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

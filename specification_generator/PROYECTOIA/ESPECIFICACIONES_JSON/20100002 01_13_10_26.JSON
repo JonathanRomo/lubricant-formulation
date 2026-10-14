@@ -1,0 +1,214 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL AW 430011",
+    "nombre_fuente": "SCHUTZ FILL AW 430011-000 U"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "en",
+    "fecha_documento_normalizada": "2016-04-28"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "PRODUCT VALIDATION",
+    "folio_apqp": "APQP-15-AMO-037",
+    "folio_vap": "VAP040215037AMO",
+    "codigo_unico_producto": "20100002",
+    "fecha": "28/04/16",
+    "revision": "01",
+    "codigo_unico_producto_fuente": "PT-AMO-05"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "COLOR",
+      "unidades": "AD",
+      "metodo": "VISUAL",
+      "especificacion": "GREEN",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "APPEARANCE",
+      "unidades": "AD",
+      "metodo": "VISUAL",
+      "especificacion": "CLEAR AND BRIGHT",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "KINEMATIC VISCOSITY TO 40°C ◊",
+      "unidades": "mm2/s",
+      "metodo": "D 445",
+      "especificacion": "12.00 – 15.00",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "KINEMATIC VISCOSITY TO 100°C",
+      "unidades": "mm2/s",
+      "metodo": "D 445",
+      "especificacion": "3.000 – 4.000",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSITY INDEX",
+      "unidades": "AD",
+      "metodo": "D 2270",
+      "especificacion": "135 MINIMUM",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "DENSITY TO 15 °C",
+      "unidades": "kg/m3",
+      "metodo": "D 1298",
+      "especificacion": "863 TYPICAL",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "BROOKFIELD VISCOSITY TO -40 °C ◊",
+      "unidades": "mPa.s",
+      "metodo": "D 2983",
+      "especificacion": "4750 MAXIMUM",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "FLASH POINT",
+      "unidades": "°C",
+      "metodo": "D 92",
+      "especificacion": "150 MINIMUM",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "ANILINE POINT",
+      "unidades": "°C",
+      "metodo": "D 611",
+      "especificacion": "92.4 TYPICAL",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "POUR POINT",
+      "unidades": "°C",
+      "metodo": "D 97",
+      "especificacion": "-54 TYPICAL",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "4-BALL WEAR – SCAR DIAMETER (40 kg, 600 rpm, 1 hr, 93 °C)",
+      "unidades": "mm",
+      "metodo": "D 4172 B MODIFIED",
+      "especificacion": "0.37 – 0.47",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "PHOSPHORUS ◊",
+      "unidades": "% mass",
+      "metodo": "D 4951",
+      "especificacion": "0.03 – 0.12",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "ZINC ◊",
+      "unidades": "% mass",
+      "metodo": "D 4951",
+      "especificacion": "0.03 – 0.12",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "WATER (SPLATTER TEST)",
+      "unidades": "AD",
+      "metodo": "INS-CCA-07",
+      "especificacion": "DRY",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 15,
+      "fila_origen": 16,
+      "prueba": "IR",
+      "unidades": "AD",
+      "metodo": "E1252",
+      "especificacion": "CONFORM TO STANDARD",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 15,
+    "encabezados": [
+      "TEST",
+      "UNITS",
+      "METHOD",
+      "SPECIFICATION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FILL AW 430011-000 U",
+    "part_id_fuente": "PT-AMO-05",
+    "part_id_final": "20100002",
+    "coincidencias_nombre": 0,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80100002",
+        "descripcion": "SCHUTZ FILL AW 430011"
+      },
+      {
+        "part_id": "20100002",
+        "descripcion": "SCHUTZ FILL AW 430011"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20100002"
+    ],
+    "nombre_catalogo": "SCHUTZ FILL AW 430011",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3496,
+      "part_id": "20100002",
+      "descripcion": "SCHUTZ FILL AW 430011",
+      "part_id_clave": "20100002",
+      "descripcion_clave": "SCHUTZ FILL AW 430011"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS_ENG/SCHUTZ FILL AW 430011-000 U REV U.doc",
+  "hash_sha256_origen": "f8a782badbaac0dc99056aefe1f53c88e174bad3211411693e64c90eb6a6a25c",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "04",
+  "fecha_creacion_json": "2026-10-13T10:43:36",
+  "archivo_json": "20100002 01_13_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

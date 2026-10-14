@@ -1,0 +1,279 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FG 85 C"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2020-06-26"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "INVESTIGACION Y DESARROLLO",
+    "folio_vap": "NA",
+    "codigo_unico_producto": "20200002",
+    "fecha": "26/06/2020",
+    "revision": "00",
+    "nombre_cliente": "NA",
+    "revision_cliente": "----"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA",
+      "unidades": "A/D",
+      "metodo": "VISUAL",
+      "especificacion": "TRANSPARENTE",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "OLOR",
+      "unidades": "A/D",
+      "metodo": "ORGANOLEPTICO",
+      "especificacion": "INOLORO, IGUAL AL ESTANDAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "COLOR",
+      "unidades": "A/D",
+      "metodo": "VISUAL",
+      "especificacion": "INCOLORO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "TEXTURA",
+      "unidades": "A/D",
+      "metodo": "VISUAL",
+      "especificacion": "LIQUIDO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "COLOR SAYBOLT",
+      "unidades": "A/D",
+      "metodo": "ASTM D-156",
+      "especificacion": "30 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "GRAVEDAD ESPECIFICA A 25 °C",
+      "unidades": "A/D",
+      "metodo": "ASTM D-1298",
+      "especificacion": "0.835 – 0.860",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "VISCOSIDAD (RVF, SPIN 2 A 20 RPM, A 25 °C)",
+      "unidades": "CPS",
+      "metodo": "ASTM D-2983",
+      "especificacion": "17 – 23",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "VISCOSIDAD SAYBOLT A 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D-2161",
+      "especificacion": "80 – 90",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "NEUTRALIDAD",
+      "unidades": "A/D",
+      "metodo": "USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "COMPUESTOS POLINUCLEARES",
+      "unidades": "nm",
+      "metodo": "USP 32",
+      "especificacion": "0.1 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "COMPUESTOS CARBONIZABLES",
+      "unidades": "A/D",
+      "metodo": "USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "PARAFINA SOLIDAV",
+      "unidades": "A/D",
+      "metodo": "USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "HUMEDAD",
+      "unidades": "N/A",
+      "metodo": "91300092",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "ESPECTRO INFRARROJO",
+      "unidades": "---",
+      "metodo": "ASTM E-1252",
+      "especificacion": "IGUAL AL ESTANDAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 15,
+      "fila_origen": 16,
+      "prueba": "ARSENICOV",
+      "unidades": "mg/kg",
+      "metodo": "EPA 200.7 REV 4.4 VERSIÓN EMMC",
+      "especificacion": "2 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 16,
+      "fila_origen": 17,
+      "prueba": "PLOMOV",
+      "unidades": "mg/kg",
+      "metodo": "EPA 200.7 REV 4.4 VERSIÓN EMMC",
+      "especificacion": "20 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 17,
+      "fila_origen": 18,
+      "prueba": "AZUFREV",
+      "unidades": "A/D",
+      "metodo": "IODOMÉTRICO",
+      "especificacion": "PASA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 18,
+      "fila_origen": 19,
+      "prueba": "BACILOS GRAM NEGATIVOS",
+      "unidades": "AUSENTE/g",
+      "metodo": "CULTIVO Y AISLAMIENTO",
+      "especificacion": "NEGATIVO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 19,
+      "fila_origen": 20,
+      "prueba": "STAPHYLOCOCCUS AUREUS",
+      "unidades": "UFC/g",
+      "metodo": "NOM-115-SSA1-1994",
+      "especificacion": "NEGATIVO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 20,
+      "fila_origen": 21,
+      "prueba": "CUENTA TOTAL AEROBIA",
+      "unidades": "UFC/g",
+      "metodo": "NOM-092-SSA1-1994",
+      "especificacion": "500 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 21,
+      "fila_origen": 22,
+      "prueba": "HONGOS Y LEVADURAS",
+      "unidades": "UFC/g",
+      "metodo": "NOM-111-SSA1-1994",
+      "especificacion": "500 MAXIMO",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 21,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FG 85 C",
+    "part_id_fuente": "20200002",
+    "part_id_final": "20200002",
+    "coincidencias_nombre": 5,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80200090",
+        "descripcion": "SCHUTZ FG 85 C"
+      },
+      {
+        "part_id": "80200031",
+        "descripcion": "SCHUTZ FG 85 C"
+      },
+      {
+        "part_id": "80200030",
+        "descripcion": "SCHUTZ FG 85 C"
+      },
+      {
+        "part_id": "80200008",
+        "descripcion": "SCHUTZ FG 85 C"
+      },
+      {
+        "part_id": "20200002",
+        "descripcion": "SCHUTZ FG 85 C"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20200002"
+    ],
+    "nombre_catalogo": "SCHUTZ FG 85 C",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3443,
+      "part_id": "20200002",
+      "descripcion": "SCHUTZ FG 85 C",
+      "part_id_clave": "20200002",
+      "descripcion_clave": "SCHUTZ FG 85 C"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ FG 85 C 260620.doc",
+  "hash_sha256_origen": "b73cc61504fb594a9b0de0df2af74ac4d6ea1945ad41f9487471460108af053f",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-13T10:42:02",
+  "archivo_json": "20200002 00_13_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

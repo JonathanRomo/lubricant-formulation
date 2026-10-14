@@ -1,0 +1,229 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FG 100"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-09-07"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "-",
+    "codigo_unico_producto": "20200008",
+    "fecha": "07/09/2026",
+    "revision": "02",
+    "nombre_cliente": "",
+    "revision_cliente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA VISUAL",
+      "unidades": "N/A",
+      "metodo": "ORGANOLÉPTICO",
+      "especificacion": "LÍQUIDO OLEOSO, TRANSPARENTE",
+      "valor_tipico": "LÍQUIDO OLEOSO, TRANSPARENTE"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR SAYBOLT",
+      "unidades": "N/A",
+      "metodo": "ASTM D156",
+      "especificacion": "30 MINIMO",
+      "valor_tipico": ">+30"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "OLOR",
+      "unidades": "N/A",
+      "metodo": "ORGANOLÉPTICO",
+      "especificacion": "INOLORO",
+      "valor_tipico": "INOLORO"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "GRAVEDAD ESPECIFÍCA 25 °C/25 °C",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D1298",
+      "especificacion": "0,835 0 – 0,905 0",
+      "valor_tipico": "0,843 0"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "DENSIDAD A 25 °C",
+      "unidades": "g/cm3",
+      "metodo": "ASTM D1298",
+      "especificacion": "0,830 0 – 0,870 0",
+      "valor_tipico": "0,841 0"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "18,50 – 25,00",
+      "valor_tipico": "20,00"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "VISCOSIDAD SAYBOLT A 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D2161",
+      "especificacion": "100,0 – 130,0",
+      "valor_tipico": "110,0"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS",
+      "unidades": "A",
+      "metodo": "USP",
+      "especificacion": "0,1 MAXIMO",
+      "valor_tipico": "0,075"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+      "unidades": "N/A",
+      "metodo": "USP",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "PARAFINA SÓLIDA",
+      "unidades": "N/A",
+      "metodo": "USP",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": "NEGATIVA"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "ACIDEZ",
+      "unidades": "N/A",
+      "metodo": "USP",
+      "especificacion": "NEUTRO",
+      "valor_tipico": "NEUTRO"
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "HUMEDAD POR CREPITACIÓN",
+      "unidades": "N/A",
+      "metodo": "91300092",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": "NEGATIVA"
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "unidades": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "metodo": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 13,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FG 100",
+    "part_id_fuente": "20200008",
+    "part_id_final": "20200008",
+    "coincidencias_nombre": 10,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80200106",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200070",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200044",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200041",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200034",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200028",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200007",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200006",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200005",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "20200008",
+        "descripcion": "SCHUTZ FG 100"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20200008"
+    ],
+    "nombre_catalogo": "SCHUTZ FG 100",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3437,
+      "part_id": "20200008",
+      "descripcion": "SCHUTZ FG 100",
+      "part_id_clave": "20200008",
+      "descripcion_clave": "SCHUTZ FG 100"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ESPECIFICACION SCHUTZ FG 100.docm",
+  "hash_sha256_origen": "01813374dfca075640a19ba84c83492380a07740304e1327a9786e028b0d82c6",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docm",
+  "conversion_temporal": true,
+  "revision_json": "01",
+  "fecha_creacion_json": "2026-10-13T10:19:30",
+  "archivo_json": "20200008 02_13_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

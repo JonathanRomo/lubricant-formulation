@@ -1,0 +1,218 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FG 100"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2024-09-12"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y desarrollo",
+    "folio_apqp": "NA",
+    "folio_vap": "",
+    "codigo_unico_producto": "20200008",
+    "fecha": "12 de Septiembre de 2024",
+    "revision": "2024"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCA",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "LIQUIDO INCOLORO",
+      "valor_tipico": "LIQUIDO INCOLORO"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "SOLUBILIDAD",
+      "unidades": "N/A",
+      "metodo": "FEUM 13/USP 32",
+      "especificacion": "INSOLUBLE EN AGUA",
+      "valor_tipico": "INSOLUBLE EN AGUA"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "COLOR SAYBOLT",
+      "unidades": "A/D",
+      "metodo": "ASTM D-156",
+      "especificacion": "30 MINIMO",
+      "valor_tipico": "≥ +30"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "DENSIDAD @ 25 °C",
+      "unidades": "g/cm3",
+      "metodo": "ASTM D-1298 / ASTM D-7042",
+      "especificacion": "0.8350 – 0.8550",
+      "valor_tipico": "0.8344"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD CINEÁMTICA @ 40 °C",
+      "unidades": "mm2/s (cSt)",
+      "metodo": "ASTM D-445 / ASTM D-7042",
+      "especificacion": "18.50 – 22.50",
+      "valor_tipico": "20.52"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "VISCOSIDAD SAYBOLT @ 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D-2161",
+      "especificacion": "100 - 120",
+      "valor_tipico": "108.7"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "VISCOSIDAD DINAMICA @ 25 °C",
+      "unidades": "cP",
+      "metodo": "ASTM D-2983",
+      "especificacion": "25 – 40",
+      "valor_tipico": "32"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "LIMITE DE COMPUESTOS POLINUCLEARES",
+      "unidades": "N/A",
+      "metodo": "FEUM 13/USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "SUSTANCIAS FACILMENTE CARBONIZABLES",
+      "unidades": "N/A",
+      "metodo": "FEUM 13/USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "PARAFINA SOLIDA B",
+      "unidades": "N/A",
+      "metodo": "FEUM 13/USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "NEUTRALIDAD",
+      "unidades": "N/A",
+      "metodo": "FEUM 13/USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "HUMEDAD",
+      "unidades": "N/A",
+      "metodo": "01300092",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": "NEGATIVA"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 12,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FG 100",
+    "part_id_fuente": "20200008",
+    "part_id_final": "20200008",
+    "coincidencias_nombre": 10,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80200106",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200070",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200044",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200041",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200034",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200028",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200007",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200006",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200005",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "20200008",
+        "descripcion": "SCHUTZ FG 100"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20200008"
+    ],
+    "nombre_catalogo": "SCHUTZ FG 100",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3437,
+      "part_id": "20200008",
+      "descripcion": "SCHUTZ FG 100",
+      "part_id_clave": "20200008",
+      "descripcion_clave": "SCHUTZ FG 100"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ FG 100.doc",
+  "hash_sha256_origen": "c04bf4414c8c01a5b7e31d00210a6d5dba3046772ed0287bd2518b71874a85b0",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "06",
+  "fecha_creacion_json": "2026-10-12T21:46:20",
+  "archivo_json": "20200008 2024_12_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

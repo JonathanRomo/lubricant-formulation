@@ -1,0 +1,276 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL HT 436151 (HT YELLOW)"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2011-06-06"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Validación de Producto",
+    "fecha": "060611",
+    "folio_apqp": "APQP 09-003",
+    "revision": "00",
+    "nombre_cliente": "RIDE CONTROL",
+    "revision_cliente": "H",
+    "codigo_unico_producto_fuente": "",
+    "codigo_unico_producto": "20100005"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "CLARO BRILLANTE",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "AMARILLO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "DENSIDAD A 15°C",
+      "unidades": "Kg/m³",
+      "metodo": "D 1298",
+      "especificacion": "858 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "INDICE DE VISCOSIDAD",
+      "unidades": "A/D",
+      "metodo": "D 2270",
+      "especificacion": "204 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "PUNTO DE ESCURRIMIENTO",
+      "unidades": "°C",
+      "metodo": "D 97",
+      "especificacion": "-54 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PUNTO DE ANILINA",
+      "unidades": "°C",
+      "metodo": "D 611",
+      "especificacion": "103.6 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "FOSFORO ◊",
+      "unidades": "% Masa",
+      "metodo": "AA",
+      "especificacion": "0.050 – 0.100",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "VISCOSIDAD BROOKFIELD – 40°C ◊",
+      "unidades": "cP",
+      "metodo": "D 2983",
+      "especificacion": "25 000 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "ZINC ◊",
+      "unidades": "% Masa",
+      "metodo": "AA",
+      "especificacion": "0.075 – 0.100",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "VISCOSIDAD CINEMATICA A 40°C ◊",
+      "unidades": "cSt",
+      "metodo": "D 445",
+      "especificacion": "29.7 – 36.3",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "VISCOSIDAD CINEMATICA A 100°C",
+      "unidades": "cSt",
+      "metodo": "D 445",
+      "especificacion": "6.4 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "AGUA, KF",
+      "unidades": "ppm",
+      "metodo": "D 6304",
+      "especificacion": "100 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "AZUFRE",
+      "unidades": "% Masa",
+      "metodo": "D 2622",
+      "especificacion": "0,8 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "4 BOLAS DESGASTE 600 rpm, 90°C, 1hr",
+      "unidades": "mm",
+      "metodo": "D 4172 MOD",
+      "especificacion": "0.36 – 0.46",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 15,
+      "fila_origen": 16,
+      "prueba": "PUNTO DE INFLAMACION",
+      "unidades": "°C",
+      "metodo": "D 92",
+      "especificacion": "160 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 16,
+      "fila_origen": 17,
+      "prueba": "AGUA",
+      "unidades": "N/A",
+      "metodo": "INS-CCA-07",
+      "especificacion": "SECO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 17,
+      "fila_origen": 18,
+      "prueba": "CARACTERISTICAS DE ESPUMADO",
+      "unidades": "",
+      "metodo": "",
+      "especificacion": "",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 18,
+      "fila_origen": 19,
+      "prueba": "SEC I, TENDENCIA/ESTABILIDAD",
+      "unidades": "ml/ml",
+      "metodo": "D 892",
+      "especificacion": "100/0",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 19,
+      "fila_origen": 20,
+      "prueba": "SEC II, TENDENCIA/ESTABILIDAD",
+      "unidades": "ml/ml",
+      "metodo": "D 892",
+      "especificacion": "50/0",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 20,
+      "fila_origen": 21,
+      "prueba": "SEC III, TENDENCIA/ESTABILIDAD",
+      "unidades": "ml/ml",
+      "metodo": "D 892",
+      "especificacion": "100/0",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 21,
+      "fila_origen": 22,
+      "prueba": "IR",
+      "unidades": "% Transmitancia־¹",
+      "metodo": "E 1421",
+      "especificacion": "ANEXAR",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Oficina: Av. Universidad 1001 Piso 10 Int. 11 Torre Plaza Bosques, C.P. 20127, Aguascalientes, Ags. Planta: Carretera a San Luis Potosí Km 14.5, C.P. 20337, El Llano, Aguascalientes. Tel 01(449)2.35.25.75 contacto@schutzoil.com, www.schutzlubricants.com"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 21,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FILL HT 436151 (HT YELLOW)",
+    "part_id_fuente": "",
+    "part_id_final": "20100005",
+    "coincidencias_nombre": 4,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80100024",
+        "descripcion": "SCHUTZ FILL HT 436151 (HT YELLOW)"
+      },
+      {
+        "part_id": "80100012",
+        "descripcion": "SCHUTZ FILL HT 436151 (HT YELLOW)"
+      },
+      {
+        "part_id": "80100004",
+        "descripcion": "SCHUTZ FILL HT 436151 (HT YELLOW)"
+      },
+      {
+        "part_id": "20100005",
+        "descripcion": "SCHUTZ FILL HT 436151 (HT YELLOW)"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20100005"
+    ],
+    "nombre_catalogo": "SCHUTZ FILL HT 436151 (HT YELLOW)",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3493,
+      "part_id": "20100005",
+      "descripcion": "SCHUTZ FILL HT 436151 (HT YELLOW)",
+      "part_id_clave": "20100005",
+      "descripcion_clave": "SCHUTZ FILL HT 436151 HT YELLOW"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ESPEC HT YELLOW.doc",
+  "hash_sha256_origen": "35f45a0106bba78492c31a00d769c7f40d93a26f8c3639b67d750ceed1ad0ecd",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-13T10:18:33",
+  "archivo_json": "20100005 00_13_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

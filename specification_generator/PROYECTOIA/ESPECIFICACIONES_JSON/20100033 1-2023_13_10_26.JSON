@@ -1,0 +1,199 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL AFM PLUS"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2023-10-12"
+  },
+  "control_documental": {
+    "folio_apqp": "NA",
+    "folio_vap": "",
+    "codigo_unico_producto": "20100033",
+    "fecha": "12/10/2023",
+    "revision": "1-2023",
+    "codigo_unico_producto_fuente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "COLOR",
+      "unidades": "NA",
+      "metodo": "VISUAL",
+      "especificacion": "AMBAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "VISCOSIDAD CINEMATICA @40 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D-445 / ASTM D-7042",
+      "especificacion": "11.50 – 13.50",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "VISCOSIDAD CINEMATICA @100 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D-445 / ASTM D-7042",
+      "especificacion": "3.50 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "INDICE DE VISCOSIDAD",
+      "unidades": "AD",
+      "metodo": "ASTM D-2270",
+      "especificacion": "120 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "PUNTO DE INFLAMACION",
+      "unidades": "°C",
+      "metodo": "ATMD D-92",
+      "especificacion": "145 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PUNTO DE ANILINA",
+      "unidades": "°C",
+      "metodo": "ASTM D-611",
+      "especificacion": "< 80",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "PUNTO DE FLUIDEZ",
+      "unidades": "°C",
+      "metodo": "ASTM D-97",
+      "especificacion": "< -20",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "VISCOSIDAD BROOKFIELD @ -40 °C",
+      "unidades": "mPa.s",
+      "metodo": "ASTM D-2983",
+      "especificacion": "> 5500 cp",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "CONTENIDO DE AGUA",
+      "unidades": "ppm",
+      "metodo": "ASTM D-6304",
+      "especificacion": "100 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "DENSIDAD @ 15 °C",
+      "unidades": "g/cm3",
+      "metodo": "ASTM D-1298 / ASTM D-7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "FOSFORO",
+      "unidades": "% MASA",
+      "metodo": "ASTM D-4951",
+      "especificacion": "0.04 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "ZINC",
+      "unidades": "% MASA",
+      "metodo": "ASTM D-4951",
+      "especificacion": "0.05 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "CORROSION EN LAMINA DE COBRE",
+      "unidades": "AD",
+      "metodo": "ASTM D-130",
+      "especificacion": "1b MAX",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "4 BOLAS DESGASTE FLUIDO LUBRICANTE, 600 RPM/93 °C/1 h/40 Kg",
+      "unidades": "mm",
+      "metodo": "ASTM D-4172 METODO B MODIFICADO",
+      "especificacion": "0.5 MAXIMO",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 14,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACIÓN"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FILL AFM PLUS",
+    "part_id_fuente": "",
+    "part_id_final": "20100033",
+    "coincidencias_nombre": 1,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "20100033",
+        "descripcion": "SCHUTZ FILL AFM PLUS"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20100033"
+    ],
+    "nombre_catalogo": "SCHUTZ FILL AFM PLUS",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3465,
+      "part_id": "20100033",
+      "descripcion": "SCHUTZ FILL AFM PLUS",
+      "part_id_clave": "20100033",
+      "descripcion_clave": "SCHUTZ FILL AFM PLUS"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ FILL AFM PLUS.doc",
+  "hash_sha256_origen": "c1350aaf55a2696e3cfe560f8fc08edf3a6c6d61c864ea9e525d29d6ab0b0d50",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-13T10:43:09",
+  "archivo_json": "20100033 1-2023_13_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

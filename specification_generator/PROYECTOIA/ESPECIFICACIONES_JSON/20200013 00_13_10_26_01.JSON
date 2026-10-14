@@ -1,0 +1,155 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FG 350 (SENSATA)",
+    "nombre_fuente": "SCHUTZ FG 350 SENSATA"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2012-01-11"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Validación de Producto",
+    "folio_apqp": "------",
+    "fecha": "11-01-12",
+    "revision": "00",
+    "nombre_cliente": "-----",
+    "revision_cliente": "-----",
+    "codigo_unico_producto_fuente": "",
+    "codigo_unico_producto": "20200013"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "VISCOSIDAD A 40 ºC",
+      "unidades": "mm²/seg (cSt)",
+      "metodo": "D-445",
+      "especificacion": "68.00 – 74.80",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "VISCOSIDAD A 100 ºC",
+      "unidades": "mm²/seg (cSt)",
+      "metodo": "D-445",
+      "especificacion": "REPORTAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "INDICE DE VISCOSIDAD",
+      "unidades": "A/D",
+      "metodo": "D-2270",
+      "especificacion": "100 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "PUNTO DE INFLAMACIÓN",
+      "unidades": "°C",
+      "metodo": "D-92",
+      "especificacion": "245 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "DENSIDAD RELATIVA A 15°C",
+      "unidades": "A/D",
+      "metodo": "D-1298",
+      "especificacion": "0.8500 – 0.8700",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "HUMEDAD",
+      "unidades": "N/A",
+      "metodo": "INS-CCA-07",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "APARIENCIA",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "BRILLANTE",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Oficina: Av. Universidad 1001 Piso 10 Int. 11 Torre Plaza Bosques, C.P. 20127, Aguascalientes, Ags Planta: Carretera a San Luis Potosí Km 14.5, C.P. 20337, El Llano, Aguascalientes. Tel 01(449)2.35.25.75 contacto@schutzoil.com, www.schutzlubricants.com"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 7,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACION"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FG 350 SENSATA",
+    "part_id_fuente": "",
+    "part_id_final": "20200013",
+    "coincidencias_nombre": 5,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80500032",
+        "descripcion": "SCHUTZ FG 350 (SENSATA)"
+      },
+      {
+        "part_id": "80500031",
+        "descripcion": "SCHUTZ FG 350 (SENSATA)"
+      },
+      {
+        "part_id": "80200019",
+        "descripcion": "SCHUTZ FG 350 (SENSATA)"
+      },
+      {
+        "part_id": "80200018",
+        "descripcion": "SCHUTZ FG 350 (SENSATA)"
+      },
+      {
+        "part_id": "20200013",
+        "descripcion": "SCHUTZ FG 350 (SENSATA)"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20200013"
+    ],
+    "nombre_catalogo": "SCHUTZ FG 350 (SENSATA)",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3432,
+      "part_id": "20200013",
+      "descripcion": "SCHUTZ FG 350 (SENSATA)",
+      "part_id_clave": "20200013",
+      "descripcion_clave": "SCHUTZ FG 350 SENSATA"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ FG 350 SENSATA.doc",
+  "hash_sha256_origen": "9d5f228cb0b77992181c4c838f44cc2aeaa8fbdaeb1ca25f7e8c7aae05c65281",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "01",
+  "fecha_creacion_json": "2026-10-13T10:39:41",
+  "archivo_json": "20200013 00_13_10_26_01.JSON",
+  "extractor_version": "0.8.4"
+}

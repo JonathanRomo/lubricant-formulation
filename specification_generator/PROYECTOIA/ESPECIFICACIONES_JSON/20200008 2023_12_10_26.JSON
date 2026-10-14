@@ -1,0 +1,193 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "ALPHA VET 85/90"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2023-09-07"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y desarrollo",
+    "folio_apqp": "NA",
+    "folio_vap": "",
+    "codigo_unico_producto": "20200008",
+    "fecha": "07 Septiembre 2023",
+    "revision": "2023"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCAI VISUAL",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "LIQUIDO INCOLORO",
+      "valor_tipico": "LIQUIDO INCOLORO"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR SAYBOLT",
+      "unidades": "A/D",
+      "metodo": "ASTM D-156",
+      "especificacion": "30 MINIMO",
+      "valor_tipico": "≥ +30"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "DENSIDAD @ 25 °C",
+      "unidades": "g/cm3",
+      "metodo": "ASTM D-1298 / ASTM D-7042",
+      "especificacion": "0.818 – 0.8750",
+      "valor_tipico": "0.8350"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "VISCOSIDAD CINEÁMTICA @ 40 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D-445 / ASTM D-7042",
+      "especificacion": "14.00 – 17.00",
+      "valor_tipico": "14.50"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD SAYBOLT @ 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D-2161",
+      "especificacion": "80 – 90",
+      "valor_tipico": "82"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PUNTO DE INFLAMACION",
+      "unidades": "° C",
+      "metodo": "ASTM D92",
+      "especificacion": "180 MINIMO",
+      "valor_tipico": "198"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "PUNTO DE FLUIDEZ",
+      "unidades": "° C",
+      "metodo": "ASTM D97",
+      "especificacion": "- 15 MAXIMO",
+      "valor_tipico": "-25"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "CONTENIDO DE AGUA",
+      "unidades": "mg/Kg",
+      "metodo": "ASTM D6304",
+      "especificacion": "50 MAXIMO",
+      "valor_tipico": "13"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "FTIR",
+      "unidades": "----",
+      "metodo": "",
+      "especificacion": "IGUAL AL ESTANDAR",
+      "valor_tipico": "IGUAL AL ESTANDAR"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 9,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "CONFLICTO_NOMBRE_PART_ID",
+    "prefijo_archivo": "--- ",
+    "nombre_fuente": "ALPHA VET 85/90",
+    "part_id_fuente": "20200008",
+    "part_id_final": "20200008",
+    "coincidencias_nombre": 9,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "82100036",
+        "descripcion": "ALPHA VET 85/90"
+      },
+      {
+        "part_id": "82100033",
+        "descripcion": "ALPHA VET 85/90"
+      },
+      {
+        "part_id": "82100032",
+        "descripcion": "ALPHA VET 85/90"
+      },
+      {
+        "part_id": "82100027",
+        "descripcion": "ALPHA VET 85/90"
+      },
+      {
+        "part_id": "82100026",
+        "descripcion": "ALPHA VET 85/90"
+      },
+      {
+        "part_id": "82100018",
+        "descripcion": "ALPHA VET 85/90"
+      },
+      {
+        "part_id": "82100012",
+        "descripcion": "ALPHA VET 85/90"
+      },
+      {
+        "part_id": "82100006",
+        "descripcion": "ALPHA VET 85/90"
+      },
+      {
+        "part_id": "22100006",
+        "descripcion": "ALPHA VET 85/90"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "22100006"
+    ],
+    "registro_por_nombre": {
+      "hoja": "Hoja1",
+      "fila_excel": 137,
+      "part_id": "82100036",
+      "descripcion": "ALPHA VET 85/90",
+      "part_id_clave": "82100036",
+      "descripcion_clave": "ALPHA VET 85 90"
+    },
+    "registro_por_part_id": {
+      "hoja": "Hoja1",
+      "fila_excel": 3437,
+      "part_id": "20200008",
+      "descripcion": "SCHUTZ FG 100",
+      "part_id_clave": "20200008",
+      "descripcion_clave": "SCHUTZ FG 100"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ALPHA VET 8590.doc",
+  "hash_sha256_origen": "efc0fb418572bfa26bea6ba22732e83d1bcd1ee24359e0b1c2eb20e3e00205a3",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-12T16:51:28",
+  "archivo_json": "20200008 2023_12_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

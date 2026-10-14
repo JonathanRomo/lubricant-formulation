@@ -1,0 +1,190 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL AW 430011-02"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2022-10-19"
+  },
+  "control_documental": {
+    "folio_apqp": "NA",
+    "folio_vap": "VAP121022932AMO",
+    "codigo_unico_producto": "20100010",
+    "fecha": "19/10/2022",
+    "revision": "2022"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "COLOR",
+      "unidades": "NA",
+      "metodo": "VISUAL",
+      "especificacion": "AMBAR",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "VISCOSIDAD CINEMATICA @40 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D-445 / ASTM D-7042",
+      "especificacion": "14.00 – 17.00",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "VISCOSIDAD CINEMATICA @100 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D-445 / ASTM D-7042",
+      "especificacion": "3.300 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "INDICE DE VISCOSIDAD",
+      "unidades": "AD",
+      "metodo": "ASTM D-2270",
+      "especificacion": "95 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "PUNTO DE INFLAMACION",
+      "unidades": "°C",
+      "metodo": "ATMD D-92",
+      "especificacion": "160 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PUNTO DE ANILINA",
+      "unidades": "°C",
+      "metodo": "ASTM D-611",
+      "especificacion": "100 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "VISCOSIDAD BROOKFIELD @ -40 °C",
+      "unidades": "mPa.s",
+      "metodo": "ASTM D-2983",
+      "especificacion": "6 500 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "CONTENIDO DE AGUA",
+      "unidades": "ppm",
+      "metodo": "ASTM D-6304",
+      "especificacion": "100 MAXIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "DENSIDAD @ 15 °C",
+      "unidades": "g/cm3",
+      "metodo": "ASTM D-1298 / ASTM D-7042",
+      "especificacion": "0.875 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "FOSFORO",
+      "unidades": "% MASA",
+      "metodo": "ASTM D-4951",
+      "especificacion": "0.04 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "ZINC",
+      "unidades": "% MASA",
+      "metodo": "ASTM D-4951",
+      "especificacion": "0.05 MINIMO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "4 BOLAS DESGASTE FLUIDO LUBRICANTE, 600 RPM/93 °C/1 h/40 Kg",
+      "unidades": "mm",
+      "metodo": "ASTM D-4172 METODO B MODIFICADO",
+      "especificacion": "0.5 MAXIMO",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 12,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACIÓN"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "CONFLICTO_NOMBRE_PART_ID",
+    "prefijo_archivo": "--- ",
+    "nombre_fuente": "SCHUTZ FILL AW 430011-02",
+    "part_id_fuente": "20100010",
+    "part_id_final": "20100010",
+    "coincidencias_nombre": 2,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80100021",
+        "descripcion": "SCHUTZ FILL AW 430011-02"
+      },
+      {
+        "part_id": "20100021",
+        "descripcion": "SCHUTZ FILL AW 430011-02"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20100021"
+    ],
+    "registro_por_nombre": {
+      "hoja": "Hoja1",
+      "fila_excel": 1407,
+      "part_id": "80100021",
+      "descripcion": "SCHUTZ FILL AW 430011-02",
+      "part_id_clave": "80100021",
+      "descripcion_clave": "SCHUTZ FILL AW 430011 02"
+    },
+    "registro_por_part_id": {
+      "hoja": "Hoja1",
+      "fila_excel": 3488,
+      "part_id": "20100010",
+      "descripcion": "SCHUTZ FILL AW 430011-002",
+      "part_id_clave": "20100010",
+      "descripcion_clave": "SCHUTZ FILL AW 430011 002"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ FILL AW 430011-02 (ESP).doc",
+  "hash_sha256_origen": "e0c0dcaa60c2c5bf1354f1e344ca69fabcf369b52bbd6484b53078c3f24a10c0",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "doc",
+  "conversion_temporal": true,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-13T10:43:53",
+  "archivo_json": "20100010 2022_13_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

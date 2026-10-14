@@ -1,0 +1,211 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FG 100"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2025-07-09"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "INVESTIGACIÓN Y DESARROLLO",
+    "folio_apqp": "------",
+    "folio_vap": "------",
+    "codigo_unico_producto": "20200008",
+    "fecha": "09/07/2025",
+    "revision": "2025",
+    "nombre_cliente": "-----",
+    "revision_cliente": "NA"
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "ASPECTO",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "LIQUIDO OLEOSO",
+      "valor_tipico": "LIQUIDO OLEOSO"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR SAYBOLT",
+      "unidades": "A/D",
+      "metodo": "D-156",
+      "especificacion": "+ 30",
+      "valor_tipico": ">+30"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "OLOR",
+      "unidades": "A/D",
+      "metodo": "USP 32",
+      "especificacion": "INODORO",
+      "valor_tipico": "INODORO"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "DENSIDAD A 25°C",
+      "unidades": "A/D",
+      "metodo": "D-1298",
+      "especificacion": "0.8350 – 0.8550",
+      "valor_tipico": "0.8382"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD CINEMATICA A 40 ºC",
+      "unidades": "mm²/seg (cSt)",
+      "metodo": "D-445",
+      "especificacion": "18.50 – 22.50",
+      "valor_tipico": "21.40"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "VISCOSIDAD SAYBOLT A 37.8°C",
+      "unidades": "SUS",
+      "metodo": "D-2161",
+      "especificacion": "100 – 120",
+      "valor_tipico": "111.90"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "COMPUESTOS CARBONIZABLES",
+      "unidades": "A/D",
+      "metodo": "USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "COMPUESTOS POLINUCLEARES",
+      "unidades": "nm -3",
+      "metodo": "USP 32",
+      "especificacion": "0.1 MAXIMO",
+      "valor_tipico": "0.075"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "ACIDEZ Y ALCALINIDAD",
+      "unidades": "A/D",
+      "metodo": "USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "PARAFINAS SOLIDAS",
+      "unidades": "A/D",
+      "metodo": "USP 32",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "HUMEDAD",
+      "unidades": "A/D",
+      "metodo": "INS-CCA-07",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": "NEGATIVA"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 11,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FG 100",
+    "part_id_fuente": "20200008",
+    "part_id_final": "20200008",
+    "coincidencias_nombre": 10,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80200106",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200070",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200044",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200041",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200034",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200028",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200007",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200006",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "80200005",
+        "descripcion": "SCHUTZ FG 100"
+      },
+      {
+        "part_id": "20200008",
+        "descripcion": "SCHUTZ FG 100"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20200008"
+    ],
+    "nombre_catalogo": "SCHUTZ FG 100",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3437,
+      "part_id": "20200008",
+      "descripcion": "SCHUTZ FG 100",
+      "part_id_clave": "20200008",
+      "descripcion_clave": "SCHUTZ FG 100"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ FG 100 .docx",
+  "hash_sha256_origen": "6f35eadc8cec68090217322c9b22921b319a36b01a985227d34ab6f4dcfb0b0b",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "02",
+  "fecha_creacion_json": "2026-10-13T10:37:44",
+  "archivo_json": "20200008 2025_13_10_26.JSON",
+  "extractor_version": "0.8.4"
+}

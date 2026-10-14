@@ -1,0 +1,247 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL AW 430011 (AW GREEN)"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": ""
+  },
+  "control_documental": {
+    "folio_apqp": "NA",
+    "folio_vap": "",
+    "codigo_unico_producto": "20100003",
+    "fecha": "",
+    "revision": "",
+    "codigo_unico_producto_fuente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "DENSIDAD A 15 °C",
+      "unidades": "Kg/m3",
+      "metodo": "ASTM D1298 – 12 b(2017)",
+      "especificacion": "852 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "APARIENCIA",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "CLARO BRILLANTE",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "COLOR",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "VERDE",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "VISCOSIDAD CINEMATICA A 40 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "11,00 – 14,50",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD CINEMATICA A 100 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "2,900 – 3,500",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "INDICE DE VISCOSIDAD",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D2270 – 10(2016)",
+      "especificacion": "115 MIN",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "PUNTO DE INFLAMACION",
+      "unidades": "°C",
+      "metodo": "ASTM D92 - 18",
+      "especificacion": "154 MIN",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "PUNTO DE ANILINA",
+      "unidades": "°C",
+      "metodo": "ASTM D611 – 12(Método E) (2016)",
+      "especificacion": "101,4 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "CONTENIDO DE AGUA POR KARL FISHER",
+      "unidades": "mg/Kg",
+      "metodo": "ASTM D6304 – 07 (Procedimiento A)",
+      "especificacion": "100 MAX",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "AZUFRE",
+      "unidades": "% W",
+      "metodo": "ASTM D2622",
+      "especificacion": "0,218 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "FOSFORO",
+      "unidades": "% W",
+      "metodo": "ASTM D4951",
+      "especificacion": "0,080 – 0,160",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "ZINC",
+      "unidades": "% W",
+      "metodo": "ASTM D4951",
+      "especificacion": "0,080 – 0,170",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 13,
+      "fila_origen": 14,
+      "prueba": "PUNTO DE FLUIDEZ",
+      "unidades": "º C",
+      "metodo": "ASTM D97 – 17b",
+      "especificacion": "- 54 TIPICO",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 14,
+      "fila_origen": 15,
+      "prueba": "VISCOSIDAD BROOKFIELD A BAJAS TEMPERATURAS",
+      "unidades": "mPa*s",
+      "metodo": "ASTM D2983 - 09",
+      "especificacion": "6 500 MAX",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 15,
+      "fila_origen": 16,
+      "prueba": "4 BOLAS DESGASTE",
+      "unidades": "mm",
+      "metodo": "ASTM D4172 – 94 (Reaprobado 2010) Método b",
+      "especificacion": "0,37 – 0,47",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 16,
+      "fila_origen": 17,
+      "prueba": "TENDENCIA A LA ESPUMA (SEC I,II Y III)",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892 - 13",
+      "especificacion": "100/0, 50/0, 100/0 MAX",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 17,
+      "fila_origen": 18,
+      "prueba": "FLUORESCENCIA A LUZ UV",
+      "unidades": "N/A",
+      "metodo": "VISUAL",
+      "especificacion": "FLUORESCE A LA LUZ UV",
+      "valor_tipico": ""
+    },
+    {
+      "numero": 18,
+      "fila_origen": 19,
+      "prueba": "CANTIDAD DE ADITIVO FLUORESCENTE",
+      "unidades": "%W",
+      "metodo": "Método interno.",
+      "especificacion": "<0.01",
+      "valor_tipico": ""
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 18,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "METODO",
+      "ESPECIFICACIÓN"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ FILL AW 430011 (AW GREEN)",
+    "part_id_fuente": "",
+    "part_id_final": "20100003",
+    "coincidencias_nombre": 4,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80100011",
+        "descripcion": "SCHUTZ FILL AW 430011 (AW GREEN)"
+      },
+      {
+        "part_id": "80100008",
+        "descripcion": "SCHUTZ FILL AW 430011 (AW GREEN)"
+      },
+      {
+        "part_id": "80100003",
+        "descripcion": "SCHUTZ FILL AW 430011 (AW GREEN)"
+      },
+      {
+        "part_id": "20100003",
+        "descripcion": "SCHUTZ FILL AW 430011 (AW GREEN)"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20100003"
+    ],
+    "nombre_catalogo": "SCHUTZ FILL AW 430011 (AW GREEN)",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3495,
+      "part_id": "20100003",
+      "descripcion": "SCHUTZ FILL AW 430011 (AW GREEN)",
+      "part_id_clave": "20100003",
+      "descripcion_clave": "SCHUTZ FILL AW 430011 AW GREEN"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ FILL AW 430011 (AW GREEN)1.docx",
+  "hash_sha256_origen": "8ccb3d006df5db445c6b665019c87ecc14ef620f6a30a9d82f80d0b3b58e158c",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "04",
+  "fecha_creacion_json": "2026-10-13T10:43:31",
+  "archivo_json": "20100003 SIN_REVISION_13_10_26.JSON",
+  "extractor_version": "0.8.4"
+}
