@@ -1,0 +1,2088 @@
+{
+  "version": 1,
+  "sha256_excel": "1a281b03b7d490a98a3a1911d612c5adc72b693477bbd8005c756ad628ba175d",
+  "ultima_comprobacion": "2026-10-14T13:43:06-06:00",
+  "ultima_modificacion": "2026-10-14T13:43:03-06:00",
+  "registros": [
+    {
+      "es": "ÁMBAR CLARO",
+      "en": "LIGHT AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ÁMBAR CLARA",
+      "en": "LIGHT AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ÁMBAR OSCURO",
+      "en": "DARK AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ÁMBAR OSCURA",
+      "en": "DARK AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ÁMBAR PÁLIDO",
+      "en": "PALE AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ÁMBAR PALIDO",
+      "en": "PALE AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ÁMBAR PÁLIDA",
+      "en": "PALE AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ÁMBAR PALIDA",
+      "en": "PALE AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMBAR CLARO",
+      "en": "LIGHT AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMBAR CLARA",
+      "en": "LIGHT AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMBAR OSCURO",
+      "en": "DARK AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMBAR OSCURA",
+      "en": "DARK AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMBAR PÁLIDO",
+      "en": "PALE AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMBAR PALIDO",
+      "en": "PALE AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMBAR PÁLIDA",
+      "en": "PALE AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMBAR PALIDA",
+      "en": "PALE AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLO CLARO",
+      "en": "LIGHT YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLO CLARA",
+      "en": "LIGHT YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLO OSCURO",
+      "en": "DARK YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLO OSCURA",
+      "en": "DARK YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLO PÁLIDO",
+      "en": "PALE YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLO PALIDO",
+      "en": "PALE YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLO PÁLIDA",
+      "en": "PALE YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLO PALIDA",
+      "en": "PALE YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLA CLARO",
+      "en": "LIGHT YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLA CLARA",
+      "en": "LIGHT YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLA OSCURO",
+      "en": "DARK YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLA OSCURA",
+      "en": "DARK YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLA PÁLIDO",
+      "en": "PALE YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLA PALIDO",
+      "en": "PALE YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLA PÁLIDA",
+      "en": "PALE YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLA PALIDA",
+      "en": "PALE YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AZUL CLARO",
+      "en": "LIGHT BLUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AZUL CLARA",
+      "en": "LIGHT BLUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AZUL OSCURO",
+      "en": "DARK BLUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AZUL OSCURA",
+      "en": "DARK BLUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AZUL PÁLIDO",
+      "en": "PALE BLUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AZUL PALIDO",
+      "en": "PALE BLUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AZUL PÁLIDA",
+      "en": "PALE BLUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AZUL PALIDA",
+      "en": "PALE BLUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VERDE CLARO",
+      "en": "LIGHT GREEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VERDE CLARA",
+      "en": "LIGHT GREEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VERDE OSCURO",
+      "en": "DARK GREEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VERDE OSCURA",
+      "en": "DARK GREEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VERDE PÁLIDO",
+      "en": "PALE GREEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VERDE PALIDO",
+      "en": "PALE GREEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VERDE PÁLIDA",
+      "en": "PALE GREEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VERDE PALIDA",
+      "en": "PALE GREEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJO CLARO",
+      "en": "LIGHT RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJO CLARA",
+      "en": "LIGHT RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJO OSCURO",
+      "en": "DARK RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJO OSCURA",
+      "en": "DARK RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJO PÁLIDO",
+      "en": "PALE RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJO PALIDO",
+      "en": "PALE RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJO PÁLIDA",
+      "en": "PALE RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJO PALIDA",
+      "en": "PALE RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJA CLARO",
+      "en": "LIGHT RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJA CLARA",
+      "en": "LIGHT RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJA OSCURO",
+      "en": "DARK RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJA OSCURA",
+      "en": "DARK RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJA PÁLIDO",
+      "en": "PALE RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJA PALIDO",
+      "en": "PALE RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJA PÁLIDA",
+      "en": "PALE RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJA PALIDA",
+      "en": "PALE RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NARANJA CLARO",
+      "en": "LIGHT ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NARANJA CLARA",
+      "en": "LIGHT ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NARANJA OSCURO",
+      "en": "DARK ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NARANJA OSCURA",
+      "en": "DARK ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NARANJA PÁLIDO",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NARANJA PALIDO",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NARANJA PÁLIDA",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NARANJA PALIDA",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADO CLARO",
+      "en": "LIGHT ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADO CLARA",
+      "en": "LIGHT ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADO OSCURO",
+      "en": "DARK ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADO OSCURA",
+      "en": "DARK ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADO PÁLIDO",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADO PALIDO",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADO PÁLIDA",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADO PALIDA",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADA CLARO",
+      "en": "LIGHT ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADA CLARA",
+      "en": "LIGHT ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADA OSCURO",
+      "en": "DARK ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADA OSCURA",
+      "en": "DARK ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADA PÁLIDO",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADA PALIDO",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADA PÁLIDA",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADA PALIDA",
+      "en": "PALE ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCO CLARO",
+      "en": "LIGHT WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCO CLARA",
+      "en": "LIGHT WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCO OSCURO",
+      "en": "DARK WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCO OSCURA",
+      "en": "DARK WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCO PÁLIDO",
+      "en": "PALE WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCO PALIDO",
+      "en": "PALE WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCO PÁLIDA",
+      "en": "PALE WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCO PALIDA",
+      "en": "PALE WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCA CLARO",
+      "en": "LIGHT WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCA CLARA",
+      "en": "LIGHT WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCA OSCURO",
+      "en": "DARK WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCA OSCURA",
+      "en": "DARK WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCA PÁLIDO",
+      "en": "PALE WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCA PALIDO",
+      "en": "PALE WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCA PÁLIDA",
+      "en": "PALE WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCA PALIDA",
+      "en": "PALE WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRO CLARO",
+      "en": "LIGHT BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRO CLARA",
+      "en": "LIGHT BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRO OSCURO",
+      "en": "DARK BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRO OSCURA",
+      "en": "DARK BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRO PÁLIDO",
+      "en": "PALE BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRO PALIDO",
+      "en": "PALE BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRO PÁLIDA",
+      "en": "PALE BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRO PALIDA",
+      "en": "PALE BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRA CLARO",
+      "en": "LIGHT BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRA CLARA",
+      "en": "LIGHT BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRA OSCURO",
+      "en": "DARK BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRA OSCURA",
+      "en": "DARK BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRA PÁLIDO",
+      "en": "PALE BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRA PALIDO",
+      "en": "PALE BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRA PÁLIDA",
+      "en": "PALE BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRA PALIDA",
+      "en": "PALE BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "GRIS CLARO",
+      "en": "LIGHT GRAY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "GRIS CLARA",
+      "en": "LIGHT GRAY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "GRIS OSCURO",
+      "en": "DARK GRAY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "GRIS OSCURA",
+      "en": "DARK GRAY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "GRIS PÁLIDO",
+      "en": "PALE GRAY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "GRIS PALIDO",
+      "en": "PALE GRAY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "GRIS PÁLIDA",
+      "en": "PALE GRAY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "GRIS PALIDA",
+      "en": "PALE GRAY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSA CLARO",
+      "en": "LIGHT PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSA CLARA",
+      "en": "LIGHT PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSA OSCURO",
+      "en": "DARK PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSA OSCURA",
+      "en": "DARK PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSA PÁLIDO",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSA PALIDO",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSA PÁLIDA",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSA PALIDA",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADO CLARO",
+      "en": "LIGHT PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADO CLARA",
+      "en": "LIGHT PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADO OSCURO",
+      "en": "DARK PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADO OSCURA",
+      "en": "DARK PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADO PÁLIDO",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADO PALIDO",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADO PÁLIDA",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADO PALIDA",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADA CLARO",
+      "en": "LIGHT PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADA CLARA",
+      "en": "LIGHT PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADA OSCURO",
+      "en": "DARK PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADA OSCURA",
+      "en": "DARK PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADA PÁLIDO",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADA PALIDO",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADA PÁLIDA",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADA PALIDA",
+      "en": "PALE PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VIOLETA CLARO",
+      "en": "LIGHT VIOLET",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VIOLETA CLARA",
+      "en": "LIGHT VIOLET",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VIOLETA OSCURO",
+      "en": "DARK VIOLET",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VIOLETA OSCURA",
+      "en": "DARK VIOLET",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VIOLETA PÁLIDO",
+      "en": "PALE VIOLET",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VIOLETA PALIDO",
+      "en": "PALE VIOLET",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VIOLETA PÁLIDA",
+      "en": "PALE VIOLET",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VIOLETA PALIDA",
+      "en": "PALE VIOLET",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADO CLARO",
+      "en": "LIGHT PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADO CLARA",
+      "en": "LIGHT PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADO OSCURO",
+      "en": "DARK PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADO OSCURA",
+      "en": "DARK PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADO PÁLIDO",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADO PALIDO",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADO PÁLIDA",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADO PALIDA",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADA CLARO",
+      "en": "LIGHT PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADA CLARA",
+      "en": "LIGHT PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADA OSCURO",
+      "en": "DARK PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADA OSCURA",
+      "en": "DARK PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADA PÁLIDO",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADA PALIDO",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADA PÁLIDA",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADA PALIDA",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÚRPURA CLARO",
+      "en": "LIGHT PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÚRPURA CLARA",
+      "en": "LIGHT PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÚRPURA OSCURO",
+      "en": "DARK PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÚRPURA OSCURA",
+      "en": "DARK PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÚRPURA PÁLIDO",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÚRPURA PALIDO",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÚRPURA PÁLIDA",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÚRPURA PALIDA",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PURPURA CLARO",
+      "en": "LIGHT PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PURPURA CLARA",
+      "en": "LIGHT PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PURPURA OSCURO",
+      "en": "DARK PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PURPURA OSCURA",
+      "en": "DARK PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PURPURA PÁLIDO",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PURPURA PALIDO",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PURPURA PÁLIDA",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PURPURA PALIDA",
+      "en": "PALE PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRÓN CLARO",
+      "en": "LIGHT BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRÓN CLARA",
+      "en": "LIGHT BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRÓN OSCURO",
+      "en": "DARK BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRÓN OSCURA",
+      "en": "DARK BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRÓN PÁLIDO",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRÓN PALIDO",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRÓN PÁLIDA",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRÓN PALIDA",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRON CLARO",
+      "en": "LIGHT BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRON CLARA",
+      "en": "LIGHT BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRON OSCURO",
+      "en": "DARK BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRON OSCURA",
+      "en": "DARK BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRON PÁLIDO",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRON PALIDO",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRON PÁLIDA",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRON PALIDA",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFÉ CLARO",
+      "en": "LIGHT BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFÉ CLARA",
+      "en": "LIGHT BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFÉ OSCURO",
+      "en": "DARK BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFÉ OSCURA",
+      "en": "DARK BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFÉ PÁLIDO",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFÉ PALIDO",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFÉ PÁLIDA",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFÉ PALIDA",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFE CLARO",
+      "en": "LIGHT BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFE CLARA",
+      "en": "LIGHT BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFE OSCURO",
+      "en": "DARK BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFE OSCURA",
+      "en": "DARK BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFE PÁLIDO",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFE PALIDO",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFE PÁLIDA",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFE PALIDA",
+      "en": "PALE BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BEIGE CLARO",
+      "en": "LIGHT BEIGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BEIGE CLARA",
+      "en": "LIGHT BEIGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BEIGE OSCURO",
+      "en": "DARK BEIGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BEIGE OSCURA",
+      "en": "DARK BEIGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BEIGE PÁLIDO",
+      "en": "PALE BEIGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BEIGE PALIDO",
+      "en": "PALE BEIGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BEIGE PÁLIDA",
+      "en": "PALE BEIGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BEIGE PALIDA",
+      "en": "PALE BEIGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADO CLARO",
+      "en": "LIGHT GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADO CLARA",
+      "en": "LIGHT GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADO OSCURO",
+      "en": "DARK GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADO OSCURA",
+      "en": "DARK GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADO PÁLIDO",
+      "en": "PALE GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADO PALIDO",
+      "en": "PALE GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADO PÁLIDA",
+      "en": "PALE GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADO PALIDA",
+      "en": "PALE GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADA CLARO",
+      "en": "LIGHT GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADA CLARA",
+      "en": "LIGHT GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADA OSCURO",
+      "en": "DARK GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADA OSCURA",
+      "en": "DARK GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADA PÁLIDO",
+      "en": "PALE GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADA PALIDO",
+      "en": "PALE GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADA PÁLIDA",
+      "en": "PALE GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADA PALIDA",
+      "en": "PALE GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADO CLARO",
+      "en": "LIGHT SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADO CLARA",
+      "en": "LIGHT SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADO OSCURO",
+      "en": "DARK SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADO OSCURA",
+      "en": "DARK SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADO PÁLIDO",
+      "en": "PALE SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADO PALIDO",
+      "en": "PALE SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADO PÁLIDA",
+      "en": "PALE SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADO PALIDA",
+      "en": "PALE SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADA CLARO",
+      "en": "LIGHT SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADA CLARA",
+      "en": "LIGHT SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADA OSCURO",
+      "en": "DARK SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADA OSCURA",
+      "en": "DARK SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADA PÁLIDO",
+      "en": "PALE SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADA PALIDO",
+      "en": "PALE SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADA PÁLIDA",
+      "en": "PALE SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADA PALIDA",
+      "en": "PALE SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CLARO Y BRILLANTE",
+      "en": "BRIGHT AND CLEAR",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CLARO BRILLANTE",
+      "en": "BRIGHT AND CLEAR",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CLARO Y BRILANTE",
+      "en": "BRIGHT AND CLEAR",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CLARO BRILANTE",
+      "en": "BRIGHT AND CLEAR",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "SIN COLOR",
+      "en": "COLORLESS",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "SIN COLORACIÓN",
+      "en": "COLORLESS",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "SIN COLORACION",
+      "en": "COLORLESS",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MÁXIMO",
+      "en": "MAXIMUM",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MAXIMO",
+      "en": "MAXIMUM",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MÍNIMO",
+      "en": "MINIMUM",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MINIMO",
+      "en": "MINIMUM",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "TÍPICO",
+      "en": "TYPICAL",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "TIPICO",
+      "en": "TYPICAL",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ÁMBAR",
+      "en": "AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMBAR",
+      "en": "AMBER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLO",
+      "en": "YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AMARILLA",
+      "en": "YELLOW",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "AZUL",
+      "en": "BLUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VERDE",
+      "en": "GREEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJO",
+      "en": "RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROJA",
+      "en": "RED",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NARANJA",
+      "en": "ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADO",
+      "en": "ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANARANJADA",
+      "en": "ORANGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCO",
+      "en": "WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BLANCA",
+      "en": "WHITE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRO",
+      "en": "BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGRA",
+      "en": "BLACK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "GRIS",
+      "en": "GRAY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSA",
+      "en": "PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADO",
+      "en": "PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ROSADA",
+      "en": "PINK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "VIOLETA",
+      "en": "VIOLET",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADO",
+      "en": "PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MORADA",
+      "en": "PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÚRPURA",
+      "en": "PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PURPURA",
+      "en": "PURPLE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRÓN",
+      "en": "BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "MARRON",
+      "en": "BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFÉ",
+      "en": "BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CAFE",
+      "en": "BROWN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BEIGE",
+      "en": "BEIGE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADO",
+      "en": "GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "DORADA",
+      "en": "GOLDEN",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADO",
+      "en": "SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PLATEADA",
+      "en": "SILVER",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "INCOLORO",
+      "en": "COLORLESS",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "INCOLORA",
+      "en": "COLORLESS",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "LIGERAMENTE",
+      "en": "SLIGHTLY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CLARO",
+      "en": "CLEAR",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CLARA",
+      "en": "CLEAR",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BRILLANTE",
+      "en": "BRIGHT",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "BRILANTE",
+      "en": "BRIGHT",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "OPACO",
+      "en": "OPAQUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "OPACA",
+      "en": "OPAQUE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "TRANSPARENTE",
+      "en": "TRANSPARENT",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "TRANSLÚCIDO",
+      "en": "TRANSLUCENT",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "TRANSLUCIDO",
+      "en": "TRANSLUCENT",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "TRANSLÚCIDA",
+      "en": "TRANSLUCENT",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "TRANSLUCIDA",
+      "en": "TRANSLUCENT",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "TURBIO",
+      "en": "HAZY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "TURBIA",
+      "en": "HAZY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "LECHOSO",
+      "en": "MILKY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "LECHOSA",
+      "en": "MILKY",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "OSCURO",
+      "en": "DARK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "OSCURA",
+      "en": "DARK",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÁLIDO",
+      "en": "PALE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PALIDO",
+      "en": "PALE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PÁLIDA",
+      "en": "PALE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PALIDA",
+      "en": "PALE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "PASA",
+      "en": "PASS",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "REPORTAR",
+      "en": "REPORT",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "INOLORO",
+      "en": "ODORLESS",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "SIN OLOR",
+      "en": "ODORLESS",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CARACTERISTICO",
+      "en": "CHARACTERISTIC",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "CARACTERÍSTICO",
+      "en": "CHARACTERISTIC",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGATIVO",
+      "en": "NEGATIVE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "NEGATIVA",
+      "en": "NEGATIVE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "POSITIVO",
+      "en": "POSTIVE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "POSITIVA",
+      "en": "POSTIVE",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANEXO",
+      "en": "ANEX",
+      "activo": true,
+      "observaciones": ""
+    },
+    {
+      "es": "ANEXAR",
+      "en": "ANEX",
+      "activo": true,
+      "observaciones": ""
+    }
+  ],
+  "ultimos_cambios": [
+    "AGREGADA: ANEXAR → ANEX",
+    "AGREGADA: ANEXO → ANEX"
+  ]
+}

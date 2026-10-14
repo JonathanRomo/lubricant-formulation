@@ -2,6 +2,16 @@
 """Interfaz principal para cargar, editar, seleccionar y comparar especificaciones."""
 from __future__ import annotations
 import estilo_interfaz as ui
+from edicion_bilingue import BorradoresBilingues, guardar_pareja_json
+from especificaciones_wip import es_wip, ruta_estado, serializar_estado, restaurar_estado
+from traductor_especificaciones import (
+    SERVICIO as SERVICIO_TRADUCTOR, actualizar_traductor,
+    validar_registros as validar_registros_traducciones,
+)
+from rutas_listas import ruta_maestro, carpeta_listas
+from rutas_proyecto import BASE, CARPETAS, resolver_ruta, ruta_portatil, rutas_configuradas
+from cambios_alineacion import (cambios_documento, diferencias_filas, original_disponible,
+                               comparar_valores_pruebas, ResaltadorCambios)
 
 
 import json
@@ -60,14 +70,7 @@ from interfaz_seleccion_especificaciones import (
 
 
 VERSION = "1.1.4"
-BASE = Path(__file__).resolve().parent
-RUTAS_PREDETERMINADAS = {
-    "especificaciones_viejas": BASE / "ESPECIFICACIONES_VIEJAS",
-    "json_anteriores": BASE / "ESPECIFICACIONES_JSON",
-    "json_alineadas": BASE / "ESPECIFICACIONES_JSON_ALINEADAS",
-    "formatos": BASE / "FORMATOS",
-    "historico": BASE / "HISTORICO_ESPECIFICACIONES",
-}
+RUTAS_PREDETERMINADAS = {clave: BASE / carpeta for clave, carpeta in CARPETAS.items()}
 ARCHIVO_CONFIGURACION = BASE / "configuracion_interfaz.json"
 CAMPOS_TABLA = ("prueba", "unidades", "metodo", "especificacion", "valor_tipico")
 CAMPO_PERIODICIDAD = "PERIODIDICAD DE ANALISIS"
@@ -1230,26 +1233,21 @@ class _SalidaCarga:
 
 
 def _cargar_configuracion() -> dict[str, Path]:
-    rutas = dict(RUTAS_PREDETERMINADAS)
-    if not ARCHIVO_CONFIGURACION.exists():
-        return rutas
-    datos = json.loads(ARCHIVO_CONFIGURACION.read_text(encoding="utf-8"))
-    if not isinstance(datos, dict):
-        raise ValueError("La configuración de carpetas debe ser un objeto JSON.")
-    for clave, predeterminada in RUTAS_PREDETERMINADAS.items():
-        valor = datos.get(clave)
-        if isinstance(valor, str) and valor.strip():
-            ruta = Path(valor).expanduser()
-            rutas[clave] = ruta if ruta.is_absolute() else (BASE / ruta).resolve()
-        else:
-            rutas[clave] = predeterminada
-    return rutas
+    return rutas_configuradas(ARCHIVO_CONFIGURACION.parent, archivo=ARCHIVO_CONFIGURACION, estricto=True)
 
 
 def _guardar_configuracion(rutas: dict[str, Path]) -> None:
+    base = ARCHIVO_CONFIGURACION.parent
+    rutas = {clave: resolver_ruta(ruta, base) for clave, ruta in rutas.items()}
+    if "metodos_lab" in rutas:
+        carpeta = Path(rutas["metodos_lab"])
+        faltantes = [nombre for nombre in ("METODOS_LAB_UNIFICADO.xlsx", "TRADUCCIONES_ESPECIFICACIONES.xlsx")
+                     if not (carpeta / nombre).is_file()]
+        if faltantes:
+            raise ValueError("La carpeta de métodos y traducciones debe contener:\n" + "\n".join(faltantes))
     temporal = ARCHIVO_CONFIGURACION.with_suffix(".tmp")
     temporal.write_text(
-        json.dumps({clave: str(ruta) for clave, ruta in rutas.items()}, indent=2),
+        json.dumps({clave: ruta_portatil(ruta, base) for clave, ruta in rutas.items()}, indent=2),
         encoding="utf-8",
     )
     temporal.replace(ARCHIVO_CONFIGURACION)
@@ -1642,7 +1640,7 @@ class VisorHistorico:
             )
 
 
-def mostrar_vista_json(contenedor: tk.Misc, ruta: Path, zoom: float = 1.0) -> None:
+def mostrar_vista_json(contenedor: tk.Misc, ruta: Path, zoom: float = 1.0) -> dict | None:
     """Renderiza un JSON antiguo o alineado en un panel con zoom propio."""
     for widget in contenedor.winfo_children():
         widget.destroy()
@@ -1796,6 +1794,9 @@ def mostrar_vista_json(contenedor: tk.Misc, ruta: Path, zoom: float = 1.0) -> No
     ventana_previa = contenedor.winfo_toplevel()
     if isinstance(ventana_previa, ui.VentanaAdaptable):
         ventana_previa._estilizar_hijos(contenedor, ajustar_fuentes=False)
+    return {"tabla": tabla, "filas": tuple(tabla.get_children()), "pruebas": previa.pruebas,
+            "idioma": "en" if previa.idioma == "INGLES" else "es", "alineada": alineado,
+            "vertical": barra_tabla_y.set, "horizontal": barra_tabla_x.set}
 
 
 def _leer_filas_maestro_editable(
@@ -1858,13 +1859,19 @@ def _guardar_cambios_maestro(
                 "La hoja METODOS no tiene las siete columnas esperadas: "
                 + ", ".join(COLUMNAS_MAESTRO)
             )
+        hubo_cambios = False
         for numero_fila, valores in cambios.items():
             if numero_fila < 2 or numero_fila > hoja.max_row:
                 raise ValueError(f"La fila {numero_fila} no existe en la lista maestra.")
             if len(valores) != len(COLUMNAS_MAESTRO):
                 raise ValueError("Cada fila editada debe incluir los siete campos.")
             for indice_columna, valor in enumerate(valores, start=1):
+                actual = hoja.cell(numero_fila, indice_columna).value
+                hubo_cambios |= ("" if actual is None else str(actual).strip()) != ("" if valor is None else str(valor).strip())
                 hoja.cell(numero_fila, indice_columna).value = valor
+
+        if not hubo_cambios:
+            return
 
         with tempfile.TemporaryDirectory(
             prefix=".edicion_metodos_",
@@ -1873,13 +1880,17 @@ def _guardar_cambios_maestro(
             temporal = Path(directorio_temporal) / ruta.name
             libro.save(temporal)
             temporal.replace(ruta)
+        from unificar_metodos_lab_v3 import registrar_fecha_modificacion
+        registrar_fecha_modificacion(ruta.parent)
     finally:
         libro.close()
 
 
 class EditorListaMaestra:
-    def __init__(self, raiz: tk.Misc, ruta: Path):
+    def __init__(self, raiz: tk.Misc, ruta: Path, al_guardar=None):
+        ruta = resolver_ruta(ruta)
         self.ruta = ruta
+        self.al_guardar = al_guardar
         self.filas = _leer_filas_maestro_editable(ruta)
         self.cambios: dict[int, tuple[str, ...]] = {}
         self.editor: ttk.Entry | None = None
@@ -2033,6 +2044,8 @@ class EditorListaMaestra:
             )
             self.cambios.clear()
             self._filtrar()
+            if self.al_guardar is not None:
+                self.al_guardar()
         return True
 
     def _cerrar(self) -> None:
@@ -2051,6 +2064,150 @@ class EditorListaMaestra:
         self.ventana.destroy()
 
 
+class EditorTraducciones:
+    def __init__(self, raiz, al_guardar=None):
+        self.al_guardar = al_guardar
+        self.filas = copy.deepcopy(SERVICIO_TRADUCTOR.estado["registros"])
+        self.huella = SERVICIO_TRADUCTOR.estado["sha256_excel"]
+        self._carpeta_traducciones = SERVICIO_TRADUCTOR.carpeta.resolve()
+        self.modificado = False
+        self.guardando = False
+        self.cola = queue.Queue()
+        self.ventana = ui.Ventana(raiz)
+        self.ventana.title("Editar lista de traducciones")
+        self.ventana.geometry("1050x700")
+        self.ventana.transient(raiz)
+        self.ventana.grab_set()
+        ttk.Label(self.ventana, text="Lista de traducciones", font=("Segoe UI", 16, "bold")).pack(anchor="w", padx=14, pady=12)
+        ttk.Label(self.ventana, text="Selecciona una fila para editarla. La primera variante española define la traducción inversa.").pack(anchor="w", padx=14)
+        self.busqueda = tk.StringVar()
+        entrada = ttk.Entry(self.ventana, textvariable=self.busqueda)
+        entrada.pack(fill="x", padx=14, pady=8)
+        entrada.bind("<KeyRelease>", lambda _e: self._mostrar())
+        marco = ttk.Frame(self.ventana)
+        marco.pack(fill="both", expand=True, padx=14)
+        self.tabla = ttk.Treeview(marco, columns=("es", "en", "activo", "observaciones"), show="headings", selectmode="browse")
+        for campo, etiqueta, ancho in (("es", "ESPAÑOL", 260), ("en", "INGLÉS", 260), ("activo", "ACTIVO", 80), ("observaciones", "OBSERVACIONES", 350)):
+            self.tabla.heading(campo, text=etiqueta)
+            self.tabla.column(campo, width=ancho)
+        barra = ttk.Scrollbar(marco, orient="vertical", command=self.tabla.yview)
+        self.tabla.configure(yscrollcommand=barra.set)
+        self.tabla.pack(side="left", fill="both", expand=True)
+        barra.pack(side="right", fill="y")
+        self.tabla.bind("<<TreeviewSelect>>", self._seleccionar)
+        formulario = ttk.Frame(self.ventana, padding=14)
+        formulario.pack(fill="x")
+        self.variables = {c: tk.StringVar(value="SI" if c == "activo" else "") for c in ("es", "en", "activo", "observaciones")}
+        for columna, (campo, etiqueta) in enumerate(zip(self.variables, ("Español", "Inglés", "Activo", "Observaciones"))):
+            ttk.Label(formulario, text=etiqueta).grid(row=0, column=columna, sticky="w")
+            control = ttk.Combobox(formulario, textvariable=self.variables[campo], values=("SI", "NO"), state="readonly", width=6) if campo == "activo" else ttk.Entry(formulario, textvariable=self.variables[campo])
+            control.grid(row=1, column=columna, sticky="ew", padx=(0, 8))
+            formulario.columnconfigure(columna, weight=0 if campo == "activo" else 1)
+        acciones = ttk.Frame(self.ventana, padding=14)
+        acciones.pack(fill="x")
+        for texto, funcion in (("Agregar fila", lambda: self._aplicar(nueva=True)), ("Aplicar a fila seleccionada", self._aplicar), ("Eliminar fila", self._eliminar)):
+            ttk.Button(acciones, text=texto, command=funcion).pack(side="left", padx=(0, 6))
+        self.boton_guardar = ttk.Button(acciones, text="Guardar cambios", command=self._guardar)
+        self.boton_guardar.pack(side="right")
+        ttk.Button(acciones, text="Cerrar", command=self._cerrar, variante="secundario").pack(side="right", padx=6)
+        self.ventana.protocol("WM_DELETE_WINDOW", self._cerrar)
+        self._mostrar()
+
+    def _mostrar(self):
+        self.tabla.delete(*self.tabla.get_children())
+        consulta = self.busqueda.get().casefold().strip()
+        for indice, fila in enumerate(self.filas):
+            valores = (fila["es"], fila["en"], "SI" if fila["activo"] else "NO", fila.get("observaciones", ""))
+            if not consulta or consulta in " ".join(valores).casefold():
+                self.tabla.insert("", "end", iid=str(indice), values=valores)
+
+    def _seleccionar(self, _evento=None):
+        seleccion = self.tabla.selection()
+        if seleccion:
+            fila = self.filas[int(seleccion[0])]
+            for campo, variable in self.variables.items():
+                variable.set(("SI" if fila["activo"] else "NO") if campo == "activo" else fila.get(campo, ""))
+
+    def _aplicar(self, nueva=False):
+        if self.guardando:
+            return False
+        seleccion = self.tabla.selection()
+        if not nueva and not seleccion:
+            return False
+        fila = {c: v.get().strip() for c, v in self.variables.items()}
+        fila["activo"] = fila["activo"] == "SI"
+        candidatas = copy.deepcopy(self.filas)
+        if nueva:
+            candidatas.append(fila)
+        else:
+            candidatas[int(seleccion[0])] = fila
+        try:
+            validar_registros_traducciones(candidatas)
+        except ValueError as exc:
+            messagebox.showerror("Revisa la traducción", str(exc), parent=self.ventana)
+            return False
+        self.filas = candidatas
+        self.modificado = True
+        self._mostrar()
+        return True
+
+    def _eliminar(self):
+        seleccion = self.tabla.selection()
+        if not self.guardando and seleccion and messagebox.askyesno("Eliminar traducción", "¿Eliminar la fila seleccionada?", parent=self.ventana):
+            del self.filas[int(seleccion[0])]
+            self.modificado = True
+            self._mostrar()
+
+    def _guardar(self):
+        if self.guardando:
+            return
+        if self.tabla.selection() and not self._aplicar():
+            return
+        self.guardando = True
+        self.boton_guardar.configure(state="disabled", text="Guardando…")
+        filas = copy.deepcopy(self.filas)
+        huella = self.huella
+        def trabajo():
+            try:
+                with SERVICIO_TRADUCTOR.lock:
+                    if SERVICIO_TRADUCTOR.carpeta.resolve() != self._carpeta_traducciones:
+                        raise ValueError("La carpeta de las listas cambió. Vuelve a abrir el editor de traducciones antes de guardar.")
+                    self.cola.put((True, SERVICIO_TRADUCTOR.guardar_registros(filas, huella)))
+            except Exception as exc:
+                self.cola.put((False, str(exc)))
+        threading.Thread(target=trabajo, daemon=True).start()
+        self.ventana.after(100, self._resultado)
+
+    def _resultado(self):
+        try:
+            correcto, resultado = self.cola.get_nowait()
+        except queue.Empty:
+            self.ventana.after(100, self._resultado)
+            return
+        self.guardando = False
+        self.boton_guardar.configure(state="normal", text="Guardar cambios")
+        if correcto:
+            self.huella = resultado["sha256_excel"]
+            self.modificado = False
+            if self.al_guardar is not None:
+                self.al_guardar()
+            for campo, variable in self.variables.items():
+                variable.set("SI" if campo == "activo" else "")
+            messagebox.showinfo("Traducciones guardadas", f"{resultado['cambios']} cambios registrados. Los editores abiertos recibirán las nuevas equivalencias.", parent=self.ventana)
+        else:
+            messagebox.showerror("No se guardaron las traducciones", resultado, parent=self.ventana)
+
+    def _cerrar(self):
+        if self.guardando:
+            return
+        formulario = {c: v.get().strip() for c, v in self.variables.items()}
+        formulario["activo"] = formulario["activo"] == "SI"
+        seleccion = self.tabla.selection()
+        pendiente = formulario != self.filas[int(seleccion[0])] if seleccion else any(formulario[c] for c in ("es", "en", "observaciones"))
+        if not (self.modificado or pendiente) or messagebox.askyesno("Cambios sin guardar", "¿Cerrar y descartar los cambios de la lista?", parent=self.ventana):
+            self.ventana.destroy()
+
+
 class GeneradorEspecificacion:
     def __init__(
         self,
@@ -2061,12 +2218,21 @@ class GeneradorEspecificacion:
         al_guardar: Callable[[Path], None] | None = None,
     ):
         self.app = app
-        self.archivo_inicial = archivo_inicial
-        self.destino_inicial = destino_inicial
+        self.archivo_inicial = resolver_ruta(archivo_inicial) if archivo_inicial is not None else None
+        self.destino_inicial = resolver_ruta(destino_inicial) if destino_inicial is not None else None
         self.al_guardar = al_guardar
         self.idioma_destino = idioma_destino
         self.datos_originales: dict[str, Any] | None = None
-        self.maestro = cargar_maestro(BASE / MAESTRO)
+        self._traductor = SERVICIO_TRADUCTOR.diccionario
+        self._cola_traductor = queue.Queue()
+        self._cargando_traductor = False
+        self._bilingue = None
+        self._originales_idioma = {}
+        self._cambios_alineacion = {}
+        self._rutas_idioma = {}
+        self._marcas_pendientes = []
+        self._redibujado_pendiente = None
+        self.maestro = cargar_maestro(ruta_maestro(BASE))
         self.codigos_part_id = _cargar_catalogo_part_ids()
         self._editor_celda: ttk.Entry | ttk.Combobox | ttk.Frame | None = None
         self._celda_editada: tuple[str, str] | None = None
@@ -2309,9 +2475,10 @@ class GeneradorEspecificacion:
             command=self.tabla_pruebas.xview,
         )
         self.tabla_pruebas.configure(
-            yscrollcommand=barra_vertical.set,
-            xscrollcommand=barra_horizontal.set,
+            yscrollcommand=lambda *args: (barra_vertical.set(*args), self._programar_resaltado()),
+            xscrollcommand=lambda *args: (barra_horizontal.set(*args), self._programar_resaltado()),
         )
+        self.tabla_pruebas.bind("<Configure>", lambda _e: self._programar_resaltado(), add="+")
         self.tabla_pruebas.grid(row=0, column=0, sticky="nsew")
         barra_vertical.grid(row=0, column=1, sticky="ns")
         barra_horizontal.grid(row=1, column=0, sticky="ew")
@@ -2342,7 +2509,14 @@ class GeneradorEspecificacion:
             command=self._eliminar_seleccionada,
         )
         self.boton_eliminar.pack(side="right")
+        self.boton_confirmar_traduccion = ttk.Button(
+            acciones_pruebas, text="Confirmar traducción de celda",
+            command=self._confirmar_celda_bilingue,
+        )
+        self.referencia_traduccion = ttk.Label(self.marco_pruebas, wraplength=900)
+        self.referencia_traduccion.grid(row=4, column=0, columnspan=2, sticky="w")
         self.tabla_pruebas.bind("<<TreeviewSelect>>", self._actualizar_boton_eliminar)
+        self.tabla_pruebas.bind("<<TreeviewSelect>>", lambda _e: self._programar_resaltado(), add="+")
 
         marco_notas = ttk.Frame(self.ventana, padding=8)
         marco_notas.pack(side="bottom", before=self.marco_pruebas, fill="x", padx=12, pady=(0, 8))
@@ -2351,11 +2525,17 @@ class GeneradorEspecificacion:
         from editor_comportamientos import NotasProtegidas
         self.notas = NotasProtegidas(marco_notas, height=3, wrap="word")
         self.notas.pack(fill="x", pady=(4, 0))
+        self.boton_confirmar_notas = ttk.Button(
+            marco_notas, text="Confirmar traducción de notas",
+            command=lambda: self._confirmar_cabecera_bilingue("notas"),
+        )
+        self.referencia_notas = ttk.Label(marco_notas, wraplength=900)
 
         pie = ttk.Frame(self.ventana, padding=(12, 0, 12, 4))
         pie.pack(side="bottom", before=marco_notas, fill="x")
         self.boton_guardar = ttk.Button(pie, command=self.guardar)
         self.boton_guardar.pack(side="right")
+        self.boton_guardar_wip = ttk.Button(pie, text="Guardar en progreso", command=self.guardar_en_progreso, variante="secundario")
         self.boton_cancelar = ttk.Button(pie, command=self.ventana.destroy)
         self.boton_cancelar.pack(side="right", padx=(0, 8))
         self.boton_alinear = ttk.Button(
@@ -2388,13 +2568,288 @@ class GeneradorEspecificacion:
         poco_espacio = (self.ventana.winfo_screenheight() - 80) / self.ventana._get_window_scaling() <= 650
         if ui.PREFERENCIAS["control_compacto"] or (ui.PREFERENCIAS["adaptacion_auto"] and poco_espacio):
             self._alternar_control_documental()
+        if idioma_destino is None and (self.datos_originales is None or self.datos_originales.get("alineacion_metodos_lab")):
+            self._iniciar_bilingue()
+            self._contenido_inicial_revision = self._contenido_para_revision()
+        self._actualizar_traductor_editor(avisar=False)
+
+    def _actualizar_traductor_editor(self, avisar=True):
+        if self._cargando_traductor:
+            return
+        self._cargando_traductor = True
+        cola = self._cola_traductor
+        def cargar():
+            try:
+                resultado = actualizar_traductor()
+                cola.put((True, resultado, SERVICIO_TRADUCTOR.diccionario, avisar))
+            except Exception as exc:
+                cola.put((False, str(exc), None, avisar))
+        threading.Thread(target=cargar, daemon=True).start()
+        self.ventana.after(100, self._recibir_actualizacion_traductor)
+
+    def _recibir_actualizacion_traductor(self):
+        if not self.ventana.winfo_exists():
+            return
+        try:
+            correcto, resultado, diccionario, avisar = self._cola_traductor.get_nowait()
+        except queue.Empty:
+            self.ventana.after(100, self._recibir_actualizacion_traductor)
+            return
+        self._cargando_traductor = False
+        if not correcto:
+            messagebox.showwarning("No se actualizaron las traducciones", f"Se conserva la última versión válida.\n\n{resultado}", parent=self.ventana)
+            return
+        self._adoptar_diccionario_traductor(diccionario)
+        if avisar:
+            messagebox.showinfo("Traducciones actualizadas", f"{resultado['equivalencias']} equivalencias activas.\n{resultado['cambios']} cambios registrados.", parent=self.ventana)
+
+    def _adoptar_diccionario_traductor(self, diccionario):
+        if self._traductor is not diccionario:
+            self._cerrar_editor_celda(guardar=True)
+            if self._bilingue is not None:
+                self._capturar_bilingue(self._idioma_anterior)
+            self._traductor = diccionario
+            if self._bilingue is not None:
+                seleccion = self._seleccion()
+                self._bilingue.actualizar_traducciones_automaticas()
+                self._aplicar_borrador(self._idioma_anterior)
+                self._actualizar_tabla()
+                if seleccion is not None and seleccion < len(self.pruebas):
+                    self.tabla_pruebas.selection_set(str(seleccion))
+                    self.tabla_pruebas.see(str(seleccion))
+
+    def _contenido_bilingue(self, idioma):
+        return {
+            "idioma": idioma, "nombre_producto": self.nombre_producto.get(),
+            "control": {c: v.get() for c, v in self.variables_control.items()},
+            "pruebas": copy.deepcopy(self.pruebas),
+            "notas": self.notas.get("1.0", "end-1c").splitlines(),
+            "desarrollador": self.desarrollador.get(),
+        }
+
+    def _traducir_campo_bilingue(self, campo, texto, origen, destino, fila):
+        diccionario = getattr(self, "_traductor", SERVICIO_TRADUCTOR.diccionario)
+        if campo == "notas":
+            lineas = [(NOTAS_PLANTILLA[destino], True) if linea.strip() == NOTAS_PLANTILLA[origen].strip()
+                      else diccionario.traducir(linea, origen, destino) for linea in texto.splitlines()]
+            return "\n".join(t for t, _ in lineas), all(seguro for _, seguro in lineas)
+        if campo == "elaboro_y_aprobo":
+            if texto == VALORES_ELABORO_APROBO[origen]:
+                return VALORES_ELABORO_APROBO[destino], True
+            # Nombres de personas no requieren traducción.
+            return texto, True
+        if campo in {"prueba", "unidades", "metodo"}:
+            registros = [r for r in self.maestro
+                         if normalizar(_nombre_maestro_para_idioma(r, origen)) == normalizar(fila.get("prueba", ""))]
+            referencias = set(referencias_astm(fila.get("metodo", "")))
+            if referencias:
+                registros = [r for r in registros if any(set(referencias_astm(m)) == referencias for m in metodos_maestros(r))]
+            alternativas = set()
+            for registro in registros:
+                if campo == "prueba":
+                    fuente = _nombre_maestro_para_idioma(registro, origen)
+                    objetivo = nombres_canonicos(registro, "INGLES" if destino == "en" else "ESPANOL")[0]
+                elif campo == "metodo":
+                    fuente = metodo_maestro_para_idioma(registro, "INGLES" if origen == "en" else "ESPANOL")
+                    objetivo = metodo_maestro_para_idioma(registro, "INGLES" if destino == "en" else "ESPANOL")
+                    if destino == "en" and not (registro.get("MÉTODO INGLÉS") or registro.get("METODO INGLES")):
+                        objetivo = ""
+                else:
+                    fuente = registro.get("UNITS" if origen == "en" else "UNIDADES", "")
+                    objetivo = registro.get("UNITS" if destino == "en" else "UNIDADES", "")
+                if normalizar(texto) == normalizar(fuente) and objetivo:
+                    alternativas.add(objetivo)
+            if len(alternativas) == 1:
+                return alternativas.pop(), True
+            if campo == "unidades" and (not texto or re.fullmatch(r"(?:N/A|[-−°%\d\s.,/*·²³^μµ]+|(?:mPa|Pa|kg|mg|g|mm|cm|m|ml|mL|L|s|cSt|SUS|K|F|C|ppm)(?:[-\d\s.,/*·²³^°%]|kg|mg|g|mm|cm|m|ml|mL|L|s|K|F|C|mol)*)", texto)):
+                return texto, True
+        return diccionario.traducir(texto, origen, destino)
+
+    def _iniciar_bilingue(self):
+        idioma = self._idioma_anterior
+        modelo = BorradoresBilingues(self._contenido_bilingue(idioma), self._traducir_campo_bilingue)
+        otro = "en" if idioma == "es" else "es"
+        if self.datos_originales is not None:
+            self._originales_idioma[idioma] = self.datos_originales
+            self._rutas_idioma[idioma] = Path(self.destino_inicial or self.archivo_inicial).resolve()
+            relaciones = self.datos_originales.get("versiones_idioma", {})
+            referencias = relaciones.get("INGLES" if otro == "en" else "ESPANOL", []) if isinstance(relaciones, dict) else []
+            if es_wip(self.archivo_inicial):
+                referencias = []  # Los IDs y pendientes se recuperan del estado WIP.
+            rutas = set()
+            for referencia in referencias:
+                if isinstance(referencia, dict) and isinstance(referencia.get("archivo_json"), str):
+                    rutas.add((Path(self.archivo_inicial).parent / referencia["archivo_json"]).resolve())
+            try:
+                if len(rutas) > 1:
+                    raise ValueError("Hay varias traducciones relacionadas. Debe elegirse una pareja inequívoca antes de editar.")
+                if rutas:
+                    ruta = rutas.pop()
+                    if not ruta.is_file():
+                        raise ValueError(f"No existe el JSON relacionado:\n{ruta}")
+                    datos = json.loads(ruta.read_text(encoding="utf-8-sig"))
+                    if not isinstance(datos, dict):
+                        raise ValueError("La raíz del JSON relacionado debe ser un objeto.")
+                    contenido = _datos_generador_desde_json(datos)
+                    actual = modelo.borradores[idioma]["control"]
+                    if contenido["idioma"] != otro or any(contenido["control"].get(c) != actual.get(c) for c in ("codigo_unico_producto", "revision", "nombre_cliente")):
+                        raise ValueError("La pareja debe tener el mismo código, cliente y revisión, y otro idioma.")
+                    modelo.cargar_pareja(contenido)
+                    self._originales_idioma[otro] = datos
+                    self._rutas_idioma[otro] = ruta
+            except (OSError, ValueError) as exc:
+                messagebox.showerror("No se pudo abrir la pareja ESP / ENG", str(exc), parent=self.ventana)
+                self.boton_guardar.configure(state="disabled")
+                self.selector_idioma.configure(state="disabled")
+                return
+        self._bilingue = modelo
+        if self.archivo_inicial is not None and es_wip(self.archivo_inicial):
+            try:
+                self._rutas_idioma = restaurar_estado(modelo, self.archivo_inicial)
+                self._originales_idioma = {i: json.loads(r.read_text(encoding="utf-8-sig")) for i, r in self._rutas_idioma.items()}
+                self._aplicar_borrador(idioma)
+            except (OSError, ValueError, KeyError, TypeError) as exc:
+                messagebox.showerror("No se pudo recuperar el trabajo en progreso", str(exc), parent=self.ventana)
+                self.boton_guardar.configure(state="disabled")
+                return
+        self.pruebas = copy.deepcopy(modelo.borradores[idioma]["pruebas"])
+        for lengua, datos in self._originales_idioma.items():
+            visibles = modelo.borradores[lengua]["pruebas"]
+            original = original_disponible(datos, self._rutas_idioma.get(lengua), self.app.rutas.get("json_anteriores"))
+            cambios = cambios_documento(datos, visibles, original)
+            self._cambios_alineacion[lengua] = {f["_id_bilingue"]: c for f, c in zip(visibles, cambios)}
+        self.boton_guardar_wip.pack(side="right", padx=(0, 8))
+        self.ventana.title(f"Editar producto · {self.nombre_producto.get()} · ESP / ENG")
+        self._programar_resaltado()
+
+    def _capturar_bilingue(self, idioma):
+        contenido = self._bilingue.actualizar(idioma, self._contenido_bilingue(idioma))
+        self.pruebas = contenido["pruebas"]
+
+    def _aplicar_borrador(self, idioma):
+        contenido = copy.deepcopy(self._bilingue.borradores[idioma])
+        self.pruebas = contenido["pruebas"]
+        self.nombre_producto.set(contenido["nombre_producto"])
+        self.desarrollador.set(contenido["desarrollador"])
+        for campo, valor in contenido["control"].items():
+            self.variables_control[campo].set(valor)
+        self.notas.delete("1.0", tk.END)
+        self.notas.insert("1.0", "\n".join(contenido["notas"]))
+        self.datos_originales = self._originales_idioma.get(idioma)
+        self.destino_inicial = self._rutas_idioma.get(idioma)
+
+    def _programar_resaltado(self):
+        if (self._bilingue is not None or self._cambios_alineacion) and self._redibujado_pendiente is None:
+            self._redibujado_pendiente = self.ventana.after_idle(self._resaltar_pendientes)
+
+    def _resaltar_pendientes(self):
+        self._redibujado_pendiente = None
+        for marca in self._marcas_pendientes:
+            marca.destroy()
+        self._marcas_pendientes.clear()
+        idioma = self._idioma_anterior
+        pendientes = self._bilingue.pendientes[idioma] if self._bilingue is not None else set()
+        cambios = getattr(self, "_cambios_alineacion", {}).get(idioma, {})
+        estilo = ttk.Style(self.tabla_pruebas)
+        nombre_estilo = self.tabla_pruebas.cget("style") or "Treeview"
+        colores = ui.paleta()
+        fondo = estilo.lookup(nombre_estilo, "fieldbackground") or colores["panel"]
+        fuente = estilo.lookup(nombre_estilo, "font") or (ui.PREFERENCIAS["fuente"], 10)
+        seleccionadas = set(self.tabla_pruebas.selection())
+        rojo = "#ff6b6b" if colores["panel"].lower() not in {"#ffffff", "white"} else "#c62828"
+        for indice, fila in enumerate(self.pruebas):
+            for columna, campo in enumerate(CAMPOS_TABLA, 1):
+                pendiente = (fila.get("_id_bilingue"), campo) in pendientes
+                cambio = campo in cambios.get(fila.get("_id_bilingue", str(indice)), set())
+                if not (pendiente or cambio) or self._celda_editada == (str(indice), campo):
+                    continue
+                bbox = self.tabla_pruebas.bbox(str(indice), f"#{columna}")
+                if not bbox:
+                    continue
+                x, y, ancho, alto = bbox
+                # Evitar cubrir encabezados y barras al desplazar horizontalmente.
+                izquierda = max(0, x)
+                ancho_visible = min(x + ancho, self.tabla_pruebas.winfo_width()) - izquierda
+                if ancho_visible <= 0:
+                    continue
+                seleccionada = str(indice) in seleccionadas
+                fondo_celda = (estilo.lookup(nombre_estilo, "background", ("selected",)) or colores["acento"]) if seleccionada else (
+                    self.tabla_pruebas.tag_configure("fila_alterna").get("background") or colores["fondo"]
+                    if indice % 2 else fondo
+                )
+                texto = fila.get(campo, "")
+                marca = tk.Label(self.tabla_pruebas, text=texto if texto.strip() else "*", anchor="w",
+                                 background=fondo_celda, foreground=("#ffb3b3" if seleccionada else rojo) if pendiente else ("#bfdbfe" if seleccionada else "#3b82f6"),
+                                 font=fuente, borderwidth=0, relief="flat", padx=2)
+                marca.place(x=izquierda, y=y, width=ancho_visible, height=alto)
+                marca.bind("<Button-1>", lambda e, i=str(indice), c=columna: self._abrir_celda_marcada(i, c))
+                self._marcas_pendientes.append(marca)
+        if pendientes:
+            self.boton_confirmar_traduccion.pack(side="left", padx=8)
+        else:
+            self.boton_confirmar_traduccion.pack_forget()
+        notas_pendientes = ("cabecera", "notas") in pendientes
+        self.notas.configure(background=colores["panel"], foreground=rojo if notas_pendientes else colores["texto"])
+        self.notas.tag_configure("nota_formato", foreground=rojo if notas_pendientes else (
+            colores["texto"] if getattr(self.notas, "_desbloqueadas", False) else "#9aa0a6"
+        ))
+        if notas_pendientes:
+            self.boton_confirmar_notas.pack(anchor="w", pady=3)
+            otro = "en" if idioma == "es" else "es"
+            self.referencia_notas.configure(text=f"{'ENG' if otro == 'en' else 'ESP'} · " + "\n".join(self._bilingue.borradores[otro]["notas"]))
+            self.referencia_notas.pack(anchor="w")
+        else:
+            self.boton_confirmar_notas.pack_forget()
+            self.referencia_notas.pack_forget()
+        if self._celda_activa is not None:
+            iid, campo = self._celda_activa
+            if iid.isdigit() and int(iid) < len(self.pruebas):
+                self._mostrar_referencia_bilingue(iid, campo)
+
+    def _abrir_celda_marcada(self, iid, columna):
+        for marca in self._marcas_pendientes:
+            marca.place_forget()
+        bbox = self.tabla_pruebas.bbox(iid, f"#{columna}")
+        if bbox:
+            self._editar_celda(type("EventoCelda", (), {"x": max(1, bbox[0]) + 2, "y": bbox[1] + 2, "iid": iid, "columna": f"#{columna}"})())
+        self._programar_resaltado()
+
+    def _mostrar_referencia_bilingue(self, iid, campo):
+        if self._bilingue is None:
+            return
+        fila = self.pruebas[int(iid)]
+        otro = "en" if self._idioma_anterior == "es" else "es"
+        origen = next((f for f in self._bilingue.borradores[otro]["pruebas"] if f["_id_bilingue"] == fila.get("_id_bilingue")), {})
+        self.referencia_traduccion.configure(text=f"{'ENG' if otro == 'en' else 'ESP'} · {origen.get(campo, '')}")
+
+    def _confirmar_celda_bilingue(self):
+        self._cerrar_editor_celda(guardar=True)
+        if self._celda_activa is None:
+            return
+        iid, campo = self._celda_activa
+        if not iid.isdigit() or int(iid) >= len(self.pruebas):
+            return
+        fila = self.pruebas[int(iid)]
+        if fila.get(campo, "").strip():
+            self._bilingue.confirmar(self._idioma_anterior, (fila["_id_bilingue"], campo))
+            self._programar_resaltado()
+
+    def _confirmar_cabecera_bilingue(self, campo):
+        self._capturar_bilingue(self._idioma_anterior)
+        if self._bilingue._texto(self._bilingue.borradores[self._idioma_anterior], campo).strip():
+            self._bilingue.confirmar(self._idioma_anterior, ("cabecera", campo))
+            self._programar_resaltado()
 
     def _contenido_para_revision(self):
+        if self._bilingue is not None:
+            self._capturar_bilingue(self._idioma_anterior)
+            return tuple((idioma, tuple(tuple(sorted((k, v) for k, v in f.items() if k != "_id_bilingue")) for f in c["pruebas"]), tuple(c["notas"]))
+                         for idioma, c in sorted(self._bilingue.borradores.items()))
         return (tuple(tuple(sorted(fila.items())) for fila in self.pruebas),
                 self.notas.get("1.0", "end-1c"))
 
     def _actualizar_revision_automatica(self) -> bool:
-        if not hasattr(self, "_contenido_inicial_revision") or self.datos_originales is None:
+        if not hasattr(self, "_contenido_inicial_revision") or (self.datos_originales is None and not self._originales_idioma):
             return True
         codigo = self.variables_control["codigo_unico_producto"].get().strip()
         if not codigo:
@@ -2428,6 +2883,7 @@ class GeneradorEspecificacion:
 
     def _vigilar_revision(self):
         if self.ventana.winfo_exists():
+            self._adoptar_diccionario_traductor(SERVICIO_TRADUCTOR.diccionario)
             self._actualizar_revision_automatica()
             self.ventana.after(250, self._vigilar_revision)
 
@@ -2818,29 +3274,39 @@ class GeneradorEspecificacion:
         self._limpiar_sugerencia()
         if idioma != self._idioma_anterior:
             self._cerrar_editor_celda(guardar=True)
-            for fila in self.pruebas:
-                fila["prueba"] = _traducir_nombre_prueba(
-                    self.maestro,
-                    fila.get("prueba", ""),
-                    self._idioma_anterior,
-                    idioma,
-                    fila.get("metodo", ""),
-                )
+            if self._bilingue is not None:
+                seleccion = self._seleccion()
+                self._capturar_bilingue(self._idioma_anterior)
+                self._bilingue.actualizar_traducciones_automaticas(idioma, completar_sin_traducir=True)
+                self._aplicar_borrador(idioma)
+            else:
+                seleccion = None
+                for fila in self.pruebas:
+                    fila["prueba"] = _traducir_nombre_prueba(
+                        self.maestro,
+                        fila.get("prueba", ""),
+                        self._idioma_anterior,
+                        idioma,
+                        fila.get("metodo", ""),
+                    )
             self._idioma_anterior = idioma
             self._actualizar_tabla()
+            if seleccion is not None and seleccion < len(self.pruebas):
+                self.tabla_pruebas.selection_set(str(seleccion))
+                self.tabla_pruebas.see(str(seleccion))
         elaborado = self.variables_control["elaboro_y_aprobo"].get().strip()
         if (
-            not elaborado
+            self._bilingue is None and (not elaborado
             or elaborado == self._elaboro_aprobo_predeterminado_actual
-        ):
+        )):
             elaborado = VALORES_ELABORO_APROBO[idioma]
             self.variables_control["elaboro_y_aprobo"].set(elaborado)
         self._elaboro_aprobo_predeterminado_actual = elaborado
         notas_actuales = self.notas.get("1.0", "end-1c").strip()
         if (
-            not notas_actuales
+            self._bilingue is None and (not notas_actuales
             or notas_actuales == self._nota_predeterminada_actual
-        ):
+        )):
             notas_actuales = NOTAS_PLANTILLA[idioma]
             self.notas.delete("1.0", tk.END)
             self.notas.insert("1.0", notas_actuales)
@@ -2889,6 +3355,9 @@ class GeneradorEspecificacion:
         self.etiqueta_notas.configure(text="Notes:" if ingles else "Notas:")
         self.boton_guardar.configure(text="Save JSON" if ingles else "Guardar JSON")
         self.boton_cancelar.configure(text="Cancel" if ingles else "Cancelar")
+        if self._bilingue is not None:
+            self.ventana.title(f"Editar producto · {self.nombre_producto.get()} · ESP / ENG")
+            self._programar_resaltado()
 
     def _seleccion(self) -> int | None:
         seleccion = self.tabla_pruebas.selection()
@@ -2898,6 +3367,8 @@ class GeneradorEspecificacion:
 
     def _actualizar_tabla(self) -> None:
         self._cerrar_editor_celda(guardar=True)
+        if self._bilingue is not None:
+            self._capturar_bilingue(self._idioma_anterior)
         self._limpiar_sugerencia()
         filas_existentes = self.tabla_pruebas.get_children()
         if filas_existentes:
@@ -2923,6 +3394,7 @@ class GeneradorEspecificacion:
             [*(str(indice) for indice in range(len(self.pruebas))), "nueva"]
         )
         self.boton_eliminar.configure(state="disabled")
+        self._programar_resaltado()
 
     def _sugerencias(self, campo: str, texto_actual: str, iid: str) -> tuple[str, ...]:
         maestro = self.maestro
@@ -2985,8 +3457,8 @@ class GeneradorEspecificacion:
         return ("", *opciones)
 
     def _editar_celda(self, evento: tk.Event) -> str | None:
-        iid = self.tabla_pruebas.identify_row(evento.y)
-        columna = self.tabla_pruebas.identify_column(evento.x)
+        iid = getattr(evento, "iid", None) or self.tabla_pruebas.identify_row(evento.y)
+        columna = getattr(evento, "columna", None) or self.tabla_pruebas.identify_column(evento.x)
         if not iid or not columna.startswith("#"):
             return None
         indice_columna = int(columna[1:]) - 1
@@ -3017,6 +3489,7 @@ class GeneradorEspecificacion:
             else ""
         )
         self._celda_activa = (iid, campo)
+        self._mostrar_referencia_bilingue(iid, campo)
         sugerencias = self._sugerencias(campo, valor, iid)
         if campo == "periodicidad":
             editor = self._crear_editor_periodicidad(
@@ -3506,6 +3979,7 @@ class GeneradorEspecificacion:
             )
             progreso.update_idletasks()
 
+        filas_antes = copy.deepcopy(self.pruebas)
         error_alineacion: str | None = None
         try:
             filas_alineadas, conteo = alinear_filas_generador(
@@ -3528,6 +4002,10 @@ class GeneradorEspecificacion:
             return
 
         self.pruebas = filas_alineadas
+        self._cambios_alineacion[idioma] = {
+            fila.get("_id_bilingue", str(indice)): campos
+            for indice, (fila, campos) in enumerate(zip(filas_alineadas, diferencias_filas(filas_antes, filas_alineadas)))
+        }
         if hasattr(self, "_cambio_alineacion_revision"):
             self._cambio_alineacion_revision = True
         self._nombres_sugeridos_por_fila.clear()
@@ -3544,6 +4022,136 @@ class GeneradorEspecificacion:
             ),
             parent=self.ventana,
         )
+
+    def guardar_en_progreso(self):
+        self._cerrar_editor_celda(guardar=True)
+        if self._bilingue is not None:
+            self._guardar_bilingue(en_progreso=True)
+
+    def _datos_en_progreso(self, contenido, idioma):
+        datos = copy.deepcopy(self._originales_idioma.get(idioma, {}))
+        datos.setdefault("esquema", "especificacion_producto_es_v3")
+        datos.setdefault("producto", {})["nombre"] = contenido["nombre_producto"].strip() or "Sin nombre"
+        documento = datos.setdefault("documento", {})
+        documento.update({"tipo": "ESPECIFICACION", "idioma": idioma})
+        documento.setdefault("fecha_documento_normalizada", "")
+        datos["control_documental"] = copy.deepcopy(contenido["control"])
+        datos["notas"] = list(contenido["notas"])
+        datos["Desarrollador"] = contenido["desarrollador"]
+        datos.setdefault("FECHA DE REANALISIS", "")
+        datos["pruebas"] = [{"numero": indice, **{campo: fila.get(campo, "") for campo in CAMPOS_TABLA},
+                             CAMPO_PERIODICIDAD: fila.get("periodicidad", "")}
+                            for indice, fila in enumerate(contenido["pruebas"], 1)]
+        datos.pop("alineacion_metodos_lab", None)
+        return crear_documento_alineado_manual(datos)
+
+    def _guardar_bilingue(self, en_progreso=False):
+        self._capturar_bilingue(self._idioma_anterior)
+        conteos = {i: len(self._bilingue.pendientes[i]) for i in ("es", "en")}
+        if any(conteos.values()) and not en_progreso:
+            messagebox.showwarning("Completar ESP / ENG",
+                f"ESP: {conteos['es']} pendientes · ENG: {conteos['en']} pendientes\n"
+                "Completa o confirma las traducciones resaltadas antes de guardar ambos idiomas.", parent=self.ventana)
+            idioma = self._idioma_anterior if conteos[self._idioma_anterior] else ("en" if self._idioma_anterior == "es" else "es")
+            if idioma != self._idioma_anterior:
+                self._idioma.set("English" if idioma == "en" else "Español")
+                self._actualizar_idioma()
+            pendientes = self._bilingue.pendientes[idioma]
+            for indice, fila in enumerate(self.pruebas):
+                campo = next((c for c in CAMPOS_TABLA if (fila["_id_bilingue"], c) in pendientes), None)
+                if campo:
+                    self.tabla_pruebas.see(str(indice))
+                    self.tabla_pruebas.selection_set(str(indice))
+                    self._celda_activa = (str(indice), campo)
+                    self._mostrar_referencia_bilingue(str(indice), campo)
+                    self._programar_resaltado()
+                    return
+            self.notas.focus_set()
+            return
+        documentos = {}
+        try:
+            for idioma, contenido in self._bilingue.borradores.items():
+                datos = self._datos_en_progreso(contenido, idioma) if en_progreso else crear_datos_especificacion_nueva(contenido["nombre_producto"], idioma,
+                    contenido["control"], contenido["pruebas"], contenido["notas"], contenido["desarrollador"])
+                if idioma in self._originales_idioma:
+                    datos = _integrar_edicion_json(self._originales_idioma[idioma], datos)
+                documentos[idioma] = datos
+        except ValueError as exc:
+            messagebox.showerror("No se puede guardar la pareja", str(exc), parent=self.ventana)
+            return
+        rutas = dict(self._rutas_idioma)
+        if en_progreso:
+            rutas = {i: r for i, r in rutas.items() if es_wip(r)}
+        carpeta = self.app.rutas["json_alineadas"]
+        carpeta.mkdir(parents=True, exist_ok=True)
+        for idioma in ("es", "en"):
+            if idioma not in rutas:
+                nombre = re.sub(r'[<>:"/\\|?*]+', "_", self.nombre_producto.get()).strip(" .") or "ESPECIFICACION"
+                elegido = filedialog.asksaveasfilename(parent=self.ventana,
+                    title=f"Guardar JSON alineado · {'ESP' if idioma == 'es' else 'ENG'}",
+                    initialdir=next(iter(rutas.values())).parent if rutas else carpeta,
+                    initialfile=f"{nombre}_{'ESP' if idioma == 'es' else 'ENG'}{'_trabajo' if en_progreso else ''}.json",
+                    defaultextension=".json", filetypes=(("Archivos JSON", "*.json"),))
+                if not elegido:
+                    return
+                rutas[idioma] = Path(elegido).resolve()
+        if rutas["es"].resolve() == rutas["en"].resolve():
+            messagebox.showerror("Rutas ESP / ENG", "Cada idioma necesita un archivo JSON diferente.", parent=self.ventana)
+            return
+        if en_progreso and any(Path(r).resolve() == Path(original).resolve() and not es_wip(original)
+                               for r in rutas.values() for original in self._rutas_idioma.values()):
+            messagebox.showerror("Guardar en progreso", "Elige archivos nuevos para el borrador y conserva la especificación terminada.", parent=self.ventana)
+            return
+        if not messagebox.askyesno("Guardar pareja ESP / ENG",
+            f"{self.nombre_producto.get()} · ESP / ENG\n" + (
+                f"En progreso · ESP: {conteos['es']} pendientes · ENG: {conteos['en']} pendientes\n\n" if en_progreso
+                else "ESP: Completo · ENG: Completo\n\n") +
+            f"Se guardarán ambos JSON alineados (se reemplazarán si existen):\n\nESP: {rutas['es']}\nENG: {rutas['en']}\n\n" +
+            ("¿Guardar el trabajo para continuarlo después?" if en_progreso else "¿Confirmas que revisaste ambas versiones y deseas guardarlas?"), parent=self.ventana):
+            return
+        for idioma, datos in documentos.items():
+            if not en_progreso:
+                datos["documento"]["edicion_bilingue"] = 1
+            otro = "en" if idioma == "es" else "es"
+            control = documentos[otro]["control_documental"]
+            datos["versiones_idioma"] = {"INGLES" if otro == "en" else "ESPANOL": [{
+                "archivo_json": Path(os.path.relpath(rutas[otro], rutas[idioma].parent)).as_posix(),
+                "codigo": control.get("codigo_unico_producto", ""), "revision": control.get("revision", ""),
+                "cliente": control.get("nombre_cliente", ""),
+            }]}
+        try:
+            archivos = {rutas[i]: documentos[i] for i in ("es", "en")}
+            if en_progreso:
+                archivos.update({ruta_estado(r): serializar_estado(self._bilingue, rutas, r) for r in rutas.values()})
+            guardar_pareja_json(archivos)
+            if not en_progreso:
+                for r in rutas.values():
+                    ruta_estado(r).unlink(missing_ok=True)
+        except OSError as exc:
+            messagebox.showerror("No se pudo guardar la pareja", str(exc), parent=self.ventana)
+            return
+        self._rutas_idioma = rutas
+        self._originales_idioma = documentos
+        self.datos_originales = documentos[self._idioma_anterior]
+        self.destino_inicial = rutas[self._idioma_anterior]
+        self._contenido_inicial_revision = self._contenido_para_revision()
+        self._revision_inicial = self.variables_control["revision"].get()
+        self._revision_aplicada = False
+        self._cambio_alineacion_revision = False
+        self._consultas_revision.clear()
+        self._revisiones_historial.clear()
+        try:
+            import registro_hii
+            if not en_progreso:
+                with registro_hii.conectar(BASE / "especificaciones.db") as con:
+                    registro_hii.vincular(con, rutas["es"], rutas["en"])
+            if self.al_guardar is not None:
+                for ruta in rutas.values():
+                    self.al_guardar(ruta)
+        except (OSError, ValueError, sqlite3.Error) as exc:
+            messagebox.showwarning("Pareja guardada", f"Ambos JSON se guardaron, pero no se pudo actualizar el catálogo:\n{exc}", parent=self.ventana)
+            return
+        messagebox.showinfo("Trabajo en progreso guardado" if en_progreso else "Pareja guardada", f"ESP: {rutas['es']}\nENG: {rutas['en']}", parent=self.ventana)
 
     def guardar(self) -> None:
         if self.idioma_destino is not None:
@@ -3575,6 +4183,9 @@ class GeneradorEspecificacion:
                 ),
                 parent=self.ventana,
             )
+            return
+        if self._bilingue is not None:
+            self._guardar_bilingue()
             return
         try:
             datos = crear_datos_especificacion_nueva(
@@ -3793,6 +4404,8 @@ class PanelComparacion:
         self.archivo_origen: Path | None = None
         self.directorio_temporal: tempfile.TemporaryDirectory[str] | None = None
         self.zoom = 1.44
+        self.vista = None
+        self.resaltador = None
         self.marco = ttk.LabelFrame(comparador.contenedor, text=f"Especificación {indice}", padding=8)
         comparador.contenedor.add(
             self.marco,
@@ -3856,7 +4469,7 @@ class PanelComparacion:
             self.cargar_archivo(Path(ruta))
 
     def cargar_archivo(self, archivo: Path) -> None:
-        self.limpiar()
+        self.limpiar(actualizar=False)
         if archivo.suffix.casefold() == ".json":
             self.archivo_origen = archivo
             self.ruta = archivo
@@ -3892,9 +4505,15 @@ class PanelComparacion:
                 "Selecciona un archivo JSON, DOC, DOCX o DOCM.",
                 parent=self.comparador.ventana,
             )
+            self.comparador.actualizar_resaltado()
             return
-        mostrar_vista_json(self.previa, self.ruta, self.zoom)
+        self._mostrar_archivo()
         self.boton_editar.configure(state="normal")
+
+    def _mostrar_archivo(self):
+        self.vista = mostrar_vista_json(self.previa, self.ruta, self.zoom)
+        self.resaltador = None
+        self.comparador.actualizar_resaltado()
 
     def editar(self) -> None:
         if self.ruta is None:
@@ -3907,7 +4526,9 @@ class PanelComparacion:
         )
         self.comparador.app.editar_especificacion(self.ruta, destino)
 
-    def limpiar(self) -> None:
+    def limpiar(self, actualizar=True) -> None:
+        self.vista = None
+        self.resaltador = None
         self.ruta = None
         self.archivo_origen = None
         self.boton_editar.configure(state="disabled")
@@ -3923,11 +4544,13 @@ class PanelComparacion:
             anchor="center",
         )
         self.etiqueta.pack(fill="both", expand=True)
+        if actualizar:
+            self.comparador.actualizar_resaltado()
 
     def cambiar_zoom(self, cambio: float) -> None:
         self.zoom = min(1.8, max(0.7, self.zoom + cambio))
         if self.ruta is not None:
-            mostrar_vista_json(self.previa, self.ruta, self.zoom)
+            self._mostrar_archivo()
 
 
 class Comparador:
@@ -3951,6 +4574,14 @@ class Comparador:
             command=self.agregar_panel,
         )
         self.boton_agregar.pack(side="right")
+        self.resaltado_activo = False
+        self._cerrando = False
+        self._maestro_comparacion = None
+        self._ruta_maestro_comparacion = None
+        self.boton_resaltar = ttk.Button(encabezado, text="RESALTAR", command=self.alternar_resaltado,
+                                        variante="secundario", state="disabled")
+        self.estado_resaltado = ttk.Label(self.ventana, text="")
+        self.estado_resaltado.pack(fill="x", padx=14)
         self.contenedor = crear_divisor_redimensionable(self.ventana, tk.HORIZONTAL)
         self.contenedor.pack(fill="both", expand=True, padx=8, pady=5)
         separador_inicializado = False
@@ -3989,6 +4620,48 @@ class Comparador:
                 0,
             )
 
+    def alternar_resaltado(self):
+        # FUNCIÓN EN ESTADO BETA: resalta diferencias entre pruebas comunes.
+        self.resaltado_activo = not self.resaltado_activo
+        self.actualizar_resaltado()
+
+    def actualizar_resaltado(self):
+        if self._cerrando:
+            return
+        paneles = [p for p in self.paneles if p.vista is not None]
+        hay_alineada = any(p.vista["alineada"] for p in paneles)
+        if hay_alineada:
+            self.boton_resaltar.pack(side="right", padx=8)
+        else:
+            self.boton_resaltar.pack_forget()
+        habilitado = hay_alineada and len(paneles) >= 2
+        self.boton_resaltar.configure(state="normal" if habilitado else "disabled",
+                                     text="Quitar resaltado" if self.resaltado_activo else "RESALTAR")
+        if not habilitado or not self.resaltado_activo:
+            for panel in paneles:
+                if panel.resaltador is not None:
+                    panel.resaltador.establecer_cambios({})
+            self.estado_resaltado.configure(text="")
+            return
+        ruta_lista = ruta_maestro(BASE)
+        if self._maestro_comparacion is None or getattr(self, "_ruta_maestro_comparacion", ruta_lista) not in (None, ruta_lista):
+            try:
+                self._maestro_comparacion = cargar_maestro(ruta_lista)
+            except (OSError, ValueError, ImportError):
+                self._maestro_comparacion = ()
+            self._ruta_maestro_comparacion = ruta_lista
+        cambios, resumen = comparar_valores_pruebas([p.vista for p in paneles], self._maestro_comparacion,
+                                                   SERVICIO_TRADUCTOR.diccionario.traducir)
+        for panel, filas in zip(paneles, cambios):
+            vista = panel.vista
+            celdas = {vista["filas"][indice]: campos for indice, campos in filas.items()}
+            if panel.resaltador is None:
+                panel.resaltador = ResaltadorCambios(vista["tabla"], celdas, vista["vertical"], vista["horizontal"])
+            else:
+                panel.resaltador.establecer_cambios(celdas)
+        aviso = f" · {resumen['unidades_distintas']} grupos con unidades distintas" if resumen["unidades_distintas"] else ""
+        self.estado_resaltado.configure(text=f"{resumen['comunes']} pruebas comunes · {resumen['celdas']} celdas diferentes{aviso}")
+
     def abrir_emergente(self) -> None:
         panel_seleccionado = self.ventana.focus_get()
         panel = next(
@@ -4007,6 +4680,7 @@ class Comparador:
         )
 
     def cerrar(self) -> None:
+        self._cerrando = True
         for panel in self.paneles:
             panel.limpiar()
         self.ventana.destroy()
@@ -4033,13 +4707,98 @@ class AplicacionEspecificaciones:
         self._mensajes_carga: list[str] = []
         self._ventana_detalles_carga: tk.Toplevel | None = None
         self._texto_detalles_carga: ScrolledText | None = None
+        self._reconstruccion_en_proceso = False
+        self._acciones_tras_recuperacion = []
         self._crear_interfaz()
+        from reconstruir_base_datos import necesita_recuperacion
+        if necesita_recuperacion(BASE, rutas=self.rutas):
+            self.reconstruir_base_datos(automatica=True)
         if ui.PREFERENCIAS["maximizar"]:
             self.raiz.after_idle(lambda: self.raiz.state("zoomed"))
 
     def _crear_interfaz(self) -> None:
         from menu_principal import crear_menu_principal
         crear_menu_principal(self)
+
+    def reconstruir_base_datos(self, automatica=False):
+        """Recuperación en segundo plano; todas las acciones de Tk se hacen en el hilo principal."""
+        if self._reconstruccion_en_proceso or self._carga_en_proceso:
+            messagebox.showinfo("Procesamiento en curso", "Espera a que termine el proceso actual.", parent=self.raiz)
+            return
+        from reconstruir_base_datos import reconstruir, asegurar_base
+        self._reconstruccion_en_proceso = True
+        rutas = dict(self.rutas)
+        cola = queue.Queue()
+        ventana = ui.Ventana(self.raiz)
+        ventana.title("Recuperar base de datos")
+        ventana.geometry("540x180")
+        ventana.transient(self.raiz)
+        ventana.grab_set()
+        ventana.protocol("WM_DELETE_WINDOW", lambda: None)
+        ttk.Label(ventana, text="Reconstruyendo desde los JSON existentes…", font=("Segoe UI", 13, "bold")).pack(padx=18, pady=(20, 10))
+        estado = ttk.Label(ventana, text="Preparando recuperación…", wraplength=490)
+        estado.pack(fill="x", padx=18, pady=8)
+        barra = ttk.Progressbar(ventana, mode="indeterminate")
+        barra.pack(fill="x", padx=18, pady=8)
+        barra.start()
+
+        def trabajar():
+            try:
+                recuperar = asegurar_base if automatica else reconstruir
+                opciones = {} if automatica else {"reemplazar": True}
+                resultado = recuperar(BASE, rutas=rutas, **opciones,
+                    al_progreso=lambda actual, total, nombre: cola.put(("progreso", (actual, total, nombre))))
+                cola.put(("terminado", resultado))
+            except Exception as exc:
+                cola.put(("error", str(exc)))
+
+        def recibir():
+            if not self.raiz.winfo_exists():
+                return
+            ultimo_progreso = None
+            terminado = None
+            while True:
+                try:
+                    tipo, dato = cola.get_nowait()
+                except queue.Empty:
+                    break
+                if tipo == "progreso":
+                    ultimo_progreso = dato
+                else:
+                    terminado = (tipo, dato)
+            if ultimo_progreso:
+                actual, total, nombre = ultimo_progreso
+                estado.configure(text=f"{actual} de {total} JSON: {nombre}")
+            if terminado is None:
+                self.raiz.after(100, recibir)
+                return
+            barra.stop()
+            ventana.grab_release()
+            ventana.destroy()
+            self._reconstruccion_en_proceso = False
+            tipo, resultado = terminado
+            if tipo == "error":
+                self._acciones_tras_recuperacion.clear()
+                messagebox.showerror("No se pudo reconstruir la base", resultado, parent=self.raiz)
+                return
+            menu = self.menu_principal
+            if "Histórico" in menu.creadas:
+                menu.reintentar_historial(menu.pestanas.tab("Histórico"))
+            if resultado is not None:
+                texto = (f"{resultado['documentos']} JSON registrados, {resultado['versiones']} versiones y "
+                         f"{resultado['relaciones']} relaciones ESP/ENG.\n"
+                         f"{resultado['wip']} borradores en progreso.\n\nSe conservaron los nombres y el contenido de los JSON.")
+                if resultado["omitidos"]:
+                    texto += f"\n\n{len(resultado['omitidos'])} archivos omitidos. Consulta REPORTE_RECONSTRUCCION_BASE.json."
+                if resultado["respaldo"]:
+                    texto += f"\n\nRespaldo anterior: {resultado['respaldo']}"
+                messagebox.showinfo("Base reconstruida", texto, parent=self.raiz)
+            acciones, self._acciones_tras_recuperacion = self._acciones_tras_recuperacion, []
+            for accion in acciones:
+                accion()
+
+        threading.Thread(target=trabajar, daemon=True).start()
+        self.raiz.after(100, recibir)
 
     def abrir_instrucciones(self) -> None:
         for nombre in ("README_ACTUALIZACION_CODIGOS_200.md", "README.md"):
@@ -4435,10 +5194,22 @@ class AplicacionEspecificaciones:
             carpeta_json_anterior=self.rutas["json_anteriores"],
             al_actualizar=abrir_editor_json,
             al_editar=lambda ruta: self.editar_especificacion(ruta, ruta),
+            al_comparar=self.comparar_especificaciones,
         )
 
-    def comparar_especificaciones(self) -> None:
-        Comparador(self)
+    def comparar_especificaciones(self, rutas: list[Path] | None = None) -> None:
+        if rutas is None:
+            Comparador(self)
+            return
+        if len(rutas) > 3:
+            if not messagebox.askyesno("Abrir más de 3 especificaciones", f"Se abrirán {len(rutas)} especificaciones en ventanas flotantes. ¿Deseas continuar?", parent=self.raiz):
+                return
+            for ruta in rutas:
+                self.abrir_emergente(ruta, 1.44)
+            return
+        comparador = Comparador(self)
+        for panel, ruta in zip(comparador.paneles, rutas):
+            panel.cargar_archivo(ruta)
 
     def actualizar_formatos(self) -> None:
         archivos = filedialog.askopenfilenames(
@@ -4462,6 +5233,71 @@ class AplicacionEspecificaciones:
             messagebox.showerror("No se pudieron actualizar los formatos", str(exc), parent=self.raiz)
             return
         messagebox.showinfo("Formatos actualizados", f"{len(nombres)} archivo(s) copiado(s) en:\n{destino}", parent=self.raiz)
+
+    def editar_traducciones(self):
+        self._cargar_traducciones_desde_metodos(lambda: EditorTraducciones(self.raiz, self._refrescar_fechas_listas))
+
+    def _refrescar_fechas_listas(self):
+        if hasattr(self, "menu_principal"):
+            self.menu_principal.refrescar_fechas_metodos()
+
+    def actualizar_traducciones(self):
+        self._cargar_traducciones_desde_metodos()
+
+    def _cargar_traducciones_desde_metodos(self, al_terminar=None, avisar=True):
+        if getattr(self, "_traducciones_cargando", False):
+            return
+        self._traducciones_cargando = True
+        cola = queue.Queue()
+        def cargar():
+            try:
+                cola.put((True, actualizar_traductor()))
+            except Exception as exc:
+                cola.put((False, str(exc)))
+        def recibir():
+            if not self.raiz.winfo_exists():
+                return
+            try:
+                correcto, resultado = cola.get_nowait()
+            except queue.Empty:
+                self.raiz.after(100, recibir)
+                return
+            self._traducciones_cargando = False
+            if correcto:
+                self._refrescar_fechas_listas()
+            if not correcto:
+                messagebox.showwarning("No se actualizaron las traducciones", f"Se conserva la última versión válida.\n\n{resultado}", parent=self.raiz)
+            elif al_terminar is not None:
+                al_terminar()
+            elif avisar:
+                messagebox.showinfo("Traducciones actualizadas", f"{resultado['equivalencias']} equivalencias activas.\n{resultado['cambios']} cambios registrados.\nLos editores abiertos recibirán las nuevas equivalencias.", parent=self.raiz)
+        threading.Thread(target=cargar, daemon=True).start()
+        self.raiz.after(100, recibir)
+
+    def opciones_traducciones(self):
+        from traductor_especificaciones import ARCHIVO_ESTADO, ARCHIVO_HISTORIAL
+        CARPETA = carpeta_listas(BASE)
+        ventana = ui.Ventana(self.raiz)
+        ventana.title("Traducciones · ubicación e historial")
+        ventana.transient(self.raiz)
+        ventana.grab_set()
+        ttk.Label(ventana, text="Lista de traducciones", font=("Segoe UI", 14, "bold")).pack(anchor="w", padx=16, pady=12)
+        ttk.Label(ventana, text="Consulta la ubicación, el historial y la última versión de las traducciones.", wraplength=450).pack(anchor="w", padx=16, pady=8)
+        def abrir(ruta):
+            try:
+                if not ruta.exists():
+                    raise FileNotFoundError(f"No existe el archivo:\n{ruta}")
+                if os.name == "nt":
+                    os.startfile(str(ruta))
+                else:
+                    subprocess.Popen(["open" if sys.platform == "darwin" else "xdg-open", str(ruta)])
+            except OSError as exc:
+                messagebox.showerror("No se pudo abrir", str(exc), parent=ventana)
+        for texto, ruta in (("Abrir carpeta de traducciones", CARPETA),
+                            ("Consultar historial de cambios", CARPETA / ARCHIVO_HISTORIAL),
+                            ("Consultar última versión registrada", CARPETA / ARCHIVO_ESTADO)):
+            ttk.Button(ventana, text=texto, command=lambda r=ruta: abrir(r)).pack(fill="x", padx=16, pady=4)
+        ttk.Button(ventana, text="Cerrar", command=ventana.destroy).pack(anchor="e", padx=16, pady=12)
 
     def actualizar_metodos(self) -> None:
         ventana = ui.Ventana(self.raiz)
@@ -4492,7 +5328,7 @@ class AplicacionEspecificaciones:
         def editar_aqui() -> None:
             ventana.destroy()
             try:
-                EditorListaMaestra(self.raiz, BASE / MAESTRO)
+                EditorListaMaestra(self.raiz, ruta_maestro(BASE), self._refrescar_fechas_listas)
             except (OSError, ValueError, ImportError) as exc:
                 messagebox.showerror(
                     "No se pudo abrir la lista maestra",
@@ -4502,7 +5338,7 @@ class AplicacionEspecificaciones:
 
         def abrir_ubicacion() -> None:
             ventana.destroy()
-            ruta = BASE / MAESTRO
+            ruta = ruta_maestro(BASE)
             if not ruta.is_file():
                 messagebox.showerror(
                     "No se encontró el Excel",
@@ -4563,11 +5399,19 @@ class AplicacionEspecificaciones:
             return
         try:
             flags = subprocess.CREATE_NEW_CONSOLE if os.name == "nt" else 0
-            subprocess.Popen(
+            proceso = subprocess.Popen(
                 [str(python), str(script), "--base", str(BASE)],
                 cwd=BASE,
                 creationflags=flags,
             )
+            def terminado():
+                if not self.raiz.winfo_exists():
+                    return
+                if proceso.poll() is None:
+                    self.raiz.after(300, terminado)
+                else:
+                    self._refrescar_fechas_listas()
+            self.raiz.after(300, terminado)
         except OSError as exc:
             messagebox.showerror("No se pudo iniciar la actualización", str(exc), parent=self.raiz)
 
@@ -4583,10 +5427,11 @@ class AplicacionEspecificaciones:
             "json_alineadas": "JSON alineados",
             "formatos": "Plantillas Word",
             "historico": "Documentos generados",
+            "metodos_lab": "Lista de métodos y traducciones",
         }
         for fila, (clave, etiqueta) in enumerate(nombres.items()):
             ttk.Label(ventana, text=etiqueta).grid(row=fila, column=0, sticky="w", padx=10, pady=7)
-            variable = tk.StringVar(value=str(self.rutas[clave]))
+            variable = tk.StringVar(value=ruta_portatil(self.rutas[clave], BASE))
             campos[clave] = variable
             ttk.Entry(ventana, textvariable=variable, width=64).grid(row=fila, column=1, padx=5, pady=7)
             ttk.Button(
@@ -4596,12 +5441,15 @@ class AplicacionEspecificaciones:
             ).grid(row=fila, column=2, padx=5, pady=7)
 
         def guardar() -> None:
-            self.rutas = {clave: Path(variable.get()).expanduser().resolve() for clave, variable in campos.items()}
+            nuevas = {clave: resolver_ruta(variable.get(), BASE) for clave, variable in campos.items()}
             try:
-                _guardar_configuracion(self.rutas)
-            except OSError as exc:
+                _guardar_configuracion(nuevas)
+            except (OSError, ValueError) as exc:
                 messagebox.showerror("No se pudo guardar", str(exc), parent=ventana)
                 return
+            self.rutas = nuevas
+            self._refrescar_fechas_listas()
+            self._cargar_traducciones_desde_metodos(avisar=False)
             ventana.destroy()
 
         ttk.Button(ventana, text="Guardar", command=guardar).grid(row=len(nombres), column=1, sticky="e", padx=8, pady=12)
@@ -4609,7 +5457,7 @@ class AplicacionEspecificaciones:
 
     @staticmethod
     def _elegir_carpeta(variable: tk.StringVar, parent: tk.Misc) -> None:
-        ruta = filedialog.askdirectory(parent=parent, initialdir=variable.get() or str(BASE))
+        ruta = filedialog.askdirectory(parent=parent, initialdir=str(resolver_ruta(variable.get() or BASE)))
         if ruta:
             variable.set(ruta)
 
@@ -4626,8 +5474,8 @@ class AplicacionEspecificaciones:
     ) -> None:
         vivas = {ventana for ventana in self.ventanas_flotantes if ventana.winfo_exists()}
         self.ventanas_flotantes = vivas
-        if len(vivas) >= 6:
-            messagebox.showinfo("Límite alcanzado", "Se permiten hasta 6 vistas emergentes.", parent=self.raiz)
+        if len(vivas) >= 10:
+            messagebox.showinfo("Límite alcanzado", "Se permiten hasta 10 vistas emergentes.", parent=self.raiz)
             return
         temporal_emergente = None
         if directorio_temporal is not None:
@@ -4691,10 +5539,16 @@ def main() -> None:
     args = parser.parse_args()
     raiz = ui.Raiz()
     app = AplicacionEspecificaciones(raiz)
-    if args.editar_json is not None:
-        EditorJson(app, args.editar_json)
-    if args.generar_json is not None:
-        app.editar_especificacion(args.generar_json, args.generar_json)
+    def abrir_inicial():
+        if args.editar_json is not None:
+            EditorJson(app, resolver_ruta(args.editar_json))
+        if args.generar_json is not None:
+            ruta = resolver_ruta(args.generar_json)
+            app.editar_especificacion(ruta, ruta)
+    if app._reconstruccion_en_proceso:
+        app._acciones_tras_recuperacion.append(abrir_inicial)
+    else:
+        abrir_inicial()
     raiz.mainloop()
 
 

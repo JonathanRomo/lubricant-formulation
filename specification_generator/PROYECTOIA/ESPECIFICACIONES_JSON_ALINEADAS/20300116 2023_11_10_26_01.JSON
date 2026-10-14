@@ -701,5 +701,15 @@
     "mensajes_astm_no_encontradas": [
       "Prueba 11 (REFRACTIVE INDEX AT 20 °C): Referencias no encontradas en la lista maestra: ASTM D1747."
     ]
+  },
+  "versiones_idioma": {
+    "ESPANOL": [
+      {
+        "archivo_json": "20300116 2023_11_10_26_02.JSON",
+        "codigo": "20300116",
+        "revision": "2023",
+        "cliente": ""
+      }
+    ]
   }
 }

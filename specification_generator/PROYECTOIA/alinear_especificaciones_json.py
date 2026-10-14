@@ -14,6 +14,7 @@ from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
+from rutas_proyecto import BASE, resolver_ruta, ruta_portatil, rutas_configuradas, reubicar_ruta_heredada
 
 try:
     import pandas as pd
@@ -1283,9 +1284,19 @@ def ejecutar(
     destinos_seleccionados: list[Path] | None = None,
     forzar: bool = False,
 ) -> dict[str, int]:
-    entrada = carpeta_entrada or base / ENTRADA
-    salida = carpeta_salida or base / SALIDA
+    base = resolver_ruta(base)
+    rutas = rutas_configuradas(base)
+    entrada = resolver_ruta(carpeta_entrada if carpeta_entrada is not None else rutas["json_anteriores"], base)
+    salida = resolver_ruta(carpeta_salida if carpeta_salida is not None else rutas["json_alineadas"], base)
+    if archivos_seleccionados is not None:
+        archivos_seleccionados = [resolver_ruta(ruta, base) for ruta in archivos_seleccionados]
+    if destinos_seleccionados is not None:
+        destinos_seleccionados = [resolver_ruta(ruta, base) for ruta in destinos_seleccionados]
+    from rutas_listas import carpeta_listas
+    carpeta_maestro = carpeta_listas(base)
     maestro_path = base / MAESTRO
+    if MAESTRO.parent == Path("METODOS_LAB") and carpeta_maestro != base.resolve() / "METODOS_LAB":
+        maestro_path = carpeta_maestro / MAESTRO.name
     if not entrada.is_dir():
         raise FileNotFoundError(f"No existe la carpeta de entrada: {entrada}")
     maestro = MaestroPreparado(cargar_maestro(maestro_path))
@@ -1348,6 +1359,13 @@ def ejecutar(
             cache = {}
     except (OSError, ValueError):
         cache = {}
+    # La caché también debe sobrevivir al traslado de la carpeta del proyecto.
+    cache = {
+        ruta_portatil(reubicar_ruta_heredada(clave, base), base):
+        dict(entrada_cache, origen=ruta_portatil(reubicar_ruta_heredada(entrada_cache["origen"], base), base))
+        for clave, entrada_cache in cache.items()
+        if isinstance(entrada_cache, dict) and isinstance(entrada_cache.get("origen"), str)
+    }
     total = {"archivos": 0, "alineados": 0, "revision": 0, "sin_coincidencia": 0, "errores": 0, "omitidos": 0}
     lineas = [f"REPORTE DE ALINEACION {datetime.now().isoformat(timespec='seconds')}", "=" * 72]
     for indice, (origen, rel) in enumerate(archivos_relativos, 1):
@@ -1355,11 +1373,11 @@ def ejecutar(
             al_progreso(indice - 1, len(archivos), str(rel))
         destino = salida / rel
         try:
-            clave = str(destino.resolve())
+            clave = ruta_portatil(destino, base)
             hash_origen = hashlib.sha256(origen.read_bytes()).hexdigest()
             entrada_cache = cache.get(clave, {})
             vigente = (not forzar and isinstance(entrada_cache, dict)
-                       and entrada_cache.get("origen") == str(origen.resolve())
+                       and entrada_cache.get("origen") == ruta_portatil(origen, base)
                        and entrada_cache.get("hash_origen") == hash_origen
                        and entrada_cache.get("hash_maestro") == hash_maestro
                        and entrada_cache.get("version") == VERSION
@@ -1372,7 +1390,7 @@ def ejecutar(
                 continue
             r = procesar_json(origen, destino, maestro)
             hash_destino = hashlib.sha256(destino.read_bytes()).hexdigest()
-            cache[clave] = {"origen": str(origen.resolve()), "version": VERSION,
+            cache[clave] = {"origen": ruta_portatil(origen, base), "version": VERSION,
                             "hash_origen": hash_destino if origen.resolve() == destino.resolve() else hash_origen,
                             "hash_maestro": hash_maestro, "hash_destino": hash_destino}
             total["archivos"] += 1
@@ -1392,7 +1410,7 @@ def ejecutar(
         cambios_relaciones = registro_hii.sincronizar_idiomas(relaciones, salida)
     for origen, rel in archivos_relativos:
         destino = salida / rel
-        clave = str(destino.resolve())
+        clave = ruta_portatil(destino, base)
         if clave in cache and destino.resolve() in cambios_relaciones:
             cache[clave]["hash_destino"] = hashlib.sha256(destino.read_bytes()).hexdigest()
             if origen.resolve() == destino.resolve():
@@ -1422,11 +1440,11 @@ def main() -> int:
             f"{sys.version_info.major}.{sys.version_info.minor}."
         )
     parser = argparse.ArgumentParser(description="Alinea pruebas y metodos de JSON con la lista maestra.")
-    parser.add_argument("--base", type=Path, default=Path(__file__).resolve().parent)
+    parser.add_argument("--base", type=resolver_ruta, default=BASE)
     parser.add_argument("--forzar", action="store_true", help="Realinea incluso archivos sin cambios.")
     args = parser.parse_args()
     try:
-        resumen = ejecutar(args.base.resolve(), forzar=args.forzar)
+        resumen = ejecutar(args.base, forzar=args.forzar)
         return 1 if resumen["errores"] else 0
     except Exception as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

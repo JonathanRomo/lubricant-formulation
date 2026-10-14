@@ -694,5 +694,15 @@
       }
     ],
     "mensajes_astm_no_encontradas": []
+  },
+  "versiones_idioma": {
+    "INGLES": [
+      {
+        "archivo_json": "20300046 02_11_10_26.JSON",
+        "codigo": "20300046",
+        "revision": "02",
+        "cliente": ""
+      }
+    ]
   }
 }

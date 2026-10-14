@@ -16,6 +16,7 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from docx import Document
+from rutas_proyecto import BASE, resolver_ruta, rutas_configuradas
 
 
 EXTENSIONES_WORD = {".doc", ".docx", ".docm"}
@@ -502,7 +503,7 @@ def generar_documento(datos: dict, plantilla: Path, destino: Path) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    base = Path(__file__).resolve().parent
+    rutas = rutas_configuradas(BASE)
     parser = argparse.ArgumentParser(
         description=(
             "Genera un archivo DOCX por JSON usando la plantilla correspondiente a documento.idioma."
@@ -510,20 +511,20 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--formatos",
-        type=Path,
-        default=base / "FORMATOS",
+        type=lambda valor: resolver_ruta(valor, BASE),
+        default=rutas["formatos"],
         help="carpeta a revisar (por defecto: FORMATOS junto al programa)",
     )
     parser.add_argument(
         "--json-dir",
-        type=Path,
-        default=base / "ESPECIFICACIONES_JSON",
+        type=lambda valor: resolver_ruta(valor, BASE),
+        default=rutas["json_anteriores"],
         help="carpeta de JSON (por defecto: ESPECIFICACIONES_JSON junto al programa)",
     )
     parser.add_argument(
         "--salida",
-        type=Path,
-        default=base / "HISTORICO_ESPECIFICACIONES",
+        type=lambda valor: resolver_ruta(valor, BASE),
+        default=rutas["historico"],
         help="carpeta para los DOCX generados (por defecto: HISTORICO_ESPECIFICACIONES)",
     )
     args = parser.parse_args(argv)

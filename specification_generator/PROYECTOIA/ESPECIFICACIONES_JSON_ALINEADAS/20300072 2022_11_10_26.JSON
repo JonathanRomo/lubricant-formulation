@@ -690,5 +690,15 @@
       }
     ],
     "mensajes_astm_no_encontradas": []
+  },
+  "versiones_idioma": {
+    "INGLES": [
+      {
+        "archivo_json": "20300072 2022_11_10_26_01.JSON",
+        "codigo": "20300072",
+        "revision": "2022",
+        "cliente": ""
+      }
+    ]
   }
 }

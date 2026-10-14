@@ -2,6 +2,7 @@ import json
 import queue
 import tempfile
 import unittest
+from dataclasses import replace
 from types import SimpleNamespace
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -19,6 +20,7 @@ from interfaz_seleccion_especificaciones import (
     preparar_vista_previa_alineada,
     requiere_realineacion,
     VERSION_ALINEADOR,
+    parejas_idioma,
 )
 
 
@@ -88,6 +90,25 @@ def json_especificacion(
 
 
 class SelectorEspecificacionesTests(unittest.TestCase):
+    def test_parejas_idioma_exige_relacion_vigente_y_revision_igual(self):
+        es = Especificacion(Path("es.json"), "Producto", "P1", "Cliente", "01", "",
+                            version_alineador=VERSION_ALINEADOR,
+                            versiones_idioma=(Path("en.json").resolve(),))
+        en = replace(es, ruta=Path("en.json"), idioma="INGLES", versiones_idioma=())
+        self.assertEqual(parejas_idioma((es, en)), {es.ruta: en, en.ruta: es})
+        self.assertEqual(parejas_idioma((es, replace(en, revision="02"))), {})
+        self.assertEqual(parejas_idioma((es, replace(en, version_alineador=""))), {})
+        self.assertEqual(parejas_idioma((es,)), {})
+        self.assertEqual(parejas_idioma((replace(es, versiones_idioma=()), en)), {})
+
+    def test_parejas_idioma_no_agrupa_relaciones_ambiguas(self):
+        es = Especificacion(Path("es.json"), "Producto", "P1", "Cliente", "01", "",
+                            version_alineador=VERSION_ALINEADOR,
+                            versiones_idioma=(Path("en.json").resolve(), Path("en2.json").resolve()))
+        en = replace(es, ruta=Path("en.json"), idioma="INGLES", versiones_idioma=())
+        en2 = replace(en, ruta=Path("en2.json"))
+        self.assertEqual(parejas_idioma((es, en, en2)), {})
+
     def test_ordenar_una_columna_y_volver_al_orden_original(self):
         tabla = TreeviewFalso(
             ("0", "1", "2", "3"),
@@ -260,6 +281,7 @@ class SelectorEspecificacionesTests(unittest.TestCase):
                     catalogo=SimpleNamespace(especificaciones=[especificacion]),
                     documentos_marcados={especificacion.ruta},
                     boton_realinear=boton,
+                    boton_comparar=None,
                 )
             }
         )

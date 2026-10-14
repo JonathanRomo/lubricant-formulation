@@ -86,8 +86,10 @@ class NotasProtegidas(tk.Text):
 def siguiente_revision(codigo, carpetas, base_datos, revision_actual="00"):
     """Deduplica originales/alineados por nombre del JSON; solo consulta SQLite."""
     nombres = set()
-    if Path(base_datos).exists():
-        con = sqlite3.connect(Path(base_datos).resolve().as_uri() + "?mode=ro", uri=True)
+    from rutas_proyecto import resolver_ruta
+    base_datos = resolver_ruta(base_datos)
+    if base_datos.exists():
+        con = sqlite3.connect(base_datos.as_uri() + "?mode=ro", uri=True)
         try:
             for nombre, revision in con.execute(
                 "SELECT archivo_json, revision_especificacion FROM versiones WHERE part_id_final=?", (codigo,)
@@ -98,7 +100,7 @@ def siguiente_revision(codigo, carpetas, base_datos, revision_actual="00"):
             pass
         finally:
             con.close()
-    for carpeta in dict.fromkeys(Path(p) for p in carpetas):
+    for carpeta in dict.fromkeys(resolver_ruta(p) for p in carpetas):
         if not carpeta.is_dir():
             continue
         for ruta in carpeta.rglob("*"):

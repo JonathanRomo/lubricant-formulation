@@ -39,3 +39,6 @@ FORMATOS/
 *.tmp
 *.temp
 *.log
+.*.recuperacion.lock
+RESPALDOS_BASE_DATOS/
+REPORTE_RECONSTRUCCION_BASE.json

@@ -1,0 +1,505 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "TURBINESCHUTZ R&O 68"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "en",
+    "fecha_documento_normalizada": "",
+    "edicion_bilingue": 1
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "-",
+    "codigo_unico_producto": "20500043",
+    "fecha": "04/09/26",
+    "revision": "08",
+    "nombre_cliente": "CFE",
+    "revision_cliente": ""
+  },
+  "notas": [
+    "The active version of the applicable method shall be the version issued and provided by the laboratory."
+  ],
+  "Desarrollador": "",
+  "FECHA DE REANALISIS": "",
+  "pruebas": [
+    {
+      "numero": 1,
+      "prueba": "ISO VISCOSITY GRADE OF LUBRICANTS",
+      "unidades": "NA",
+      "metodo": "ASTM D2422",
+      "especificacion": "68",
+      "valor_tipico": "68",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 2,
+      "prueba": "KINEMATIC VISCOSITY AT 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "61,2 - 74,8",
+      "valor_tipico": "65,93",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 3,
+      "prueba": "KINEMATIC VISCOSITY AT 100 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "8,15 - 9,1",
+      "valor_tipico": "8,783",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 4,
+      "prueba": "VISCOSITY INDEX",
+      "unidades": "DIMENSIONLESS",
+      "metodo": "ASTM D2270",
+      "especificacion": "95 MINIMUM",
+      "valor_tipico": "106,00",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 5,
+      "prueba": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+      "unidades": "°C",
+      "metodo": "ASTM D92",
+      "especificacion": "220 MINIMUM",
+      "valor_tipico": "243",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 6,
+      "prueba": "POUR POINT",
+      "unidades": "°C",
+      "metodo": "ASTM D97",
+      "especificacion": "− 12 MINIMUM",
+      "valor_tipico": "− 24",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 7,
+      "prueba": "VISUAL APPEAREANCE",
+      "unidades": "NA",
+      "metodo": "ORGANOLEPTIC",
+      "especificacion": "BRIGHT AND CLEAR",
+      "valor_tipico": "BRIGHT AND CLEAR",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 8,
+      "prueba": "ASTM COLOR",
+      "unidades": "NA",
+      "metodo": "ASTM D1500",
+      "especificacion": "REPORT",
+      "valor_tipico": "0,5",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 9,
+      "prueba": "ACID NUMBER",
+      "unidades": "mgKOH/g",
+      "metodo": "ASTM D974",
+      "especificacion": "REPORT",
+      "valor_tipico": "0,05",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 10,
+      "prueba": "WATER CONTENT BY KARL FISCHER (COULOMETRIC)",
+      "unidades": "mg/kg",
+      "metodo": "ASTM D6304",
+      "especificacion": "150 MAXIMUM",
+      "valor_tipico": "4,0",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 11,
+      "prueba": "VARNISH AND SLUDGE DEPOSIT CONTROL TEST",
+      "unidades": "NA",
+      "metodo": "INTERNAL METHOD",
+      "especificacion": "---",
+      "valor_tipico": "---",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 12,
+      "prueba": "RUST PREVENTION OF INHIBITED MINERAL OILS",
+      "unidades": "NA",
+      "metodo": "ASTM D665",
+      "especificacion": "PASS",
+      "valor_tipico": "PASS",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 13,
+      "prueba": "COPPER CORROSION (COPPER STRIP) (TIME/TEMPERATURE)",
+      "unidades": "NA",
+      "metodo": "ASTM D130",
+      "especificacion": "1b MAXIMUM",
+      "valor_tipico": "1b",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 14,
+      "prueba": "WATER-OIL SEPARABILITY AT X °C",
+      "unidades": "mL/mL/mL (min)",
+      "metodo": "ASTM D1401",
+      "especificacion": "30 MAXIMUM",
+      "valor_tipico": "40-40-0 (25)",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 15,
+      "prueba": "FOAMING CHARACTERISTICS (SEQUENCE I)",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892",
+      "especificacion": "50/0 MAXIMUM",
+      "valor_tipico": "10/0",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 16,
+      "prueba": "OXIDATION STABILITY, SLUDGE",
+      "unidades": "wt %",
+      "metodo": "ASTM D2440",
+      "especificacion": "---",
+      "valor_tipico": "---",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 17,
+      "prueba": "OXIDATION STABILITY NEUTRALIZATION NUMBER",
+      "unidades": "mgKOH/g",
+      "metodo": "ASTM D2440",
+      "especificacion": "3 500 MINIMUM",
+      "valor_tipico": "3 500",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 18,
+      "prueba": "OXIDATION STABILITY, METHOD B",
+      "unidades": "min",
+      "metodo": "ASTM D2272",
+      "especificacion": "500 MINIMUM",
+      "valor_tipico": "855",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 19,
+      "prueba": "RELATIVE DENSITY AT 15,6 °C/15,6 °C",
+      "unidades": "DIMENSIONLESS",
+      "metodo": "ASTM D1298",
+      "especificacion": "0,870 - 0,890",
+      "valor_tipico": "0,872",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 20,
+      "prueba": "CLEANLINESS CODE",
+      "unidades": "NA",
+      "metodo": "ISO 4406",
+      "especificacion": "18/16/13",
+      "valor_tipico": "18/16/13",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 21,
+      "prueba": "DETERMINATION OF PHOSPHORUS (P) IN LUBRICATING OILS BY ICP-OES",
+      "unidades": "mg/kg",
+      "metodo": "ASTM D4951",
+      "especificacion": "REPORT",
+      "valor_tipico": "ANEX",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 22,
+      "prueba": "DETERMINATION OF P, S, CA AND ZN IN OIL BY EDXRF",
+      "unidades": "wt %",
+      "metodo": "ASTM D6481",
+      "especificacion": "REPORT",
+      "valor_tipico": "ANEX",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 23,
+      "prueba": "INTERFACIAL TENSION BY THE RING METHOD",
+      "unidades": "mN/m",
+      "metodo": "ASTM D971",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    }
+  ],
+  "alineacion_metodos_lab": {
+    "version_programa": "EDICION_MANUAL",
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "ISO VISCOSITY GRADE OF LUBRICANTS",
+          "unidades": "NA",
+          "metodo": "ASTM D2422",
+          "especificacion": "68",
+          "valor_tipico": "68"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "KINEMATIC VISCOSITY AT 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "61,2 - 74,8",
+          "valor_tipico": "65,93"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "KINEMATIC VISCOSITY AT 100 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "8,15 - 9,1",
+          "valor_tipico": "8,783"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "VISCOSITY INDEX",
+          "unidades": "DIMENSIONLESS",
+          "metodo": "ASTM D2270",
+          "especificacion": "95 MINIMUM",
+          "valor_tipico": "106,00"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "220 MINIMUM",
+          "valor_tipico": "243"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "POUR POINT",
+          "unidades": "°C",
+          "metodo": "ASTM D97",
+          "especificacion": "− 12 MINIMUM",
+          "valor_tipico": "− 24"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "VISUAL APPEAREANCE",
+          "unidades": "NA",
+          "metodo": "ORGANOLEPTIC",
+          "especificacion": "BRIGHT AND CLEAR",
+          "valor_tipico": "BRIGHT AND CLEAR"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "ASTM COLOR",
+          "unidades": "NA",
+          "metodo": "ASTM D1500",
+          "especificacion": "REPORT",
+          "valor_tipico": "0,5"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "ACID NUMBER",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D974",
+          "especificacion": "REPORT",
+          "valor_tipico": "0,05"
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "WATER CONTENT BY KARL FISCHER (COULOMETRIC)",
+          "unidades": "mg/kg",
+          "metodo": "ASTM D6304",
+          "especificacion": "150 MAXIMUM",
+          "valor_tipico": "4,0"
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "VARNISH AND SLUDGE DEPOSIT CONTROL TEST",
+          "unidades": "NA",
+          "metodo": "INTERNAL METHOD",
+          "especificacion": "---",
+          "valor_tipico": "---"
+        }
+      },
+      {
+        "numero_prueba": 12,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "RUST PREVENTION OF INHIBITED MINERAL OILS",
+          "unidades": "NA",
+          "metodo": "ASTM D665",
+          "especificacion": "PASS",
+          "valor_tipico": "PASS"
+        }
+      },
+      {
+        "numero_prueba": 13,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "COPPER CORROSION (COPPER STRIP) (TIME/TEMPERATURE)",
+          "unidades": "NA",
+          "metodo": "ASTM D130",
+          "especificacion": "1b MAXIMUM",
+          "valor_tipico": "1b"
+        }
+      },
+      {
+        "numero_prueba": 14,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "WATER-OIL SEPARABILITY AT X °C",
+          "unidades": "mL/mL/mL (min)",
+          "metodo": "ASTM D1401",
+          "especificacion": "30 MAXIMUM",
+          "valor_tipico": "40-40-0 (25)"
+        }
+      },
+      {
+        "numero_prueba": 15,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "FOAMING CHARACTERISTICS (SEQUENCE I)",
+          "unidades": "ml/ml",
+          "metodo": "ASTM D892",
+          "especificacion": "50/0 MAXIMUM",
+          "valor_tipico": "10/0"
+        }
+      },
+      {
+        "numero_prueba": 16,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "OXIDATION STABILITY, SLUDGE",
+          "unidades": "wt %",
+          "metodo": "ASTM D2440",
+          "especificacion": "---",
+          "valor_tipico": "---"
+        }
+      },
+      {
+        "numero_prueba": 17,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "OXIDATION STABILITY NEUTRALIZATION NUMBER",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D2440",
+          "especificacion": "3 500 MINIMUM",
+          "valor_tipico": "3 500"
+        }
+      },
+      {
+        "numero_prueba": 18,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "OXIDATION STABILITY, METHOD B",
+          "unidades": "min",
+          "metodo": "ASTM D2272",
+          "especificacion": "500 MINIMUM",
+          "valor_tipico": "855"
+        }
+      },
+      {
+        "numero_prueba": 19,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "RELATIVE DENSITY AT 15,6 °C/15,6 °C",
+          "unidades": "DIMENSIONLESS",
+          "metodo": "ASTM D1298",
+          "especificacion": "0,870 - 0,890",
+          "valor_tipico": "0,872"
+        }
+      },
+      {
+        "numero_prueba": 20,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "CLEANLINESS CODE",
+          "unidades": "NA",
+          "metodo": "ISO 4406",
+          "especificacion": "18/16/13",
+          "valor_tipico": "18/16/13"
+        }
+      },
+      {
+        "numero_prueba": 21,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "DETERMINATION OF PHOSPHORUS (P) IN LUBRICATING OILS BY ICP-OES",
+          "unidades": "mg/kg",
+          "metodo": "ASTM D4951",
+          "especificacion": "REPORT",
+          "valor_tipico": "ANEX"
+        }
+      },
+      {
+        "numero_prueba": 22,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "DETERMINATION OF P, S, CA AND ZN IN OIL BY EDXRF",
+          "unidades": "wt %",
+          "metodo": "ASTM D6481",
+          "especificacion": "REPORT",
+          "valor_tipico": "ANEX"
+        }
+      },
+      {
+        "numero_prueba": 23,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "INTERFACIAL TENSION BY THE RING METHOD",
+          "unidades": "mN/m",
+          "metodo": "ASTM D971",
+          "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+          "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  },
+  "versiones_idioma": {
+    "ESPANOL": [
+      {
+        "archivo_json": "TURBINESCHUTZ R&O 68_ESP_trabajo.json",
+        "codigo": "20500043",
+        "revision": "08",
+        "cliente": "CFE"
+      }
+    ]
+  }
+}

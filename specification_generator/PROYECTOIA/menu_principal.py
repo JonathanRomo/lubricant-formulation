@@ -1,10 +1,60 @@
 """Menú principal por pestañas y personalización del espacio de trabajo."""
 from pathlib import Path
+from rutas_listas import ruta_maestro
+from rutas_proyecto import resolver_ruta, ruta_portatil
+import json
+import sqlite3
+import re
+from datetime import datetime, timezone, timedelta
+from functools import lru_cache
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
 import estilo_interfaz as ui
 from estilo_interfaz import ctk
+
+
+@lru_cache(maxsize=8)
+def _fecha_registrada(estado, historial, firma):
+    """Solo relee registros si cambian su tamaño o fecha; nunca abre el Excel."""
+    try:
+        fecha = json.loads(Path(estado).read_text(encoding="utf-8")).get("ultima_modificacion")
+        if fecha:
+            return _formatear_fecha(fecha)
+    except (OSError, ValueError, AttributeError):
+        pass
+    try:
+        with Path(historial).open("rb") as archivo:
+            archivo.seek(0, 2)
+            archivo.seek(max(0, archivo.tell() - 8192))
+            fechas = re.findall(r"\[([^\]\r\n]+)\]", archivo.read().decode("utf-8", errors="replace"))
+        for fecha in reversed(fechas):
+            try:
+                return _formatear_fecha(fecha)
+            except ValueError:
+                continue
+    except OSError:
+        pass
+    return "Sin actualización registrada"
+
+
+def _formatear_fecha(fecha):
+    fecha = datetime.fromisoformat(fecha)
+    if fecha.tzinfo is not None:
+        fecha = fecha.astimezone(timezone(timedelta(hours=-6)))
+    return "Última actualización: " + fecha.strftime("%d/%m/%Y · %H:%M")
+
+
+def fecha_actualizacion(carpeta, estado, historial):
+    rutas = (Path(carpeta) / estado, Path(carpeta) / historial)
+    firma = []
+    for ruta in rutas:
+        try:
+            info = ruta.stat()
+            firma.append((info.st_mtime_ns, info.st_size))
+        except OSError:
+            firma.append(None)
+    return _fecha_registrada(str(rutas[0]), str(rutas[1]), tuple(firma))
 
 
 class BarraPestanas(ctk.CTkFrame):
@@ -109,6 +159,8 @@ class MenuPrincipal:
         if nombre in self.creadas:
             if nombre == "Histórico" and hasattr(self, "historico"):
                 self.historico._cargar_pagina()
+            if nombre == "Métodos":
+                self.refrescar_fechas_metodos()
             return
         self.creadas.add(nombre)
         creadores = {"Inicio": self.inicio, "Instrucciones": self.instrucciones,
@@ -176,7 +228,7 @@ class MenuPrincipal:
         contenedor = self.pestanas.tab("Histórico")
         try:
             self.historico = VisorHistorico(self.raiz, BASE / "especificaciones.db", self.app.rutas["historico"], contenedor=contenedor)
-        except (OSError, ValueError) as exc:
+        except (OSError, ValueError, sqlite3.Error) as exc:
             ctk.CTkLabel(contenedor, text=str(exc), wraplength=700).pack(pady=30)
             ui.Boton(contenedor, text="Volver a intentar", command=lambda: self.reintentar_historial(contenedor)).pack()
 
@@ -202,39 +254,123 @@ class MenuPrincipal:
 
     def metodos(self):
         from interfaz_aplicacion_especificaciones import EditorListaMaestra, BASE, MAESTRO
-        pagina = self.pagina("Métodos", "Lista maestra de métodos", "Consulta y edita los métodos del laboratorio.")
+        fondo = self.pestanas.cget("fg_color")
+        pagina = ctk.CTkScrollableFrame(self.pestanas.tab("Métodos"), fg_color=fondo, corner_radius=0)
+        pagina.pack(fill="both", expand=True, padx=8, pady=8)
+        pagina._parent_canvas._ui_fondo_control = fondo
+        self._pagina_metodos = pagina
+        encabezado = ctk.CTkFrame(pagina, fg_color="transparent")
+        encabezado.pack(fill="x", padx=18, pady=(12, 18))
+        self._encabezado_metodos = encabezado
+        ctk.CTkLabel(encabezado, text="Métodos y traducciones", font=(ui.PREFERENCIAS["fuente"], 24, "bold"), anchor="w").pack(fill="x", pady=(0, 4))
+        ctk.CTkLabel(encabezado, text="Administra las listas utilizadas por el editor de especificaciones.", anchor="w", justify="left", wraplength=700,
+                     text_color=("#5d718a", "#a5b5ca")).pack(fill="x")
+        rejilla = ctk.CTkFrame(pagina, fg_color="transparent")
+        rejilla.pack(fill="x", padx=18, pady=(0, 18))
+        self._rejilla_metodos = rejilla
+        self._tarjetas_metodos = []
+        self._fechas_metodos = {}
+        self._disposicion_metodos = None
+        self._margen_metodos = None
+        self._wrap_metodos = None
+        color_tarjeta = ("#f5f8fc", "#253449")
         def editar():
             try:
-                EditorListaMaestra(self.raiz, BASE / MAESTRO)
+                EditorListaMaestra(self.raiz, ruta_maestro(BASE), self.refrescar_fechas_metodos)
             except (OSError, ValueError) as exc:
                 messagebox.showerror("Lista maestra", str(exc), parent=self.raiz)
-        ui.Boton(pagina, text="Editar lista maestra", command=editar).pack(anchor="w", padx=14, pady=6)
-        ui.Boton(pagina, text="Ubicación y otras opciones", command=self.app.actualizar_metodos).pack(anchor="w", padx=14, pady=6)
+        secciones = (
+            ("metodos", "Lista de métodos", "Consulta y edita los métodos del laboratorio.",
+             (("Editar lista maestra", editar, "principal"),
+              ("Ubicación y otras opciones", self.app.actualizar_metodos, "secundario"))),
+            ("traducciones", "Lista de traducciones", "Administra las equivalencias en español e inglés.",
+             (("Editar traducciones", self.app.editar_traducciones, "principal"),
+              ("Actualizar traducciones desde Excel", self.app.actualizar_traducciones, "secundario"),
+              ("Ubicación e historial", self.app.opciones_traducciones, "secundario"))),
+        )
+        for clave, titulo, descripcion, acciones in secciones:
+            tarjeta = ctk.CTkFrame(rejilla, fg_color=color_tarjeta, corner_radius=12, border_width=1, border_color=("#d8e2ef", "#34465d"))
+            tarjeta.grid_columnconfigure(0, weight=1)
+            ctk.CTkLabel(tarjeta, text=titulo, font=(ui.PREFERENCIAS["fuente"], 20, "bold"), anchor="w").grid(row=0, column=0, sticky="ew", padx=20, pady=(20, 6))
+            detalle = ctk.CTkLabel(tarjeta, text=descripcion, anchor="w", justify="left", wraplength=360, height=44,
+                                  text_color=("#5d718a", "#a5b5ca"))
+            detalle.grid(row=1, column=0, sticky="ew", padx=20)
+            fecha = ctk.CTkLabel(tarjeta, text="", anchor="w", font=(ui.PREFERENCIAS["fuente"], 12), text_color=("#5d718a", "#a5b5ca"))
+            fecha.grid(row=2, column=0, sticky="ew", padx=20, pady=(6, 16))
+            self._fechas_metodos[clave] = fecha
+            for fila, (texto, accion, variante) in enumerate(acciones, 3):
+                ui.Boton(tarjeta, text=texto, command=accion, variante=variante, width=38, height=36, fondo=color_tarjeta).grid(row=fila, column=0, sticky="ew", padx=20, pady=5)
+            tarjeta.grid_rowconfigure(6, weight=1, minsize=18)
+            tarjeta.grid_rowconfigure(5, minsize=46)
+            self._tarjetas_metodos.append((tarjeta, detalle))
+        pagina._parent_canvas.bind("<Configure>", self._adaptar_tarjetas_metodos, add="+")
+        self._adaptar_tarjetas_metodos()
+        self.refrescar_fechas_metodos()
+
+    def _adaptar_tarjetas_metodos(self, evento=None):
+        pagina = self._pagina_metodos
+        ancho = (evento.width if evento is not None else self.pestanas.winfo_width()) / pagina._get_widget_scaling()
+        columnas = 2 if ancho >= 880 else 1
+        margen = max(18, round((ancho - 1200) / 2))
+        if margen != self._margen_metodos:
+            self._rejilla_metodos.pack_configure(padx=margen)
+            self._encabezado_metodos.pack_configure(padx=margen)
+            self._margen_metodos = margen
+        if columnas != self._disposicion_metodos:
+            rejilla = self._rejilla_metodos
+            rejilla.grid_columnconfigure(0, weight=1, uniform="listas" if columnas == 2 else "")
+            rejilla.grid_columnconfigure(1, weight=1 if columnas == 2 else 0, uniform="listas" if columnas == 2 else "", minsize=0)
+            for indice, (tarjeta, _) in enumerate(self._tarjetas_metodos):
+                tarjeta.grid(row=indice // columnas, column=indice % columnas, sticky="nsew",
+                             padx=(0, 8) if columnas == 2 and indice == 0 else ((8, 0) if columnas == 2 else 0), pady=(0, 16))
+            self._disposicion_metodos = columnas
+        wrap = max(180, round((ancho - 2 * margen) / columnas - 56))
+        if wrap != self._wrap_metodos:
+            for _, detalle in self._tarjetas_metodos:
+                detalle.configure(wraplength=wrap)
+            self._wrap_metodos = wrap
+
+    def refrescar_fechas_metodos(self):
+        if not hasattr(self, "_fechas_metodos"):
+            return
+        from interfaz_aplicacion_especificaciones import BASE
+        carpeta = self.app.rutas.get("metodos_lab", BASE / "METODOS_LAB")
+        for clave, estado, historial in (("metodos", ".estado_metodos_lab.json", "CAMBIOS_METODOS_LAB.txt"),
+                                         ("traducciones", ".estado_traductor.json", "CAMBIOS_TRADUCTOR.txt")):
+            etiqueta = self._fechas_metodos[clave]
+            texto = fecha_actualizacion(carpeta, estado, historial)
+            if etiqueta.cget("text") != texto:
+                etiqueta.configure(text=texto)
 
     def configuracion(self):
         from interfaz_aplicacion_especificaciones import _guardar_configuracion
         pagina = self.pagina("Configuración", "Carpetas del proyecto", "Elige dónde leer documentos y guardar los resultados.")
         campos = {}
         for clave, etiqueta in (("especificaciones_viejas", "Documentos Word recibidos"), ("json_anteriores", "JSON extraídos"),
-            ("json_alineadas", "JSON alineados"), ("formatos", "Plantillas Word y Excel"), ("historico", "Documentos generados")):
+            ("json_alineadas", "JSON alineados"), ("formatos", "Plantillas Word y Excel"), ("historico", "Documentos generados"), ("metodos_lab", "Lista de métodos y traducciones")):
             ctk.CTkLabel(pagina, text=etiqueta, anchor="w", font=(ui.PREFERENCIAS["fuente"], 13, "bold")).pack(fill="x", padx=14, pady=(9, 2))
             fila = ctk.CTkFrame(pagina, fg_color="transparent")
             fila.pack(fill="x", padx=14)
-            variable = tk.StringVar(value=str(self.app.rutas[clave]))
+            variable = tk.StringVar(value=ruta_portatil(self.app.rutas[clave]))
             campos[clave] = variable
             ctk.CTkEntry(fila, textvariable=variable).pack(side="left", fill="x", expand=True, padx=(0, 8))
             ui.Boton(fila, text="Examinar", width=10, command=lambda v=variable: self.app._elegir_carpeta(v, self.raiz)).pack(side="right")
         def guardar():
-            nuevas = {clave: Path(variable.get()).expanduser().resolve() for clave, variable in campos.items()}
+            nuevas = {clave: resolver_ruta(variable.get()) for clave, variable in campos.items()}
             try:
                 _guardar_configuracion(nuevas)
                 self.app.rutas = nuevas
+                self.refrescar_fechas_metodos()
+                self.app._cargar_traducciones_desde_metodos(avisar=False)
                 if hasattr(self, "historico"):
                     self.historico.carpeta_historico = nuevas["historico"]
                 messagebox.showinfo("Configuración", "Carpetas guardadas.", parent=self.raiz)
-            except OSError as exc:
+            except (OSError, ValueError) as exc:
                 messagebox.showerror("Configuración", str(exc), parent=self.raiz)
         ui.Boton(pagina, text="Guardar carpetas", command=guardar).pack(anchor="w", padx=14, pady=18)
+        ui.Boton(pagina, text="Reconstruir base desde JSON", command=self.app.reconstruir_base_datos).pack(anchor="w", padx=14, pady=(0, 10))
+        ctk.CTkLabel(pagina, text="Recupera el registro conservando los JSON. La base anterior se respalda y los eventos exclusivos de SQLite no se reconstruyen.",
+                     anchor="w", justify="left", wraplength=760).pack(anchor="w", padx=14, pady=(0, 14))
 
     def personalizar(self):
         pagina = ctk.CTkScrollableFrame(self.pestanas.tab("Personalizar"), fg_color="transparent", corner_radius=0)

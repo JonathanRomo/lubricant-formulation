@@ -732,5 +732,15 @@
       }
     ],
     "mensajes_astm_no_encontradas": []
+  },
+  "versiones_idioma": {
+    "INGLES": [
+      {
+        "archivo_json": "20300171 00_11_10_26.JSON",
+        "codigo": "20300171",
+        "revision": "00",
+        "cliente": ""
+      }
+    ]
   }
 }

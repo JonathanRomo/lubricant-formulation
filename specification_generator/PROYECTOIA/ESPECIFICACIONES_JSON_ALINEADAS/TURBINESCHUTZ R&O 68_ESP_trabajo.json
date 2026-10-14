@@ -1,0 +1,565 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "TURBINESCHUTZ R&O 68"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-09-04",
+    "edicion_bilingue": 1
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "-",
+    "codigo_unico_producto": "20500043",
+    "fecha": "04/09/26",
+    "revision": "08",
+    "nombre_cliente": "CFE",
+    "revision_cliente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "prueba": "GRADO DE VISCOSIDAD ISO DE LUBRICANTE",
+      "unidades": "NA",
+      "metodo": "ASTM D2422",
+      "especificacion": "68",
+      "valor_tipico": "68",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 2,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "61,2 - 74,8",
+      "valor_tipico": "65,93",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 3,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "8,15 - 9,1",
+      "valor_tipico": "8,783",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 4,
+      "prueba": "ÍNDICE DE VISCOSIDAD",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D2270",
+      "especificacion": "95 MÍNIMO",
+      "valor_tipico": "106,00",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 5,
+      "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+      "unidades": "°C",
+      "metodo": "ASTM D92",
+      "especificacion": "220 MÍNIMO",
+      "valor_tipico": "243",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 6,
+      "prueba": "PUNTO DE FLUIDEZ",
+      "unidades": "°C",
+      "metodo": "ASTM D97",
+      "especificacion": "− 12 MÍNIMO",
+      "valor_tipico": "− 24",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 7,
+      "prueba": "APARIENCIA VISUAL",
+      "unidades": "NA",
+      "metodo": "ORGANOLÉPTICO",
+      "especificacion": "CLARO Y BRILLANTE",
+      "valor_tipico": "CLARO Y BRILLANTE",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 8,
+      "prueba": "COLOR ASTM",
+      "unidades": "NA",
+      "metodo": "ASTM D1500",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "0,5",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 9,
+      "prueba": "NÚMERO ÁCIDO",
+      "unidades": "mgKOH/g",
+      "metodo": "ASTM D974",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "0,05",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 10,
+      "prueba": "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+      "unidades": "mg/kg",
+      "metodo": "ASTM D6304",
+      "especificacion": "150 MÁXIMO",
+      "valor_tipico": "4,0",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 11,
+      "prueba": "PRUEBA DE LODOS Y BARNICES",
+      "unidades": "NA",
+      "metodo": "MÉTODO INTERNO",
+      "especificacion": "---",
+      "valor_tipico": "---",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 12,
+      "prueba": "PREVENCIÓN DE HERRUMBRE EN ACEITES MINERALES INHIBIDOS",
+      "unidades": "NA",
+      "metodo": "ASTM D665",
+      "especificacion": "PASA",
+      "valor_tipico": "PASA",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 13,
+      "prueba": "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (TIEMPO/TEMPERATURA)",
+      "unidades": "NA",
+      "metodo": "ASTM D130",
+      "especificacion": "1b MÁXIMO",
+      "valor_tipico": "1b",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 14,
+      "prueba": "SEPARABILIDAD AGUA-ACEITE A X °C",
+      "unidades": "mL/mL/mL(min)",
+      "metodo": "ASTM D1401",
+      "especificacion": "30 MÁXIMO",
+      "valor_tipico": "40-40-0 (25)",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 15,
+      "prueba": "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892",
+      "especificacion": "50/0 MÁXIMO",
+      "valor_tipico": "10/0",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 16,
+      "prueba": "ESTABILIDAD A LA OXIDACIÓN , LODOS",
+      "unidades": "% en masa",
+      "metodo": "ASTM D2440",
+      "especificacion": "---",
+      "valor_tipico": "---",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 17,
+      "prueba": "ESTABILIDAD A LA OXIDACIÓN -NÚMERO DE NEUTRALIZACIÓN",
+      "unidades": "mgKOH/g",
+      "metodo": "ASTM D2440",
+      "especificacion": "3 500 MÍNIMO",
+      "valor_tipico": "3 500",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 18,
+      "prueba": "ESTABILIDAD A LA OXIDACIÓN, MÉTODO B",
+      "unidades": "min",
+      "metodo": "ASTM D2272",
+      "especificacion": "500 MÍNIMO",
+      "valor_tipico": "855",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 19,
+      "prueba": "DENSIDAD RELATIVA A 15,6 °C/15,6 °C",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D1298",
+      "especificacion": "0,870 - 0,890",
+      "valor_tipico": "0,872",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 20,
+      "prueba": "CÓDIGO DE LIMPIEZA",
+      "unidades": "NA",
+      "metodo": "ISO 4406",
+      "especificacion": "18/16/13",
+      "valor_tipico": "18/16/13",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 21,
+      "prueba": "DETERMINACIÓN DE FÓSFORO (P) EN ACEITES LUBRICANTES POR ICP-OES",
+      "unidades": "mg/kg",
+      "metodo": "ASTM D4951",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "ANEXO",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 22,
+      "prueba": "DETERMINACIÓN DE P, S, CA Y ZN EN ACEITE POR EDXRF",
+      "unidades": "% EN MASA",
+      "metodo": "ASTM D6481",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "ANEXO",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 23,
+      "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+      "unidades": "mN/m",
+      "metodo": "ASTM D971",
+      "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    }
+  ],
+  "notas": [
+    "La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+  ],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 23,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "TURBINESCHUTZ R&O 68",
+    "part_id_fuente": "20500043",
+    "part_id_final": "20500043",
+    "coincidencias_nombre": 3,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80500243",
+        "descripcion": "TURBINESCHUTZ R&O 68"
+      },
+      {
+        "part_id": "80500035",
+        "descripcion": "TURBINESCHUTZ R&O 68"
+      },
+      {
+        "part_id": "20500043",
+        "descripcion": "TURBINESCHUTZ R&O 68"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20500043"
+    ],
+    "nombre_catalogo": "TURBINESCHUTZ R&O 68",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3147,
+      "part_id": "20500043",
+      "descripcion": "TURBINESCHUTZ R&O 68",
+      "part_id_clave": "20500043",
+      "descripcion_clave": "TURBINESCHUTZ R O 68"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ESPECIFICACION TURBINESCHUTZ R&O 68 (CFE).docx",
+  "hash_sha256_origen": "a1546a652ce83684a1e2186197d46d459f57ddc401f5ab8d07e3d0e517ffb2f6",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "01",
+  "fecha_creacion_json": "2026-10-11T01:26:36",
+  "archivo_json": "20500043 01_11_10_26.JSON",
+  "extractor_version": "0.8.4",
+  "alineacion_metodos_lab": {
+    "version_programa": "EDICION_MANUAL",
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "GRADO DE VISCOSIDAD ISO DE LUBRICANTE",
+          "unidades": "NA",
+          "metodo": "ASTM D2422",
+          "especificacion": "68",
+          "valor_tipico": "68"
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "61,2 - 74,8",
+          "valor_tipico": "65,93"
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "8,15 - 9,1",
+          "valor_tipico": "8,783"
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "ÍNDICE DE VISCOSIDAD",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D2270",
+          "especificacion": "95 MÍNIMO",
+          "valor_tipico": "106,00"
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "220 MÍNIMO",
+          "valor_tipico": "243"
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "PUNTO DE FLUIDEZ",
+          "unidades": "°C",
+          "metodo": "ASTM D97",
+          "especificacion": "− 12 MÍNIMO",
+          "valor_tipico": "− 24"
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "NA",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "CLARO Y BRILLANTE",
+          "valor_tipico": "CLARO Y BRILLANTE"
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "COLOR ASTM",
+          "unidades": "NA",
+          "metodo": "ASTM D1500",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "0,5"
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "NÚMERO ÁCIDO",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D974",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "0,05"
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+          "unidades": "mg/kg",
+          "metodo": "ASTM D6304",
+          "especificacion": "150 MÁXIMO",
+          "valor_tipico": "4,0"
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "PRUEBA DE LODOS Y BARNICES",
+          "unidades": "NA",
+          "metodo": "MÉTODO INTERNO",
+          "especificacion": "---",
+          "valor_tipico": "---"
+        }
+      },
+      {
+        "numero_prueba": 12,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "PREVENCIÓN DE HERRUMBRE EN ACEITES MINERALES INHIBIDOS",
+          "unidades": "NA",
+          "metodo": "ASTM D665",
+          "especificacion": "PASA",
+          "valor_tipico": "PASA"
+        }
+      },
+      {
+        "numero_prueba": 13,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (TIEMPO/TEMPERATURA)",
+          "unidades": "NA",
+          "metodo": "ASTM D130",
+          "especificacion": "1b MÁXIMO",
+          "valor_tipico": "1b"
+        }
+      },
+      {
+        "numero_prueba": 14,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "SEPARABILIDAD AGUA-ACEITE A X °C",
+          "unidades": "mL/mL/mL(min)",
+          "metodo": "ASTM D1401",
+          "especificacion": "30 MÁXIMO",
+          "valor_tipico": "40-40-0 (25)"
+        }
+      },
+      {
+        "numero_prueba": 15,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+          "unidades": "ml/ml",
+          "metodo": "ASTM D892",
+          "especificacion": "50/0 MÁXIMO",
+          "valor_tipico": "10/0"
+        }
+      },
+      {
+        "numero_prueba": 16,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "ESTABILIDAD A LA OXIDACIÓN , LODOS",
+          "unidades": "% en masa",
+          "metodo": "ASTM D2440",
+          "especificacion": "---",
+          "valor_tipico": "---"
+        }
+      },
+      {
+        "numero_prueba": 17,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "ESTABILIDAD A LA OXIDACIÓN -NÚMERO DE NEUTRALIZACIÓN",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D2440",
+          "especificacion": "3 500 MÍNIMO",
+          "valor_tipico": "3 500"
+        }
+      },
+      {
+        "numero_prueba": 18,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "ESTABILIDAD A LA OXIDACIÓN, MÉTODO B",
+          "unidades": "min",
+          "metodo": "ASTM D2272",
+          "especificacion": "500 MÍNIMO",
+          "valor_tipico": "855"
+        }
+      },
+      {
+        "numero_prueba": 19,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "DENSIDAD RELATIVA A 15,6 °C/15,6 °C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D1298",
+          "especificacion": "0,870 - 0,890",
+          "valor_tipico": "0,872"
+        }
+      },
+      {
+        "numero_prueba": 20,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "CÓDIGO DE LIMPIEZA",
+          "unidades": "NA",
+          "metodo": "ISO 4406",
+          "especificacion": "18/16/13",
+          "valor_tipico": "18/16/13"
+        }
+      },
+      {
+        "numero_prueba": 21,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "DETERMINACIÓN DE FÓSFORO (P) EN ACEITES LUBRICANTES POR ICP-OES",
+          "unidades": "mg/kg",
+          "metodo": "ASTM D4951",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "ANEXO"
+        }
+      },
+      {
+        "numero_prueba": 22,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "DETERMINACIÓN DE P, S, CA Y ZN EN ACEITE POR EDXRF",
+          "unidades": "% EN MASA",
+          "metodo": "ASTM D6481",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "ANEXO"
+        }
+      },
+      {
+        "numero_prueba": 23,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+          "unidades": "mN/m",
+          "metodo": "ASTM D971",
+          "especificacion": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio.",
+          "valor_tipico": "Notas: La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  },
+  "Desarrollador": "",
+  "FECHA DE REANALISIS": "",
+  "versiones_idioma": {
+    "INGLES": [
+      {
+        "archivo_json": "TURBINESCHUTZ R&O 68_ENG_trabajo.json",
+        "codigo": "20500043",
+        "revision": "08",
+        "cliente": "CFE"
+      }
+    ]
+  }
+}

@@ -110,7 +110,8 @@ MESES = {
 
 
 def base_app() -> Path:
-    return Path(sys.executable if getattr(sys, "frozen", False) else __file__).resolve().parent
+    from rutas_proyecto import base_programa
+    return base_programa()
 
 
 def limpiar(valor) -> str:
@@ -144,7 +145,12 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def conectar(path: Path) -> sqlite3.Connection:
+def conectar(path: Path, *, recuperar: bool = True) -> sqlite3.Connection:
+    from rutas_proyecto import resolver_ruta, ruta_portatil, reubicar_ruta_heredada
+    path = resolver_ruta(path)
+    if recuperar:
+        from reconstruir_base_datos import asegurar_base
+        asegurar_base(path.parent, destino=path)
     con = sqlite3.connect(path, timeout=30)
     try:
         con.row_factory = sqlite3.Row
@@ -217,6 +223,12 @@ def conectar(path: Path) -> sqlite3.Connection:
         for nombre, tipo in requeridas_versiones.items():
             if nombre not in existentes:
                 con.execute(f"ALTER TABLE versiones ADD COLUMN {nombre} {tipo}")
+        if not con.execute("SELECT 1 FROM gestor_estado WHERE clave='rutas_catalogo_portatiles'").fetchone():
+            for fila in con.execute("SELECT id, ruta_archivo FROM catalogo_fuentes").fetchall():
+                ruta = reubicar_ruta_heredada(fila["ruta_archivo"], path.parent)
+                con.execute("UPDATE catalogo_fuentes SET ruta_archivo=? WHERE id=?",
+                            (ruta_portatil(ruta, path.parent), fila["id"]))
+            con.execute("INSERT OR IGNORE INTO gestor_estado VALUES ('rutas_catalogo_portatiles', '1')")
         con.commit()
         return con
     except BaseException:
@@ -361,11 +373,15 @@ def ampliar_productos_afectados(con, salida, catalogo, productos):
 
 def registrar_catalogo(con: sqlite3.Connection, registros: list[dict], digest: str,
                        fecha: str, archivo: Path) -> None:
+    from rutas_proyecto import ruta_portatil
+    base = Path(con.execute("PRAGMA database_list").fetchone()[2]).parent
     stat = archivo.stat()
     con.execute("""INSERT OR IGNORE INTO catalogo_fuentes
       (nombre_archivo,ruta_archivo,hash_catalogo,tamano_bytes,fecha_modificacion_ns,fecha_lectura,total_registros)
       VALUES(?,?,?,?,?,?,?)""",
-      (archivo.name, str(archivo.resolve()), digest, stat.st_size, stat.st_mtime_ns, fecha, len(registros)))
+      (archivo.name, ruta_portatil(archivo, base), digest, stat.st_size, stat.st_mtime_ns, fecha, len(registros)))
+    con.execute("UPDATE catalogo_fuentes SET ruta_archivo=? WHERE hash_catalogo=?",
+                (ruta_portatil(archivo, base), digest))
     existentes = con.execute("SELECT COUNT(*) FROM catalogo_codigos WHERE hash_catalogo=?", (digest,)).fetchone()[0]
     if existentes == len(registros):
         con.commit()
@@ -1335,10 +1351,16 @@ def procesar(
     al_progreso: Callable[[int, int, str], None] | None = None,
     json_generados: list[Path] | None = None,
 ) -> dict:
+    from rutas_proyecto import resolver_ruta, ruta_portatil, rutas_configuradas
+    base = resolver_ruta(base)
     _restablecer_error_inicio_word()
-    entrada, entrada_eng, salida = base / ENTRADA, base / ENTRADA_ENG, base / SALIDA
-    entrada.mkdir(exist_ok=True)
-    entrada_eng.mkdir(exist_ok=True)
+    rutas = rutas_configuradas(base)
+    entrada, salida = rutas["especificaciones_viejas"], rutas["json_anteriores"]
+    entrada_eng = entrada.parent / ENTRADA_ENG
+    entrada.mkdir(parents=True, exist_ok=True)
+    entrada_eng.mkdir(parents=True, exist_ok=True)
+    if archivos_seleccionados is not None:
+        archivos_seleccionados = [resolver_ruta(ruta, base) for ruta in archivos_seleccionados]
     if archivos_seleccionados is None:
         archivos = sorted(
             ((p, raiz == entrada_eng) for raiz in (entrada, entrada_eng)
@@ -1359,7 +1381,7 @@ def procesar(
         )
     total_archivos = len(archivos)
 
-    salida.mkdir(exist_ok=True)
+    salida.mkdir(parents=True, exist_ok=True)
     con = conectar(base / DB)
     ahora_inicio = datetime.now().isoformat(timespec="seconds")
     catalogo, hash_catalogo = obtener_catalogo(con, base / CATALOGO)
@@ -1381,7 +1403,7 @@ def procesar(
             al_progreso(indice, total_archivos, ruta)
 
     for indice_archivo, (origen, ya_esta_en_ingles) in enumerate(archivos, 1):
-        rel = origen.relative_to(base).as_posix()
+        rel = ruta_portatil(origen, base)
         ahora = datetime.now(); fecha_iso = ahora.isoformat(timespec="seconds")
         digest = ""
         stat = None
@@ -1421,7 +1443,7 @@ def procesar(
                     destino_revisar.parent.mkdir(exist_ok=True)
                     shutil.move(str(origen), str(destino_revisar))
                     origen = destino_revisar
-                    rel = origen.relative_to(base).as_posix()
+                    rel = ruta_portatil(origen, base)
                     detalle = ", ".join(menciones)
                     con.execute(
                         """UPDATE archivos SET ruta_relativa=?
@@ -1458,7 +1480,7 @@ def procesar(
                 destino_eng = destino_movimiento_sin_colision(entrada_eng / origen.name)
                 shutil.move(str(origen), str(destino_eng))
                 origen = destino_eng
-                rel = origen.relative_to(base).as_posix()
+                rel = ruta_portatil(origen, base)
                 con.commit()
                 resumen["movidos_eng"] += 1
                 print(f"MOVIDO ENG: {rel}")
@@ -1567,7 +1589,7 @@ def procesar(
                     destino_revisar = destino_movimiento_sin_colision(carpeta_revisar / origen.name)
                     shutil.move(str(origen), str(destino_revisar))
                     origen = destino_revisar
-                    rel = origen.relative_to(base).as_posix()
+                    rel = ruta_portatil(origen, base)
                     resumen["movidos_revisar"] += 1
                     print(f"MOVIDO A REVISAR: {rel}", flush=True)
             except OSError as error_movimiento:

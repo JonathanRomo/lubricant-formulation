@@ -639,5 +639,15 @@
       }
     ],
     "mensajes_astm_no_encontradas": []
+  },
+  "versiones_idioma": {
+    "ESPANOL": [
+      {
+        "archivo_json": "20500170 01_11_10_26_01.JSON",
+        "codigo": "20500170",
+        "revision": "01",
+        "cliente": ""
+      }
+    ]
   }
 }

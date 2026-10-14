@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, hashlib, json, re, shutil, sys, unicodedata
+import argparse, hashlib, json, re, shutil, sys, unicodedata, tempfile
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from rutas_proyecto import BASE, resolver_ruta
 
 VERSION="3.1.0"; CARPETA="METODOS_LAB"; SALIDA="METODOS_LAB_UNIFICADO.xlsx"
 BITACORA="CAMBIOS_METODOS_LAB.txt"; ESTADO=".estado_metodos_lab.json"
@@ -136,11 +137,34 @@ def crear(path,filas):
     rs=wb.create_sheet("RESUMEN");rs.append(["CONCEPTO","VALOR"]);rs.append(["Version",VERSION]);rs.append(["Fecha",datetime.now().isoformat(timespec="seconds")]);rs.append(["Total filas",len(filas)])
     for n,c in Counter(r["_ORIGEN"] for r in filas).items():rs.append([n,c])
     temp=path.with_suffix(".tmp.xlsx");wb.save(temp);shutil.move(temp,path)
+def registrar_fecha_modificacion(carpeta, estado=None):
+    ruta=Path(carpeta)/ESTADO
+    if estado is None:
+        estado=json.loads(ruta.read_text(encoding="utf-8")) if ruta.exists() else {}
+    estado["ultima_modificacion"]=datetime.now(timezone(timedelta(hours=-6))).isoformat(timespec="seconds")
+    temporal=None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",dir=carpeta,prefix=".estado_metodos_",suffix=".tmp",delete=False) as archivo:
+            temporal=Path(archivo.name);json.dump(estado,archivo,ensure_ascii=False,indent=2)
+        temporal.replace(ruta)
+    finally:
+        if temporal:temporal.unlink(missing_ok=True)
+
+def filas_maestro_actual(path):
+    if not path.exists():return None
+    wb=cargar_openpyxl().load_workbook(path,read_only=True,data_only=True)
+    try:
+        if "METODOS" not in wb.sheetnames:return None
+        return [tuple(txt(v) for v in fila) for fila in wb["METODOS"].iter_rows(min_row=2,max_col=len(COLUMNAS),values_only=True)]
+    finally:wb.close()
+
 def ejecutar(base):
-    carpeta=base/CARPETA
+    from rutas_listas import carpeta_listas
+    carpeta=carpeta_listas(base)
     if not carpeta.exists():raise FileNotFoundError(f"No existe la carpeta {carpeta}")
     ep=carpeta/ESTADO;ant=json.loads(ep.read_text(encoding="utf-8")) if ep.exists() else {"archivos":{}}
-    filas=[];actual={"version":VERSION,"archivos":{}};mensajes=[]
+    filas=[];actual={"version":VERSION,"archivos":{},"ultima_modificacion":ant.get("ultima_modificacion")};mensajes=[]
+    anterior=filas_maestro_actual(carpeta/SALIDA)
     metodos_ingles,metodos_por_nombre=metodos_ingles_existentes(carpeta/SALIDA)
     for p,t in archivos(carpeta):
         datos=leer(p,t);filas+=datos;firma={"hash":digest(p),"filas":len(datos)};actual["archivos"][p.name]=firma;viejo=ant.get("archivos",{}).get(p.name)
@@ -150,12 +174,15 @@ def ejecutar(base):
     crear(carpeta/SALIDA,filas)
     if mensajes:
         with (carpeta/BITACORA).open("a",encoding="utf-8") as f:f.write(f"\n[{datetime.now().isoformat(timespec='seconds')}]\n"+"\n".join(mensajes)+"\n")
-    ep.write_text(json.dumps(actual,ensure_ascii=False,indent=2),encoding="utf-8")
+    if anterior!=[tuple(txt(f[c]) for c in COLUMNAS) for f in filas]:
+        registrar_fecha_modificacion(carpeta,actual)
+    else:
+        ep.write_text(json.dumps(actual,ensure_ascii=False,indent=2),encoding="utf-8")
     print(f"GENERADO: {carpeta/SALIDA}\nFILAS EN METODOS: {len(filas)}\nCAMBIOS REGISTRADOS: {len(mensajes)}")
 def main():
     if sys.version_info[:2]!=PYTHON_REQUERIDO:
         raise SystemExit(f"Se requiere Python 3.11. Detectado {sys.version_info.major}.{sys.version_info.minor}.")
-    p=argparse.ArgumentParser();p.add_argument("--base",type=Path,default=Path(__file__).resolve().parent);a=p.parse_args()
-    try:cargar_openpyxl();ejecutar(a.base.resolve());return 0
+    p=argparse.ArgumentParser();p.add_argument("--base",type=resolver_ruta,default=BASE);a=p.parse_args()
+    try:cargar_openpyxl();ejecutar(a.base);return 0
     except Exception as e:print(f"ERROR: {e}",file=sys.stderr);return 1
 if __name__=="__main__":raise SystemExit(main())

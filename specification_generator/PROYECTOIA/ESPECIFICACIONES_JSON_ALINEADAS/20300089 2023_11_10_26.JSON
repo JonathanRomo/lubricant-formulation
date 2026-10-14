@@ -801,5 +801,15 @@
       }
     ],
     "mensajes_astm_no_encontradas": []
+  },
+  "versiones_idioma": {
+    "ESPANOL": [
+      {
+        "archivo_json": "20300089 2023_11_10_26_05.JSON",
+        "codigo": "20300089",
+        "revision": "2023",
+        "cliente": ""
+      }
+    ]
   }
 }

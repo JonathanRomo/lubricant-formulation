@@ -2,6 +2,10 @@
 """Selector con busqueda y vista previa de especificaciones en espanol."""
 from __future__ import annotations
 import estilo_interfaz as ui
+from rutas_listas import ruta_maestro
+from rutas_proyecto import BASE, resolver_ruta, rutas_configuradas
+from especificaciones_wip import es_wip
+from cambios_alineacion import cambios_documento, ResaltadorCambios
 
 
 import json
@@ -42,7 +46,6 @@ from generador_especs_hii import (
 )
 
 
-BASE = Path(__file__).resolve().parent
 JSON_DIR_ANTERIORES = BASE / "ESPECIFICACIONES_JSON"
 JSON_DIR_NUEVAS = BASE / "ESPECIFICACIONES_JSON_ALINEADAS"
 
@@ -92,6 +95,9 @@ class Especificacion:
     busqueda: str
     idioma: str = "ESPANOL"
     version_alineador: str = ""
+    versiones_idioma: tuple[Path, ...] = ()
+    edicion_bilingue: bool = False
+    en_progreso: bool = False
 
     @property
     def etiqueta(self) -> str:
@@ -260,9 +266,11 @@ class PanelEspecificaciones:
     canvas_previa: tk.Canvas | None = None
     tabla_pruebas: ttk.Treeview | None = None
     boton_contraparte: ttk.Button | None = None
+    boton_idioma: ttk.Button | None = None
     boton_editar: ttk.Button | None = None
     boton_alinear: ttk.Button | None = None
     boton_realinear: ttk.Button | None = None
+    boton_comparar: ttk.Button | None = None
     zoom_previa: float = 1.44
     especificacion_actual: Especificacion | None = None
 
@@ -297,9 +305,15 @@ def _aplicar_zoom_vista_previa(contenedor: tk.Misc, factor: float) -> None:
         _aplicar_zoom_vista_previa(widget, factor)
 
 
-@lru_cache(maxsize=1)
 def _referencias_maestras_astm() -> frozenset[str]:
-    registros = cargar_maestro(BASE / MAESTRO)
+    ruta = ruta_maestro(BASE)
+    info = ruta.stat()
+    return _referencias_maestras_desde_archivo(ruta, info.st_mtime_ns, info.st_size)
+
+
+@lru_cache(maxsize=4)
+def _referencias_maestras_desde_archivo(ruta, fecha, tamano) -> frozenset[str]:
+    registros = cargar_maestro(ruta)
     return frozenset(
         referencia
         for registro in registros
@@ -413,6 +427,17 @@ def cargar_catalogo(carpeta: Path) -> Catalogo:
                     busqueda=clave_texto(" ".join(campos)),
                     idioma=idioma,
                     version_alineador=version_alineador,
+                    en_progreso=es_wip(ruta),
+                    edicion_bilingue=(datos.get("documento") or {}).get("edicion_bilingue") == 1
+                    if isinstance(datos.get("documento"), dict) else False,
+                    versiones_idioma=tuple(
+                        (ruta.parent / referencia["archivo_json"]).resolve()
+                        for referencias in (datos.get("versiones_idioma") or {}).values()
+                        if isinstance(referencias, list)
+                        for referencia in referencias
+                        if isinstance(referencia, dict)
+                        and isinstance(referencia.get("archivo_json"), str)
+                    ) if isinstance(datos.get("versiones_idioma"), dict) else (),
                 )
             )
         except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
@@ -422,6 +447,32 @@ def cargar_catalogo(carpeta: Path) -> Catalogo:
         especificaciones=tuple(especificaciones),
         errores=tuple(errores),
     )
+
+
+def parejas_idioma(especificaciones: tuple[Especificacion, ...]) -> dict[Path, Especificacion]:
+    """Agrupa parejas vigentes o del editor bilingüe, explícitas y de igual revisión."""
+    por_ruta = {e.ruta.resolve(): e for e in especificaciones}
+    candidatas: dict[Path, set[Path]] = {}
+    for origen in especificaciones:
+        if origen.version_alineador != VERSION_ALINEADOR and not origen.edicion_bilingue and not origen.en_progreso:
+            continue
+        for ruta in origen.versiones_idioma:
+            destino = por_ruta.get(ruta)
+            if destino is None or (destino.version_alineador != VERSION_ALINEADOR and not destino.edicion_bilingue and not destino.en_progreso):
+                continue
+            if {origen.idioma, destino.idioma} != {"ESPANOL", "INGLES"}:
+                continue
+            if tuple(map(clave_texto, (origen.codigo, origen.revision, origen.cliente))) != tuple(
+                map(clave_texto, (destino.codigo, destino.revision, destino.cliente))
+            ):
+                continue
+            candidatas.setdefault(origen.ruta, set()).add(destino.ruta)
+            candidatas.setdefault(destino.ruta, set()).add(origen.ruta)
+    return {
+        ruta: por_ruta[next(iter(destinos)).resolve()]
+        for ruta, destinos in candidatas.items()
+        if len(destinos) == 1 and len(candidatas[next(iter(destinos))]) == 1
+    }
 
 
 def buscar_especificaciones(
@@ -472,6 +523,8 @@ def buscar_contraparte(
     ]
 
     def compatibles(candidata: Especificacion) -> bool:
+        if especificacion.idioma != candidata.idioma:
+            return False
         if especificacion.codigo and candidata.codigo:
             if clave_texto(especificacion.codigo) != clave_texto(candidata.codigo):
                 return False
@@ -676,17 +729,20 @@ class SelectorEspecificaciones:
     def __init__(
         self,
         raiz: tk.Tk | tk.Toplevel,
-        carpeta_json: Path = JSON_DIR_NUEVAS,
-        carpeta_json_anterior: Path = JSON_DIR_ANTERIORES,
+        carpeta_json: Path | None = None,
+        carpeta_json_anterior: Path | None = None,
         al_actualizar: Callable[[Path], None] | None = None,
         al_editar: Callable[[Path], None] | None = None,
+        al_comparar: Callable[[list[Path]], None] | None = None,
     ):
         self.raiz = raiz
         self.al_actualizar = al_actualizar
         self.al_editar = al_editar
+        self.al_comparar = al_comparar
+        rutas = rutas_configuradas(BASE)
         self.carpetas_json = {
-            "anteriores": carpeta_json_anterior,
-            "nuevas": carpeta_json,
+            "anteriores": resolver_ruta(carpeta_json_anterior if carpeta_json_anterior is not None else rutas["json_anteriores"], BASE),
+            "nuevas": resolver_ruta(carpeta_json if carpeta_json is not None else rutas["json_alineadas"], BASE),
         }
         self.paneles: dict[str, PanelEspecificaciones] = {}
         self.zoom_aplicacion = ui.PREFERENCIAS["escala"]
@@ -720,7 +776,7 @@ class SelectorEspecificaciones:
         estilo.configure("Treeview", rowheight=25, font=("Segoe UI", 9))
         estilo.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
 
-        encabezado = tk.Frame(self.raiz, background="#0752b9", padx=24, pady=10)
+        encabezado = tk.Frame(self.raiz, background="#0752b9", padx=24, pady=5)
         encabezado.pack(fill="x")
         controles_zoom = ui.ctk.CTkFrame(encabezado, fg_color="#0752b9")
         controles_zoom.pack(side="right", padx=(12, 0))
@@ -736,15 +792,8 @@ class SelectorEspecificaciones:
             style="Titulo.TLabel",
             background="#0752b9",
         ).pack(anchor="w")
-        ttk.Label(
-            encabezado,
-            text="Compara las especificaciones de origen con las nuevas versiones alineadas.",
-            style="Subtitulo.TLabel",
-            background="#0752b9",
-        ).pack(anchor="w", pady=(3, 0))
-
         self.pestanas = ttk.Notebook(self.raiz)
-        self.pestanas.pack(fill="both", expand=True, padx=18, pady=(0, 10))
+        self.pestanas.pack(fill="both", expand=True, padx=18, pady=(0, 5))
         for clave, titulo in (
             ("anteriores", "Anteriores · JSON extraídos"),
             ("nuevas", "Nuevas · JSON alineados"),
@@ -799,6 +848,7 @@ class SelectorEspecificaciones:
         estado.pack(anchor="w", pady=(8, 0))
         boton_alinear = None
         boton_realinear = None
+        boton_comparar = None
         if clave == "anteriores":
             acciones_alinear = ttk.Frame(panel_busqueda)
             acciones_alinear.pack(fill="x", pady=(12, 3))
@@ -825,6 +875,8 @@ class SelectorEspecificaciones:
                 state="disabled",
             )
             boton_realinear.pack(fill="x", pady=(12, 0))
+            boton_comparar = ttk.Button(panel_busqueda, text="Comparar especificaciones", height=28, command=lambda c=clave: self._comparar_seleccionadas(c), state="disabled")
+            boton_comparar.pack(fill="x", pady=(6, 0))
 
         barra_vista = ttk.Frame(panel_previa)
         barra_vista.pack(fill="x", pady=(0, 9))
@@ -873,6 +925,13 @@ class SelectorEspecificaciones:
         ).pack(side="right", padx=(0, 6))
         boton_editar.pack(side="left")
         boton_contraparte.pack(side="left", padx=(8, 0))
+        boton_idioma = None
+        if clave == "nuevas":
+            boton_idioma = ttk.Button(
+                acciones_vista, text="ENG", width=6, height=28,
+                variante="secundario", command=self._cambiar_idioma,
+                state="disabled",
+            )
         marco_previa = ttk.Frame(panel_previa)
         marco_previa.pack(fill="both", expand=True)
         ttk.Label(
@@ -893,9 +952,11 @@ class SelectorEspecificaciones:
             estado_catalogo=estado,
             marco_previa=marco_previa,
             boton_contraparte=boton_contraparte,
+            boton_idioma=boton_idioma,
             boton_editar=boton_editar,
             boton_alinear=boton_alinear,
             boton_realinear=boton_realinear,
+            boton_comparar=boton_comparar,
         )
         self._actualizar_estado_accion(clave)
         entrada.bind("<KeyRelease>", lambda _evento, c=clave: self._actualizar_sugerencias(c))
@@ -924,21 +985,40 @@ class SelectorEspecificaciones:
                 texto_estado += f"\n{len(panel.catalogo.errores)} archivo(s) con error"
             panel.estado_catalogo.configure(text=texto_estado)
         for clave in self.paneles:
+            self._actualizar_boton_idioma(clave)
             self._actualizar_boton_contraparte(clave)
             self._actualizar_estado_accion(clave)
 
     def _actualizar_sugerencias(self, clave: str) -> None:
         panel = self.paneles[clave]
-        panel.sugerencias = buscar_especificaciones(
+        parejas = parejas_idioma(panel.catalogo.especificaciones) if clave == "nuevas" else {}
+        resultados = buscar_especificaciones(
             panel.catalogo.especificaciones,
             panel.entrada_busqueda.get(),
         )
+        panel.sugerencias = []
+        vistas = set()
+        for especificacion in resultados:
+            pareja = parejas.get(especificacion.ruta)
+            if pareja is not None and especificacion.idioma == "INGLES":
+                especificacion = pareja
+            if especificacion.ruta not in vistas:
+                panel.sugerencias.append(especificacion)
+                vistas.add(especificacion.ruta)
+        if clave == "nuevas":
+            panel.sugerencias.sort(key=lambda e: not (e.en_progreso or (e.ruta in parejas and parejas[e.ruta].en_progreso)))
         panel.lista.delete(0, tk.END)
         for especificacion in panel.sugerencias:
             marca = "☑" if especificacion.ruta in panel.documentos_marcados else "☐"
             idioma = " · English" if especificacion.idioma == "INGLES" else ""
-            panel.lista.insert(tk.END, f"{marca}  {especificacion.etiqueta}{idioma}")
-            if especificacion.version_alineador == VERSION_ALINEADOR:
+            if especificacion.ruta in parejas:
+                idioma = " · ESP / ENG"
+            en_progreso = clave == "nuevas" and (especificacion.en_progreso or (especificacion.ruta in parejas and parejas[especificacion.ruta].en_progreso))
+            estado = " · WIP / En progreso" if en_progreso else ""
+            panel.lista.insert(tk.END, f"{marca}  {especificacion.etiqueta}{idioma}{estado}")
+            if en_progreso:
+                panel.lista.itemconfigure(tk.END, foreground="#d4a000")
+            elif especificacion.version_alineador == VERSION_ALINEADOR:
                 panel.lista.itemconfigure(tk.END, foreground=ui.paleta()["alineado"])
         mensaje = (
             "No se encontraron especificaciones."
@@ -983,6 +1063,9 @@ class SelectorEspecificaciones:
             panel.boton_realinear.configure(
                 state="normal" if pendientes else "disabled"
             )
+        if clave == "nuevas" and panel.boton_comparar is not None:
+            cantidad = len(panel.documentos_marcados)
+            panel.boton_comparar.configure(state="normal" if 2 <= cantidad <= 10 else "disabled")
 
     def _seleccionar_primera_sugerencia(self, clave: str) -> str:
         panel = self.paneles[clave]
@@ -1011,6 +1094,7 @@ class SelectorEspecificaciones:
     def _mostrar_previa(self, clave: str, especificacion: Especificacion) -> None:
         panel = self.paneles[clave]
         panel.especificacion_actual = especificacion
+        self._actualizar_boton_idioma(clave)
         if panel.boton_editar is not None:
             panel.boton_editar.configure(state="normal")
         self._actualizar_boton_contraparte(clave)
@@ -1021,6 +1105,12 @@ class SelectorEspecificaciones:
                 else preparar_vista_previa_alineada
             )
             previa = preparar(especificacion.ruta)
+            cambios_previa = []
+            if clave == "nuevas":
+                datos = leer_datos_json(especificacion.ruta)
+                contraparte = buscar_contraparte(especificacion, self.paneles["anteriores"].catalogo.especificaciones)
+                original = leer_datos_json(contraparte.ruta) if contraparte is not None else None
+                cambios_previa = cambios_documento(datos, previa.pruebas, original)
         except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
             self._mostrar_error(clave, str(exc))
             return
@@ -1060,6 +1150,7 @@ class SelectorEspecificaciones:
         )
 
         escala_fuente = panel.zoom_previa
+        escala_detalle = escala_fuente * 0.7
         ttk.Label(
             area_tabla,
             text=previa.nombre_producto,
@@ -1087,12 +1178,12 @@ class SelectorEspecificaciones:
         estilo_nombre_encabezado = f"{estilo_nombre}.Heading"
         estilo_tabla.configure(
             estilo_nombre,
-            font=("Segoe UI", max(7, round(9 * escala_fuente))),
-            rowheight=max(18, round(25 * escala_fuente)),
+            font=("Segoe UI", max(7, round(9 * escala_detalle))),
+            rowheight=max(18, round(25 * escala_detalle)),
         )
         estilo_tabla.configure(
             estilo_nombre_encabezado,
-            font=("Segoe UI", max(7, round(9 * escala_fuente)), "bold"),
+            font=("Segoe UI", max(7, round(9 * escala_detalle)), "bold"),
         )
         tabla = ttk.Treeview(
             marco_tabla,
@@ -1122,16 +1213,21 @@ class SelectorEspecificaciones:
         tabla.grid(row=0, column=0, sticky="nsew")
         barra_tabla.grid(row=0, column=1, sticky="ns")
         barra_tabla_x.grid(row=1, column=0, sticky="ew")
-        for prueba in previa.pruebas:
-            tabla.insert(
+        cambios_celdas = {}
+        for indice, prueba in enumerate(previa.pruebas):
+            iid = tabla.insert(
                 "",
                 tk.END,
                 values=tuple(_texto(prueba.get(campo)) for campo in columnas),
             )
+            if indice < len(cambios_previa):
+                cambios_celdas[iid] = cambios_previa[indice]
         OrdenadorColumnasTreeview(
             tabla,
             {campo: encabezados[campo] for campo in ("prueba", "metodo")},
         )
+        if cambios_celdas:
+            tabla._resaltador_alineacion = ResaltadorCambios(tabla, cambios_celdas, barra_tabla.set, barra_tabla_x.set)
 
         if previa.idioma == "INGLES":
             ttk.Label(
@@ -1226,10 +1322,29 @@ class SelectorEspecificaciones:
                 wraplength=800,
                 foreground="#526174",
             ).pack(anchor="w")
-        _aplicar_zoom_vista_previa(pagina, escala_fuente)
+        _aplicar_zoom_vista_previa(pagina, escala_detalle)
         panel.marco_previa._ui_preservar_fuentes = True
         self.raiz._estilizar_hijos(panel.marco_previa, ajustar_fuentes=False)
         self._vincular_scroll_preview(panel, pagina, tabla, barra_tabla)
+
+    def _actualizar_boton_idioma(self, clave: str) -> None:
+        panel = self.paneles[clave]
+        if panel.boton_idioma is None:
+            return
+        actual = panel.especificacion_actual
+        pareja = parejas_idioma(panel.catalogo.especificaciones).get(actual.ruta) if actual else None
+        if pareja is None:
+            panel.boton_idioma.pack_forget()
+        else:
+            panel.boton_idioma.configure(text="ENG" if actual.idioma == "ESPANOL" else "ESP", state="normal")
+            panel.boton_idioma.pack(side="left", padx=(8, 0))
+
+    def _cambiar_idioma(self) -> None:
+        panel = self.paneles["nuevas"]
+        actual = panel.especificacion_actual
+        pareja = parejas_idioma(panel.catalogo.especificaciones).get(actual.ruta) if actual else None
+        if pareja is not None:
+            self._mostrar_previa("nuevas", pareja)
 
     def _actualizar_boton_contraparte(self, clave: str) -> None:
         panel = self.paneles[clave]
@@ -1264,6 +1379,12 @@ class SelectorEspecificaciones:
             self._actualizar_boton_contraparte(clave)
             return
 
+        entrada_lista = contraparte
+        if otra_clave == "nuevas" and contraparte.idioma == "INGLES":
+            entrada_lista = parejas_idioma(otro_panel.catalogo.especificaciones).get(
+                contraparte.ruta, contraparte
+            )
+
         otro_panel.entrada_busqueda.delete(0, tk.END)
         otro_panel.entrada_busqueda.insert(
             0,
@@ -1274,7 +1395,7 @@ class SelectorEspecificaciones:
             (
                 indice
                 for indice, sugerencia in enumerate(otro_panel.sugerencias)
-                if sugerencia.ruta == contraparte.ruta
+                if sugerencia.ruta == entrada_lista.ruta
             ),
             None,
         )
@@ -1285,7 +1406,7 @@ class SelectorEspecificaciones:
                 (
                     indice
                     for indice, sugerencia in enumerate(otro_panel.sugerencias)
-                    if sugerencia.ruta == contraparte.ruta
+                    if sugerencia.ruta == entrada_lista.ruta
                 ),
                 None,
             )
@@ -1317,6 +1438,7 @@ class SelectorEspecificaciones:
     def _cerrar_vista_previa(self, clave: str) -> None:
         panel = self.paneles[clave]
         panel.especificacion_actual = None
+        self._actualizar_boton_idioma(clave)
         self._actualizar_boton_contraparte(clave)
         panel.canvas_previa = None
         panel.tabla_pruebas = None
@@ -1439,6 +1561,13 @@ class SelectorEspecificaciones:
                 archivos_origen,
                 destinos_seleccionados=archivos_destino,
             )
+
+    def _comparar_seleccionadas(self, clave: str) -> None:
+        if clave != "nuevas" or self.al_comparar is None:
+            return
+        rutas = [e.ruta for e in self.paneles[clave].catalogo.especificaciones if e.ruta in self.paneles[clave].documentos_marcados]
+        if 2 <= len(rutas) <= 10:
+            self.al_comparar(rutas)
 
     def _alinear_especificaciones(
         self,

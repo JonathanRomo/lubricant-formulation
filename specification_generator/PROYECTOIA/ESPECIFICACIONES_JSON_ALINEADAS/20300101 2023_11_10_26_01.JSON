@@ -697,5 +697,15 @@
       }
     ],
     "mensajes_astm_no_encontradas": []
+  },
+  "versiones_idioma": {
+    "INGLES": [
+      {
+        "archivo_json": "20300101 2023_11_10_26.JSON",
+        "codigo": "20300101",
+        "revision": "2023",
+        "cliente": ""
+      }
+    ]
   }
 }

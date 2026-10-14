@@ -32,7 +32,7 @@ from interfaz_seleccion_especificaciones import (
 )
 import registro_hii
 
-BASE = Path(__file__).resolve().parent
+from rutas_proyecto import BASE, resolver_ruta, rutas_configuradas
 NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
       "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
       "xdr": "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing"}
@@ -259,14 +259,15 @@ def construir_excel(plantilla: Path, datos: DatosHII) -> bytes:
 
 
 class GeneradorHII:
-    def __init__(self, padre, carpeta_formatos=BASE / "FORMATOS", carpeta_json=BASE / "ESPECIFICACIONES_JSON_ALINEADAS", app=None, base_datos=BASE / "especificaciones.db"):
+    def __init__(self, padre, carpeta_formatos=None, carpeta_json=None, app=None, base_datos=BASE / "especificaciones.db"):
         self.app = app
-        self.base_datos = Path(base_datos)
+        rutas = rutas_configuradas(BASE)
+        self.base_datos = resolver_ruta(base_datos, BASE)
         self.idioma_objetivo = None
         self.origen_actual = None
         self.editores_traduccion = {}
-        self.formatos = Path(carpeta_formatos)
-        self.carpeta_json = Path(carpeta_json)
+        self.formatos = resolver_ruta(carpeta_formatos if carpeta_formatos is not None else rutas["formatos"], BASE)
+        self.carpeta_json = resolver_ruta(carpeta_json if carpeta_json is not None else rutas["json_alineadas"], BASE)
         self.excel = None
         self.datos = None
         self.marcadas = set()
@@ -742,8 +743,8 @@ class GeneradorHII:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--formatos", type=Path, default=BASE / "FORMATOS")
-    parser.add_argument("--json", type=Path, default=BASE / "ESPECIFICACIONES_JSON_ALINEADAS")
+    parser.add_argument("--formatos", type=lambda valor: resolver_ruta(valor, BASE))
+    parser.add_argument("--json", type=lambda valor: resolver_ruta(valor, BASE))
     args = parser.parse_args()
     raiz = ui.Raiz()
     raiz.withdraw()

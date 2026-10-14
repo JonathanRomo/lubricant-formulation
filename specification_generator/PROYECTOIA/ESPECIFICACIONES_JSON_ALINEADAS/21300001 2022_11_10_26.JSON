@@ -483,5 +483,15 @@
       }
     ],
     "mensajes_astm_no_encontradas": []
+  },
+  "versiones_idioma": {
+    "INGLES": [
+      {
+        "archivo_json": "21300001 2022_11_10_26_01.JSON",
+        "codigo": "21300001",
+        "revision": "2022",
+        "cliente": ""
+      }
+    ]
   }
 }

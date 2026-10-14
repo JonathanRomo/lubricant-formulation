@@ -213,7 +213,7 @@
   "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
   "formato_origen": "doc",
   "conversion_temporal": true,
-  "revision_json": "01",
+  "revision_json": "02",
   "fecha_creacion_json": "2026-10-13T10:43:19",
   "archivo_json": "20100003 2021_13_10_26.JSON",
   "extractor_version": "0.8.4"

@@ -13,8 +13,8 @@ from types import SimpleNamespace
 import weakref
 
 import customtkinter as ctk
+from rutas_proyecto import BASE
 
-BASE = Path(__file__).resolve().parent
 ARCHIVO = BASE / "preferencias_interfaz.json"
 PREDETERMINADAS = {"apariencia": "Claro", "acento": "Azul", "escala": 1.0,
                   "densidad": "Cómoda", "fuente": "Segoe UI", "maximizar": False,
@@ -235,7 +235,10 @@ class VentanaAdaptable:
             elif isinstance(widget, tk.PanedWindow) and not isinstance(widget, ttk_original.Widget):
                 widget.configure(background=colores["fondo"], sashrelief="flat", borderwidth=0)
             elif isinstance(widget, tk.Canvas):
-                widget.configure(background=colores["fondo"], highlightbackground=colores["borde"])
+                fondo_canvas = getattr(widget, "_ui_fondo_control", colores["fondo"])
+                if isinstance(fondo_canvas, (tuple, list)):
+                    fondo_canvas = fondo_canvas[1 if ctk.get_appearance_mode() == "Dark" else 0]
+                widget.configure(background=fondo_canvas, highlightbackground=colores["borde"])
             elif isinstance(widget, (tk.Frame, tk.Label)) and not isinstance(widget, ttk_original.Widget):
                 fondo = str(widget.cget("background"))
                 if fondo in {"#edf2f7", "#f0f0f0", "#d9d9d9", "#eef3f9", "#141c2a", "SystemButtonFace"}:

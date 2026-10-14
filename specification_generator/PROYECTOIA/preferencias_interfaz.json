@@ -1,9 +1,9 @@
 {
-  "apariencia": "Claro",
+  "apariencia": "Oscuro",
   "acento": "Azul",
   "escala": 1.0,
   "densidad": "Compacta",
-  "fuente": "Arial",
+  "fuente": "Segoe UI",
   "maximizar": false,
   "control_compacto": false,
   "adaptacion_auto": true
