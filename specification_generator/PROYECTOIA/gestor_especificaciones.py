@@ -19,6 +19,8 @@ import tempfile
 import time
 import unicodedata
 from collections import defaultdict
+from contextlib import contextmanager
+from contextvars import ContextVar
 from datetime import date, datetime
 from pathlib import Path
 from typing import Callable
@@ -39,6 +41,7 @@ EXTENSIONES = {".doc", ".docx", ".docm"}
 TIEMPO_LIMITE_CONVERSION_WORD = 30
 _PROCESOS_WORD_PREEXISTENTES: set[int] | None = None
 _ERROR_INICIO_WORD: str | None = None
+_LECTURA_WORD = ContextVar("lectura_word_gestor", default=None)
 
 COLUMNAS = {
     "PRUEBA": "prueba", "UNIDAD": "unidades", "UNIDADES": "unidades",
@@ -189,6 +192,11 @@ def conectar(path: Path) -> sqlite3.Connection:
       fecha_lectura TEXT NOT NULL, total_registros INTEGER NOT NULL);
     CREATE INDEX IF NOT EXISTS idx_archivos_hash_catalogo_estado
       ON archivos(hash_actual,hash_catalogo,estado);
+    CREATE TABLE IF NOT EXISTS gestor_estado (
+      clave TEXT PRIMARY KEY, valor TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS gestor_historial_cache (
+      version_id INTEGER PRIMARY KEY REFERENCES versiones(id),
+      tamano_bytes INTEGER NOT NULL, fecha_modificacion_ns INTEGER NOT NULL);
         """)
         # Migracion no destructiva desde versiones previas.
         requeridas_archivos = {
@@ -216,7 +224,7 @@ def conectar(path: Path) -> sqlite3.Connection:
         raise
 
 
-def leer_catalogo(path: Path) -> tuple[list[dict], str]:
+def leer_catalogo(path: Path, *, digest: str | None = None) -> tuple[list[dict], str]:
     """Lee CODIGOS_200.xlsx estrictamente en modo solo lectura.
 
     Esta funcion nunca llama save(), nunca cambia celdas y nunca crea una copia
@@ -225,7 +233,7 @@ def leer_catalogo(path: Path) -> tuple[list[dict], str]:
     """
     if not path.exists():
         raise FileNotFoundError(f"No se encontro el catalogo obligatorio: {path.name}")
-    digest = sha256(path)
+    digest = digest or sha256(path)
     wb = load_workbook(path, read_only=True, data_only=True, keep_links=False)
     registros = []
     for ws in wb.worksheets:
@@ -255,6 +263,102 @@ def leer_catalogo(path: Path) -> tuple[list[dict], str]:
     return registros, digest
 
 
+def obtener_catalogo(con: sqlite3.Connection, path: Path) -> tuple[list[dict], str]:
+    """Reutiliza registros completos del mismo Excel, comprobando su contenido."""
+    digest = sha256(path)
+    fuente = con.execute("SELECT total_registros FROM catalogo_fuentes WHERE hash_catalogo=?", (digest,)).fetchone()
+    if fuente:
+        filas = con.execute("""SELECT hoja, fila_excel, part_id, descripcion,
+            part_id_clave, descripcion_clave FROM catalogo_codigos
+            WHERE hash_catalogo=? ORDER BY id""", (digest,)).fetchall()
+        if filas and len(filas) == fuente["total_registros"]:
+            return [dict(fila) for fila in filas], digest
+    return leer_catalogo(path, digest=digest)
+
+
+class CatalogoPreparado(list):
+    """Índices de búsqueda con el mismo orden y deduplicación del validador."""
+    def __init__(self, catalogo):
+        super().__init__(catalogo)
+        self.registros = list({(r["part_id_clave"], r["descripcion_clave"]): r
+            for r in self if r["part_id_clave"] and r["descripcion_clave"]}.values())
+        self.por_nombre = defaultdict(list)
+        self.por_id = defaultdict(list)
+        for registro in self.registros:
+            self.por_nombre[registro["descripcion_clave"]].append(registro)
+            self.por_id[registro["part_id_clave"]].append(registro)
+
+
+@contextmanager
+def lectura_word_compartida():
+    """Caché por documento; también se limpia en errores y cambios de archivo."""
+    token = _LECTURA_WORD.set({})
+    try:
+        yield
+    finally:
+        _LECTURA_WORD.reset(token)
+
+
+def productos_historial_modificados(con, salida):
+    afectados = set()
+    for fila in con.execute("""SELECT v.id, v.producto_clave, v.archivo_json,
+        c.tamano_bytes, c.fecha_modificacion_ns FROM versiones v
+        LEFT JOIN gestor_historial_cache c ON c.version_id=v.id"""):
+        try:
+            estado = (salida / fila["archivo_json"]).stat()
+            cambiado = (estado.st_size, estado.st_mtime_ns) != (fila["tamano_bytes"], fila["fecha_modificacion_ns"])
+        except OSError:
+            cambiado = True
+        if cambiado:
+            afectados.add(fila["producto_clave"])
+    return afectados
+
+
+def registrar_historial_revisado(con, salida, productos):
+    for fila in con.execute("SELECT id, producto_clave, archivo_json FROM versiones").fetchall():
+        if productos is not None and fila["producto_clave"] not in productos:
+            continue
+        try:
+            estado = (salida / fila["archivo_json"]).stat()
+        except OSError:
+            continue
+        con.execute("""INSERT INTO gestor_historial_cache VALUES (?, ?, ?)
+            ON CONFLICT(version_id) DO UPDATE SET tamano_bytes=excluded.tamano_bytes,
+            fecha_modificacion_ns=excluded.fecha_modificacion_ns""",
+            (fila["id"], estado.st_size, estado.st_mtime_ns))
+
+
+def ampliar_productos_afectados(con, salida, catalogo, productos):
+    """Incluye historiales de destino cuando la normalización cambia el producto."""
+    filas = con.execute("SELECT producto_clave, archivo_json FROM versiones").fetchall()
+    procesados = set()
+    while productos - procesados:
+        grupo = productos - procesados
+        procesados.update(grupo)
+        for fila in filas:
+            if fila["producto_clave"] not in grupo:
+                continue
+            try:
+                datos = json.loads((salida / fila["archivo_json"]).read_text(encoding="utf-8"))
+                producto, control = datos.get("producto", {}), datos.get("control_documental", {})
+                nombre = producto.get("nombre_fuente") or producto.get("nombre", "")
+                part_id = control.get("codigo_unico_producto_fuente", control.get("codigo_unico_producto", ""))
+                contenido = dict(datos)
+                contenido["producto"] = dict(producto, nombre=nombre)
+                control_busqueda = dict(control)
+                if "codigo_unico_producto_fuente" in control_busqueda:
+                    control_busqueda["codigo_unico_producto"] = control_busqueda.pop("codigo_unico_producto_fuente")
+                contenido["control_documental"] = control_busqueda
+                validacion = validar_catalogo(nombre, part_id, catalogo,
+                    contenido=json.dumps(contenido, ensure_ascii=False))
+                if validacion.get("nombre_catalogo"):
+                    productos.add(clave(validacion["nombre_catalogo"]))
+            except (OSError, ValueError, AttributeError, TypeError):
+                # El reindexador reporta el error y conserva el historial completo.
+                continue
+    return productos
+
+
 def registrar_catalogo(con: sqlite3.Connection, registros: list[dict], digest: str,
                        fecha: str, archivo: Path) -> None:
     stat = archivo.stat()
@@ -262,9 +366,14 @@ def registrar_catalogo(con: sqlite3.Connection, registros: list[dict], digest: s
       (nombre_archivo,ruta_archivo,hash_catalogo,tamano_bytes,fecha_modificacion_ns,fecha_lectura,total_registros)
       VALUES(?,?,?,?,?,?,?)""",
       (archivo.name, str(archivo.resolve()), digest, stat.st_size, stat.st_mtime_ns, fecha, len(registros)))
-    if con.execute("SELECT 1 FROM catalogo_codigos WHERE hash_catalogo=? LIMIT 1", (digest,)).fetchone():
+    existentes = con.execute("SELECT COUNT(*) FROM catalogo_codigos WHERE hash_catalogo=?", (digest,)).fetchone()[0]
+    if existentes == len(registros):
         con.commit()
         return
+    if existentes:
+        # Reparar únicamente la caché derivada de esta huella si quedó incompleta.
+        con.execute("DELETE FROM catalogo_codigos WHERE hash_catalogo=?", (digest,))
+    con.execute("UPDATE catalogo_fuentes SET total_registros=? WHERE hash_catalogo=?", (len(registros), digest))
     con.executemany("""INSERT OR IGNORE INTO catalogo_codigos
       (hash_catalogo,hoja,fila_excel,part_id,descripcion,part_id_clave,descripcion_clave,fecha_carga)
       VALUES(?,?,?,?,?,?,?,?)""",
@@ -304,8 +413,6 @@ def _convertir_word_com_worker(path: str, destino: str, resultados) -> None:
         word = win32com.client.DispatchEx("Word.Application")
         word.Visible = False
         word.DisplayAlerts = 0
-        _, pid_word = win32process.GetWindowThreadProcessId(word.Hwnd)
-        resultados.put(("word_pid", pid_word))
         resultados.put(("stage", "abrir documento .doc"))
         documento = word.Documents.Open(
             path,
@@ -316,6 +423,16 @@ def _convertir_word_com_worker(path: str, destino: str, resultados) -> None:
             OpenAndRepair=False,
             NoEncodingDialog=True,
         )
+        # Hwnd pertenece a Window, no a Word.Application. El PID es auxiliar:
+        # si no hay ventana disponible, el supervisor conserva su limpieza
+        # por procesos de automatización y su límite de tiempo.
+        try:
+            hwnd = documento.Windows.Item(1).Hwnd
+            _, pid_word = win32process.GetWindowThreadProcessId(hwnd)
+            if pid_word:
+                resultados.put(("word_pid", pid_word))
+        except Exception:
+            pass
         resultados.put(("stage", "guardar documento temporal .docx"))
         documento.SaveAs2(destino, FileFormat=16)
         resultados.put(("stage", "cerrar documento"))
@@ -328,14 +445,22 @@ def _convertir_word_com_worker(path: str, destino: str, resultados) -> None:
     except Exception as exc:
         resultados.put(("error", f"{type(exc).__name__}: {exc}"))
     finally:
-        if documento is not None:
-            resultados.put(("stage", "cerrar documento tras error"))
-            documento.Close(False)
-        if word is not None:
-            resultados.put(("stage", "cerrar Microsoft Word tras error"))
-            word.Quit()
-        resultados.put(("stage", "finalizar automatización COM"))
-        pythoncom.CoUninitialize()
+        try:
+            if documento is not None:
+                resultados.put(("stage", "cerrar documento tras error"))
+                try:
+                    documento.Close(False)
+                except Exception:
+                    pass
+            if word is not None:
+                resultados.put(("stage", "cerrar Microsoft Word tras error"))
+                try:
+                    word.Quit()
+                except Exception:
+                    pass
+        finally:
+            resultados.put(("stage", "finalizar automatización COM"))
+            pythoncom.CoUninitialize()
 
 
 def _terminar_proceso_word(pid: int) -> None:
@@ -539,6 +664,10 @@ def validar_documento_word(path: Path, tmp: Path) -> None:
 
 
 def texto_ooxml(path: Path) -> str:
+    cache = _LECTURA_WORD.get()
+    clave_cache = str(path.resolve())
+    if cache is not None and clave_cache in cache:
+        return cache[clave_cache]
     partes = []
     with ZipFile(path) as z:
         for nombre in z.namelist():
@@ -546,7 +675,10 @@ def texto_ooxml(path: Path) -> str:
                 contenido = z.read(nombre).decode("utf-8", "ignore")
                 partes.extend(re.findall(r"<w:t[^>]*>(.*?)</w:t>", contenido, re.S))
                 partes.extend(re.findall(r"<a:t[^>]*>(.*?)</a:t>", contenido, re.S))
-    return limpiar(html.unescape(" ".join(re.sub(r"<[^>]+>", " ", x) for x in partes)))
+    resultado = limpiar(html.unescape(" ".join(re.sub(r"<[^>]+>", " ", x) for x in partes)))
+    if cache is not None:
+        cache[clave_cache] = resultado
+    return resultado
 
 
 def metadatos_formato(path: Path) -> dict:
@@ -1087,14 +1219,15 @@ def validar_catalogo(
 ) -> dict:
     nk, ik = clave(nombre), id_clave(part_id)
     # Collapse repeated spreadsheet rows, but keep distinct IDs as real candidates.
-    registros = {
-        (r["part_id_clave"], r["descripcion_clave"]): r
-        for r in catalogo
-        if r["part_id_clave"] and r["descripcion_clave"]
-    }
-    registros = list(registros.values())
-    por_nombre = [r for r in registros if r["descripcion_clave"] == nk]
-    por_id = [r for r in registros if ik and r["part_id_clave"] == ik]
+    if isinstance(catalogo, CatalogoPreparado):
+        registros = catalogo.registros
+        por_nombre = catalogo.por_nombre.get(nk, [])
+        por_id = catalogo.por_id.get(ik, []) if ik else []
+    else:
+        registros = list({(r["part_id_clave"], r["descripcion_clave"]): r
+            for r in catalogo if r["part_id_clave"] and r["descripcion_clave"]}.values())
+        por_nombre = [r for r in registros if r["descripcion_clave"] == nk]
+        por_id = [r for r in registros if ik and r["part_id_clave"] == ik]
     texto_contenido = f" {clave(contenido)} " if contenido else ""
     coincidencias_contenido = [
         r for r in registros
@@ -1229,14 +1362,18 @@ def procesar(
     salida.mkdir(exist_ok=True)
     con = conectar(base / DB)
     ahora_inicio = datetime.now().isoformat(timespec="seconds")
-    catalogo, hash_catalogo = leer_catalogo(base / CATALOGO)
+    catalogo, hash_catalogo = obtener_catalogo(con, base / CATALOGO)
     ids_catalogo = {r["part_id_clave"] for r in catalogo if r["part_id_clave"]}
     registrar_catalogo(con, catalogo, hash_catalogo, ahora_inicio, base / CATALOGO)
+    catalogo = CatalogoPreparado(catalogo)
+    huella_historial = f"{APP_VERSION}:{hash_catalogo}"
+    estado_historial = con.execute("SELECT valor FROM gestor_estado WHERE clave='historial_revisado'").fetchone()
+    revisar_todo = estado_historial is None or estado_historial["valor"] != huella_historial
     resumen = {"nuevos": 0, "actualizados": 0, "ignorados": 0, "bloqueados": 0,
                "movidos_eng": 0,
                "movidos_revisar": 0, "conflictos": 0, "completados": 0,
                "yves_yoi_a_revisar": 0, "errores": 0, "revisiones_reordenadas": 0}
-    productos_afectados: set[str] = set()
+    productos_afectados = productos_historial_modificados(con, salida) if not revisar_todo else set()
     archivos_json_reindexados: list[int] = []
 
     def informar_progreso(indice: int, ruta: str) -> None:
@@ -1273,7 +1410,7 @@ def procesar(
                 print(f"IGNORADO (sin cambios): {rel}", flush=True)
                 informar_progreso(indice_archivo, rel)
                 continue
-            with tempfile.TemporaryDirectory(prefix="espec_") as td:
+            with tempfile.TemporaryDirectory(prefix="espec_") as td, lectura_word_compartida():
                 lectura, convertido = preparar(origen, Path(td))
                 menciones = menciones_yves_yoi(lectura)
                 if menciones:
@@ -1456,12 +1593,22 @@ def procesar(
             con.commit(); resumen["errores"] += 1; print(f"ERROR: {rel}: {exc}")
             informar_progreso(indice_archivo, rel)
     try:
+        if not revisar_todo:
+            productos_afectados = ampliar_productos_afectados(con, salida, catalogo, productos_afectados)
         resumen_revisiones = reindexar_revisiones(
             con,
             salida,
             catalogo,
-            productos_afectados if archivos_seleccionados is not None else None,
+            None if revisar_todo else productos_afectados,
         )
+        if resumen_revisiones["revisiones_historial_omitidas"] == 0:
+            import registro_hii
+            with registro_hii.conectar(base / DB) as relaciones:
+                registro_hii.sincronizar_idiomas(relaciones, salida)
+            registrar_historial_revisado(con, salida, None if revisar_todo else productos_afectados)
+            con.execute("""INSERT INTO gestor_estado VALUES ('historial_revisado', ?)
+                ON CONFLICT(clave) DO UPDATE SET valor=excluded.valor""", (huella_historial,))
+            con.commit()
         resumen.update(resumen_revisiones)
         resumen["errores"] += resumen_revisiones["revisiones_historial_omitidas"]
         if json_generados is not None and archivos_json_reindexados:

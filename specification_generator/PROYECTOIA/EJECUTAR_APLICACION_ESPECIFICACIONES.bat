@@ -26,7 +26,7 @@ if errorlevel 1 (
     exit /b 1
 )
 
-"%PYTHON%" -c "import docx, openpyxl, pandas, rapidfuzz" >nul 2>&1
+"%PYTHON%" -c "import docx, openpyxl, pandas, rapidfuzz, customtkinter" >nul 2>&1
 if errorlevel 1 (
     echo Instalando dependencias de la aplicacion...
     "%PYTHON%" -m pip install -r "%~dp0requirements.txt"

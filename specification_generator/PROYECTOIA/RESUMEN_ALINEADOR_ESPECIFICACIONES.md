@@ -65,3 +65,30 @@ relativa de cada archivo. Usa la hoja `METODOS` del archivo maestro
 
 Los resultados dudosos, sin coincidencia o con errores deben revisarse; el
 puntaje de similitud no sustituye la validación técnica de la especificación.
+
+## Rendimiento y ejecuciones incrementales
+
+El maestro se prepara una sola vez por lote: se reutilizan textos normalizados,
+referencias ASTM y partes de métodos. Las coincidencias repetidas se guardan en
+memoria por nombre, método e idioma; la caché se descarta al terminar el lote.
+Se conservan solo los dos mejores candidatos sin ordenar toda la lista y se
+respeta el orden original cuando hay empates.
+
+En la carpeta de salida se guarda `.cache_alineacion`, un índice auxiliar.
+Un archivo se omite únicamente si coinciden las huellas SHA-256 del origen,
+del maestro y del resultado, además de la versión del alineador y las rutas.
+Si cambia cualquiera, falta el resultado o no hay un índice válido, se procesa.
+La primera ejecución crea el índice; las posteriores pueden aprovecharlo.
+Los omitidos aparecen como `SIN CAMBIOS` y se cuentan por separado en el reporte.
+El índice no tiene extensión JSON para evitar que los selectores lo confundan
+con una especificación.
+
+Para forzar una realineación completa:
+
+```powershell
+.venv\Scripts\python.exe alinear_especificaciones_json.py --forzar
+```
+
+La API `ejecutar(..., forzar=True)` permite el mismo comportamiento.
+Las reglas de coincidencia y limpieza se mantienen; no se ejecutan archivos
+en paralelo. La comprobación incremental también admite origen y destino iguales.

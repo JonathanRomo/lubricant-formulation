@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Genera HII bilingües preservando macros, objetos y formato del XLSM original."""
 from __future__ import annotations
+import estilo_interfaz as ui
+
 
 import argparse
 import copy
@@ -14,7 +16,9 @@ import tkinter as tk
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox
+from estilo_interfaz import ttk
+
 from zipfile import ZipFile
 
 from lxml import etree as ET
@@ -268,7 +272,7 @@ class GeneradorHII:
         self.marcadas = set()
         self.compacta = False
         self.actual = None
-        self.ventana = tk.Toplevel(padre)
+        self.ventana = ui.Ventana(padre)
         self.ventana.title("Generar HII — especificación alineada y Excel")
         self.ventana.geometry("1400x850")
         self.ventana.minsize(1000, 650)
@@ -355,8 +359,7 @@ class GeneradorHII:
         try:
             self.catalogo = cargar_catalogo(self.carpeta_json)
             with registro_hii.conectar(self.base_datos) as con:
-                for especificacion in self.catalogo.especificaciones:
-                    registro_hii.indexar(con, especificacion.ruta)
+                registro_hii.sincronizar_idiomas(con, self.carpeta_json)
         except (OSError, ValueError, sqlite3.Error) as exc:
             messagebox.showerror("No se pudo cargar la lista", str(exc), parent=self.ventana)
             return
@@ -481,7 +484,7 @@ class GeneradorHII:
             opciones = registro_hii.candidatas(con, origen, self.idioma_objetivo,
                                               [e.ruta for e in self.catalogo.especificaciones])
         if len(opciones) > 1:
-            dialogo = tk.Toplevel(self.ventana)
+            dialogo = ui.Ventana(self.ventana)
             dialogo.title("Elegir especificación traducida")
             dialogo.transient(self.ventana)
             ttk.Label(dialogo, text="Hay varias versiones con el mismo código, revisión y cliente. Elige la correspondiente.",
@@ -508,7 +511,7 @@ class GeneradorHII:
             if preparar_datos(destino).idioma != self.idioma_objetivo:
                 raise ValueError("La especificación vinculada no está en el idioma solicitado.")
             with registro_hii.conectar(self.base_datos) as con:
-                registro_hii.vincular(con, origen, destino)
+                registro_hii.vincular(con, origen, destino, permitir_revision_distinta=True)
             return destino
         self.vaciar_previa()
         self.origen_actual = origen
@@ -537,7 +540,7 @@ class GeneradorHII:
             if datos.idioma != idioma:
                 raise ValueError("La traducción no tiene el idioma solicitado.")
             with registro_hii.conectar(self.base_datos) as con:
-                registro_hii.vincular(con, origen, ruta)
+                registro_hii.vincular(con, origen, ruta, permitir_revision_distinta=True)
             self.recargar_catalogo()
             self.cargar_previa(origen)
         editor = GeneradorEspecificacion(app, archivo_inicial=origen, destino_inicial=destino,
@@ -742,7 +745,7 @@ def main():
     parser.add_argument("--formatos", type=Path, default=BASE / "FORMATOS")
     parser.add_argument("--json", type=Path, default=BASE / "ESPECIFICACIONES_JSON_ALINEADAS")
     args = parser.parse_args()
-    raiz = tk.Tk()
+    raiz = ui.Raiz()
     raiz.withdraw()
     generador = GeneradorHII(raiz, args.formatos, args.json)
     generador.ventana.protocol("WM_DELETE_WINDOW", raiz.destroy)

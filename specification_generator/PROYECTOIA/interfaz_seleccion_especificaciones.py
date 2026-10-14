@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Selector con busqueda y vista previa de especificaciones en espanol."""
 from __future__ import annotations
+import estilo_interfaz as ui
+
 
 import json
 import os
@@ -16,7 +18,9 @@ import webbrowser
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from tkinter import messagebox, ttk
+from tkinter import messagebox
+from estilo_interfaz import ttk
+
 from typing import Any, Callable
 
 from alinear_especificaciones_json import (
@@ -259,7 +263,7 @@ class PanelEspecificaciones:
     boton_editar: ttk.Button | None = None
     boton_alinear: ttk.Button | None = None
     boton_realinear: ttk.Button | None = None
-    zoom_previa: float = 1.0
+    zoom_previa: float = 1.44
     especificacion_actual: Especificacion | None = None
 
 
@@ -685,7 +689,7 @@ class SelectorEspecificaciones:
             "nuevas": carpeta_json,
         }
         self.paneles: dict[str, PanelEspecificaciones] = {}
-        self.zoom_aplicacion = 1.0
+        self.zoom_aplicacion = ui.PREFERENCIAS["escala"]
         self._escala_tk_base = float(self.raiz.tk.call("tk", "scaling"))
         self._alineacion_en_proceso = False
         self._cola_alineacion: queue.Queue[tuple[str, Any]] | None = None
@@ -712,19 +716,19 @@ class SelectorEspecificaciones:
         estilo = ttk.Style(self.raiz)
         estilo.configure("Titulo.TLabel", font=("Segoe UI", 17, "bold"), foreground="#ffffff")
         estilo.configure("Subtitulo.TLabel", font=("Segoe UI", 10), foreground="#dbeafe")
-        estilo.configure("Seccion.TLabel", font=("Segoe UI", 12, "bold"), foreground="#163b70")
+        estilo.configure("Seccion.TLabel", font=("Segoe UI", 12, "bold"), foreground=ui.paleta()["alineado"])
         estilo.configure("Treeview", rowheight=25, font=("Segoe UI", 9))
         estilo.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
 
         encabezado = tk.Frame(self.raiz, background="#0752b9", padx=24, pady=10)
         encabezado.pack(fill="x")
-        controles_zoom = ttk.Frame(encabezado)
+        controles_zoom = ui.ctk.CTkFrame(encabezado, fg_color="#0752b9")
         controles_zoom.pack(side="right", padx=(12, 0))
         ttk.Button(
-            controles_zoom, text="A−", width=4, command=lambda: self._cambiar_zoom_aplicacion(-0.1)
+            controles_zoom, text="A−", width=4, height=26, fondo="#0752b9", command=lambda: self._cambiar_zoom_aplicacion(-0.1)
         ).pack(side="left", padx=2)
         ttk.Button(
-            controles_zoom, text="A+", width=4, command=lambda: self._cambiar_zoom_aplicacion(0.1)
+            controles_zoom, text="A+", width=4, height=26, fondo="#0752b9", command=lambda: self._cambiar_zoom_aplicacion(0.1)
         ).pack(side="left", padx=2)
         ttk.Label(
             encabezado,
@@ -788,6 +792,7 @@ class SelectorEspecificaciones:
         ttk.Button(
             panel_busqueda,
             text="Actualizar lista",
+            height=28, variante="secundario",
             command=self.recargar_catalogos,
         ).pack(fill="x", pady=(10, 0))
         estado = ttk.Label(panel_busqueda, text="", wraplength=280)
@@ -800,6 +805,7 @@ class SelectorEspecificaciones:
             boton_alinear = ttk.Button(
                 acciones_alinear,
                 text="Alinear especificaciones",
+                height=28,
                 command=lambda c=clave: self._alinear_seleccionadas(c),
                 state="disabled",
             )
@@ -807,13 +813,14 @@ class SelectorEspecificaciones:
             ttk.Button(
                 acciones_alinear,
                 text="ⓘ",
-                width=3,
+                width=3, height=28, variante="secundario",
                 command=self.abrir_resumen_alineador,
             ).pack(side="left", padx=(5, 0))
         else:
             boton_realinear = ttk.Button(
                 panel_busqueda,
                 text="Realinear a versión vigente",
+                height=28,
                 command=lambda c=clave: self._realinear_seleccionadas(c),
                 state="disabled",
             )
@@ -829,40 +836,43 @@ class SelectorEspecificaciones:
                 else "Vista previa · JSON alineado"
             ),
             style="Seccion.TLabel",
-        ).pack(side="left", anchor="w")
+        ).pack(anchor="w")
+        acciones_vista = ttk.Frame(barra_vista)
+        acciones_vista.pack(fill="x", pady=(6, 0))
         boton_editar = ttk.Button(
-            barra_vista,
+            acciones_vista,
             text="Editar",
+            width=10, height=28,
             command=lambda c=clave: self._editar_especificacion(c),
             state="disabled",
         )
         boton_contraparte = ttk.Button(
-            barra_vista,
+            acciones_vista,
             text="Ver alineada →" if clave == "anteriores" else "← Ver original",
-            width=16,
+            width=16, height=28, variante="secundario",
             command=lambda c=clave: self._ir_a_contraparte(c),
             state="disabled",
         )
         ttk.Button(
-            barra_vista,
+            acciones_vista,
             text="−",
-            width=3,
+            width=3, height=28, variante="secundario",
             command=lambda c=clave: self._cambiar_zoom_previa(c, -0.1),
-        ).pack(side="right", padx=(3, 0))
+        ).pack(side="right", padx=(6, 0))
         ttk.Button(
-            barra_vista,
+            acciones_vista,
             text="+",
-            width=3,
+            width=3, height=28, variante="secundario",
             command=lambda c=clave: self._cambiar_zoom_previa(c, 0.1),
         ).pack(side="right")
         ttk.Button(
-            barra_vista,
+            acciones_vista,
             text="×",
-            width=3,
+            width=3, height=28, variante="secundario",
             command=lambda c=clave: self._cerrar_vista_previa(c),
         ).pack(side="right", padx=(0, 6))
-        boton_contraparte.pack(side="right", padx=(10, 0))
-        boton_editar.pack(side="right", padx=(6, 0))
+        boton_editar.pack(side="left")
+        boton_contraparte.pack(side="left", padx=(8, 0))
         marco_previa = ttk.Frame(panel_previa)
         marco_previa.pack(fill="both", expand=True)
         ttk.Label(
@@ -928,6 +938,8 @@ class SelectorEspecificaciones:
             marca = "☑" if especificacion.ruta in panel.documentos_marcados else "☐"
             idioma = " · English" if especificacion.idioma == "INGLES" else ""
             panel.lista.insert(tk.END, f"{marca}  {especificacion.etiqueta}{idioma}")
+            if especificacion.version_alineador == VERSION_ALINEADOR:
+                panel.lista.itemconfigure(tk.END, foreground=ui.paleta()["alineado"])
         mensaje = (
             "No se encontraron especificaciones."
             if panel.entrada_busqueda.get().strip() and not panel.sugerencias
@@ -1215,6 +1227,8 @@ class SelectorEspecificaciones:
                 foreground="#526174",
             ).pack(anchor="w")
         _aplicar_zoom_vista_previa(pagina, escala_fuente)
+        panel.marco_previa._ui_preservar_fuentes = True
+        self.raiz._estilizar_hijos(panel.marco_previa, ajustar_fuentes=False)
         self._vincular_scroll_preview(panel, pagina, tabla, barra_tabla)
 
     def _actualizar_boton_contraparte(self, clave: str) -> None:
@@ -1288,12 +1302,8 @@ class SelectorEspecificaciones:
         self._mostrar_previa(otra_clave, contraparte)
 
     def _cambiar_zoom_aplicacion(self, cambio: float) -> None:
-        self.zoom_aplicacion = min(1.6, max(0.8, self.zoom_aplicacion + cambio))
-        self.raiz.tk.call(
-            "tk",
-            "scaling",
-            self._escala_tk_base * self.zoom_aplicacion,
-        )
+        self.zoom_aplicacion = min(1.4, max(0.8, self.zoom_aplicacion + cambio))
+        ui.aplicar_preferencias({**ui.PREFERENCIAS, "escala": self.zoom_aplicacion})
         for clave, panel in self.paneles.items():
             if panel.especificacion_actual is not None:
                 self._mostrar_previa(clave, panel.especificacion_actual)
@@ -1484,7 +1494,7 @@ class SelectorEspecificaciones:
             "errores": 0,
         }
         self._cola_alineacion = queue.Queue()
-        ventana = tk.Toplevel(self.raiz)
+        ventana = ui.Ventana(self.raiz)
         self._ventana_progreso_alineacion = ventana
         ventana.title("Alineando especificaciones")
         ventana.transient(self.raiz)
@@ -1725,7 +1735,7 @@ class SelectorEspecificaciones:
 
 
 def main() -> None:
-    raiz = tk.Tk()
+    raiz = ui.Raiz()
     SelectorEspecificaciones(raiz)
     raiz.mainloop()
 

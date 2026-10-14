@@ -332,3 +332,42 @@ la instalación de Python administrada por uv.
 No ejecutes `pip install` directamente sobre el Python administrado por uv. Si
 Python 3.11 no está instalado, instálalo y luego crea el entorno con
 `py -3.11 -m venv .venv`.
+
+## Optimización del gestor
+
+El gestor sigue calculando SHA-256 del catálogo y de los Word para detectar
+cambios de contenido. Si el Excel coincide con una carga completa registrada,
+recupera sus registros de SQLite sin interpretar el libro otra vez. Si cambia
+o la caché está incompleta, lee el Excel. Nunca modifica el catálogo original.
+
+La validación prepara una vez por carga los índices por nombre y Part ID,
+respetando duplicados, prioridades y conflictos del catálogo. El texto OOXML
+de cada Word se comparte entre detección de idioma, marcadores y metadatos;
+esa caché se elimina al terminar el documento, incluso ante errores.
+
+La primera carga con esta optimización revisa todo el historial. También se
+revisa completo cuando cambia el catálogo o la versión del gestor. Después
+se reindexan solamente los productos afectados y los posibles historiales de
+destino de una normalización. Los cambios de tamaño o fecha de modificación
+de un JSON histórico, y los archivos faltantes, también activan su revisión.
+Las tablas auxiliares `gestor_estado` y `gestor_historial_cache` se crean en
+SQLite sin borrar el historial existente.
+
+Se mantienen las conversiones Word, el OCR y los controles de bloqueo actuales.
+
+## Relaciones entre español e inglés
+
+Los JSON pueden contener `versiones_idioma`, con listas `ESPANOL` o `INGLES`.
+Cada referencia incluye `archivo_json` (ruta relativa al JSON que la contiene),
+código, revisión y cliente de la contraparte. La relación se escribe en ambos
+archivos y también se conserva en `hii_especificaciones` y `hii_traducciones`.
+
+Solo se infiere automáticamente cuando hay una única especificación por idioma
+con el mismo Part ID, revisión y cliente dentro de la carpeta. Si aparecen
+varias candidatas, se retira el enlace inferido. Las relaciones confirmadas
+explícitamente en el generador HII se conservan, incluso con distinta revisión.
+Los archivos faltantes no se exportan como referencias.
+
+El gestor, el alineador, el editor y la recarga del generador HII actualizan
+estas referencias. La escritura es atómica y solo se realiza cuando cambian
+los enlaces; no modifica las pruebas ni el control documental.

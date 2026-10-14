@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -942,6 +943,83 @@ def registros_ambiguos(a: dict[str, str], b: dict[str, str], idioma: str) -> boo
     )
 
 
+class MaestroPreparado(list):
+    """Datos derivados y coincidencias reutilizables, aislados por lote."""
+    def __init__(self, registros):
+        super().__init__(deepcopy(registros))
+        self.rasgos = {}
+        self.coincidencias = {}
+        self.candidatos = []
+        self.referencias = frozenset(
+            referencia for registro in self for metodo in metodos_maestros(registro)
+            for referencia in referencias_astm(metodo)
+        )
+        for registro in self:
+            es = limpiar_marca_acreditacion(registro["NOMBRE IQM"])
+            en = limpiar_marca_acreditacion(registro["NOMBRE IQM INGLES"])
+            metodos = {idioma: metodo_maestro_para_idioma(registro, idioma)
+                       for idioma in ("ESPANOL", "INGLES", "DESCONOCIDO")}
+            for valor in (es, en, *metodos.values()):
+                self.preparar_texto(valor)
+            self.candidatos.append((registro, es, en, metodos))
+
+    def preparar_texto(self, valor):
+        clave = texto(valor)
+        if clave not in self.rasgos:
+            self.rasgos[clave] = (normalizar(clave), frozenset(referencias_astm(clave)),
+                                 frozenset(partes_metodo(clave)))
+        return self.rasgos[clave]
+
+    def similitud(self, a, b):
+        na, ra, _ = self.preparar_texto(a)
+        nb, rb, _ = self.preparar_texto(b)
+        if not na or not nb:
+            return 0.0
+        if ra or rb:
+            if not ra or not rb:
+                return 0.0
+            inter = ra & rb
+            if ra == rb:
+                return 1.0
+            if inter and (ra <= rb or rb <= ra):
+                return 0.90 + 0.10 * len(inter) / max(len(ra), len(rb))
+            return 0.50 * len(inter) / len(ra | rb) if inter else 0.0
+        if na == nb:
+            return 1.0
+        return (0.75 * (fuzz.ratio(na, nb) / 100)
+                + 0.15 * (fuzz.token_sort_ratio(na, nb) / 100)
+                + 0.10 * (fuzz.token_set_ratio(na, nb) / 100))
+
+    def puntuar(self, nombre, metodo, candidato, idioma):
+        _, es, en, metodos = candidato
+        sn = max(self.similitud(nombre, es), self.similitud(nombre, en))
+        mc = metodos.get(idioma)
+        if mc is None:
+            mc = metodo_maestro_para_idioma(candidato[0], idioma)
+        na, ra, pa = self.preparar_texto(metodo)
+        nb, rb, pb = self.preparar_texto(mc)
+        if not na and not nb:
+            sm = 0.5
+        elif not na or not nb:
+            sm = 0.0
+        elif na == nb:
+            sm = 1.0
+        elif pa and pb:
+            inter = len(pa & pb)
+            sm = 0.90 + 0.10 * inter / max(len(pa), len(pb)) if inter else 0.0
+        else:
+            sm = self.similitud(metodo, mc)
+        if texto(metodo):
+            total = 0.68 * sn + 0.32 * sm
+            if sn >= 0.96 and sm >= 0.90:
+                total = max(total, 0.96)
+            elif ra and rb and sm >= 0.90 and sn >= 0.45:
+                total = max(total, UMBRAL_AUTOMATICO)
+        else:
+            total = 0.88 * sn + 0.12 * sm
+        return total, sn, sm
+
+
 def mejor_coincidencia(
     nombre: str,
     metodo: str,
@@ -957,13 +1035,20 @@ def mejor_coincidencia(
             "registro": {}, "segunda_opcion": {},
         }
 
-    evaluados = []
-    for registro in maestro:
-        total, sn, sm = puntuar(nombre, metodo, registro, idioma)
-        evaluados.append((total, sn, sm, registro))
-    evaluados.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
-    mejor = evaluados[0]
-    segundo = evaluados[1] if len(evaluados) > 1 else (0.0, 0.0, 0.0, {})
+    clave_cache = (nombre, metodo, idioma)
+    preparado = isinstance(maestro, MaestroPreparado)
+    if preparado and clave_cache in maestro.coincidencias:
+        return deepcopy(maestro.coincidencias[clave_cache])
+    mejor = segundo = None
+    for indice, registro in enumerate(maestro):
+        total, sn, sm = (maestro.puntuar(nombre, metodo, maestro.candidatos[indice], idioma)
+                         if preparado else puntuar(nombre, metodo, registro, idioma))
+        candidato = (total, sn, sm, registro)
+        if mejor is None or candidato[:3] > mejor[:3]:
+            segundo, mejor = mejor, candidato
+        elif segundo is None or candidato[:3] > segundo[:3]:
+            segundo = candidato
+    segundo = segundo if segundo is not None else (0.0, 0.0, 0.0, {})
     margen = mejor[0] - segundo[0]
     ambiguo = (
         margen < MARGEN_AMBIGUEDAD
@@ -975,12 +1060,17 @@ def mejor_coincidencia(
         estado = "REVISION_REQUERIDA"
     else:
         estado = "SIN_COINCIDENCIA"
-    return {"estado": estado, "puntaje": round(mejor[0], 4), "puntaje_nombre": round(mejor[1], 4),
+    resultado_match = {"estado": estado, "puntaje": round(mejor[0], 4), "puntaje_nombre": round(mejor[1], 4),
             "puntaje_metodo": round(mejor[2], 4), "margen": round(margen, 4), "ambiguo": ambiguo,
             "registro": mejor[3], "segunda_opcion": segundo[3]}
+    if preparado:
+        maestro.coincidencias[clave_cache] = deepcopy(resultado_match)
+    return resultado_match
 
 
 def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> dict[str, int]:
+    if not isinstance(maestro, MaestroPreparado):
+        maestro = MaestroPreparado(maestro)
     datos = json.loads(path.read_text(encoding="utf-8-sig"))
     if not isinstance(datos, dict):
         raise ValueError("La raiz del JSON debe ser un objeto.")
@@ -1008,12 +1098,7 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
     conteo = {"alineados": 0, "revision": 0, "sin_coincidencia": 0}
     auditoria = []
     mensajes_astm_no_encontradas = []
-    referencias_maestras = {
-        referencia
-        for registro in maestro
-        for metodo in metodos_maestros(registro)
-        for referencia in referencias_astm(metodo)
-    }
+    referencias_maestras = maestro.referencias
     for indice, prueba in enumerate(pruebas, 1):
         if not isinstance(prueba, dict):
             raise ValueError(f"El elemento {indice} de 'pruebas' debe ser un objeto.")
@@ -1196,13 +1281,15 @@ def ejecutar(
     carpeta_entrada: Path | None = None,
     carpeta_salida: Path | None = None,
     destinos_seleccionados: list[Path] | None = None,
+    forzar: bool = False,
 ) -> dict[str, int]:
     entrada = carpeta_entrada or base / ENTRADA
     salida = carpeta_salida or base / SALIDA
     maestro_path = base / MAESTRO
     if not entrada.is_dir():
         raise FileNotFoundError(f"No existe la carpeta de entrada: {entrada}")
-    maestro = cargar_maestro(maestro_path)
+    maestro = MaestroPreparado(cargar_maestro(maestro_path))
+    hash_maestro = hashlib.sha256(maestro_path.read_bytes()).hexdigest()
     if destinos_seleccionados is not None and archivos_seleccionados is None:
         raise ValueError("Los destinos seleccionados requieren archivos de entrada.")
     if (
@@ -1254,14 +1341,40 @@ def ejecutar(
                 )
         archivos_relativos.append((origen, relativo_salida))
     salida.mkdir(parents=True, exist_ok=True)
-    total = {"archivos": 0, "alineados": 0, "revision": 0, "sin_coincidencia": 0, "errores": 0}
+    ruta_cache = salida / ".cache_alineacion"
+    try:
+        cache = json.loads(ruta_cache.read_text(encoding="utf-8"))
+        if not isinstance(cache, dict):
+            cache = {}
+    except (OSError, ValueError):
+        cache = {}
+    total = {"archivos": 0, "alineados": 0, "revision": 0, "sin_coincidencia": 0, "errores": 0, "omitidos": 0}
     lineas = [f"REPORTE DE ALINEACION {datetime.now().isoformat(timespec='seconds')}", "=" * 72]
     for indice, (origen, rel) in enumerate(archivos_relativos, 1):
         if al_progreso is not None:
             al_progreso(indice - 1, len(archivos), str(rel))
         destino = salida / rel
         try:
+            clave = str(destino.resolve())
+            hash_origen = hashlib.sha256(origen.read_bytes()).hexdigest()
+            entrada_cache = cache.get(clave, {})
+            vigente = (not forzar and isinstance(entrada_cache, dict)
+                       and entrada_cache.get("origen") == str(origen.resolve())
+                       and entrada_cache.get("hash_origen") == hash_origen
+                       and entrada_cache.get("hash_maestro") == hash_maestro
+                       and entrada_cache.get("version") == VERSION
+                       and destino.is_file()
+                       and entrada_cache.get("hash_destino") == hashlib.sha256(destino.read_bytes()).hexdigest())
+            if vigente:
+                total["omitidos"] += 1
+                lineas.append(f"SIN CAMBIOS | {rel.as_posix()}")
+                print(f"SIN CAMBIOS: {rel}")
+                continue
             r = procesar_json(origen, destino, maestro)
+            hash_destino = hashlib.sha256(destino.read_bytes()).hexdigest()
+            cache[clave] = {"origen": str(origen.resolve()), "version": VERSION,
+                            "hash_origen": hash_destino if origen.resolve() == destino.resolve() else hash_origen,
+                            "hash_maestro": hash_maestro, "hash_destino": hash_destino}
             total["archivos"] += 1
             for k in ("alineados", "revision", "sin_coincidencia"):
                 total[k] += r[k]
@@ -1274,6 +1387,26 @@ def ejecutar(
         finally:
             if al_progreso is not None:
                 al_progreso(indice, len(archivos), str(rel))
+    import registro_hii
+    with registro_hii.conectar(base / "especificaciones.db") as relaciones:
+        cambios_relaciones = registro_hii.sincronizar_idiomas(relaciones, salida)
+    for origen, rel in archivos_relativos:
+        destino = salida / rel
+        clave = str(destino.resolve())
+        if clave in cache and destino.resolve() in cambios_relaciones:
+            cache[clave]["hash_destino"] = hashlib.sha256(destino.read_bytes()).hexdigest()
+            if origen.resolve() == destino.resolve():
+                cache[clave]["hash_origen"] = cache[clave]["hash_destino"]
+    temporal_cache = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=salida,
+                                         prefix=".cache_alineacion.", suffix=".tmp", delete=False) as archivo:
+            temporal_cache = Path(archivo.name)
+            json.dump(cache, archivo, ensure_ascii=False)
+        os.replace(temporal_cache, ruta_cache)
+    finally:
+        if temporal_cache is not None:
+            temporal_cache.unlink(missing_ok=True)
     lineas.extend(["", "RESUMEN"] + [f"{k}: {v}" for k, v in total.items()])
     (salida / REPORTE).write_text("\n".join(lineas) + "\n", encoding="utf-8")
     print("\nRESUMEN")
@@ -1290,9 +1423,10 @@ def main() -> int:
         )
     parser = argparse.ArgumentParser(description="Alinea pruebas y metodos de JSON con la lista maestra.")
     parser.add_argument("--base", type=Path, default=Path(__file__).resolve().parent)
+    parser.add_argument("--forzar", action="store_true", help="Realinea incluso archivos sin cambios.")
     args = parser.parse_args()
     try:
-        resumen = ejecutar(args.base.resolve())
+        resumen = ejecutar(args.base.resolve(), forzar=args.forzar)
         return 1 if resumen["errores"] else 0
     except Exception as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

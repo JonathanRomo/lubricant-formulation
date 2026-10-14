@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Interfaz principal para cargar, editar, seleccionar y comparar especificaciones."""
 from __future__ import annotations
+import estilo_interfaz as ui
+
 
 import json
 import argparse
@@ -19,7 +21,9 @@ import threading
 import tkinter as tk
 from datetime import date
 from pathlib import Path
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox
+from estilo_interfaz import ttk
+
 from tkinter.scrolledtext import ScrolledText
 from typing import Any, Callable
 from zipfile import BadZipFile
@@ -55,7 +59,7 @@ from interfaz_seleccion_especificaciones import (
 )
 
 
-VERSION = "1.0.0"
+VERSION = "1.1.4"
 BASE = Path(__file__).resolve().parent
 RUTAS_PREDETERMINADAS = {
     "especificaciones_viejas": BASE / "ESPECIFICACIONES_VIEJAS",
@@ -1391,15 +1395,17 @@ class VisorHistorico:
         raiz: tk.Misc,
         ruta: Path,
         carpeta_historico: Path,
+        contenedor: tk.Misc | None = None,
     ):
         self.ruta = ruta
         self.carpeta_historico = carpeta_historico
         self.desplazamiento = 0
         tablas = self._listar_tablas()
-        self.ventana = tk.Toplevel(raiz)
-        self.ventana.title("Histórico de especificaciones · Base de datos")
-        self.ventana.geometry("1250x700")
-        self.ventana.minsize(850, 450)
+        self.ventana = contenedor if contenedor is not None else ui.Ventana(raiz)
+        if contenedor is None:
+            self.ventana.title("Histórico de especificaciones · Base de datos")
+            self.ventana.geometry("1250x700")
+            self.ventana.minsize(850, 450)
 
         cabecera = ttk.Frame(self.ventana, padding=(12, 10, 12, 6))
         cabecera.pack(fill="x")
@@ -1786,6 +1792,11 @@ def mostrar_vista_json(contenedor: tk.Misc, ruta: Path, zoom: float = 1.0) -> No
             font=("Segoe UI", max(8, round(9 * zoom))),
         ).pack(anchor="w", pady=(8, 0))
 
+    contenedor._ui_preservar_fuentes = True
+    ventana_previa = contenedor.winfo_toplevel()
+    if isinstance(ventana_previa, ui.VentanaAdaptable):
+        ventana_previa._estilizar_hijos(contenedor, ajustar_fuentes=False)
+
 
 def _leer_filas_maestro_editable(
     ruta: Path,
@@ -1873,7 +1884,7 @@ class EditorListaMaestra:
         self.cambios: dict[int, tuple[str, ...]] = {}
         self.editor: ttk.Entry | None = None
         self.celda_editada: tuple[str, str] | None = None
-        self.ventana = tk.Toplevel(raiz)
+        self.ventana = ui.Ventana(raiz)
         self.ventana.title("Editar lista maestra de métodos")
         self.ventana.geometry("1250x700")
         self.ventana.minsize(850, 450)
@@ -2075,7 +2086,7 @@ class GeneradorEspecificacion:
         self._idioma_anterior = "es"
         self._nota_predeterminada_actual = ""
         self._elaboro_aprobo_predeterminado_actual = VALORES_ELABORO_APROBO["es"]
-        self.ventana = tk.Toplevel(app.raiz)
+        self.ventana = ui.Ventana(app.raiz)
         self.ventana.title("Generar especificación")
         self.ventana.geometry("1050x760")
         self.ventana.minsize(760, 560)
@@ -2088,7 +2099,7 @@ class GeneradorEspecificacion:
         self._idioma = tk.StringVar(value="Español")
         self.desarrollador = tk.StringVar()
 
-        encabezado = ttk.Frame(self.ventana, padding=(12, 10, 12, 4))
+        encabezado = ttk.Frame(self.ventana, padding=(12, 4, 12, 2))
         encabezado.pack(fill="x")
         self.etiqueta_idioma = ttk.Label(encabezado)
         self.etiqueta_idioma.pack(side="left", padx=(0, 8))
@@ -2102,10 +2113,10 @@ class GeneradorEspecificacion:
         self.selector_idioma.pack(side="left")
         self.selector_idioma.bind("<<ComboboxSelected>>", self._actualizar_idioma)
 
-        identidad = ttk.Frame(self.ventana, padding=(12, 4, 12, 8))
+        identidad = ttk.Frame(self.ventana, padding=(12, 0, 12, 2))
         identidad.pack(fill="x")
         self.etiqueta_producto = ttk.Label(identidad)
-        self.etiqueta_producto.grid(row=0, column=0, sticky="w", padx=(0, 8))
+        self.etiqueta_producto.grid(row=0, column=0, sticky="w", padx=(0, 8), pady=3)
         self.nombre_producto = tk.StringVar()
         self.entrada_nombre_producto = ttk.Combobox(
             identidad,
@@ -2115,7 +2126,7 @@ class GeneradorEspecificacion:
             "write", self._sincronizar_codigo_desde_nombre
         )
         self.entrada_nombre_producto.grid(
-            row=0, column=1, sticky="ew"
+            row=0, column=1, sticky="ew", pady=3
         )
         self.entrada_nombre_producto.bind(
             "<KeyRelease>", self._filtrar_nombres_producto
@@ -2125,23 +2136,37 @@ class GeneradorEspecificacion:
         )
         self.entrada_nombre_producto.bind("<Down>", self._enfocar_sugerencias)
         identidad.columnconfigure(1, weight=1)
+        identidad.columnconfigure(3, weight=1)
 
-        self.marco_control = ttk.LabelFrame(self.ventana, padding=10)
-        self.marco_control.pack(fill="x", padx=12, pady=(0, 8))
+        titulo_control = self.encabezado_control = ttk.Frame(self.ventana)
+        titulo_control.pack(fill="x", padx=12, pady=(0, 3))
+        self.etiqueta_titulo_control = ttk.Label(titulo_control)
+        self.etiqueta_titulo_control.pack(side="left")
+        self.boton_control = ttk.Button(
+            titulo_control, text="−", width=2, command=self._alternar_control_documental
+        )
+        self.boton_control.pack(side="left", padx=(6, 0))
+        self.marco_control = ttk.Frame(self.ventana, padding=(10, 3), style="Borde.TFrame")
+        self.marco_control.pack(fill="x", padx=12, pady=(0, 3))
+        self._control_colapsado = False
+        self._campos_control_ocultos: list[tk.Widget] = []
         self.entradas_control: dict[str, ttk.Entry | ttk.Combobox] = {}
         self.etiqueta_codigo_asterisco: ttk.Label | None = None
         self.etiqueta_codigo_invalido: ttk.Label | None = None
         for indice, (clave, _, _) in enumerate(CAMPOS_CONTROL_GENERADOR):
             fila, grupo = divmod(indice, 2)
             columna = grupo * 2
-            etiqueta = ttk.Label(self.marco_control)
-            etiqueta.grid(row=fila, column=columna, sticky="w", padx=(0, 6), pady=3)
+            padre_campo = identidad if clave == "codigo_unico_producto" else self.marco_control
+            etiqueta = ttk.Label(padre_campo)
+            etiqueta.grid(row=0 if clave == "codigo_unico_producto" else fila,
+                          column=2 if clave == "codigo_unico_producto" else columna,
+                          sticky="w", padx=(12 if clave == "codigo_unico_producto" else 0, 6), pady=3)
             self._etiquetas[clave] = etiqueta
             if clave == "codigo_unico_producto":
-                contenedor_codigo = ttk.Frame(self.marco_control)
+                contenedor_codigo = ttk.Frame(identidad)
                 contenedor_codigo.grid(
-                    row=fila,
-                    column=columna + 1,
+                    row=0,
+                    column=3,
                     sticky="ew",
                     padx=(0, 12 if grupo == 0 else 0),
                     pady=3,
@@ -2162,14 +2187,13 @@ class GeneradorEspecificacion:
                 )
                 contenedor_codigo.columnconfigure(0, weight=1)
                 self.etiqueta_codigo_invalido = ttk.Label(
-                    contenedor_codigo,
+                    identidad,
                     foreground="#c00000",
                     wraplength=330,
                 )
                 self.etiqueta_codigo_invalido.grid(
                     row=1,
-                    column=0,
-                    columnspan=2,
+                    column=3,
                     sticky="w",
                     pady=(2, 0),
                 )
@@ -2197,8 +2221,8 @@ class GeneradorEspecificacion:
         self.marco_control.columnconfigure(3, weight=1)
         self.etiqueta_desarrollador = ttk.Label(self.marco_control)
         self.etiqueta_desarrollador.grid(
-            row=(len(CAMPOS_CONTROL_GENERADOR) + 1) // 2,
-            column=0,
+            row=1,
+            column=2,
             sticky="w",
             padx=(0, 6),
             pady=3,
@@ -2208,15 +2232,14 @@ class GeneradorEspecificacion:
             textvariable=self.desarrollador,
         )
         self.entrada_desarrollador.grid(
-            row=(len(CAMPOS_CONTROL_GENERADOR) + 1) // 2,
-            column=1,
-            columnspan=3,
+            row=1,
+            column=3,
             sticky="ew",
             pady=3,
         )
 
-        self.marco_pruebas = ttk.LabelFrame(self.ventana, padding=8)
-        self.marco_pruebas.pack(fill="both", expand=True, padx=12, pady=(0, 8))
+        self.marco_pruebas = ttk.LabelFrame(self.ventana, padding=(8, 3))
+        self.marco_pruebas.pack(fill="both", expand=True, padx=12, pady=(0, 4))
         self.tabla_pruebas = ttk.Treeview(
             self.marco_pruebas,
             columns=(*CAMPOS_TABLA, "periodicidad"),
@@ -2306,7 +2329,7 @@ class GeneradorEspecificacion:
             "<Button-1>", self._aceptar_sugerencia
         )
         acciones_pruebas = ttk.Frame(self.marco_pruebas)
-        acciones_pruebas.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+        acciones_pruebas.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(3, 0))
         self.boton_ayuda_tabla = ttk.Button(
             acciones_pruebas,
             text="ⓘ",
@@ -2321,15 +2344,16 @@ class GeneradorEspecificacion:
         self.boton_eliminar.pack(side="right")
         self.tabla_pruebas.bind("<<TreeviewSelect>>", self._actualizar_boton_eliminar)
 
-        marco_notas = ttk.LabelFrame(self.ventana, padding=8)
-        marco_notas.pack(fill="x", padx=12, pady=(0, 8))
+        marco_notas = ttk.Frame(self.ventana, padding=8)
+        marco_notas.pack(side="bottom", before=self.marco_pruebas, fill="x", padx=12, pady=(0, 8))
         self.etiqueta_notas = ttk.Label(marco_notas)
         self.etiqueta_notas.pack(anchor="w")
-        self.notas = tk.Text(marco_notas, height=3, wrap="word")
+        from editor_comportamientos import NotasProtegidas
+        self.notas = NotasProtegidas(marco_notas, height=3, wrap="word")
         self.notas.pack(fill="x", pady=(4, 0))
 
-        pie = ttk.Frame(self.ventana, padding=(12, 0, 12, 10))
-        pie.pack(fill="x")
+        pie = ttk.Frame(self.ventana, padding=(12, 0, 12, 4))
+        pie.pack(side="bottom", before=marco_notas, fill="x")
         self.boton_guardar = ttk.Button(pie, command=self.guardar)
         self.boton_guardar.pack(side="right")
         self.boton_cancelar = ttk.Button(pie, command=self.ventana.destroy)
@@ -2352,6 +2376,70 @@ class GeneradorEspecificacion:
                 text="He revisado y completado la traducción de pruebas, especificaciones, notas y control documental",
                 variable=self.traduccion_revisada).pack(fill="x", padx=12, pady=6)
             self.ventana.title("Completar traducción de especificación")
+
+        self._contenido_inicial_revision = self._contenido_para_revision()
+        self._revision_inicial = self.variables_control["revision"].get()
+        self._revision_aplicada = False
+        self._cambio_alineacion_revision = False
+        self._resultados_revision = queue.Queue()
+        self._revisiones_historial = {}
+        self._consultas_revision = set()
+        self.ventana.after(250, self._vigilar_revision)
+        poco_espacio = (self.ventana.winfo_screenheight() - 80) / self.ventana._get_window_scaling() <= 650
+        if ui.PREFERENCIAS["control_compacto"] or (ui.PREFERENCIAS["adaptacion_auto"] and poco_espacio):
+            self._alternar_control_documental()
+
+    def _contenido_para_revision(self):
+        return (tuple(tuple(sorted(fila.items())) for fila in self.pruebas),
+                self.notas.get("1.0", "end-1c"))
+
+    def _actualizar_revision_automatica(self) -> bool:
+        if not hasattr(self, "_contenido_inicial_revision") or self.datos_originales is None:
+            return True
+        codigo = self.variables_control["codigo_unico_producto"].get().strip()
+        if not codigo:
+            return True
+        while not self._resultados_revision.empty():
+            clave, valor = self._resultados_revision.get_nowait()
+            self._revisiones_historial[clave] = valor
+        if codigo not in self._consultas_revision:
+            self._consultas_revision.add(codigo)
+            carpetas = [self.app.rutas.get(clave, RUTAS_PREDETERMINADAS[clave])
+                        for clave in ("json_anteriores", "json_alineadas")]
+            revision = self._revision_inicial
+            resultados = self._resultados_revision
+            def consultar():
+                from editor_comportamientos import siguiente_revision
+                try:
+                    valor = siguiente_revision(codigo, carpetas, BASE / "especificaciones.db", revision)
+                except Exception as exc:
+                    valor = exc
+                resultados.put((codigo, valor))
+            threading.Thread(target=consultar, daemon=True).start()
+        cambiado = self._cambio_alineacion_revision or self._contenido_para_revision() != self._contenido_inicial_revision
+        if not cambiado or self._revision_aplicada:
+            return True
+        valor = self._revisiones_historial.get(codigo)
+        if valor is None or isinstance(valor, Exception):
+            return False
+        self.variables_control["revision"].set(valor)
+        self._revision_aplicada = True
+        return True
+
+    def _vigilar_revision(self):
+        if self.ventana.winfo_exists():
+            self._actualizar_revision_automatica()
+            self.ventana.after(250, self._vigilar_revision)
+
+    def _alternar_control_documental(self) -> None:
+        self._ocultar_lista_sugerencias()
+        if self._control_colapsado:
+            self.marco_control.pack(after=self.encabezado_control, fill="x", padx=12, pady=(0, 3))
+            self.boton_control.configure(text="−")
+        else:
+            self.marco_control.pack_forget()
+            self.boton_control.configure(text="+")
+        self._control_colapsado = not self._control_colapsado
 
     def _cargar_especificacion(self, ruta: Path) -> None:
         try:
@@ -2525,7 +2613,7 @@ class GeneradorEspecificacion:
                 lista.insert(tk.END, opcion)
         else:
             self._ocultar_lista_sugerencias()
-            popup = tk.Toplevel(self.ventana)
+            popup = ui.Ventana(self.ventana)
             popup.wm_overrideredirect(True)
             popup.transient(self.ventana)
             lista = tk.Listbox(
@@ -2626,6 +2714,10 @@ class GeneradorEspecificacion:
                 else:
                     mensaje = "Ingresa un código del catálogo."
             self.etiqueta_codigo_invalido.configure(text=mensaje)
+            if mensaje:
+                self.etiqueta_codigo_invalido.grid()
+            else:
+                self.etiqueta_codigo_invalido.grid_remove()
         return valido
 
     def _mostrar_leyenda_periodicidad(self) -> None:
@@ -2661,6 +2753,7 @@ class GeneradorEspecificacion:
     def _limpiar_sugerencia(self) -> None:
         self._sugerencia_actual = None
         self.etiqueta_sugerencia.configure(text="")
+        self.etiqueta_sugerencia.grid_remove()
 
     def _mostrar_sugerencia(
         self, iid: str, campo: str, valor: str
@@ -2671,6 +2764,7 @@ class GeneradorEspecificacion:
             "unidades": "Suggested unit" if ingles else "Unidad sugerida",
         }
         self._sugerencia_actual = (iid, campo, valor)
+        self.etiqueta_sugerencia.grid()
         self.etiqueta_sugerencia.configure(
             text=f"{encabezados[campo]}: {valor}  ·  "
             + ("click to use" if ingles else "haz clic para usar")
@@ -2760,7 +2854,7 @@ class GeneradorEspecificacion:
         self.etiqueta_desarrollador.configure(
             text="Developer:" if ingles else "Desarrollador:"
         )
-        self.marco_control.configure(
+        self.etiqueta_titulo_control.configure(
             text="Document control" if ingles else "Control documental"
         )
         self.marco_pruebas.configure(text="Tests" if ingles else "Pruebas")
@@ -3375,7 +3469,7 @@ class GeneradorEspecificacion:
             )
             return
 
-        progreso = tk.Toplevel(self.ventana)
+        progreso = ui.Ventana(self.ventana)
         progreso.title("Aligning specifications" if ingles else "Alineando especificaciones")
         progreso.transient(self.ventana)
         progreso.resizable(False, False)
@@ -3434,6 +3528,8 @@ class GeneradorEspecificacion:
             return
 
         self.pruebas = filas_alineadas
+        if hasattr(self, "_cambio_alineacion_revision"):
+            self._cambio_alineacion_revision = True
         self._nombres_sugeridos_por_fila.clear()
         self._actualizar_tabla()
         messagebox.showinfo(
@@ -3459,6 +3555,14 @@ class GeneradorEspecificacion:
         self._cerrar_editor_celda(guardar=True)
         ingles = self._idioma.get() == "English"
         idioma = "en" if ingles else "es"
+        if not self._actualizar_revision_automatica():
+            codigo = self.variables_control["codigo_unico_producto"].get().strip()
+            error = self._revisiones_historial.get(codigo)
+            messagebox.showerror("Revisión pendiente",
+                str(error) if isinstance(error, Exception) else
+                "Se está consultando el historial del producto. Espera un momento y vuelve a guardar.",
+                parent=self.ventana)
+            return
         self._codigo_validacion_activada = True
         if not self._actualizar_validacion_codigo():
             self.entradas_control["codigo_unico_producto"].focus_set()
@@ -3560,6 +3664,15 @@ class GeneradorEspecificacion:
         )
         if self.al_guardar is not None:
             self.al_guardar(destino)
+        else:
+            try:
+                import registro_hii
+                with registro_hii.conectar(BASE / "especificaciones.db") as con:
+                    registro_hii.sincronizar_idiomas(con, destino.parent)
+            except (OSError, ValueError, sqlite3.Error) as exc:
+                messagebox.showerror("Relaciones por idioma",
+                    f"El JSON se guardó, pero no se pudieron actualizar sus relaciones: {exc}",
+                    parent=self.ventana)
 
 
 class EditorJson:
@@ -3569,7 +3682,7 @@ class EditorJson:
         archivo_inicial: Path | None = None,
     ):
         self.app = app
-        self.ventana = tk.Toplevel(app.raiz)
+        self.ventana = ui.Ventana(app.raiz)
         self.ventana.title("Generar o editar JSON alineado")
         self.ventana.geometry("1050x720")
         self.ventana.minsize(700, 480)
@@ -3679,7 +3792,7 @@ class PanelComparacion:
         self.ruta: Path | None = None
         self.archivo_origen: Path | None = None
         self.directorio_temporal: tempfile.TemporaryDirectory[str] | None = None
-        self.zoom = 1.0
+        self.zoom = 1.44
         self.marco = ttk.LabelFrame(comparador.contenedor, text=f"Especificación {indice}", padding=8)
         comparador.contenedor.add(
             self.marco,
@@ -3690,24 +3803,28 @@ class PanelComparacion:
         self.marco.columnconfigure(0, weight=1)
         comandos = ttk.Frame(self.marco)
         comandos.grid(row=0, column=0, sticky="ew", pady=(0, 6))
-        ttk.Button(comandos, text="Seleccionar spec / Word", command=self.seleccionar).pack(side="left")
+        fila_archivo = ttk.Frame(comandos)
+        fila_archivo.pack(fill="x", pady=(0, 6))
+        fila_herramientas = ttk.Frame(comandos)
+        fila_herramientas.pack(fill="x")
+        ttk.Button(fila_archivo, text="Seleccionar archivo", width=16, command=self.seleccionar).pack(side="left")
         ttk.Button(
-            comandos,
+            fila_herramientas,
             text="ⓘ",
-            width=3,
+            width=3, variante="secundario", height=26,
             command=self.mostrar_ayuda_seleccion,
         ).pack(side="left", padx=(4, 0))
         self.boton_editar = ttk.Button(
-            comandos,
+            fila_archivo,
             text="Editar",
-            command=self.editar,
+            command=self.editar, width=7, variante="secundario",
             state="disabled",
         )
         self.boton_editar.pack(side="left", padx=(6, 0))
-        ttk.Button(comandos, text="−", width=3, command=lambda: self.cambiar_zoom(-0.1)).pack(side="left", padx=(8, 2))
-        ttk.Button(comandos, text="+", width=3, command=lambda: self.cambiar_zoom(0.1)).pack(side="left")
-        ttk.Button(comandos, text="Emergente", command=self.comparador.abrir_emergente).pack(side="right")
-        ttk.Button(comandos, text="×", width=3, command=self.limpiar).pack(side="right", padx=(0, 6))
+        ttk.Button(fila_herramientas, text="−", width=3, height=26, variante="secundario", command=lambda: self.cambiar_zoom(-0.1)).pack(side="left", padx=(8, 4))
+        ttk.Button(fila_herramientas, text="+", width=3, height=26, variante="secundario", command=lambda: self.cambiar_zoom(0.1)).pack(side="left")
+        ttk.Button(fila_herramientas, text="Emergente", width=9, height=26, variante="secundario", command=self.comparador.abrir_emergente).pack(side="right")
+        ttk.Button(fila_herramientas, text="×", width=3, height=26, variante="secundario", command=self.limpiar).pack(side="right", padx=(0, 6))
         self.previa = ttk.Frame(self.marco)
         self.previa.grid(row=1, column=0, sticky="nsew")
         self.etiqueta = ttk.Label(self.previa, text="Selecciona un JSON para mostrarlo.", anchor="center")
@@ -3816,7 +3933,7 @@ class PanelComparacion:
 class Comparador:
     def __init__(self, app: "AplicacionEspecificaciones"):
         self.app = app
-        self.ventana = tk.Toplevel(app.raiz)
+        self.ventana = ui.Ventana(app.raiz)
         self.ventana.title("Comparar especificaciones")
         self.ventana.geometry("1350x820")
         self.ventana.minsize(850, 550)
@@ -3909,106 +4026,20 @@ class AplicacionEspecificaciones:
         self.raiz.title("Gestor de especificaciones")
         self.raiz.geometry("1380x820")
         self.raiz.minsize(900, 600)
-        self.raiz.configure(background="#0752b9")
+        self.raiz.configure(background=ui.paleta()["fondo"])
+        self.zoom_aplicacion = ui.PREFERENCIAS["escala"]
         self._carga_en_proceso = False
         self._cola_carga: queue.Queue[tuple[str, str | int]] | None = None
         self._mensajes_carga: list[str] = []
         self._ventana_detalles_carga: tk.Toplevel | None = None
         self._texto_detalles_carga: ScrolledText | None = None
         self._crear_interfaz()
+        if ui.PREFERENCIAS["maximizar"]:
+            self.raiz.after_idle(lambda: self.raiz.state("zoomed"))
 
     def _crear_interfaz(self) -> None:
-        barra = tk.Frame(self.raiz, background="#0752b9", padx=20, pady=12)
-        barra.pack(fill="x")
-        zoom = ttk.Frame(barra)
-        zoom.pack(side="right", padx=(8, 0))
-        ttk.Button(zoom, text="A−", width=4, command=lambda: self.cambiar_zoom(-0.1)).pack(side="left", padx=2)
-        ttk.Button(zoom, text="A+", width=4, command=lambda: self.cambiar_zoom(0.1)).pack(side="left", padx=2)
-        for texto, accion in (
-            ("INSTRUCCIONES", self.abrir_instrucciones),
-            ("VER HISTÓRICO", self.abrir_historico),
-            ("ACTUALIZAR FORMATOS", self.actualizar_formatos),
-            ("ACTUALIZAR MÉTODOS", self.actualizar_metodos),
-            ("CONFIGURACIÓN", self.configuracion),
-        ):
-            tk.Button(
-                barra,
-                text=texto,
-                command=accion,
-                relief="flat",
-                background="white",
-                activebackground="#dbeafe",
-                font=("Segoe UI", 10),
-                padx=18,
-                pady=5,
-            ).pack(side="left", padx=5)
-
-        acciones = tk.Frame(self.raiz, background="#0752b9", padx=45, pady=45)
-        acciones.pack(anchor="nw")
-        for texto, accion in (
-            ("SUBIR ESPEC", self.subir_especificacion),
-            ("GENERAR ESPEC", self.generar_especificacion),
-            ("SELECCIONAR ESPEC", self.seleccionar_especificacion),
-            ("COMPARAR ESPECS", self.comparar_especificaciones),
-            ("GENERAR HII", self.generar_hii),
-        ):
-            tk.Button(
-                acciones,
-                text=texto,
-                command=accion,
-                relief="flat",
-                background="white",
-                activebackground="#dbeafe",
-                font=("Segoe UI", 11),
-                padx=24,
-                pady=8,
-                width=22,
-            ).pack(anchor="w", pady=9)
-
-        color_pie = "#d9d9d9"
-        self._barra_progreso_carga = tk.Frame(
-            self.raiz,
-            background=color_pie,
-            padx=12,
-            pady=4,
-        )
-        self._barra_progreso_carga.pack(side="bottom", fill="x")
-        self._barra_progreso_carga.columnconfigure(0, weight=1)
-        tk.Label(
-            self._barra_progreso_carga,
-            text=f"Interfaz v{VERSION} | Alineador v{VERSION_ALINEADOR}",
-            anchor="e",
-            background=color_pie,
-            font=("Segoe UI", 9),
-        ).grid(row=1, column=1, sticky="se", padx=(12, 0))
-        self._estado_progreso_carga = tk.Label(
-            self._barra_progreso_carga,
-            text="Listo.",
-            anchor="center",
-            background=color_pie,
-            font=("Segoe UI", 9),
-        )
-        self._estado_progreso_carga.grid(
-            row=0, column=0, columnspan=2, pady=(0, 2)
-        )
-        controles_progreso = tk.Frame(
-            self._barra_progreso_carga,
-            background=color_pie,
-        )
-        controles_progreso.grid(row=1, column=0)
-        self._indicador_progreso_carga = ttk.Progressbar(
-            controles_progreso,
-            mode="determinate",
-            maximum=100,
-            length=420,
-        )
-        self._indicador_progreso_carga.configure(value=0)
-        self._indicador_progreso_carga.pack(side="left", padx=(0, 8))
-        ttk.Button(
-            controles_progreso,
-            text="Ver más",
-            command=self._mostrar_detalles_carga,
-        ).pack(side="left")
+        from menu_principal import crear_menu_principal
+        crear_menu_principal(self)
 
     def abrir_instrucciones(self) -> None:
         for nombre in ("README_ACTUALIZACION_CODIGOS_200.md", "README.md"):
@@ -4268,7 +4299,7 @@ class AplicacionEspecificaciones:
             self._ventana_detalles_carga.deiconify()
             self._ventana_detalles_carga.lift()
             return
-        ventana = tk.Toplevel(self.raiz)
+        ventana = ui.Ventana(self.raiz)
         ventana.title("Mensajes de carga")
         ventana.geometry("850x480")
         ventana.transient(self.raiz)
@@ -4397,7 +4428,7 @@ class AplicacionEspecificaciones:
         def abrir_editor_json(ruta: Path) -> None:
             EditorJson(self, ruta)
 
-        ventana = tk.Toplevel(self.raiz)
+        ventana = ui.Ventana(self.raiz)
         SelectorEspecificaciones(
             ventana,
             carpeta_json=self.rutas["json_alineadas"],
@@ -4413,7 +4444,7 @@ class AplicacionEspecificaciones:
         archivos = filedialog.askopenfilenames(
             parent=self.raiz,
             title="Selecciona plantillas Word para FORMATOS",
-            filetypes=(("Plantillas Word", "*.doc *.docm *.docx"),),
+            filetypes=(("Plantillas Word y Excel", "*.doc *.docm *.docx *.xlsx *.xlsm"),),
         )
         if not archivos:
             return
@@ -4423,7 +4454,7 @@ class AplicacionEspecificaciones:
             nombres = []
             for archivo in archivos:
                 origen = Path(archivo)
-                if origen.suffix.lower() not in EXTENSIONES_WORD:
+                if origen.suffix.lower() not in {*EXTENSIONES_WORD, ".xlsx", ".xlsm"}:
                     raise ValueError(f"Extensión no compatible: {origen.name}")
                 shutil.copy2(origen, destino / origen.name)
                 nombres.append(origen.name)
@@ -4433,7 +4464,7 @@ class AplicacionEspecificaciones:
         messagebox.showinfo("Formatos actualizados", f"{len(nombres)} archivo(s) copiado(s) en:\n{destino}", parent=self.raiz)
 
     def actualizar_metodos(self) -> None:
-        ventana = tk.Toplevel(self.raiz)
+        ventana = ui.Ventana(self.raiz)
         ventana.title("Actualizar métodos")
         ventana.transient(self.raiz)
         ventana.resizable(False, False)
@@ -4541,7 +4572,7 @@ class AplicacionEspecificaciones:
             messagebox.showerror("No se pudo iniciar la actualización", str(exc), parent=self.raiz)
 
     def configuracion(self) -> None:
-        ventana = tk.Toplevel(self.raiz)
+        ventana = ui.Ventana(self.raiz)
         ventana.title("Configuración de carpetas")
         ventana.transient(self.raiz)
         ventana.grab_set()
@@ -4583,12 +4614,8 @@ class AplicacionEspecificaciones:
             variable.set(ruta)
 
     def cambiar_zoom(self, cambio: float) -> None:
-        self.zoom_aplicacion = min(1.6, max(0.8, self.zoom_aplicacion + cambio))
-        self.raiz.tk.call(
-            "tk",
-            "scaling",
-            self._escala_tk_base * self.zoom_aplicacion,
-        )
+        self.zoom_aplicacion = min(1.4, max(0.8, self.zoom_aplicacion + cambio))
+        ui.aplicar_preferencias({**ui.PREFERENCIAS, "escala": self.zoom_aplicacion})
 
     def abrir_emergente(
         self,
@@ -4619,7 +4646,7 @@ class AplicacionEspecificaciones:
                 )
                 return
             ruta = ruta_emergente
-        ventana = tk.Toplevel(self.raiz)
+        ventana = ui.Ventana(self.raiz)
         ventana.title(f"Vista emergente · {ruta.name}")
         ventana.geometry("900x680")
         ventana.minsize(600, 400)
@@ -4662,7 +4689,7 @@ def main() -> None:
         help="abre en el generador el JSON indicado",
     )
     args = parser.parse_args()
-    raiz = tk.Tk()
+    raiz = ui.Raiz()
     app = AplicacionEspecificaciones(raiz)
     if args.editar_json is not None:
         EditorJson(app, args.editar_json)

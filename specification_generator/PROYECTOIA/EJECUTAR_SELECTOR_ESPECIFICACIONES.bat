@@ -26,7 +26,7 @@ if errorlevel 1 (
     exit /b 1
 )
 
-"%PYTHON%" -c "import docx" >nul 2>&1
+"%PYTHON%" -c "import docx, customtkinter" >nul 2>&1
 if errorlevel 1 (
     echo Instalando dependencias del selector...
     "%PYTHON%" -m pip install -r "%~dp0requirements.txt"
