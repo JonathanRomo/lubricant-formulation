@@ -6,7 +6,8 @@ generador HII también pueden iniciarse directamente con sus archivos Python.
 
 ## Carpetas y portabilidad
 
-`rutas_proyecto.py` centraliza la carpeta del programa. El menú, selector,
+`rutas_proyecto.py` centraliza la carpeta del programa y las rutas de listas,
+métodos y traducciones mediante `carpeta_listas()` y `ruta_maestro()`. El menú, selector,
 generadores, extractor, alineador, métodos y traductor usan esa ubicación,
 independientemente de la carpeta desde la que se ejecuten. Los argumentos de
 consola relativos también parten de esa carpeta, incluido `--base`.

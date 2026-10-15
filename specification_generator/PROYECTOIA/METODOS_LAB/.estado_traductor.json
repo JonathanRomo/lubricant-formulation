@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "sha256_excel": "1a281b03b7d490a98a3a1911d612c5adc72b693477bbd8005c756ad628ba175d",
-  "ultima_comprobacion": "2026-10-14T13:43:06-06:00",
-  "ultima_modificacion": "2026-10-14T13:43:03-06:00",
+  "sha256_excel": "a8a28f1abe25ccfa120e8f53f2db3e27e7fbe8dce16ba4eb2a53d47f32594950",
+  "ultima_comprobacion": "2026-10-14T21:14:05-06:00",
+  "ultima_modificacion": "2026-10-14T21:14:05-06:00",
   "registros": [
     {
       "es": "ÁMBAR CLARO",
@@ -2070,19 +2070,18 @@
     },
     {
       "es": "ANEXO",
-      "en": "ANEX",
+      "en": "ANNEX",
       "activo": true,
       "observaciones": ""
     },
     {
       "es": "ANEXAR",
-      "en": "ANEX",
+      "en": "ANNEX",
       "activo": true,
       "observaciones": ""
     }
   ],
   "ultimos_cambios": [
-    "AGREGADA: ANEXAR → ANEX",
-    "AGREGADA: ANEXO → ANEX"
+    "MODIFICADA: {'es': 'ANEXAR', 'en': 'ANEX', 'activo': True, 'observaciones': ''} → {'es': 'ANEXAR', 'en': 'ANNEX', 'activo': True, 'observaciones': ''}"
   ]
 }

@@ -13,7 +13,7 @@ from unittest.mock import patch
 import alinear_especificaciones_json as alineador
 import generador_especs_hii as generador_word
 import gestor_especificaciones as gestor
-import registro_hii
+import generador_hii as hii
 from interfaz_aplicacion_especificaciones import _guardar_configuracion, _cargar_configuracion
 from rutas_proyecto import BASE, CARPETAS, resolver_ruta, ruta_portatil, rutas_configuradas
 
@@ -160,19 +160,19 @@ assert rutas_configuradas()['metodos_lab'] == base / 'METODOS_LAB'
             excel = base / "HISTORICO_ESPECIFICACIONES" / "producto.xlsm"
             excel.parent.mkdir()
             excel.write_bytes(b"HII")
-            with registro_hii.conectar(base / "especificaciones.db") as con:
-                registro_hii.vincular(con, es, en)
-                registro_hii.registrar(con, excel, es, "ESPANOL", "2026-10-14")
+            with hii.conectar(base / "especificaciones.db") as con:
+                hii.vincular(con, es, en)
+                hii.registrar(con, excel, es, "ESPANOL", "2026-10-14")
                 self.assertTrue(all(not Path(fila[0]).is_absolute() for fila in con.execute("SELECT ruta FROM hii_especificaciones")))
             nueva = raiz / "trasladado"
             base.rename(nueva)
             es, en = nueva / es.relative_to(base), nueva / en.relative_to(base)
-            with otro_directorio(raiz), registro_hii.conectar(nueva / "especificaciones.db") as con:
-                self.assertEqual(registro_hii.candidatas(con, es, "INGLES", [en]), [en])
+            with otro_directorio(raiz), hii.conectar(nueva / "especificaciones.db") as con:
+                self.assertEqual(hii.candidatas(con, es, "INGLES", [en]), [en])
                 fila = con.execute("SELECT * FROM hii_generadas").fetchone()
                 self.assertTrue((nueva / fila["ruta"]).is_file())
                 self.assertTrue((nueva / fila["especificacion"]).is_file())
-                self.assertEqual(registro_hii.exportar_relaciones(con, [es, en]), set())
+                self.assertEqual(hii.exportar_relaciones(con, [es, en]), set())
 
     def test_migracion_de_registros_antiguos_conserva_parejas_y_hii(self):
         with tempfile.TemporaryDirectory() as temporal:
@@ -185,7 +185,7 @@ assert rutas_configuradas()['metodos_lab'] == base / 'METODOS_LAB'
             excel = base / "HISTORICO_ESPECIFICACIONES" / "producto.xlsm"
             excel.parent.mkdir()
             excel.write_bytes(b"HII")
-            with registro_hii.conectar(base / "especificaciones.db", recuperar=False) as con:
+            with hii.conectar(base / "especificaciones.db", recuperar=False) as con:
                 # Simular el formato anterior sin tocar ninguna base del usuario.
                 con.execute("DELETE FROM hii_estado")
                 con.executemany("INSERT INTO hii_especificaciones VALUES (?, ?, ?, ?, ?)",
@@ -197,23 +197,23 @@ assert rutas_configuradas()['metodos_lab'] == base / 'METODOS_LAB'
             base.rename(nueva)
             es, en = nueva / es.relative_to(base), nueva / en.relative_to(base)
             contenido = es.read_bytes()
-            with patch.object(registro_hii, "reubicar_ruta_heredada", side_effect=[es, OSError("fallo simulado")]):
-                with self.assertRaises(OSError), registro_hii.conectar(nueva / "especificaciones.db"):
+            with patch.object(hii, "reubicar_ruta_heredada", side_effect=[es, OSError("fallo simulado")]):
+                with self.assertRaises(OSError), hii.conectar(nueva / "especificaciones.db"):
                     pass
             # Una migración interrumpida no deja claves nuevas ni rompe las anteriores.
             with closing(sqlite3.connect(nueva / "especificaciones.db")) as comprobar:
                 self.assertEqual(comprobar.execute("SELECT COUNT(*) FROM hii_especificaciones").fetchone()[0], 2)
                 self.assertTrue(all(Path(fila[0]).is_absolute() for fila in comprobar.execute("SELECT ruta FROM hii_especificaciones")))
                 self.assertEqual(list(comprobar.execute("PRAGMA foreign_key_check")), [])
-            with registro_hii.conectar(nueva / "especificaciones.db") as con:
-                self.assertEqual(registro_hii.candidatas(con, es, "INGLES", [en]), [en])
+            with hii.conectar(nueva / "especificaciones.db") as con:
+                self.assertEqual(hii.candidatas(con, es, "INGLES", [en]), [en])
                 for tabla in ("hii_traducciones", "hii_enlaces_automaticos", "hii_generadas"):
                     self.assertEqual(con.execute(f"SELECT COUNT(*) FROM {tabla}").fetchone()[0], 1)
                 self.assertEqual(list(con.execute("PRAGMA foreign_key_check")), [])
                 self.assertFalse(Path(con.execute("SELECT ruta FROM hii_generadas").fetchone()[0]).is_absolute())
             self.assertEqual(es.read_bytes(), contenido)
-            with patch.object(registro_hii, "reubicar_ruta_heredada", side_effect=AssertionError("No repetir migración")):
-                with registro_hii.conectar(nueva / "especificaciones.db"):
+            with patch.object(hii, "reubicar_ruta_heredada", side_effect=AssertionError("No repetir migración")):
+                with hii.conectar(nueva / "especificaciones.db"):
                     pass
 
     def test_catalogo_registrado_se_reubica_sin_cambiar_el_historial(self):

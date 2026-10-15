@@ -14,7 +14,7 @@ from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
-from rutas_proyecto import BASE, resolver_ruta, ruta_portatil, rutas_configuradas, reubicar_ruta_heredada
+from rutas_proyecto import BASE, resolver_ruta, ruta_portatil, rutas_configuradas, reubicar_ruta_heredada, carpeta_listas
 
 try:
     import pandas as pd
@@ -27,7 +27,7 @@ except ModuleNotFoundError as exc:
         ) from None
     raise
 
-VERSION = "1.12.0"
+VERSION = "1.13.1"
 PYTHON_REQUERIDO = (3, 11)
 ENTRADA = "ESPECIFICACIONES_JSON"
 SALIDA = "ESPECIFICACIONES_JSON_ALINEADAS"
@@ -1070,6 +1070,7 @@ def mejor_coincidencia(
 
 
 def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> dict[str, int]:
+    from generador_hii import conservar_historial
     if not isinstance(maestro, MaestroPreparado):
         maestro = MaestroPreparado(maestro)
     datos = json.loads(path.read_text(encoding="utf-8-sig"))
@@ -1103,7 +1104,9 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
     for indice, prueba in enumerate(pruebas, 1):
         if not isinstance(prueba, dict):
             raise ValueError(f"El elemento {indice} de 'pruebas' debe ser un objeto.")
-        prueba["PERIODIDICAD DE ANALISIS"] = ""
+        prueba["PERIODIDICAD DE ANALISIS"] = next(
+            (prueba[campo] for campo in ("PERIODIDICAD DE ANALISIS", "periodicidad", "periodicidad_analisis")
+             if texto(prueba.get(campo))), "▶")
         nombre_original = texto(prueba.get("prueba") or prueba.get("nombre"))
         metodo_original = texto(prueba.get("metodo"))
         unidades_originales = texto(prueba.get("unidades"))
@@ -1247,6 +1250,7 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
         "archivo_maestro": MAESTRO.as_posix(), "resumen": conteo, "detalle": auditoria,
         "mensajes_astm_no_encontradas": mensajes_astm_no_encontradas,
     }
+    conservar_historial(resultado, path, salida)
     salida.parent.mkdir(parents=True, exist_ok=True)
     archivo_temporal = None
     try:
@@ -1292,7 +1296,6 @@ def ejecutar(
         archivos_seleccionados = [resolver_ruta(ruta, base) for ruta in archivos_seleccionados]
     if destinos_seleccionados is not None:
         destinos_seleccionados = [resolver_ruta(ruta, base) for ruta in destinos_seleccionados]
-    from rutas_listas import carpeta_listas
     carpeta_maestro = carpeta_listas(base)
     maestro_path = base / MAESTRO
     if MAESTRO.parent == Path("METODOS_LAB") and carpeta_maestro != base.resolve() / "METODOS_LAB":
@@ -1405,9 +1408,9 @@ def ejecutar(
         finally:
             if al_progreso is not None:
                 al_progreso(indice, len(archivos), str(rel))
-    import registro_hii
-    with registro_hii.conectar(base / "especificaciones.db") as relaciones:
-        cambios_relaciones = registro_hii.sincronizar_idiomas(relaciones, salida)
+    import generador_hii as hii
+    with hii.conectar(base / "especificaciones.db") as relaciones:
+        cambios_relaciones = hii.sincronizar_idiomas(relaciones, salida)
     for origen, rel in archivos_relativos:
         destino = salida / rel
         clave = ruta_portatil(destino, base)

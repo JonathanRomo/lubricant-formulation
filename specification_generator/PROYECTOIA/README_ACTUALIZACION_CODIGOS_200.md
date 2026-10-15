@@ -231,6 +231,23 @@ especificación en el generador con sus datos cargados; al guardar, permite
 confirmar la actualización del mismo JSON. Si se abrió un Word solo para
 compararlo, «Editar» carga su extracción temporal en el generador para crear un
 JSON persistente.
+Si la traducción vinculada tiene otro código, cliente o revisión, falta o no
+puede emparejarse con las pruebas, el editor abre la especificación y prepara
+un borrador del otro idioma con un aviso dentro de la ventana. La versión
+vinculada se conserva y la traducción nueva requiere otro archivo. Al guardar
+la pareja se comprueba que coincidan código, cliente y revisión, que los
+idiomas sean distintos y que no queden traducciones pendientes.
+Al modificar una especificación existente y aplicar la siguiente revisión, el
+editor sustituye su fecha por la fecha local del sistema (`DD/MM/YY`). Ambos
+idiomas comparten la nueva revisión y fecha; abrir sin cambios conserva las originales.
+Cuando faltan nombre o revisión del cliente al abrir una especificación, el
+editor propone un guion que se puede borrar. Desarrollador es obligatorio al
+guardar tanto en progreso como terminado. Junto a Revisión aparece Fecha de
+reanálisis, con la unidad meses: carga y edita `FECHA DE REANALISIS` del JSON y
+se comparte entre idiomas. Puede quedar incompleta en progreso; el guardado
+terminado exige exactamente dos dígitos (por ejemplo, `06` o `12`).
+El JSON guarda la unidad junto al valor (`"FECHA DE REANALISIS": "06 meses"`);
+al reabrirlo, el campo numérico del editor muestra solamente `06`.
 La fecha inicial usa la fecha local del sistema en formato `DD/MM/YY`; Folio
 VAP, nombre de cliente y revisión del cliente empiezan con `-`. En la tabla se
 puede pulsar Suprimir para vaciar la celda; el desplegable de periodicidad
@@ -242,11 +259,8 @@ un nombre con una relación única completa el código. Un nombre que no exista 
 el catálogo se puede conservar como texto libre. Al cambiar el idioma, los
 nombres de prueba que tengan traducción única en la lista maestra se traducen
 automáticamente.
-`ACTUALIZAR MÉTODOS` permite consultar y editar las siete columnas de la lista
-maestra, abrir la ubicación del Excel o reconstruirlo desde los archivos
-fuente. Al reconstruir, conserva los métodos ingleses ya guardados cuando puede
-asociarlos con una fila de origen; si no existe una traducción, usa el método
-original como fallback.
+`ACTUALIZAR MÉTODOS` permite consultar y editar manualmente las siete columnas
+de la lista maestra o abrir la ubicación del Excel.
 `COMPARAR ESPECS` abre dos paneles de comparación, distribuidos inicialmente
 con el mismo ancho. El botón «＋ Agregar especificación» permite añadir un
 tercer panel; cada panel tiene zoom independiente y puede abrir su vista en una
@@ -273,7 +287,7 @@ la carpeta de documentos generados o exportar la tabla seleccionada a un archivo
 Excel `.xlsx` en la ruta que elija el usuario; si hay una búsqueda activa, se
 exportan todos los registros coincidentes, no solo la página visible. La
 aplicación permite además copiar
-plantillas Word a `FORMATOS`, ejecutar la actualización de la lista maestra y
+plantillas Word a `FORMATOS`, editar manualmente la lista maestra y
 configurar las carpetas usadas por la interfaz. Los controles `A−` y `A+` ajustan el zoom
 general; los controles `−` y `+` de cada panel ajustan solo esa vista previa.
 El selector y la comparación incluyen JSON en español e inglés; las vistas
@@ -315,23 +329,21 @@ El proyecto aún no contiene la carpeta `FORMATOS` ni una plantilla Word
 española. Por eso, la ventana presenta una vista de los campos y tablas que
 rellena el generador, no una reproducción exacta del diseño del archivo Word.
 
-## Unificador de métodos de laboratorio
+## Mantenimiento manual de métodos de laboratorio
 
-El unificador también requiere Python 3.11. Instala su dependencia y ejecútalo
-desde la carpeta del proyecto:
+La lista maestra se mantiene manualmente en `METODOS_LAB_UNIFICADO.xlsx`, dentro
+de la carpeta de métodos configurada. La aplicación utiliza ese archivo existente
+para la alineación y el editor; no lo reconstruye ni combina archivos fuente.
 
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r ".\requirements_metodos_lab.txt"
-.\.venv\Scripts\python.exe ".\unificar_metodos_lab_v3.py" --base "."
-```
+Desde **Métodos**, usa **Editar lista maestra** o **Ubicación y edición manual**
+para consultar y modificar el Excel. Para agregar o limpiar registros, trabaja
+directamente en Excel y conserva la hoja `METODOS` y sus siete encabezados:
+`METODO`, `MÉTODO INGLÉS`, `NOMBRE IQM`, `NOMBRE IQM INGLES`, `UNIDADES`, `UNITS`
+y `ACREDITACION NOMBRE`.
 
-También puedes ejecutar `EJECUTAR_UNIFICAR_METODOS_LAB.bat`. Este crea el
-entorno virtual `.venv` si hace falta e instala allí `openpyxl`, sin modificar
-la instalación de Python administrada por uv.
-
-No ejecutes `pip install` directamente sobre el Python administrado por uv. Si
-Python 3.11 no está instalado, instálalo y luego crea el entorno con
-`py -3.11 -m venv .venv`.
+La fecha mostrada en la tarjeta de métodos corresponde a la modificación del
+propio Excel, incluidas las ediciones externas. Las dependencias necesarias para
+la aplicación siguen en `requirements.txt`.
 
 ## Optimización del gestor
 

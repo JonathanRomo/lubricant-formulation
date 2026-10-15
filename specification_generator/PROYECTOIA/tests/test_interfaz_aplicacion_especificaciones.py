@@ -1,10 +1,11 @@
 import unittest
 import json
+import queue
 import sqlite3
 import tempfile
 from datetime import date
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from docx import Document
 
@@ -15,6 +16,7 @@ from generador_especs_hii import (
 )
 from interfaz_aplicacion_especificaciones import (
     CAMPO_PERIODICIDAD,
+    GeneradorEspecificacion,
     LEYENDA_PERIODICIDAD,
     NOTAS_PLANTILLA,
     VALORES_ELABORO_APROBO,
@@ -30,6 +32,8 @@ from interfaz_aplicacion_especificaciones import (
     _traducir_nombre_prueba,
     _unidad_sugerida,
     _valores_control_predeterminados,
+    _valor_reanalisis_editor,
+    _valor_reanalisis_json,
     _valores_prueba_predeterminados,
     _SalidaCarga,
     _procesar_carga_especificaciones,
@@ -49,7 +53,69 @@ from interfaz_aplicacion_especificaciones import (
 )
 
 
+class RevisionAutomaticaTests(unittest.TestCase):
+    def editor(self):
+        editor = GeneradorEspecificacion.__new__(GeneradorEspecificacion)
+        editor.datos_originales = {"control_documental": {"fecha": "24-02-12"}}
+        editor._originales_idioma = {}
+        editor._contenido_inicial_revision = ("original",)
+        editor._contenido_para_revision = Mock(return_value=("editado",))
+        editor._revision_inicial = "01"
+        editor._revision_aplicada = False
+        editor._cambio_alineacion_revision = False
+        editor._resultados_revision = queue.Queue()
+        editor._consultas_revision = {"P1"}
+        editor._revisiones_historial = {"P1": "08"}
+        editor.variables_control = {
+            campo: Mock(get=Mock(return_value=valor))
+            for campo, valor in (("codigo_unico_producto", "P1"), ("revision", "01"), ("fecha", "24-02-12"))}
+        return editor
+
+    def test_modificar_actualiza_revision_y_fecha_del_sistema_una_sola_vez(self):
+        editor = self.editor()
+        with patch("interfaz_aplicacion_especificaciones.date") as reloj:
+            reloj.today.return_value = date(2026, 10, 14)
+            self.assertTrue(editor._actualizar_revision_automatica())
+            reloj.today.return_value = date(2026, 10, 15)
+            self.assertTrue(editor._actualizar_revision_automatica())
+        editor.variables_control["revision"].set.assert_called_once_with("08")
+        editor.variables_control["fecha"].set.assert_called_once_with("14/10/26")
+        self.assertEqual(editor.datos_originales["control_documental"]["fecha"], "24-02-12")
+
+    def test_sin_cambios_o_especificacion_nueva_conserva_fecha_y_revision(self):
+        for nueva in (False, True):
+            with self.subTest(nueva=nueva):
+                editor = self.editor()
+                if nueva:
+                    editor.datos_originales = None
+                else:
+                    editor._contenido_para_revision.return_value = editor._contenido_inicial_revision
+                self.assertTrue(editor._actualizar_revision_automatica())
+                editor.variables_control["revision"].set.assert_not_called()
+                editor.variables_control["fecha"].set.assert_not_called()
+
+    def test_fecha_cambia_cuando_llega_el_resultado_del_historial(self):
+        editor = self.editor()
+        editor._revisiones_historial.clear()
+        self.assertFalse(editor._actualizar_revision_automatica())
+        editor.variables_control["fecha"].set.assert_not_called()
+        editor._resultados_revision.put(("P1", "08"))
+        with patch("interfaz_aplicacion_especificaciones.date") as reloj:
+            reloj.today.return_value = date(2026, 10, 14)
+            self.assertTrue(editor._actualizar_revision_automatica())
+        editor.variables_control["fecha"].set.assert_called_once_with("14/10/26")
+
+
 class DatosNuevaEspecificacionTests(unittest.TestCase):
+    def test_reanalisis_guarda_meses_y_reabre_sin_duplicar_unidad(self):
+        for entrada in ("06", "06 meses", " 06 MESES "):
+            with self.subTest(entrada=entrada):
+                self.assertEqual(_valor_reanalisis_json(entrada), "06 meses")
+                self.assertEqual(_valor_reanalisis_editor(entrada), "06")
+                contenido = _datos_generador_desde_json({"FECHA DE REANALISIS": entrada})
+                self.assertEqual(contenido["fecha_reanalisis"], "06")
+        self.assertEqual(_valor_reanalisis_json(""), "")
+
     def setUp(self):
         self.maestro = [
             {
@@ -386,6 +452,20 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
         self.assertEqual(resultado["campo_futuro"], {"valor": 1})
         self.assertEqual(resultado["Desarrollador"], "Nuevo")
 
+    def test_cliente_ausente_recibe_guion_y_su_borrado_se_conserva(self):
+        for control in ({}, {"nombre_cliente": " ", "revision_cliente": None}):
+            with self.subTest(control=control):
+                original = {"control_documental": control, "FECHA DE REANALISIS": "12"}
+                contenido = _datos_generador_desde_json(original)
+                self.assertEqual(contenido["control"]["nombre_cliente"], "-")
+                self.assertEqual(contenido["control"]["revision_cliente"], "-")
+                self.assertEqual(contenido["fecha_reanalisis"], "12")
+                contenido["control"].update(nombre_cliente="", revision_cliente="")
+                actualizado = _integrar_edicion_json(original, {"control_documental": contenido["control"], "FECHA DE REANALISIS": "06"})
+                self.assertEqual(actualizado["control_documental"]["nombre_cliente"], "")
+                self.assertEqual(actualizado["control_documental"]["revision_cliente"], "")
+                self.assertEqual(actualizado["FECHA DE REANALISIS"], "06")
+
     def test_traduce_nombres_de_prueba_al_cambiar_idioma(self):
         self.assertEqual(
             _traducir_nombre_prueba(
@@ -418,7 +498,9 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
     def test_periodicidad_requiere_de_uno_a_cuatro_simbolos_validos(self):
         self.assertEqual(_normalizar_periodicidad("◊, ▶ I", 1), "◊▶I")
         self.assertEqual(_normalizar_periodicidad("QIP", 1), "QIP")
-        for valor in ("", "◊ ▶ C I P", "X", "◊ ◊"):
+        self.assertEqual(_normalizar_periodicidad("", 1), "▶")
+        self.assertEqual(_normalizar_periodicidad("  ", 1), "▶")
+        for valor in ("◊ ▶ C I P", "X", "◊ ◊"):
             with self.subTest(valor=valor), self.assertRaises(ValueError):
                 _normalizar_periodicidad(valor, 1)
         self.assertEqual(len(LEYENDA_PERIODICIDAD["es"]), 8)

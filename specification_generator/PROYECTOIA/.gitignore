@@ -42,3 +42,4 @@ FORMATOS/
 .*.recuperacion.lock
 RESPALDOS_BASE_DATOS/
 REPORTE_RECONSTRUCCION_BASE.json
+.cache_catalogo_hii

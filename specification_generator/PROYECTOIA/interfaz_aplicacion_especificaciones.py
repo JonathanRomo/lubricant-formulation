@@ -8,8 +8,8 @@ from traductor_especificaciones import (
     SERVICIO as SERVICIO_TRADUCTOR, actualizar_traductor,
     validar_registros as validar_registros_traducciones,
 )
-from rutas_listas import ruta_maestro, carpeta_listas
-from rutas_proyecto import BASE, CARPETAS, resolver_ruta, ruta_portatil, rutas_configuradas
+from rutas_proyecto import BASE, CARPETAS, resolver_ruta, ruta_portatil, rutas_configuradas, ruta_maestro, carpeta_listas
+from generador_hii import conservar_historial
 from cambios_alineacion import (cambios_documento, diferencias_filas, original_disponible,
                                comparar_valores_pruebas, ResaltadorCambios)
 
@@ -276,6 +276,17 @@ def crear_documento_alineado_manual(datos: dict[str, Any]) -> dict[str, Any]:
     return resultado
 
 
+def _valor_reanalisis_editor(valor: Any) -> str:
+    texto = str(valor if valor is not None else "").strip()
+    coincidencia = re.fullmatch(r"([0-9]+)\s+meses", texto, flags=re.IGNORECASE)
+    return coincidencia.group(1) if coincidencia else texto
+
+
+def _valor_reanalisis_json(valor: Any) -> str:
+    texto = _valor_reanalisis_editor(valor)
+    return f"{texto} meses" if re.fullmatch(r"[0-9]+", texto) else texto
+
+
 def crear_datos_especificacion_nueva(
     nombre_producto: str,
     idioma: str,
@@ -283,6 +294,7 @@ def crear_datos_especificacion_nueva(
     pruebas: list[dict[str, str]],
     notas: list[str],
     desarrollador: str = "",
+    fecha_reanalisis: str = "",
 ) -> dict[str, Any]:
     """Construye el JSON alineado que usa la vista previa y la generación Word."""
     nombre = nombre_producto.strip()
@@ -339,7 +351,7 @@ def crear_datos_especificacion_nueva(
             "fecha_documento_normalizada": "",
         },
         "control_documental": control_documental,
-        "FECHA DE REANALISIS": "",
+        "FECHA DE REANALISIS": _valor_reanalisis_json(fecha_reanalisis),
         "Desarrollador": desarrollador.strip(),
         "pruebas": pruebas_json,
         "notas": notas_especificacion,
@@ -458,6 +470,19 @@ def alinear_filas_generador(
     return filas, conteo
 
 
+def _validar_pareja_editor(origen: dict, pareja: dict) -> None:
+    """Comprueba la identidad de dos versiones que se editarán como pareja."""
+    if {origen.get("idioma"), pareja.get("idioma")} != {"es", "en"}:
+        raise ValueError("Las versiones deben estar en idiomas distintos: ESP y ENG.")
+    diferencias = []
+    for campo, etiqueta in (("codigo_unico_producto", "código"), ("nombre_cliente", "cliente"), ("revision", "revisión")):
+        a, b = (contenido.get("control", {}).get(campo, "") for contenido in (origen, pareja))
+        if a != b:
+            diferencias.append(f"{etiqueta} ({a or 'vacío'} / {b or 'vacío'})")
+    if diferencias:
+        raise ValueError("No coinciden " + ", ".join(diferencias) + ".")
+
+
 def _datos_generador_desde_json(datos: dict[str, Any]) -> dict[str, Any]:
     producto = datos.get("producto", {})
     documento = datos.get("documento", {})
@@ -499,16 +524,17 @@ def _datos_generador_desde_json(datos: dict[str, Any]) -> dict[str, Any]:
         notas = [notas]
     if not isinstance(notas, list):
         raise ValueError("Las notas del JSON deben ser una lista de textos.")
+    control_editor = {clave: str(control.get(clave, "") or "") for clave, _, _ in CAMPOS_CONTROL_GENERADOR}
+    for clave in ("nombre_cliente", "revision_cliente"):
+        if not control_editor[clave].strip():
+            control_editor[clave] = "-"
     return {
         "nombre_producto": str(producto.get("nombre", "") or ""),
         "idioma": "en" if str(documento.get("idioma", "es")).casefold() == "en" else "es",
-        "control": {
-            clave: str(control.get(clave, "") or "")
-            for clave, _, _ in CAMPOS_CONTROL_GENERADOR
-        },
+        "control": control_editor,
         "pruebas": filas_generador,
         "notas": [str(nota) for nota in notas if nota is not None],
-        "fecha_reanalisis": str(datos.get("FECHA DE REANALISIS", "") or ""),
+        "fecha_reanalisis": _valor_reanalisis_editor(datos.get("FECHA DE REANALISIS", "")),
         "desarrollador": str(datos.get("Desarrollador", "") or ""),
     }
 
@@ -683,6 +709,7 @@ def _integrar_edicion_json(
         "notas",
         "alineacion_metodos_lab",
         "Desarrollador",
+        "FECHA DE REANALISIS",
     ):
         valor_actualizado = actualizado.get(clave)
         valor_original = resultado.get(clave)
@@ -702,6 +729,11 @@ def _integrar_edicion_json(
             resultado[clave] = fusionado
         elif clave in actualizado:
             resultado[clave] = copy.deepcopy(valor_actualizado)
+    fecha_actualizada = actualizado.get("control_documental", {}).get("fecha")
+    if fecha_actualizada is not None and fecha_actualizada != original.get("control_documental", {}).get("fecha"):
+        from gestor_especificaciones import parsear_fecha_documento
+        fecha = parsear_fecha_documento(fecha_actualizada)
+        resultado.setdefault("documento", {})["fecha_documento_normalizada"] = fecha.isoformat() if fecha else ""
     resultado.setdefault("FECHA DE REANALISIS", original.get("FECHA DE REANALISIS", ""))
     return resultado
 
@@ -788,6 +820,8 @@ def _opciones_maestro(
 
 def _normalizar_periodicidad(valor: str, numero_fila: int) -> str:
     texto = valor.strip()
+    if not texto:
+        return PERIODICIDAD_PREDETERMINADA
     if texto and not re.search(r"[\s,;/|]", texto):
         simbolos = list(texto)
     else:
@@ -1880,8 +1914,6 @@ def _guardar_cambios_maestro(
             temporal = Path(directorio_temporal) / ruta.name
             libro.save(temporal)
             temporal.replace(ruta)
-        from unificar_metodos_lab_v3 import registrar_fecha_modificacion
-        registrar_fecha_modificacion(ruta.parent)
     finally:
         libro.close()
 
@@ -2227,6 +2259,7 @@ class GeneradorEspecificacion:
         self._cola_traductor = queue.Queue()
         self._cargando_traductor = False
         self._bilingue = None
+        self._rutas_pareja_descartadas = set()
         self._originales_idioma = {}
         self._cambios_alineacion = {}
         self._rutas_idioma = {}
@@ -2264,6 +2297,7 @@ class GeneradorEspecificacion:
         self._etiquetas: dict[str, ttk.Label] = {}
         self._idioma = tk.StringVar(value="Español")
         self.desarrollador = tk.StringVar()
+        self.fecha_reanalisis = tk.StringVar()
 
         encabezado = ttk.Frame(self.ventana, padding=(12, 4, 12, 2))
         encabezado.pack(fill="x")
@@ -2278,6 +2312,7 @@ class GeneradorEspecificacion:
         )
         self.selector_idioma.pack(side="left")
         self.selector_idioma.bind("<<ComboboxSelected>>", self._actualizar_idioma)
+        self.aviso_pareja = ttk.Label(encabezado, foreground="#9a3412", wraplength=850, justify="left")
 
         identidad = ttk.Frame(self.ventana, padding=(12, 0, 12, 2))
         identidad.pack(fill="x")
@@ -2369,6 +2404,17 @@ class GeneradorEspecificacion:
                     "<<ComboboxSelected>>",
                     self._seleccionar_part_id,
                 )
+            elif clave == "revision":
+                marco_revision = ttk.Frame(self.marco_control)
+                marco_revision.grid(row=fila, column=columna + 1, sticky="ew", pady=3)
+                entrada = ttk.Entry(marco_revision, textvariable=self.variables_control[clave], width=6)
+                entrada.pack(side="left")
+                self.etiqueta_reanalisis = ttk.Label(marco_revision)
+                self.etiqueta_reanalisis.pack(side="left", padx=(12, 6))
+                self.entrada_reanalisis = ttk.Entry(marco_revision, textvariable=self.fecha_reanalisis, width=5)
+                self.entrada_reanalisis.pack(side="left")
+                self.unidad_reanalisis = ttk.Label(marco_revision)
+                self.unidad_reanalisis.pack(side="left", padx=(6, 0))
             else:
                 entrada = ttk.Entry(
                     self.marco_control,
@@ -2625,6 +2671,7 @@ class GeneradorEspecificacion:
             "pruebas": copy.deepcopy(self.pruebas),
             "notas": self.notas.get("1.0", "end-1c").splitlines(),
             "desarrollador": self.desarrollador.get(),
+            "fecha_reanalisis": self.fecha_reanalisis.get(),
         }
 
     def _traducir_campo_bilingue(self, campo, texto, origen, destino, fila):
@@ -2669,6 +2716,11 @@ class GeneradorEspecificacion:
         idioma = self._idioma_anterior
         modelo = BorradoresBilingues(self._contenido_bilingue(idioma), self._traducir_campo_bilingue)
         otro = "en" if idioma == "es" else "es"
+        self._rutas_pareja_descartadas = set()
+        self._originales_idioma.pop(otro, None)
+        self._rutas_idioma.pop(otro, None)
+        if hasattr(self, "aviso_pareja"):
+            self.aviso_pareja.pack_forget()
         if self.datos_originales is not None:
             self._originales_idioma[idioma] = self.datos_originales
             self._rutas_idioma[idioma] = Path(self.destino_inicial or self.archivo_inicial).resolve()
@@ -2677,36 +2729,39 @@ class GeneradorEspecificacion:
             if es_wip(self.archivo_inicial):
                 referencias = []  # Los IDs y pendientes se recuperan del estado WIP.
             rutas = set()
-            for referencia in referencias:
-                if isinstance(referencia, dict) and isinstance(referencia.get("archivo_json"), str):
-                    rutas.add((Path(self.archivo_inicial).parent / referencia["archivo_json"]).resolve())
             try:
+                if not isinstance(referencias, list):
+                    raise ValueError("Las referencias de idioma no tienen un formato válido.")
+                for referencia in referencias:
+                    if isinstance(referencia, dict) and isinstance(referencia.get("archivo_json"), str):
+                        rutas.add((Path(self.archivo_inicial).parent / referencia["archivo_json"]).resolve())
                 if len(rutas) > 1:
-                    raise ValueError("Hay varias traducciones relacionadas. Debe elegirse una pareja inequívoca antes de editar.")
+                    raise ValueError("Hay varias traducciones relacionadas.")
                 if rutas:
-                    ruta = rutas.pop()
+                    ruta = next(iter(rutas))
                     if not ruta.is_file():
                         raise ValueError(f"No existe el JSON relacionado:\n{ruta}")
                     datos = json.loads(ruta.read_text(encoding="utf-8-sig"))
                     if not isinstance(datos, dict):
                         raise ValueError("La raíz del JSON relacionado debe ser un objeto.")
                     contenido = _datos_generador_desde_json(datos)
-                    actual = modelo.borradores[idioma]["control"]
-                    if contenido["idioma"] != otro or any(contenido["control"].get(c) != actual.get(c) for c in ("codigo_unico_producto", "revision", "nombre_cliente")):
-                        raise ValueError("La pareja debe tener el mismo código, cliente y revisión, y otro idioma.")
+                    _validar_pareja_editor(modelo.borradores[idioma], contenido)
                     modelo.cargar_pareja(contenido)
                     self._originales_idioma[otro] = datos
                     self._rutas_idioma[otro] = ruta
             except (OSError, ValueError) as exc:
-                messagebox.showerror("No se pudo abrir la pareja ESP / ENG", str(exc), parent=self.ventana)
-                self.boton_guardar.configure(state="disabled")
-                self.selector_idioma.configure(state="disabled")
-                return
+                self._rutas_pareja_descartadas = rutas - {self._rutas_idioma[idioma]}
+                if hasattr(self, "aviso_pareja"):
+                    self.aviso_pareja.configure(text=f"Borrador {'ENG' if otro == 'en' else 'ESP'} nuevo: "
+                                               f"no se cargó la versión vinculada. {exc}")
+                    self.aviso_pareja.pack(side="left", padx=(12, 0), fill="x", expand=True)
         self._bilingue = modelo
         if self.archivo_inicial is not None and es_wip(self.archivo_inicial):
             try:
                 self._rutas_idioma = restaurar_estado(modelo, self.archivo_inicial)
                 self._originales_idioma = {i: json.loads(r.read_text(encoding="utf-8-sig")) for i, r in self._rutas_idioma.items()}
+                for lengua, datos in self._originales_idioma.items():
+                    modelo.borradores[lengua].setdefault("fecha_reanalisis", _valor_reanalisis_editor(datos.get("FECHA DE REANALISIS", "")))
                 self._aplicar_borrador(idioma)
             except (OSError, ValueError, KeyError, TypeError) as exc:
                 messagebox.showerror("No se pudo recuperar el trabajo en progreso", str(exc), parent=self.ventana)
@@ -2731,6 +2786,7 @@ class GeneradorEspecificacion:
         self.pruebas = contenido["pruebas"]
         self.nombre_producto.set(contenido["nombre_producto"])
         self.desarrollador.set(contenido["desarrollador"])
+        self.fecha_reanalisis.set(contenido.get("fecha_reanalisis", ""))
         for campo, valor in contenido["control"].items():
             self.variables_control[campo].set(valor)
         self.notas.delete("1.0", tk.END)
@@ -2843,10 +2899,13 @@ class GeneradorEspecificacion:
     def _contenido_para_revision(self):
         if self._bilingue is not None:
             self._capturar_bilingue(self._idioma_anterior)
-            return tuple((idioma, tuple(tuple(sorted((k, v) for k, v in f.items() if k != "_id_bilingue")) for f in c["pruebas"]), tuple(c["notas"]))
+            return tuple((idioma, tuple(tuple(sorted((k, v) for k, v in f.items() if k != "_id_bilingue")) for f in c["pruebas"]), tuple(c["notas"]),
+                          c.get("desarrollador", ""), c.get("fecha_reanalisis", ""),
+                          c["control"].get("nombre_cliente", ""), c["control"].get("revision_cliente", ""))
                          for idioma, c in sorted(self._bilingue.borradores.items()))
         return (tuple(tuple(sorted(fila.items())) for fila in self.pruebas),
-                self.notas.get("1.0", "end-1c"))
+                self.notas.get("1.0", "end-1c"), self.desarrollador.get(), self.fecha_reanalisis.get(),
+                self.variables_control["nombre_cliente"].get(), self.variables_control["revision_cliente"].get())
 
     def _actualizar_revision_automatica(self) -> bool:
         if not hasattr(self, "_contenido_inicial_revision") or (self.datos_originales is None and not self._originales_idioma):
@@ -2878,6 +2937,7 @@ class GeneradorEspecificacion:
         if valor is None or isinstance(valor, Exception):
             return False
         self.variables_control["revision"].set(valor)
+        self.variables_control["fecha"].set(date.today().strftime("%d/%m/%y"))
         self._revision_aplicada = True
         return True
 
@@ -2921,6 +2981,7 @@ class GeneradorEspecificacion:
         for clave, valor in contenido["control"].items():
             self.variables_control[clave].set(valor)
         self.desarrollador.set(contenido["desarrollador"])
+        self.fecha_reanalisis.set(contenido["fecha_reanalisis"])
         self.pruebas = contenido["pruebas"]
         self.notas.delete("1.0", tk.END)
         self.notas.insert("1.0", "\n".join(contenido["notas"]))
@@ -3318,8 +3379,10 @@ class GeneradorEspecificacion:
             text="Product name:" if ingles else "Nombre del producto:"
         )
         self.etiqueta_desarrollador.configure(
-            text="Developer:" if ingles else "Desarrollador:"
+            text="Developer *:" if ingles else "Desarrollador *:"
         )
+        self.etiqueta_reanalisis.configure(text="Reanalysis date:" if ingles else "Fecha de reanálisis:")
+        self.unidad_reanalisis.configure(text="months" if ingles else "meses")
         self.etiqueta_titulo_control.configure(
             text="Document control" if ingles else "Control documental"
         )
@@ -4028,6 +4091,21 @@ class GeneradorEspecificacion:
         if self._bilingue is not None:
             self._guardar_bilingue(en_progreso=True)
 
+    def _validar_campos_guardado(self, en_progreso=False):
+        if not self.desarrollador.get().strip():
+            messagebox.showerror("Desarrollador obligatorio", "Completa el campo Desarrollador para guardar.", parent=self.ventana)
+            if getattr(self, "_control_colapsado", False):
+                self._alternar_control_documental()
+            self.entrada_desarrollador.focus_set()
+            return False
+        if not en_progreso and not re.fullmatch(r"[0-9]{2}", self.fecha_reanalisis.get().strip()):
+            messagebox.showerror("Reanálisis obligatorio", "Ingresa exactamente dos dígitos para el reanálisis en meses (por ejemplo, 06 o 12).", parent=self.ventana)
+            if getattr(self, "_control_colapsado", False):
+                self._alternar_control_documental()
+            self.entrada_reanalisis.focus_set()
+            return False
+        return True
+
     def _datos_en_progreso(self, contenido, idioma):
         datos = copy.deepcopy(self._originales_idioma.get(idioma, {}))
         datos.setdefault("esquema", "especificacion_producto_es_v3")
@@ -4038,7 +4116,7 @@ class GeneradorEspecificacion:
         datos["control_documental"] = copy.deepcopy(contenido["control"])
         datos["notas"] = list(contenido["notas"])
         datos["Desarrollador"] = contenido["desarrollador"]
-        datos.setdefault("FECHA DE REANALISIS", "")
+        datos["FECHA DE REANALISIS"] = _valor_reanalisis_json(contenido.get("fecha_reanalisis", ""))
         datos["pruebas"] = [{"numero": indice, **{campo: fila.get(campo, "") for campo in CAMPOS_TABLA},
                              CAMPO_PERIODICIDAD: fila.get("periodicidad", "")}
                             for indice, fila in enumerate(contenido["pruebas"], 1)]
@@ -4046,7 +4124,15 @@ class GeneradorEspecificacion:
         return crear_documento_alineado_manual(datos)
 
     def _guardar_bilingue(self, en_progreso=False):
+        if not self._validar_campos_guardado(en_progreso):
+            return
         self._capturar_bilingue(self._idioma_anterior)
+        if not en_progreso:
+            try:
+                _validar_pareja_editor(self._bilingue.borradores["es"], self._bilingue.borradores["en"])
+            except ValueError as exc:
+                messagebox.showerror("No se puede guardar la pareja", str(exc), parent=self.ventana)
+                return
         conteos = {i: len(self._bilingue.pendientes[i]) for i in ("es", "en")}
         if any(conteos.values()) and not en_progreso:
             messagebox.showwarning("Completar ESP / ENG",
@@ -4072,7 +4158,7 @@ class GeneradorEspecificacion:
         try:
             for idioma, contenido in self._bilingue.borradores.items():
                 datos = self._datos_en_progreso(contenido, idioma) if en_progreso else crear_datos_especificacion_nueva(contenido["nombre_producto"], idioma,
-                    contenido["control"], contenido["pruebas"], contenido["notas"], contenido["desarrollador"])
+                    contenido["control"], contenido["pruebas"], contenido["notas"], contenido["desarrollador"], contenido.get("fecha_reanalisis", ""))
                 if idioma in self._originales_idioma:
                     datos = _integrar_edicion_json(self._originales_idioma[idioma], datos)
                 documentos[idioma] = datos
@@ -4087,16 +4173,27 @@ class GeneradorEspecificacion:
         for idioma in ("es", "en"):
             if idioma not in rutas:
                 nombre = re.sub(r'[<>:"/\\|?*]+', "_", self.nombre_producto.get()).strip(" .") or "ESPECIFICACION"
+                directorio = next(iter(rutas.values())).parent if rutas else carpeta
+                base_nombre = f"{nombre}_{'ESP' if idioma == 'es' else 'ENG'}{'_trabajo' if en_progreso else ''}"
+                sugerido, indice = directorio / f"{base_nombre}.json", 1
+                while sugerido.exists():
+                    sugerido = directorio / f"{base_nombre}_{indice}.json"
+                    indice += 1
                 elegido = filedialog.asksaveasfilename(parent=self.ventana,
                     title=f"Guardar JSON alineado · {'ESP' if idioma == 'es' else 'ENG'}",
-                    initialdir=next(iter(rutas.values())).parent if rutas else carpeta,
-                    initialfile=f"{nombre}_{'ESP' if idioma == 'es' else 'ENG'}{'_trabajo' if en_progreso else ''}.json",
+                    initialdir=directorio, initialfile=sugerido.name,
                     defaultextension=".json", filetypes=(("Archivos JSON", "*.json"),))
                 if not elegido:
                     return
                 rutas[idioma] = Path(elegido).resolve()
         if rutas["es"].resolve() == rutas["en"].resolve():
             messagebox.showerror("Rutas ESP / ENG", "Cada idioma necesita un archivo JSON diferente.", parent=self.ventana)
+            return
+        if any(Path(r).resolve() in getattr(self, "_rutas_pareja_descartadas", set()) and Path(r).exists()
+               for r in rutas.values()):
+            messagebox.showerror("Elige un archivo nuevo",
+                "La versión vinculada que no se cargó se conserva por separado. Elige otro nombre para la nueva traducción.",
+                parent=self.ventana)
             return
         if en_progreso and any(Path(r).resolve() == Path(original).resolve() and not es_wip(original)
                                for r in rutas.values() for original in self._rutas_idioma.values()):
@@ -4120,6 +4217,8 @@ class GeneradorEspecificacion:
                 "cliente": control.get("nombre_cliente", ""),
             }]}
         try:
+            for idioma, datos in documentos.items():
+                conservar_historial(datos, self._rutas_idioma.get(idioma, rutas[idioma]), rutas[idioma])
             archivos = {rutas[i]: documentos[i] for i in ("es", "en")}
             if en_progreso:
                 archivos.update({ruta_estado(r): serializar_estado(self._bilingue, rutas, r) for r in rutas.values()})
@@ -4127,13 +4226,15 @@ class GeneradorEspecificacion:
             if not en_progreso:
                 for r in rutas.values():
                     ruta_estado(r).unlink(missing_ok=True)
-        except OSError as exc:
+        except (OSError, ValueError) as exc:
             messagebox.showerror("No se pudo guardar la pareja", str(exc), parent=self.ventana)
             return
         self._rutas_idioma = rutas
         self._originales_idioma = documentos
         self.datos_originales = documentos[self._idioma_anterior]
         self.destino_inicial = rutas[self._idioma_anterior]
+        if hasattr(self, "aviso_pareja"):
+            self.aviso_pareja.pack_forget()
         self._contenido_inicial_revision = self._contenido_para_revision()
         self._revision_inicial = self.variables_control["revision"].get()
         self._revision_aplicada = False
@@ -4141,10 +4242,10 @@ class GeneradorEspecificacion:
         self._consultas_revision.clear()
         self._revisiones_historial.clear()
         try:
-            import registro_hii
+            import generador_hii as hii
             if not en_progreso:
-                with registro_hii.conectar(BASE / "especificaciones.db") as con:
-                    registro_hii.vincular(con, rutas["es"], rutas["en"])
+                with hii.conectar(BASE / "especificaciones.db") as con:
+                    hii.vincular(con, rutas["es"], rutas["en"])
             if self.al_guardar is not None:
                 for ruta in rutas.values():
                     self.al_guardar(ruta)
@@ -4161,6 +4262,8 @@ class GeneradorEspecificacion:
                     parent=self.ventana)
                 return
         self._cerrar_editor_celda(guardar=True)
+        if not self._validar_campos_guardado():
+            return
         ingles = self._idioma.get() == "English"
         idioma = "en" if ingles else "es"
         if not self._actualizar_revision_automatica():
@@ -4198,6 +4301,7 @@ class GeneradorEspecificacion:
                 self.pruebas,
                 self.notas.get("1.0", "end-1c").splitlines(),
                 self.desarrollador.get(),
+                self.fecha_reanalisis.get(),
             )
             if self.datos_originales is not None:
                 datos = _integrar_edicion_json(self.datos_originales, datos)
@@ -4243,6 +4347,12 @@ class GeneradorEspecificacion:
             destino = Path(ruta)
         temporal = None
         try:
+            origen_historial = self.archivo_inicial or destino
+            if self.idioma_destino is not None:
+                # Una traducción nueva no hereda las HII del idioma de origen.
+                datos["hii_generadas"] = []
+                origen_historial = destino
+            conservar_historial(datos, Path(origen_historial), destino)
             with tempfile.NamedTemporaryFile(
                 mode="w",
                 encoding="utf-8",
@@ -4255,7 +4365,7 @@ class GeneradorEspecificacion:
                 json.dump(datos, archivo, ensure_ascii=False, indent=2)
                 archivo.write("\n")
             os.replace(temporal, destino)
-        except OSError as exc:
+        except (OSError, ValueError) as exc:
             if temporal is not None:
                 temporal.unlink(missing_ok=True)
             messagebox.showerror(
@@ -4277,9 +4387,9 @@ class GeneradorEspecificacion:
             self.al_guardar(destino)
         else:
             try:
-                import registro_hii
-                with registro_hii.conectar(BASE / "especificaciones.db") as con:
-                    registro_hii.sincronizar_idiomas(con, destino.parent)
+                import generador_hii as hii
+                with hii.conectar(BASE / "especificaciones.db") as con:
+                    hii.sincronizar_idiomas(con, destino.parent)
             except (OSError, ValueError, sqlite3.Error) as exc:
                 messagebox.showerror("Relaciones por idioma",
                     f"El JSON se guardó, pero no se pudieron actualizar sus relaciones: {exc}",
@@ -5301,22 +5411,21 @@ class AplicacionEspecificaciones:
 
     def actualizar_metodos(self) -> None:
         ventana = ui.Ventana(self.raiz)
-        ventana.title("Actualizar métodos")
+        ventana.title("Lista maestra de métodos")
         ventana.transient(self.raiz)
         ventana.resizable(False, False)
         ventana.grab_set()
         ttk.Label(
             ventana,
-            text="¿Cómo quieres actualizar o consultar la lista maestra?",
+            text="Consulta y edición manual de la lista maestra",
             font=("Segoe UI", 11, "bold"),
             wraplength=440,
         ).pack(anchor="w", padx=16, pady=(16, 12))
         ttk.Label(
             ventana,
             text=(
-                "Puedes editar los siete campos en esta ventana o abrir la carpeta "
-                "del Excel. Reconstruir desde archivos fuente puede reemplazar "
-                "cambios hechos solo en la lista maestra."
+                "Puedes editar los siete campos aquí o abrir la ubicación del Excel "
+                "para mantener la lista manualmente."
             ),
             wraplength=440,
             justify="left",
@@ -5360,10 +5469,6 @@ class AplicacionEspecificaciones:
                     parent=self.raiz,
                 )
 
-        def reconstruir() -> None:
-            ventana.destroy()
-            self._reconstruir_metodos()
-
         ttk.Button(
             acciones,
             text="Editar la lista maestra aquí",
@@ -5375,45 +5480,10 @@ class AplicacionEspecificaciones:
             command=abrir_ubicacion,
         ).pack(fill="x", pady=4)
         ttk.Button(
-            acciones,
-            text="Actualizar desde archivos fuente",
-            command=reconstruir,
-        ).pack(fill="x", pady=4)
-        ttk.Button(
             ventana,
             text="Cancelar",
             command=ventana.destroy,
         ).pack(anchor="e", padx=16, pady=12)
-
-    def _reconstruir_metodos(self) -> None:
-        python = (
-            BASE / ".venv" / "Scripts" / "python.exe"
-            if os.name == "nt"
-            else BASE / ".venv" / "bin" / "python"
-        )
-        if not python.is_file():
-            python = Path(sys.executable)
-        script = BASE / "unificar_metodos_lab_v3.py"
-        if not script.is_file():
-            messagebox.showerror("No encontrado", f"No se encontró {script.name}.", parent=self.raiz)
-            return
-        try:
-            flags = subprocess.CREATE_NEW_CONSOLE if os.name == "nt" else 0
-            proceso = subprocess.Popen(
-                [str(python), str(script), "--base", str(BASE)],
-                cwd=BASE,
-                creationflags=flags,
-            )
-            def terminado():
-                if not self.raiz.winfo_exists():
-                    return
-                if proceso.poll() is None:
-                    self.raiz.after(300, terminado)
-                else:
-                    self._refrescar_fechas_listas()
-            self.raiz.after(300, terminado)
-        except OSError as exc:
-            messagebox.showerror("No se pudo iniciar la actualización", str(exc), parent=self.raiz)
 
     def configuracion(self) -> None:
         ventana = ui.Ventana(self.raiz)

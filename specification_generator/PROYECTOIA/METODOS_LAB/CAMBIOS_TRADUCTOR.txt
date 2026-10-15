@@ -370,3 +370,9 @@ AGREGADA: POSITIVO → POSTIVE
 [2026-10-14T13:43:03-06:00] 2 cambios
 AGREGADA: ANEXAR → ANEX
 AGREGADA: ANEXO → ANEX
+
+[2026-10-14T21:13:59-06:00] 1 cambios
+MODIFICADA: {'es': 'ANEXO', 'en': 'ANEX', 'activo': True, 'observaciones': ''} → {'es': 'ANEXO', 'en': 'ANNEX', 'activo': True, 'observaciones': ''}
+
+[2026-10-14T21:14:05-06:00] 1 cambios
+MODIFICADA: {'es': 'ANEXAR', 'en': 'ANEX', 'activo': True, 'observaciones': ''} → {'es': 'ANEXAR', 'en': 'ANNEX', 'activo': True, 'observaciones': ''}

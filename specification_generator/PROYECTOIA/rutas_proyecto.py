@@ -97,3 +97,12 @@ def reubicar_ruta_heredada(ruta, base=BASE) -> Path:
     if original.name == "CODIGOS_200.xlsx" and (base / original.name).is_file():
         return base / original.name
     return original
+
+
+def carpeta_listas(base=BASE) -> Path:
+    """Carpeta de métodos y traducciones según la configuración compartida."""
+    return rutas_configuradas(base)["metodos_lab"]
+
+
+def ruta_maestro(base=BASE) -> Path:
+    return carpeta_listas(base) / "METODOS_LAB_UNIFICADO.xlsx"

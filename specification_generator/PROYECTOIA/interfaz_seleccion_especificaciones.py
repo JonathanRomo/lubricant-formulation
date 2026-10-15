@@ -2,8 +2,7 @@
 """Selector con busqueda y vista previa de especificaciones en espanol."""
 from __future__ import annotations
 import estilo_interfaz as ui
-from rutas_listas import ruta_maestro
-from rutas_proyecto import BASE, resolver_ruta, rutas_configuradas
+from rutas_proyecto import BASE, resolver_ruta, rutas_configuradas, ruta_maestro
 from especificaciones_wip import es_wip
 from cambios_alineacion import cambios_documento, ResaltadorCambios
 
@@ -376,14 +375,14 @@ def _mensajes_astm_no_encontradas(
     return tuple(resultado)
 
 
-def cargar_catalogo(carpeta: Path) -> Catalogo:
+def cargar_catalogo(carpeta: Path, *, archivos: list[Path] | None = None) -> Catalogo:
     """Indexa JSON en español e inglés; reporta archivos inválidos."""
     if not carpeta.is_dir():
         raise FileNotFoundError(f"No existe la carpeta de especificaciones: {carpeta}")
 
     especificaciones = []
     errores = []
-    for ruta in detectar_json(carpeta):
+    for ruta in detectar_json(carpeta) if archivos is None else archivos:
         try:
             datos = leer_datos_json(ruta)
             idioma = leer_idioma_datos(datos)
@@ -651,9 +650,12 @@ def preparar_vista_previa(ruta: Path) -> VistaPrevia:
     )
 
 
-def preparar_vista_previa_alineada(ruta: Path) -> VistaPrevia:
+def preparar_vista_previa_alineada(ruta: Path, *, datos: dict | None = None) -> VistaPrevia:
     """Muestra exclusivamente la instantanea de valores guardada en la auditoria alineada."""
-    datos = leer_datos_json(ruta)
+    if datos is None:
+        datos = leer_datos_json(ruta)
+    if not isinstance(datos, dict):
+        raise ValueError("El JSON debe contener un objeto.")
     idioma = leer_idioma_datos(datos)
 
     producto = datos.get("producto")

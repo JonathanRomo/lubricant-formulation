@@ -1,7 +1,6 @@
 """Menú principal por pestañas y personalización del espacio de trabajo."""
 from pathlib import Path
-from rutas_listas import ruta_maestro
-from rutas_proyecto import resolver_ruta, ruta_portatil
+from rutas_proyecto import resolver_ruta, ruta_portatil, ruta_maestro
 import json
 import sqlite3
 import re
@@ -55,6 +54,15 @@ def fecha_actualizacion(carpeta, estado, historial):
         except OSError:
             firma.append(None)
     return _fecha_registrada(str(rutas[0]), str(rutas[1]), tuple(firma))
+
+
+def fecha_actualizacion_maestro(ruta):
+    """Refleja la modificación del Excel, incluidas las ediciones fuera de la aplicación."""
+    try:
+        fecha = datetime.fromtimestamp(Path(ruta).stat().st_mtime, timezone.utc)
+        return _formatear_fecha(fecha.isoformat())
+    except (OSError, ValueError, OverflowError):
+        return "Lista maestra no disponible"
 
 
 class BarraPestanas(ctk.CTkFrame):
@@ -282,7 +290,7 @@ class MenuPrincipal:
         secciones = (
             ("metodos", "Lista de métodos", "Consulta y edita los métodos del laboratorio.",
              (("Editar lista maestra", editar, "principal"),
-              ("Ubicación y otras opciones", self.app.actualizar_metodos, "secundario"))),
+              ("Ubicación y edición manual", self.app.actualizar_metodos, "secundario"))),
             ("traducciones", "Lista de traducciones", "Administra las equivalencias en español e inglés.",
              (("Editar traducciones", self.app.editar_traducciones, "principal"),
               ("Actualizar traducciones desde Excel", self.app.actualizar_traducciones, "secundario"),
@@ -335,10 +343,12 @@ class MenuPrincipal:
             return
         from interfaz_aplicacion_especificaciones import BASE
         carpeta = self.app.rutas.get("metodos_lab", BASE / "METODOS_LAB")
-        for clave, estado, historial in (("metodos", ".estado_metodos_lab.json", "CAMBIOS_METODOS_LAB.txt"),
-                                         ("traducciones", ".estado_traductor.json", "CAMBIOS_TRADUCTOR.txt")):
+        fechas = {
+            "metodos": fecha_actualizacion_maestro(Path(carpeta) / "METODOS_LAB_UNIFICADO.xlsx"),
+            "traducciones": fecha_actualizacion(carpeta, ".estado_traductor.json", "CAMBIOS_TRADUCTOR.txt"),
+        }
+        for clave, texto in fechas.items():
             etiqueta = self._fechas_metodos[clave]
-            texto = fecha_actualizacion(carpeta, estado, historial)
             if etiqueta.cget("text") != texto:
                 etiqueta.configure(text=texto)
 

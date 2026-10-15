@@ -1,0 +1,414 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL 1086"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "en",
+    "fecha_documento_normalizada": "",
+    "edicion_bilingue": 1
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Validación de Producto",
+    "folio_apqp": "--------",
+    "folio_vap": "",
+    "codigo_unico_producto": "20100001",
+    "fecha": "",
+    "revision": "07",
+    "nombre_cliente": "SACHS BOGE DE MÉXICO S. A. DE C.V.",
+    "revision_cliente": "09/02/04"
+  },
+  "FECHA DE REANALISIS": "",
+  "Desarrollador": "",
+  "pruebas": [
+    {
+      "numero": 1,
+      "prueba": "ASTM COLOR",
+      "unidades": "NA",
+      "metodo": "ASTM D1500",
+      "especificacion": "4,0 MAXIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 2,
+      "prueba": "PUREZA DE PARTICULA",
+      "unidades": "N/A",
+      "metodo": "ISO 4406:99",
+      "especificacion": "18/15",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 3,
+      "prueba": "PESO ESPECIFICO A 15 °C",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D1298",
+      "especificacion": "0.865 - 0.900",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 4,
+      "prueba": "KINEMATIC VISCOSITY AT 100 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "2,5 MINIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 5,
+      "prueba": "KINEMATIC VISCOSITY AT 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "REPORT",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 6,
+      "prueba": "KINEMATIC VISCOSITY AT 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "20 - 22",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 7,
+      "prueba": "DYNAMIC BROOKFIELD VISCOSITY AT X °C",
+      "unidades": "mPa*s",
+      "metodo": "ASTM D2983",
+      "especificacion": "3 000 MAXIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 8,
+      "prueba": "LOWER POUR POINT",
+      "unidades": "°C",
+      "metodo": "ASTM D97",
+      "especificacion": "DEBE FLUIR EN MENOS DE 5 SEG",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 9,
+      "prueba": "AGUA Y SEDIMENTOS, W",
+      "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+      "metodo": "ASTM D1298",
+      "especificacion": "0 MAXIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 10,
+      "prueba": "COPPER CORROSION (COPPER STRIP) (TIME/TEMPERATURE)",
+      "unidades": "NA",
+      "metodo": "ASTM D130",
+      "especificacion": "1 MAXIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 11,
+      "prueba": "EVAPORATION LOSS OF LUBRICATING GREASES AND OILS",
+      "unidades": "%",
+      "metodo": "ASTM D972",
+      "especificacion": "5,0 MAXIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 12,
+      "prueba": "FOAMING CHARACTERISTICS (SEQUENCE I)",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892",
+      "especificacion": "REPORT",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 13,
+      "prueba": "FOAMING CHARACTERISTICS (SEQUENCE II)",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892",
+      "especificacion": "100 mL MAXIMUM/ 60 seg MAXIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 14,
+      "prueba": "FOAMING CHARACTERISTICS (SEQUENCE II)",
+      "unidades": "ml/ml",
+      "metodo": "ASTM D892",
+      "especificacion": "100 mL MAXIMUM/ 60 seg MAXIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 15,
+      "prueba": "ISO VISCOSITY GRADE OF LUBRICANTS",
+      "unidades": "NA",
+      "metodo": "ASTM D2422",
+      "especificacion": "95 MINIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 16,
+      "prueba": "RESIDUE ON IGNITION",
+      "unidades": "wt %",
+      "metodo": "USP / FEUM",
+      "especificacion": "75,0 MINIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 17,
+      "prueba": "INFRARED SPECTRUM",
+      "unidades": "NA",
+      "metodo": "ASTM E1252",
+      "especificacion": "ANEX",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 18,
+      "prueba": "SPECIFIC GRAVITY AT X °C/X °C",
+      "unidades": "DIMENSIONLESS",
+      "metodo": "USP",
+      "especificacion": "REPORT",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    }
+  ],
+  "notas": [
+    "The active version of the applicable method shall be the version issued and provided by the laboratory."
+  ],
+  "alineacion_metodos_lab": {
+    "version_programa": "EDICION_MANUAL",
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "ASTM COLOR",
+          "unidades": "NA",
+          "metodo": "ASTM D1500",
+          "especificacion": "4,0 MAXIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "PUREZA DE PARTICULA",
+          "unidades": "N/A",
+          "metodo": "ISO 4406:99",
+          "especificacion": "18/15",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "PESO ESPECIFICO A 15 °C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D1298",
+          "especificacion": "0.865 - 0.900",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "KINEMATIC VISCOSITY AT 100 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "2,5 MINIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "KINEMATIC VISCOSITY AT 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "REPORT",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "KINEMATIC VISCOSITY AT 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "20 - 22",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "DYNAMIC BROOKFIELD VISCOSITY AT X °C",
+          "unidades": "mPa*s",
+          "metodo": "ASTM D2983",
+          "especificacion": "3 000 MAXIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "LOWER POUR POINT",
+          "unidades": "°C",
+          "metodo": "ASTM D97",
+          "especificacion": "DEBE FLUIR EN MENOS DE 5 SEG",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "AGUA Y SEDIMENTOS, W",
+          "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+          "metodo": "ASTM D1298",
+          "especificacion": "0 MAXIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "COPPER CORROSION (COPPER STRIP) (TIME/TEMPERATURE)",
+          "unidades": "NA",
+          "metodo": "ASTM D130",
+          "especificacion": "1 MAXIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "EVAPORATION LOSS OF LUBRICATING GREASES AND OILS",
+          "unidades": "%",
+          "metodo": "ASTM D972",
+          "especificacion": "5,0 MAXIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 12,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "FOAMING CHARACTERISTICS (SEQUENCE I)",
+          "unidades": "ml/ml",
+          "metodo": "ASTM D892",
+          "especificacion": "REPORT",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 13,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "FOAMING CHARACTERISTICS (SEQUENCE II)",
+          "unidades": "ml/ml",
+          "metodo": "ASTM D892",
+          "especificacion": "100 mL MAXIMUM/ 60 seg MAXIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 14,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "FOAMING CHARACTERISTICS (SEQUENCE II)",
+          "unidades": "ml/ml",
+          "metodo": "ASTM D892",
+          "especificacion": "100 mL MAXIMUM/ 60 seg MAXIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 15,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "ISO VISCOSITY GRADE OF LUBRICANTS",
+          "unidades": "NA",
+          "metodo": "ASTM D2422",
+          "especificacion": "95 MINIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 16,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "RESIDUE ON IGNITION",
+          "unidades": "wt %",
+          "metodo": "USP / FEUM",
+          "especificacion": "75,0 MINIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 17,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "INFRARED SPECTRUM",
+          "unidades": "NA",
+          "metodo": "ASTM E1252",
+          "especificacion": "ANEX",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 18,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "SPECIFIC GRAVITY AT X °C/X °C",
+          "unidades": "DIMENSIONLESS",
+          "metodo": "USP",
+          "especificacion": "REPORT",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  },
+  "versiones_idioma": {
+    "ESPANOL": [
+      {
+        "archivo_json": "20100001 00_11_10_26.JSON",
+        "codigo": "20100001",
+        "revision": "00",
+        "cliente": "SACHS BOGE DE MEXICO S A DE C V"
+      }
+    ]
+  },
+  "hii_generadas": [
+    {
+      "id": "a4b94bc3-9d1d-4f89-a162-2b38935b9435",
+      "archivo": "../../../../../Downloads/20100001 HII INGLES.xlsm",
+      "fecha_generacion": "2026-10-14T21:12:24-06:00",
+      "version_generador": "1.1.0",
+      "hash_especificacion": "5f6ebb0d21a82847f9bcfad51fe97b713818679454bcac8da260c0d288c09e6c"
+    }
+  ]
+}

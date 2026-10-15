@@ -22,18 +22,20 @@
       "fila_origen": 2,
       "metodo": "D1500",
       "unidades": "A/D",
-      "especificacion": "4,0 MAXIMO",
+      "especificacion": "4,0 MÁXIMO",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 2,
       "fila_origen": 3,
       "metodo": "D1298",
       "unidades": "gr/cm³",
-      "especificacion": "0,865 – 0,900",
+      "especificacion": "0,865 - 0,900",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 3,
@@ -42,16 +44,18 @@
       "unidades": "mm²/seg (cSt)",
       "especificacion": "REPORTAR",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 4,
       "fila_origen": 5,
       "metodo": "D445",
       "unidades": "mm²/seg (cSt)",
-      "especificacion": "2,5 MINIMO",
+      "especificacion": "2,5 MÍNIMO",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 5,
@@ -60,97 +64,98 @@
       "unidades": "mm²/seg (cSt)",
       "especificacion": "20 - 22",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 6,
       "fila_origen": 7,
       "metodo": "D2983",
       "unidades": "cP",
-      "especificacion": "3 000 MAXIMO",
+      "especificacion": "3 000 MÁXIMO",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 7,
       "fila_origen": 8,
       "metodo": "D97",
       "unidades": "°C",
-      "especificacion": "-45 MAXIMO",
+      "especificacion": "− 45 MÁXIMO",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 8,
       "fila_origen": 9,
       "metodo": "D96",
       "unidades": "%",
-      "especificacion": "0 MAXIMO",
+      "especificacion": "0 MÁXIMO",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 9,
       "fila_origen": 10,
       "metodo": "D130",
       "unidades": "A/D",
-      "especificacion": "1 MAXIMO",
+      "especificacion": "1 MÁXIMO",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 10,
       "fila_origen": 11,
       "metodo": "DIN 51 581",
       "unidades": "%",
-      "especificacion": "5,0 MAXIMO",
+      "especificacion": "5,0 MÁXIMO",
       "prueba": "",
-      "valor_tipico": ""
-    },
-    {
-      "numero": 11,
-      "fila_origen": 12,
-      "metodo": "",
-      "unidades": "",
-      "especificacion": "",
-      "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 12,
       "fila_origen": 13,
       "metodo": "D892",
       "unidades": "ml/ml",
-      "especificacion": "100 mL Max/ 60 mL Máx, 20seg/ 0 mL Max 10 min",
+      "especificacion": "100 mL MÁXIMO/ 60 mL MÁXIMO, 20seg/ 0 mL MÁXIMO 10 min",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 13,
       "fila_origen": 14,
       "metodo": "D 892",
       "unidades": "ml/ml",
-      "especificacion": "100 mL Max/ 60 mL Max,20seg/ 0 mL Max 10 min",
+      "especificacion": "100 mL MÁXIMO/ 60 mL MÁXIMO,20seg/ 0 mL MÁXIMO 10 min",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 14,
       "fila_origen": 15,
       "metodo": "D2270",
       "unidades": "A/D",
-      "especificacion": "95 MINIMO",
+      "especificacion": "95 MÍNIMO",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 15,
       "fila_origen": 16,
       "metodo": "D 611",
       "unidades": "°C",
-      "especificacion": "75,0 MINIMO",
+      "especificacion": "75,0 MÍNIMO",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 16,
@@ -159,25 +164,28 @@
       "unidades": "% Transmitancia/cm-1",
       "especificacion": "ANEXAR",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 17,
       "fila_origen": 18,
       "metodo": "D 4172 MOD",
       "unidades": "mm",
-      "especificacion": "0,40 MAXIMO",
+      "especificacion": "0,40 MÁXIMO",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 18,
       "fila_origen": 19,
       "metodo": "D2783",
       "unidades": "mm",
-      "especificacion": "Pasa / Reportar Diametro de huella de 3 bolas, mm",
+      "especificacion": "PASA / REPORTAR Diametro de huella de 3 bolas, mm",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     },
     {
       "numero": 19,
@@ -186,7 +194,8 @@
       "unidades": "gr/cm³",
       "especificacion": "REPORTAR",
       "prueba": "",
-      "valor_tipico": ""
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": ""
     }
   ],
   "notas": [],
@@ -245,14 +254,16 @@
   "fecha_creacion_json": "2026-10-11T01:25:42",
   "archivo_json": "20100001 00_11_10_26_01.JSON",
   "extractor_version": "0.8.4",
+  "FECHA DE REANALISIS": "",
+  "Desarrollador": "",
   "alineacion_metodos_lab": {
-    "version_programa": "1.6.0",
-    "fecha": "2026-10-11T21:39:24",
+    "version_programa": "1.13.0",
+    "fecha": "2026-10-14T21:53:20",
     "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
     "resumen": {
       "alineados": 0,
-      "revision": 0,
-      "sin_coincidencia": 19
+      "revision": 1,
+      "sin_coincidencia": 17
     },
     "detalle": [
       {
@@ -264,7 +275,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D1500",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D1500",
         "referencias_astm_originales": [
           "D1500"
         ],
@@ -280,6 +291,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "A/D",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -290,20 +302,20 @@
           "prueba": "",
           "unidades": "A/D",
           "metodo": "ASTM D1500",
-          "especificacion": "4,0 MAXIMO",
+          "especificacion": "4,0 MÁXIMO",
           "valor_tipico": ""
         }
       },
       {
         "numero_prueba": 2,
-        "estado": "SIN_COINCIDENCIA",
+        "estado": "REVISION_REQUERIDA",
         "nombre_original": "",
         "metodo_original": "D1298",
         "nombre_maestro_propuesto": "",
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D1298",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D1298",
         "referencias_astm_originales": [
           "D1298"
         ],
@@ -319,6 +331,9 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "gr/cm³",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [
+          "Separador numérico ambiguo en especificacion: 0,865, 0,900"
+        ],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -329,7 +344,7 @@
           "prueba": "",
           "unidades": "gr/cm³",
           "metodo": "ASTM D1298",
-          "especificacion": "0,865 – 0,900",
+          "especificacion": "0,865 - 0,900",
           "valor_tipico": ""
         }
       },
@@ -342,7 +357,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D445",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D445",
         "referencias_astm_originales": [
           "D445"
         ],
@@ -358,6 +373,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "mm²/seg (cSt)",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -381,7 +397,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D445",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D445",
         "referencias_astm_originales": [
           "D445"
         ],
@@ -397,6 +413,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "mm²/seg (cSt)",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -407,7 +424,7 @@
           "prueba": "",
           "unidades": "mm²/seg (cSt)",
           "metodo": "ASTM D445",
-          "especificacion": "2,5 MINIMO",
+          "especificacion": "2,5 MÍNIMO",
           "valor_tipico": ""
         }
       },
@@ -420,7 +437,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D445",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D445",
         "referencias_astm_originales": [
           "D445"
         ],
@@ -436,6 +453,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "mm²/seg (cSt)",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -459,7 +477,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D2983",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D2983",
         "referencias_astm_originales": [
           "D2983"
         ],
@@ -475,6 +493,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "cP",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -485,7 +504,7 @@
           "prueba": "",
           "unidades": "cP",
           "metodo": "ASTM D2983",
-          "especificacion": "3 000 MAXIMO",
+          "especificacion": "3 000 MÁXIMO",
           "valor_tipico": ""
         }
       },
@@ -498,7 +517,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D97",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D97",
         "referencias_astm_originales": [
           "D97"
         ],
@@ -514,6 +533,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "°C",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -524,7 +544,7 @@
           "prueba": "",
           "unidades": "°C",
           "metodo": "ASTM D97",
-          "especificacion": "-45 MAXIMO",
+          "especificacion": "− 45 MÁXIMO",
           "valor_tipico": ""
         }
       },
@@ -537,7 +557,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D96",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D96",
         "referencias_astm_originales": [
           "D96"
         ],
@@ -555,6 +575,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "%",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -565,7 +586,7 @@
           "prueba": "",
           "unidades": "%",
           "metodo": "ASTM D96",
-          "especificacion": "0 MAXIMO",
+          "especificacion": "0 MÁXIMO",
           "valor_tipico": ""
         }
       },
@@ -578,7 +599,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D130",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D130",
         "referencias_astm_originales": [
           "D130"
         ],
@@ -594,6 +615,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "A/D",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -604,7 +626,7 @@
           "prueba": "",
           "unidades": "A/D",
           "metodo": "ASTM D130",
-          "especificacion": "1 MAXIMO",
+          "especificacion": "1 MÁXIMO",
           "valor_tipico": ""
         }
       },
@@ -631,6 +653,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "%",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -641,7 +664,7 @@
           "prueba": "",
           "unidades": "%",
           "metodo": "DIN 51 581",
-          "especificacion": "5,0 MAXIMO",
+          "especificacion": "5,0 MÁXIMO",
           "valor_tipico": ""
         }
       },
@@ -649,13 +672,15 @@
         "numero_prueba": 11,
         "estado": "SIN_COINCIDENCIA",
         "nombre_original": "",
-        "metodo_original": "",
+        "metodo_original": "D892",
         "nombre_maestro_propuesto": "",
         "nombre_maestro_ingles_propuesto": "",
-        "metodo_original_normalizado": "",
+        "metodo_original_normalizado": "ASTM D892",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
-        "referencias_astm_originales": [],
+        "metodo_maestro_propuesto": "ASTM D892",
+        "referencias_astm_originales": [
+          "D892"
+        ],
         "referencias_astm_no_encontradas": [],
         "mensaje_astm_no_encontradas": "",
         "referencias_astm_maestras": [],
@@ -666,8 +691,9 @@
         "metodo_segunda_opcion": "",
         "fila_segunda_opcion": "",
         "margen_puntaje": 0.0,
-        "unidades_originales": "",
+        "unidades_originales": "ml/ml",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -676,9 +702,9 @@
         "ambiguo": false,
         "valores_alineados": {
           "prueba": "",
-          "unidades": "",
-          "metodo": "",
-          "especificacion": "",
+          "unidades": "ml/ml",
+          "metodo": "ASTM D892",
+          "especificacion": "100 mL MÁXIMO/ 60 mL MÁXIMO, 20seg/ 0 mL MÁXIMO 10 min",
           "valor_tipico": ""
         }
       },
@@ -686,12 +712,12 @@
         "numero_prueba": 12,
         "estado": "SIN_COINCIDENCIA",
         "nombre_original": "",
-        "metodo_original": "D892",
+        "metodo_original": "D 892",
         "nombre_maestro_propuesto": "",
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D892",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D892",
         "referencias_astm_originales": [
           "D892"
         ],
@@ -707,6 +733,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "ml/ml",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -717,7 +744,7 @@
           "prueba": "",
           "unidades": "ml/ml",
           "metodo": "ASTM D892",
-          "especificacion": "100 mL Max/ 60 mL Máx, 20seg/ 0 mL Max 10 min",
+          "especificacion": "100 mL MÁXIMO/ 60 mL MÁXIMO,20seg/ 0 mL MÁXIMO 10 min",
           "valor_tipico": ""
         }
       },
@@ -725,51 +752,12 @@
         "numero_prueba": 13,
         "estado": "SIN_COINCIDENCIA",
         "nombre_original": "",
-        "metodo_original": "D 892",
-        "nombre_maestro_propuesto": "",
-        "nombre_maestro_ingles_propuesto": "",
-        "metodo_original_normalizado": "ASTM D892",
-        "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
-        "referencias_astm_originales": [
-          "D892"
-        ],
-        "referencias_astm_no_encontradas": [],
-        "mensaje_astm_no_encontradas": "",
-        "referencias_astm_maestras": [],
-        "referencias_farmacopea_originales": [],
-        "referencias_farmacopea_maestras": [],
-        "fila_maestro": "",
-        "nombre_segunda_opcion": "",
-        "metodo_segunda_opcion": "",
-        "fila_segunda_opcion": "",
-        "margen_puntaje": 0.0,
-        "unidades_originales": "ml/ml",
-        "valor_tipico_original": "",
-        "unidades_maestras_propuestas": "",
-        "idioma": "ESPANOL",
-        "puntaje_total": 0.0,
-        "puntaje_nombre": 0.0,
-        "puntaje_metodo": 0.0,
-        "ambiguo": false,
-        "valores_alineados": {
-          "prueba": "",
-          "unidades": "ml/ml",
-          "metodo": "ASTM D892",
-          "especificacion": "100 mL Max/ 60 mL Max,20seg/ 0 mL Max 10 min",
-          "valor_tipico": ""
-        }
-      },
-      {
-        "numero_prueba": 14,
-        "estado": "SIN_COINCIDENCIA",
-        "nombre_original": "",
         "metodo_original": "D2270",
         "nombre_maestro_propuesto": "",
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D2270",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D2270",
         "referencias_astm_originales": [
           "D2270"
         ],
@@ -785,6 +773,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "A/D",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -795,12 +784,12 @@
           "prueba": "",
           "unidades": "A/D",
           "metodo": "ASTM D2270",
-          "especificacion": "95 MINIMO",
+          "especificacion": "95 MÍNIMO",
           "valor_tipico": ""
         }
       },
       {
-        "numero_prueba": 15,
+        "numero_prueba": 14,
         "estado": "SIN_COINCIDENCIA",
         "nombre_original": "",
         "metodo_original": "D 611",
@@ -808,7 +797,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D611",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D611",
         "referencias_astm_originales": [
           "D611"
         ],
@@ -824,6 +813,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "°C",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -834,12 +824,12 @@
           "prueba": "",
           "unidades": "°C",
           "metodo": "ASTM D611",
-          "especificacion": "75,0 MINIMO",
+          "especificacion": "75,0 MÍNIMO",
           "valor_tipico": ""
         }
       },
       {
-        "numero_prueba": 16,
+        "numero_prueba": 15,
         "estado": "SIN_COINCIDENCIA",
         "nombre_original": "",
         "metodo_original": "E1421",
@@ -861,6 +851,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "% Transmitancia/cm-1",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -876,7 +867,7 @@
         }
       },
       {
-        "numero_prueba": 17,
+        "numero_prueba": 16,
         "estado": "SIN_COINCIDENCIA",
         "nombre_original": "",
         "metodo_original": "D 4172 MOD",
@@ -884,7 +875,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D4172",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D4172",
         "referencias_astm_originales": [
           "D4172"
         ],
@@ -900,6 +891,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "mm",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -910,12 +902,12 @@
           "prueba": "",
           "unidades": "mm",
           "metodo": "ASTM D4172",
-          "especificacion": "0,40 MAXIMO",
+          "especificacion": "0,40 MÁXIMO",
           "valor_tipico": ""
         }
       },
       {
-        "numero_prueba": 18,
+        "numero_prueba": 17,
         "estado": "SIN_COINCIDENCIA",
         "nombre_original": "",
         "metodo_original": "D2783",
@@ -923,7 +915,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D2783",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D2783",
         "referencias_astm_originales": [
           "D2783"
         ],
@@ -939,6 +931,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "mm",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -949,12 +942,12 @@
           "prueba": "",
           "unidades": "mm",
           "metodo": "ASTM D2783",
-          "especificacion": "Pasa / Reportar Diametro de huella de 3 bolas, mm",
+          "especificacion": "PASA / REPORTAR Diametro de huella de 3 bolas, mm",
           "valor_tipico": ""
         }
       },
       {
-        "numero_prueba": 19,
+        "numero_prueba": 18,
         "estado": "SIN_COINCIDENCIA",
         "nombre_original": "",
         "metodo_original": "D1298",
@@ -962,7 +955,7 @@
         "nombre_maestro_ingles_propuesto": "",
         "metodo_original_normalizado": "ASTM D1298",
         "metodo_maestro_fuente": "",
-        "metodo_maestro_propuesto": "",
+        "metodo_maestro_propuesto": "ASTM D1298",
         "referencias_astm_originales": [
           "D1298"
         ],
@@ -978,6 +971,7 @@
         "margen_puntaje": 0.0,
         "unidades_originales": "gr/cm³",
         "valor_tipico_original": "",
+        "observaciones_limpieza": [],
         "unidades_maestras_propuestas": "",
         "idioma": "ESPANOL",
         "puntaje_total": 0.0,
@@ -996,5 +990,6 @@
     "mensajes_astm_no_encontradas": [
       "Prueba 8: Referencias no encontradas en la lista maestra: ASTM D96."
     ]
-  }
+  },
+  "hii_generadas": []
 }

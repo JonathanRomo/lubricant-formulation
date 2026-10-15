@@ -123,6 +123,7 @@ class BorradoresBilingues:
                         self.revisiones[otro].add(clave)
         contraparte["nombre_producto"] = nuevo["nombre_producto"]
         contraparte["desarrollador"] = nuevo.get("desarrollador", "")
+        contraparte["fecha_reanalisis"] = nuevo.get("fecha_reanalisis", "")
         for campo, valor in nuevo["control"].items():
             if campo != "elaboro_y_aprobo":
                 contraparte["control"][campo] = valor

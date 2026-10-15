@@ -7,6 +7,7 @@ from unittest.mock import patch
 import pandas as pd
 
 from alinear_especificaciones_json import (
+    VERSION,
     cargar_maestro,
     ejecutar,
     limpiar_marca_acreditacion,
@@ -39,6 +40,18 @@ MAESTRO = {
 
 
 class AlineacionEspecificacionesTests(unittest.TestCase):
+    def test_periodicidad_vacia_usa_triangulo_y_conserva_valores_capturados(self):
+        for campos, esperado in (({}, "▶"), ({"PERIODIDICAD DE ANALISIS": " "}, "▶"),
+                                 ({"PERIODIDICAD DE ANALISIS": None}, "▶"),
+                                 ({"PERIODIDICAD DE ANALISIS": "QIP"}, "QIP"),
+                                 ({"periodicidad": "I"}, "I")):
+            with self.subTest(campos=campos), tempfile.TemporaryDirectory() as temporal:
+                origen = Path(temporal) / "entrada.json"
+                destino = Path(temporal) / "salida.json"
+                origen.write_text(json.dumps({"pruebas": [{"prueba": "Viscosidad cinemática", "metodo": "ASTM D445", **campos}]}), encoding="utf-8")
+                procesar_json(origen, destino, [MAESTRO])
+                self.assertEqual(json.loads(destino.read_text(encoding="utf-8"))["pruebas"][0]["PERIODIDICAD DE ANALISIS"], esperado)
+
     def test_ejecutar_acepta_carpetas_configuradas_de_entrada_y_salida(self):
         with tempfile.TemporaryDirectory() as temporal:
             base = Path(temporal)
@@ -651,7 +664,7 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
                     self.assertEqual(salida["notas"], [nota_canonica])
                     self.assertEqual(
                         salida["alineacion_metodos_lab"]["version_programa"],
-                        "1.12.0",
+                        VERSION,
                     )
 
     def test_normaliza_terminos_en_especificacion_y_valor_tipico_alineados(self):

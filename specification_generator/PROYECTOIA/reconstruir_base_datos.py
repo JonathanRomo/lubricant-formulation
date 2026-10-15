@@ -106,7 +106,7 @@ def _leer_documentos(base, rutas, progreso, resumen):
             revision_orden = int(revision) if revision.isdigit() and len(revision) < 18 else -1
             # El índice necesita metadatos, no todas las pruebas y auditorías en memoria.
             metadatos = {c: datos[c] for c in ("producto", "documento", "control_documental", "validacion_codigos_200",
-                "versiones_idioma", "archivo_origen", "hash_sha256_origen", "hash_sha256_catalogo", "formato_origen") if c in datos}
+                "versiones_idioma", "hii_generadas", "archivo_origen", "hash_sha256_origen", "hash_sha256_catalogo", "formato_origen") if c in datos}
             documentos.append(dict(ruta=ruta, tipo=tipo, datos=metadatos, nombre=nombre or codigo,
                 codigo=codigo, cliente=clave(control.get("nombre_cliente")), revision=revision,
                 revision_orden=revision_orden, idioma=leer_idioma_datos(datos),
@@ -263,6 +263,37 @@ def _validar(con):
         raise ValueError("La base reconstruida no superó la validación de integridad.")
 
 
+def _registrar_hii_generadas(con, documentos, base, resumen):
+    """Recupera el índice desde el historial, incluso si el Excel ya no está disponible."""
+    registros = []
+    for d in documentos:
+        historial = d["datos"].get("hii_generadas", [])
+        if not isinstance(historial, list):
+            resumen["advertencias"].append(f"Historial HII inválido: {d['ruta'].name}")
+            continue
+        for registro in historial:
+            try:
+                if not isinstance(registro, dict) or not all(isinstance(registro.get(c), str) and registro[c].strip()
+                    for c in ("id", "archivo", "fecha_generacion", "version_generador", "hash_especificacion")):
+                    raise ValueError("registro incompleto")
+                fecha = datetime.fromisoformat(registro["fecha_generacion"])
+                if fecha.tzinfo is None:
+                    raise ValueError("fecha sin zona horaria")
+                ruta = resolver_ruta(registro["archivo"], d["ruta"].parent)
+                registros.append((fecha.timestamp(), str(d["ruta"]), ruta, d, fecha))
+            except (ValueError, OSError, OverflowError) as exc:
+                resumen["advertencias"].append(f"HII no recuperada de {d['ruta'].name}: {exc}")
+    # La tabla existente representa el archivo actual: prevalece la última generación por ruta.
+    for _, _, ruta, d, fecha in sorted(registros, key=lambda r: (r[0], r[1])):
+        con.execute("""INSERT INTO hii_generadas VALUES (?, ?, ?, ?)
+            ON CONFLICT(ruta) DO UPDATE SET especificacion=excluded.especificacion,
+            idioma=excluded.idioma, fecha=excluded.fecha""",
+            (ruta_portatil(ruta, base), ruta_portatil(d["ruta"], base), d["idioma"], fecha.strftime("%d/%m/%y")))
+        if not ruta.is_file():
+            resumen["advertencias"].append(f"HII registrada pero no localizada: {ruta}")
+    resumen["hii_generadas"] = con.execute("SELECT COUNT(*) FROM hii_generadas").fetchone()[0]
+
+
 def _copiar_base(origen, destino, timeout=30):
     limite = time.monotonic() + timeout
     def avanzar(estado, pendientes, total):
@@ -357,7 +388,7 @@ def reconstruir(base=BASE, *, destino=None, rutas=None, reemplazar=False, al_pro
             temporal = Path(archivo.name)
         try:
             from gestor_especificaciones import conectar, leer_catalogo, registrar_catalogo, APP_VERSION
-            import registro_hii
+            import generador_hii as hii
             with closing(conectar(temporal, recuperar=False)) as con:
                 _registrar_documentos(con, documentos, base)
                 _registrar_extraccion(con, documentos, base, rutas)
@@ -370,15 +401,16 @@ def reconstruir(base=BASE, *, destino=None, rutas=None, reemplazar=False, al_pro
                     except (OSError, ValueError, BadZipFile) as exc:
                         resumen["advertencias"].append(f"Catálogo no recuperado: {exc}")
                 con.commit()
-            with registro_hii.conectar(temporal, recuperar=False) as con:
+            with hii.conectar(temporal, recuperar=False) as con:
                 _registrar_relaciones(con, documentos, base, resumen)
+                _registrar_hii_generadas(con, documentos, base, resumen)
                 resumen["versiones"] = con.execute("SELECT COUNT(*) FROM versiones").fetchone()[0]
                 _validar(con)
             with closing(sqlite3.connect(temporal)) as con:
                 con.execute("PRAGMA wal_checkpoint(TRUNCATE)")
                 con.execute("PRAGMA journal_mode=DELETE")
             _publicar(temporal, destino, base, resumen)
-            resumen["advertencias"].append("Las HII generadas y los eventos que solo estaban en la base anterior no se pueden recuperar con certeza desde los JSON.")
+            resumen["advertencias"].append("Las HII sin historial en los JSON y los eventos que solo estaban en la base anterior no se pueden recuperar con certeza.")
             reporte = base / "REPORTE_RECONSTRUCCION_BASE.json"
             try:
                 reporte.write_text(json.dumps(resumen, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -1624,9 +1624,9 @@ def procesar(
             None if revisar_todo else productos_afectados,
         )
         if resumen_revisiones["revisiones_historial_omitidas"] == 0:
-            import registro_hii
-            with registro_hii.conectar(base / DB) as relaciones:
-                registro_hii.sincronizar_idiomas(relaciones, salida)
+            import generador_hii as hii
+            with hii.conectar(base / DB) as relaciones:
+                hii.sincronizar_idiomas(relaciones, salida)
             registrar_historial_revisado(con, salida, None if revisar_todo else productos_afectados)
             con.execute("""INSERT INTO gestor_estado VALUES ('historial_revisado', ?)
                 ON CONFLICT(clave) DO UPDATE SET valor=excluded.valor""", (huella_historial,))

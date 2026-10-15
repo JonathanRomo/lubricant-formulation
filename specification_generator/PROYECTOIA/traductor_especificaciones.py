@@ -12,8 +12,7 @@ import unicodedata
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from pathlib import Path
-from rutas_listas import carpeta_listas
-from rutas_proyecto import resolver_ruta
+from rutas_proyecto import resolver_ruta, carpeta_listas
 
 BASE = carpeta_listas()
 ARCHIVO_EXCEL = "TRADUCCIONES_ESPECIFICACIONES.xlsx"

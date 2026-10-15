@@ -5,13 +5,13 @@ from pathlib import Path
 from unittest.mock import patch
 
 from openpyxl import Workbook
-from rutas_listas import carpeta_listas, ruta_maestro
+from rutas_proyecto import carpeta_listas, ruta_maestro
 from traductor_especificaciones import ServicioTraductor, ARCHIVO_EXCEL
 from interfaz_aplicacion_especificaciones import _guardar_configuracion, _cargar_configuracion
 from alinear_especificaciones_json import ejecutar
 
 
-class RutasListasTests(unittest.TestCase):
+class RutasProyectoTests(unittest.TestCase):
     def test_default_relativa_y_cambio_sin_releer_configuracion(self):
         with tempfile.TemporaryDirectory() as temporal:
             base = Path(temporal).resolve()

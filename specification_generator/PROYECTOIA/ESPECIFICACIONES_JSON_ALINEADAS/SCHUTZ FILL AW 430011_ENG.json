@@ -1,0 +1,326 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ FILL AW 430011"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "en",
+    "fecha_documento_normalizada": "",
+    "edicion_bilingue": 1
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Validación de Producto",
+    "folio_apqp": "--------",
+    "folio_vap": "",
+    "codigo_unico_producto": "20100002",
+    "fecha": "14/10/26",
+    "revision": "12",
+    "nombre_cliente": "RIDE CONTROL MEXICANA, S. DE RL DE C.V.",
+    "revision_cliente": "02-05-93"
+  },
+  "FECHA DE REANALISIS": "24 meses",
+  "Desarrollador": "PRUEBA",
+  "pruebas": [
+    {
+      "numero": 1,
+      "prueba": "VISUAL APPEAREANCE",
+      "unidades": "N/A",
+      "metodo": "ORGANOLEPTIC",
+      "especificacion": "BRIGHT AND CLEAR",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 2,
+      "prueba": "COLOR",
+      "unidades": "N/A",
+      "metodo": "USP / FEUM",
+      "especificacion": "GREEN",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 3,
+      "prueba": "DENSIDAD A 15°C",
+      "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+      "metodo": "ASTM D1298",
+      "especificacion": "864 TYPICAL",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 4,
+      "prueba": "VISCOSITY INDEX",
+      "unidades": "DIMENSIONLESS",
+      "metodo": "ASTM D2270",
+      "especificacion": "90 TYPICAL",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 5,
+      "prueba": "VISCOSIDAD BROOKFIELD – 40°C",
+      "unidades": "mPa*s",
+      "metodo": "ASTM D2983",
+      "especificacion": "3 610 TYPICAL",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 6,
+      "prueba": "SAYBOLT VISCOSITY AT 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D2161",
+      "especificacion": "70 TYPICAL",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 7,
+      "prueba": "SAYBOLT VISCOSITY AT 210 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D2161",
+      "especificacion": "35 TYPICAL",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 8,
+      "prueba": "PUNTO DE ANILINA",
+      "unidades": "°C, °F",
+      "metodo": "ASTM D611",
+      "especificacion": "81,8 TYPICAL",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 9,
+      "prueba": "ODOR",
+      "unidades": "N/A",
+      "metodo": "ORGANOLEPTIC",
+      "especificacion": "0,130 – 0,200",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 10,
+      "prueba": "PUNTO DE INFLAMACION",
+      "unidades": "°C",
+      "metodo": "ASTM D92",
+      "especificacion": "149 MINIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 11,
+      "prueba": "PUNTO DE ESCURRIMIENTO",
+      "unidades": "°C, °F",
+      "metodo": "ASTM D97",
+      "especificacion": "-45 MAXIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 12,
+      "prueba": "KINEMATIC VISCOSITY AT 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "9,6 – 12,3",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 13,
+      "prueba": "KINEMATIC VISCOSITY AT 100 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445",
+      "especificacion": "2,59 – 2,96",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 14,
+      "prueba": "SAPONIFICATION NUMBER",
+      "unidades": "mgKOH/g",
+      "metodo": "ASTM D94",
+      "especificacion": "5 MINIMUM",
+      "valor_tipico": "",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    }
+  ],
+  "notas": [
+    "The active version of the applicable method shall be the version issued and provided by the laboratory."
+  ],
+  "alineacion_metodos_lab": {
+    "version_programa": "EDICION_MANUAL",
+    "detalle": [
+      {
+        "numero_prueba": 1,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "VISUAL APPEAREANCE",
+          "unidades": "N/A",
+          "metodo": "ORGANOLEPTIC",
+          "especificacion": "BRIGHT AND CLEAR",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 2,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "COLOR",
+          "unidades": "N/A",
+          "metodo": "USP / FEUM",
+          "especificacion": "GREEN",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 3,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "DENSIDAD A 15°C",
+          "unidades": "g/cm3, g/ml, kg/L, kg/m3",
+          "metodo": "ASTM D1298",
+          "especificacion": "864 TYPICAL",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 4,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "VISCOSITY INDEX",
+          "unidades": "DIMENSIONLESS",
+          "metodo": "ASTM D2270",
+          "especificacion": "90 TYPICAL",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 5,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD BROOKFIELD – 40°C",
+          "unidades": "mPa*s",
+          "metodo": "ASTM D2983",
+          "especificacion": "3 610 TYPICAL",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 6,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "SAYBOLT VISCOSITY AT 100 °F",
+          "unidades": "SUS",
+          "metodo": "ASTM D2161",
+          "especificacion": "70 TYPICAL",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 7,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "SAYBOLT VISCOSITY AT 210 °F",
+          "unidades": "SUS",
+          "metodo": "ASTM D2161",
+          "especificacion": "35 TYPICAL",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 8,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "PUNTO DE ANILINA",
+          "unidades": "°C, °F",
+          "metodo": "ASTM D611",
+          "especificacion": "81,8 TYPICAL",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 9,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "ODOR",
+          "unidades": "N/A",
+          "metodo": "ORGANOLEPTIC",
+          "especificacion": "0,130 – 0,200",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 10,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACION",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "149 MINIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 11,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "PUNTO DE ESCURRIMIENTO",
+          "unidades": "°C, °F",
+          "metodo": "ASTM D97",
+          "especificacion": "-45 MAXIMUM",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 12,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "KINEMATIC VISCOSITY AT 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "9,6 – 12,3",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 13,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "KINEMATIC VISCOSITY AT 100 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445",
+          "especificacion": "2,59 – 2,96",
+          "valor_tipico": ""
+        }
+      },
+      {
+        "numero_prueba": 14,
+        "estado": "EDICION_MANUAL",
+        "valores_alineados": {
+          "prueba": "SAPONIFICATION NUMBER",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D94",
+          "especificacion": "5 MINIMUM",
+          "valor_tipico": ""
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": []
+  },
+  "versiones_idioma": {
+    "ESPANOL": [
+      {
+        "archivo_json": "20100002 00_11_10_26.JSON",
+        "codigo": "20100002",
+        "revision": "12",
+        "cliente": "RIDE CONTROL MEXICANA S DE RL DE C V"
+      }
+    ]
+  },
+  "hii_generadas": []
+}

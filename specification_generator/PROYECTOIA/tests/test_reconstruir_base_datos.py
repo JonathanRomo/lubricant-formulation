@@ -12,7 +12,7 @@ from openpyxl import Workbook
 
 import gestor_especificaciones as gestor
 import reconstruir_base_datos as recuperacion
-import registro_hii
+import generador_hii as hii
 
 
 def documento(idioma="es", revision="01", fecha="2026-01-01", **extras):
@@ -48,7 +48,7 @@ class ReconstruccionTests(unittest.TestCase):
 
     def test_auto_relaciones_crea_tambien_tablas_del_gestor(self):
         escribir(self.base)
-        with registro_hii.conectar(self.db) as con:
+        with hii.conectar(self.db) as con:
             self.assertEqual(con.execute("SELECT COUNT(*) FROM versiones").fetchone()[0], 1)
 
     def test_recupera_archivo_de_cero_bytes_con_respaldo(self):
@@ -73,7 +73,7 @@ class ReconstruccionTests(unittest.TestCase):
         with closing(sqlite3.connect(self.db)):
             pass
         escribir(self.base)
-        with registro_hii.conectar(self.db) as con:
+        with hii.conectar(self.db) as con:
             self.assertEqual(con.execute("SELECT COUNT(*) FROM hii_especificaciones").fetchone()[0], 1)
 
     def test_catalogo_solo_no_equivale_a_especificaciones_registradas(self):
@@ -146,8 +146,8 @@ class ReconstruccionTests(unittest.TestCase):
         antes = {p: p.read_bytes() for p in (es, en)}
         resultado = recuperacion.reconstruir(self.base)
         self.assertEqual(resultado["relaciones"], 1)
-        with registro_hii.conectar(self.db) as con:
-            self.assertEqual(registro_hii.candidatas(con, es, "INGLES", [en]), [en])
+        with hii.conectar(self.db) as con:
+            self.assertEqual(hii.candidatas(con, es, "INGLES", [en]), [en])
         self.assertEqual({p: p.read_bytes() for p in antes}, antes)
 
     def test_no_inventa_parejas_ambiguas(self):

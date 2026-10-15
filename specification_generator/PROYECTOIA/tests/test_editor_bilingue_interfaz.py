@@ -1,13 +1,18 @@
 import copy
 import json
+import queue
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 from edicion_bilingue import BorradoresBilingues
-from interfaz_aplicacion_especificaciones import GeneradorEspecificacion, NOTAS_PLANTILLA, CAMPOS_CONTROL_GENERADOR
+from interfaz_aplicacion_especificaciones import (
+    GeneradorEspecificacion, NOTAS_PLANTILLA, CAMPOS_CONTROL_GENERADOR,
+    crear_datos_especificacion_nueva,
+)
 from interfaz_seleccion_especificaciones import cargar_catalogo, parejas_idioma
 
 
@@ -16,7 +21,7 @@ class EditorBilingueTests(unittest.TestCase):
         editor = GeneradorEspecificacion.__new__(GeneradorEspecificacion)
         editor.maestro = [{"NOMBRE IQM": "DENSIDAD", "NOMBRE IQM INGLES": "DENSITY",
                            "UNIDADES": "g/ml", "UNITS": "g/ml", "METODO": "ASTM D445", "MÉTODO INGLÉS": "ASTM D445"}]
-        contenido = {"idioma": "es", "nombre_producto": "Producto", "desarrollador": "Nombre",
+        contenido = {"idioma": "es", "nombre_producto": "Producto", "desarrollador": "Nombre", "fecha_reanalisis": "12",
                      "control": {"codigo_unico_producto": "P1", "revision": "01", "nombre_cliente": "Cliente", "elaboro_y_aprobo": "Persona"},
                      "notas": [NOTAS_PLANTILLA["es"]], "pruebas": [
                          {"prueba": "DENSIDAD", "metodo": "ASTM D445", "unidades": "g/ml", "especificacion": "149 MÍNIMO", "valor_tipico": "150", "periodicidad": "▶"}]}
@@ -35,7 +40,232 @@ class EditorBilingueTests(unittest.TestCase):
         editor._contenido_para_revision = Mock(return_value=())
         editor._consultas_revision = set()
         editor._revisiones_historial = {}
+        editor.desarrollador = Mock(get=Mock(return_value="Nombre"))
+        editor.fecha_reanalisis = Mock(get=Mock(return_value="12"))
+        editor.fecha_reanalisis.set.side_effect = lambda valor: setattr(editor.fecha_reanalisis.get, "return_value", valor)
+        for nombre in ("entrada_desarrollador", "entrada_reanalisis", "etiqueta_reanalisis", "unidad_reanalisis"):
+            setattr(editor, nombre, Mock())
         return editor
+
+    def editor_con_vinculo(self, carpeta, revision="07", idioma="es"):
+        editor = self.editor(carpeta)
+        documentos = {}
+        for lengua, contenido in editor._bilingue.borradores.items():
+            documentos[lengua] = crear_datos_especificacion_nueva(
+                contenido["nombre_producto"], lengua, contenido["control"],
+                contenido["pruebas"], contenido["notas"], contenido["desarrollador"], contenido["fecha_reanalisis"])
+        otro = "en" if idioma == "es" else "es"
+        ruta = Path(carpeta) / f"Producto_{'ENG' if otro == 'en' else 'ESP'}.json"
+        documentos[otro]["control_documental"]["revision"] = revision
+        ruta.write_text(json.dumps(documentos[otro]), encoding="utf-8")
+        documentos[idioma]["versiones_idioma"] = {
+            "INGLES" if otro == "en" else "ESPANOL": [{"archivo_json": ruta.name}]}
+        editor.archivo_inicial = Path(carpeta) / f"{idioma}.json"
+        editor.archivo_inicial.write_text(json.dumps(documentos[idioma]), encoding="utf-8")
+        editor.destino_inicial = editor.archivo_inicial
+        editor.datos_originales = documentos[idioma]
+        editor._idioma_anterior = idioma
+        editor._contenido_bilingue = Mock(return_value=copy.deepcopy(editor._bilingue.borradores[idioma]))
+        editor._originales_idioma = {}
+        editor._rutas_idioma = {}
+        for nombre in ("boton_guardar", "selector_idioma", "boton_guardar_wip", "aviso_pareja", "_programar_resaltado"):
+            setattr(editor, nombre, Mock())
+        return editor, ruta
+
+    def test_revision_distinta_abre_borrador_sin_modal_ni_modificar_originales(self):
+        for idioma in ("es", "en"):
+            with self.subTest(idioma=idioma), tempfile.TemporaryDirectory() as carpeta:
+                editor, ruta = self.editor_con_vinculo(carpeta, idioma=idioma)
+                originales = {r: r.read_bytes() for r in (editor.archivo_inicial, ruta)}
+                with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes:
+                    editor._iniciar_bilingue()
+                    mensajes.assert_not_called()
+                    self.assertFalse(mensajes.method_calls)
+                otro = "en" if idioma == "es" else "es"
+                self.assertEqual(editor._bilingue.borradores[otro]["control"]["revision"], "01")
+                self.assertEqual(set(editor._rutas_idioma), {idioma})
+                self.assertEqual(set(editor._originales_idioma), {idioma})
+                self.assertIn(ruta.resolve(), editor._rutas_pareja_descartadas)
+                self.assertIn("revisión (01 / 07)", editor.aviso_pareja.configure.call_args.kwargs["text"])
+                editor.selector_idioma.configure.assert_not_called()
+                editor.boton_guardar.configure.assert_not_called()
+                self.assertEqual(originales, {r: r.read_bytes() for r in originales})
+
+    def test_vinculos_no_utilizables_permiten_crear_traduccion(self):
+        for caso in ("ausente", "json_invalido", "varios", "filas_distintas", "cliente_distinto", "mismo_idioma"):
+            with self.subTest(caso=caso), tempfile.TemporaryDirectory() as carpeta:
+                editor, ruta = self.editor_con_vinculo(carpeta, revision="01")
+                datos = json.loads(ruta.read_text(encoding="utf-8"))
+                if caso == "ausente":
+                    ruta.unlink()
+                elif caso == "json_invalido":
+                    ruta.write_text("{", encoding="utf-8")
+                elif caso == "varios":
+                    editor.datos_originales["versiones_idioma"]["INGLES"].append({"archivo_json": "otro.json"})
+                else:
+                    if caso == "filas_distintas":
+                        datos["pruebas"] = []
+                    elif caso == "cliente_distinto":
+                        datos["control_documental"]["nombre_cliente"] = "Otro cliente"
+                    else:
+                        datos["documento"]["idioma"] = "es"
+                    ruta.write_text(json.dumps(datos), encoding="utf-8")
+                with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes:
+                    editor._iniciar_bilingue()
+                    self.assertFalse(mensajes.method_calls)
+                self.assertEqual(editor._bilingue.borradores["en"]["pruebas"][0]["prueba"], "DENSITY")
+                self.assertNotIn("en", editor._rutas_idioma)
+                editor.aviso_pareja.pack.assert_called_once()
+
+    def test_pareja_compatible_carga_version_existente(self):
+        with tempfile.TemporaryDirectory() as carpeta:
+            editor, ruta = self.editor_con_vinculo(carpeta, revision="01")
+            datos = json.loads(ruta.read_text(encoding="utf-8"))
+            datos["notas"] = ["Manually translated note"]
+            ruta.write_text(json.dumps(datos), encoding="utf-8")
+            with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes:
+                editor._iniciar_bilingue()
+                self.assertFalse(mensajes.method_calls)
+            self.assertEqual(editor._rutas_idioma["en"], ruta.resolve())
+            self.assertEqual(editor._bilingue.borradores["en"]["notas"], datos["notas"])
+            editor.aviso_pareja.pack.assert_not_called()
+
+    def test_guarda_traduccion_nueva_y_conserva_revision_inglesa_anterior(self):
+        with tempfile.TemporaryDirectory() as carpeta:
+            editor, anterior = self.editor_con_vinculo(carpeta)
+            original = anterior.read_bytes()
+            editor._iniciar_bilingue()
+            nueva = Path(carpeta) / "Producto_ENG_1.json"
+            with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch(
+                "interfaz_aplicacion_especificaciones.filedialog.asksaveasfilename", return_value=str(nueva)
+            ) as dialogo, patch("generador_hii.conectar"), patch("generador_hii.vincular"):
+                mensajes.askyesno.return_value = True
+                editor._guardar_bilingue()
+                mensajes.showerror.assert_not_called()
+                mensajes.showwarning.assert_not_called()
+            self.assertEqual(dialogo.call_args.kwargs["initialfile"], nueva.name)
+            self.assertEqual(anterior.read_bytes(), original)
+            datos = json.loads(nueva.read_text(encoding="utf-8"))
+            self.assertEqual(datos["control_documental"]["revision"], "01")
+            self.assertEqual(datos["versiones_idioma"]["ESPANOL"][0]["archivo_json"], "es.json")
+            fuente = json.loads(editor.archivo_inicial.read_text(encoding="utf-8"))
+            self.assertEqual(fuente["versiones_idioma"]["INGLES"][0]["archivo_json"], nueva.name)
+
+    def test_guardar_no_sobrescribe_pareja_descartada(self):
+        with tempfile.TemporaryDirectory() as carpeta:
+            editor, anterior = self.editor_con_vinculo(carpeta)
+            editor._iniciar_bilingue()
+            originales = {r: r.read_bytes() for r in (editor.archivo_inicial, anterior)}
+            with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch(
+                "interfaz_aplicacion_especificaciones.filedialog.asksaveasfilename", return_value=str(anterior)
+            ), patch("interfaz_aplicacion_especificaciones.guardar_pareja_json") as guardar:
+                editor._guardar_bilingue()
+                mensajes.showerror.assert_called_once()
+                mensajes.askyesno.assert_not_called()
+                guardar.assert_not_called()
+            self.assertEqual(originales, {r: r.read_bytes() for r in originales})
+
+    def test_guardar_valida_identidad_e_idiomas_antes_de_escribir(self):
+        for campo, valor in (("revision", "07"), ("codigo_unico_producto", "P2"), ("nombre_cliente", "Otro"), ("idioma", "es")):
+            with self.subTest(campo=campo), tempfile.TemporaryDirectory() as carpeta:
+                editor = self.editor(carpeta)
+                destino = editor._bilingue.borradores["en"]
+                (destino if campo == "idioma" else destino["control"])[campo] = valor
+                with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch(
+                    "interfaz_aplicacion_especificaciones.filedialog.asksaveasfilename"
+                ) as dialogo:
+                    editor._guardar_bilingue()
+                    mensajes.showerror.assert_called_once()
+                    mensajes.askyesno.assert_not_called()
+                    dialogo.assert_not_called()
+                self.assertFalse(list(Path(carpeta).iterdir()))
+
+    def test_revision_y_fecha_nuevas_se_guardan_en_ambos_idiomas(self):
+        with tempfile.TemporaryDirectory() as carpeta:
+            editor, _ = self.editor_con_vinculo(carpeta, revision="01")
+            editor._iniciar_bilingue()
+            valores = dict(editor._bilingue.borradores["es"]["control"], fecha="24-02-12")
+            editor.variables_control = {
+                campo: SimpleNamespace(get=lambda c=campo: valores[c], set=lambda valor, c=campo: valores.__setitem__(c, valor))
+                for campo in valores}
+            editor._contenido_bilingue.side_effect = lambda idioma: dict(
+                copy.deepcopy(editor._bilingue.borradores[idioma]),
+                control=copy.deepcopy(valores), pruebas=copy.deepcopy(editor.pruebas))
+            editor._capturar_bilingue = GeneradorEspecificacion._capturar_bilingue.__get__(editor)
+            editor._contenido_para_revision = GeneradorEspecificacion._contenido_para_revision.__get__(editor)
+            editor._contenido_inicial_revision = editor._contenido_para_revision()
+            editor._revision_inicial = "01"
+            editor._revision_aplicada = False
+            editor._cambio_alineacion_revision = False
+            editor._resultados_revision = queue.Queue()
+            editor._consultas_revision = {"P1"}
+            editor._revisiones_historial = {"P1": "08"}
+            editor.pruebas[0]["valor_tipico"] = "151"
+            with patch("interfaz_aplicacion_especificaciones.date") as reloj, patch(
+                "interfaz_aplicacion_especificaciones.messagebox"
+            ) as mensajes, patch("generador_hii.conectar"), patch("generador_hii.vincular"):
+                reloj.today.return_value = date(2026, 10, 14)
+                self.assertTrue(editor._actualizar_revision_automatica())
+                mensajes.askyesno.return_value = True
+                editor._guardar_bilingue()
+                mensajes.showerror.assert_not_called()
+                mensajes.showwarning.assert_not_called()
+            for ruta in editor._rutas_idioma.values():
+                datos = json.loads(ruta.read_text(encoding="utf-8"))
+                self.assertEqual(datos["control_documental"]["fecha"], "14/10/26")
+                self.assertEqual(datos["control_documental"]["revision"], "08")
+                self.assertEqual(datos["documento"]["fecha_documento_normalizada"], "2026-10-14")
+
+    def test_desarrollador_obligatorio_impide_cualquier_guardado(self):
+        for modo in ("json", "bilingue", "progreso"):
+            with self.subTest(modo=modo), tempfile.TemporaryDirectory() as carpeta:
+                editor = self.editor(carpeta)
+                editor.desarrollador.get.return_value = "  "
+                editor.idioma_destino = None
+                editor._cerrar_editor_celda = Mock()
+                with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch(
+                    "interfaz_aplicacion_especificaciones.filedialog.asksaveasfilename"
+                ) as dialogo:
+                    if modo == "json":
+                        editor.guardar()
+                    elif modo == "progreso":
+                        editor.guardar_en_progreso()
+                    else:
+                        editor._guardar_bilingue()
+                    mensajes.showerror.assert_called_once()
+                    mensajes.askyesno.assert_not_called()
+                    dialogo.assert_not_called()
+                editor.entrada_desarrollador.focus_set.assert_called_once()
+                self.assertFalse(list(Path(carpeta).iterdir()))
+
+    def test_json_terminado_requiere_reanalisis_de_dos_digitos(self):
+        for valor in ("", "6", "123", "ab", "12.0", "-1", "１２"):
+            with self.subTest(valor=valor), tempfile.TemporaryDirectory() as carpeta:
+                editor = self.editor(carpeta)
+                editor.fecha_reanalisis.get.return_value = valor
+                with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes:
+                    editor._guardar_bilingue()
+                    mensajes.showerror.assert_called_once()
+                    mensajes.askyesno.assert_not_called()
+                editor.entrada_reanalisis.focus_set.assert_called_once()
+                self.assertFalse(list(Path(carpeta).iterdir()))
+
+    def test_reanalisis_se_edita_en_campo_existente_y_se_comparte_entre_idiomas(self):
+        with tempfile.TemporaryDirectory() as carpeta:
+            editor, _ = self.editor_con_vinculo(carpeta, revision="01")
+            editor._iniciar_bilingue()
+            contenido = copy.deepcopy(editor._bilingue.borradores["es"])
+            contenido["fecha_reanalisis"] = "06"
+            editor._bilingue.actualizar("es", contenido)
+            editor.fecha_reanalisis.get.return_value = "06"
+            with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch("generador_hii.conectar"), patch("generador_hii.vincular"):
+                mensajes.askyesno.return_value = True
+                editor._guardar_bilingue()
+                mensajes.showerror.assert_not_called()
+            for ruta in editor._rutas_idioma.values():
+                datos = json.loads(ruta.read_text(encoding="utf-8"))
+                self.assertEqual(datos["FECHA DE REANALISIS"], "06 meses")
+                self.assertNotIn("fecha_reanalisis", datos["control_documental"])
 
     def test_maestro_traduce_con_fuente_intacta_y_no_usa_fallback_como_traduccion(self):
         with tempfile.TemporaryDirectory() as carpeta:
@@ -77,7 +307,7 @@ class EditorBilingueTests(unittest.TestCase):
     def test_guarda_dos_json_y_referencias_correctas_sin_ids_internos(self):
         with tempfile.TemporaryDirectory() as carpeta:
             editor = self.editor(carpeta)
-            with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch("registro_hii.conectar"), patch("registro_hii.vincular"):
+            with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch("generador_hii.conectar"), patch("generador_hii.vincular"):
                 mensajes.askyesno.return_value = True
                 editor._guardar_bilingue()
                 mensajes.showerror.assert_not_called()
@@ -103,6 +333,23 @@ class EditorBilingueTests(unittest.TestCase):
                 editor._guardar_bilingue()
                 mensajes.showerror.assert_called_once()
                 self.assertFalse(list(Path(carpeta).iterdir()))
+
+    def test_guardado_conserva_historial_hii_reciente_de_cada_idioma(self):
+        with tempfile.TemporaryDirectory() as carpeta:
+            editor = self.editor(carpeta)
+            with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch("generador_hii.conectar"), patch("generador_hii.vincular"):
+                mensajes.askyesno.return_value = True
+                editor._guardar_bilingue()
+                # El generador registra una HII mientras el editor permanece abierto.
+                for idioma, ruta in editor._rutas_idioma.items():
+                    datos = json.loads(ruta.read_text(encoding="utf-8"))
+                    datos["hii_generadas"] = [{"id": idioma, "archivo": f"{idioma}.xlsm"}]
+                    ruta.write_text(json.dumps(datos), encoding="utf-8")
+                editor._guardar_bilingue()
+                mensajes.showerror.assert_not_called()
+            for idioma, ruta in editor._rutas_idioma.items():
+                datos = json.loads(ruta.read_text(encoding="utf-8"))
+                self.assertEqual(datos["hii_generadas"], [{"id": idioma, "archivo": f"{idioma}.xlsm"}])
 
     def test_pendiente_rojo_conserva_fondo_fuente_y_asterisco_solo_visual(self):
         with tempfile.TemporaryDirectory() as carpeta:
