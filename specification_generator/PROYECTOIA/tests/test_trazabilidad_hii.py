@@ -226,9 +226,7 @@ class TrazabilidadTests(unittest.TestCase):
         self.assertTrue(any("no localizada" in a for a in resultado["advertencias"]))
         self.assertTrue(any("incompleto" in a for a in resultado["advertencias"]))
         with closing(sqlite3.connect(nueva / "especificaciones.db")) as con:
-            fila = con.execute("SELECT ruta, especificacion, fecha FROM hii_generadas").fetchone()
-            self.assertEqual(fila[:2], ("HII/producto.xlsm", "ESPECIFICACIONES_JSON_ALINEADAS/producto.json"))
-            self.assertEqual(fila[2], datetime.fromisoformat(ultimo["fecha_generacion"]).strftime("%d/%m/%y"))
+            self.assertEqual(con.execute("SELECT name FROM sqlite_master WHERE name LIKE 'hii_%'").fetchall(), [])
             self.assertEqual(con.execute("PRAGMA integrity_check").fetchone()[0], "ok")
         self.assertEqual((nueva / "ESPECIFICACIONES_JSON_ALINEADAS/producto.json").read_bytes(), antes)
 
@@ -236,7 +234,8 @@ class TrazabilidadTests(unittest.TestCase):
         generador = SimpleNamespace(registrar_hii=Mock(side_effect=sqlite3.DatabaseError("base dañada")))
         datos = preparar_datos(self.especificacion)
         aviso = GeneradorHII.guardar_archivo(generador, self.destino, self.especificacion, datos, self.contenido)
-        self.assertIn("registro en SQLite pendiente", aviso)
+        self.assertIsNone(aviso)
+        generador.registrar_hii.assert_not_called()
         self.assertTrue(self.destino.exists())
         self.assertEqual(len(self.leer()["hii_generadas"]), 1)
 
@@ -264,7 +263,7 @@ class TrazabilidadTests(unittest.TestCase):
             mensajes.showwarning.assert_not_called()
         historial = self.leer()["hii_generadas"]
         self.assertEqual(len(historial), 2)
-        self.assertEqual(generador.registrar_hii.call_count, 2)
+        generador.registrar_hii.assert_not_called()
         for registro in historial:
             archivo = self.especificacion.parent / registro["archivo"]
             libro = load_workbook(archivo)
@@ -319,7 +318,7 @@ class TrazabilidadTests(unittest.TestCase):
             generador.guardar()
             generador.guardar_seleccionadas()
             mensajes.showerror.assert_not_called()
-        self.assertEqual(generador.registrar_hii.call_count, 4)
+        generador.registrar_hii.assert_not_called()
         for ruta, extension in ((self.especificacion, ".xlsx"), (ingles, ".xltx")):
             historial = json.loads(ruta.read_text(encoding="utf-8"))["hii_generadas"]
             self.assertEqual(len(historial), 2)
@@ -393,6 +392,100 @@ class TrazabilidadTests(unittest.TestCase):
                 libro = load_workbook(io.BytesIO(salida))
                 self.assertEqual(libro.custom_doc_props["HII_ID"].value, "prueba-plantilla")
                 libro.close()
+
+
+class CompatibilidadPlantillasHII(unittest.TestCase):
+    @unittest.skipUnless(os.name == "nt", "Las métricas reales usan las fuentes de Windows")
+    def test_altura_comentarios_mide_anchos_de_letras_y_saltos(self):
+        medir = trazabilidad._altura_texto_comentarios
+        estrecho = medir("i" * 100, 250, 8, "Arial", True)
+        ancho = medir("W" * 100, 250, 8, "Arial", True)
+        self.assertGreater(ancho, estrecho)
+        self.assertGreater(medir("Primera\nSegunda\nTercera", 250, 8, "Arial"),
+                           medir("Primera Segunda Tercera", 250, 8, "Arial"))
+        self.assertLessEqual(medir("Nota breve", 250, 8, "Arial"), 18)
+
+    def test_notas_crecen_reducen_fuente_y_conservan_bordes_en_plantillas_reales(self):
+        for idioma in ("ESPANOL", "INGLES"):
+            plantilla = seleccionar_plantilla(BASE / "FORMATOS", idioma)
+            original = load_workbook(plantilla)
+            hoja = original.active
+            fuente_original = hoja["D21"].font.sz
+            comun = next(linea.strip() for linea in hoja["D21"].value.splitlines()
+                         if trazabilidad.es_nota_formato(linea))
+            altura_original = sum(hoja.row_dimensions[r].height or hoja.sheet_format.defaultRowHeight
+                                  for r in range(21, 29))
+            alturas_originales = {r: hoja.row_dimensions[r].height for r in range(20, 36)}
+            original.close()
+            for cantidad in (0, 3, 4, 12):
+                with self.subTest(idioma=idioma, cantidad=cantidad):
+                    notas = [(f"{i + 1}. " + "Observaciones del usuario con varias palabras. " * 3).strip()
+                             for i in range(cantidad)]
+                    # La nota común puede llegar antes y repetida desde la especificación.
+                    comentarios = "\n".join([comun, *notas, comun])
+                    pruebas = [{"numero": str(i + 1), "prueba": "Prueba"} for i in range(6)]
+                    datos = trazabilidad.DatosHII("Producto", "123", idioma, pruebas, comentarios, "12 meses", "19/10/26")
+                    contenido = construir_excel(plantilla, datos)
+                    final = load_workbook(io.BytesIO(contenido))
+                    s = final.active
+                    celda = s["D24"]  # Tres filas insertadas por las seis pruebas.
+                    esperado = "\n\n".join(["\n".join(notas), comun]) if notas else comun
+                    self.assertEqual(celda.value, esperado)
+                    self.assertEqual(celda.font.sz, fuente_original - (1 if cantidad > 3 else 0))
+                    self.assertTrue(celda.alignment.wrap_text)
+                    altura = sum(s.row_dimensions[r].height or s.sheet_format.defaultRowHeight
+                                 for r in range(24, 32))
+                    self.assertGreaterEqual(altura, altura_original)
+                    if cantidad == 12:
+                        self.assertGreater(altura, altura_original)
+                        self.assertGreater(s.row_dimensions[24].height, alturas_originales[21])
+                    for r, altura_previa in alturas_originales.items():
+                        if r != 21:
+                            self.assertEqual(s.row_dimensions[r + 3].height, altura_previa,
+                                             f"Se alteró la altura original de la fila {r}")
+                    for r in range(15, 21):
+                        self.assertEqual(s[f"F{r}"].border.right.style, "thin")
+                    self.assertEqual(s["D34"].value, "12 meses")
+                    self.assertIn("D24:F31", str(s.merged_cells))
+                    final.close()
+                    trazabilidad.preparar_dibujo_excel(contenido, datos)
+            with self.assertRaisesRegex(ValueError, "fila libre"):
+                construir_excel(plantilla, replace(datos, comentarios="Nota extensa " * 2000))
+            # Cada exportación parte de la fuente original, sin reducciones acumuladas.
+            final_original = load_workbook(plantilla)
+            self.assertEqual(final_original.active["D21"].font.sz, fuente_original)
+            final_original.close()
+
+    def test_expansion_respeta_comentarios_y_reanalisis_en_ambos_dis_enos(self):
+        for capacidad in (3, 6):
+            for idioma in ("ESPANOL", "INGLES"):
+                with self.subTest(capacidad=capacidad, idioma=idioma), tempfile.TemporaryDirectory() as carpeta:
+                    plantilla = Path(carpeta) / "modelo.xlsx"
+                    libro = Workbook()
+                    hoja = libro.active
+                    for i in range(capacidad):
+                        hoja.cell(15 + i, 1, i + 1)
+                    comentarios = 20 if capacidad == 3 else 23
+                    contenido = comentarios + 1
+                    reanalisis = 30 if capacidad == 3 else 32
+                    hoja.cell(comentarios, 4, "COMMENTS:" if idioma == "INGLES" else "COMENTARIOS:")
+                    hoja.merge_cells(start_row=contenido, end_row=reanalisis - 2, start_column=4, end_column=6)
+                    hoja.cell(contenido, 4, "Nota original")
+                    hoja.cell(reanalisis, 4, "REANALYSIS DATE")
+                    hoja.cell(reanalisis + 1, 4, "X months")
+                    libro.save(plantilla)
+                    libro.close()
+                    for cantidad in (1, capacidad, 12):
+                        pruebas = [{"numero": str(i + 1), "prueba": f"Prueba {i + 1}"} for i in range(cantidad)]
+                        datos = trazabilidad.DatosHII("Producto", "123", idioma, pruebas, "Nota nueva", "12 meses", "19/10/26")
+                        salida = construir_excel(plantilla, datos)
+                        final = load_workbook(io.BytesIO(salida))
+                        extra = max(0, cantidad - capacidad)
+                        self.assertEqual(final.active.cell(contenido + extra, 4).value, "Nota nueva")
+                        self.assertEqual(final.active.cell(reanalisis + 1 + extra, 4).value, "12 meses")
+                        for i in range(cantidad):
+                            self.assertEqual(final.active.cell(15 + i, 2).value, f"Prueba {i + 1}")
+                        final.close()
 
 
 if __name__ == "__main__":

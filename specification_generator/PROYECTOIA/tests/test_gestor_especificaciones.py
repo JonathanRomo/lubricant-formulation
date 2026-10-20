@@ -64,7 +64,12 @@ class _ContextoSimulado:
 
 class ConversionWordTests(unittest.TestCase):
     def test_worker_real_no_bloquea_indefinidamente_si_word_no_responde(self):
-        with patch.object(gestor_especificaciones, "TIEMPO_LIMITE_CONVERSION_WORD", 0.1):
+        with (
+            patch.object(gestor_especificaciones, "TIEMPO_LIMITE_CONVERSION_WORD", 0.1),
+            patch.object(gestor_especificaciones, "_procesos_word_automatizacion", return_value=set()),
+            patch.object(gestor_especificaciones, "_PROCESOS_WORD_PREEXISTENTES", None),
+            patch.object(gestor_especificaciones, "_ERROR_INICIO_WORD", None),
+        ):
             with self.assertRaisesRegex(TimeoutError, "excedió el límite"):
                 gestor_especificaciones._convertir_word_com(
                     Path("origen.doc"),

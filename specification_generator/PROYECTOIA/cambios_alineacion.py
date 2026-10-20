@@ -14,6 +14,13 @@ ORIGINALES = {"prueba": "nombre_original", "metodo": "metodo_original",
               "unidades": "unidades_originales", "valor_tipico": "valor_tipico_original"}
 
 
+class CambiosFila(set):
+    """Campos resaltados y motivo de rechazo, sin alterar los datos de la fila."""
+    def __init__(self, campos=(), mensaje_metodo=""):
+        super().__init__(CAMPOS if mensaje_metodo else campos)
+        self.mensaje_metodo = mensaje_metodo
+
+
 def _clave_comparacion(valor):
     valor = unicodedata.normalize("NFKD", texto(valor).upper())
     return " ".join("".join(c for c in valor if not unicodedata.combining(c)).split())
@@ -149,21 +156,29 @@ def cambios_documento(datos, visibles, original=None):
                     fuente[campo] = auditoria[clave]
             if "prueba" not in fuente and "nombre" in fuente:
                 fuente["prueba"] = fuente["nombre"]
-        cambios = diferencias_filas([fuente], [alineada])[0]
+        cambios = CambiosFila(diferencias_filas([fuente], [alineada])[0],
+                              auditoria.get("mensaje_metodo", "") if auditoria.get("metodo_no_encontrado") else "")
         disponibles.append((tuple(texto(alineada.get(c)) for c in CAMPOS), cambios))
     resultado = []
     for fila in visibles:
+        from alinear_especificaciones_json import es_separador_pruebas
+        if es_separador_pruebas(fila.get('prueba', fila.get('nombre', '')), fila.get('metodo', '')):
+            resultado.append(CambiosFila((), 'Separador: ' + texto(fila.get('prueba', fila.get('nombre', ''))) + ' no es una prueba.'))
+            continue
         firma = tuple(texto(fila.get(c)) for c in CAMPOS)
         candidatas = [cambios for guardada, cambios in disponibles if guardada == firma]
-        resultado.append(set(candidatas[0]) if candidatas and all(c == candidatas[0] for c in candidatas) else set())
+        error = next((c.mensaje_metodo for c in candidatas if c.mensaje_metodo), "")
+        resultado.append(CambiosFila(candidatas[0], error) if candidatas and
+                         (error or all(c == candidatas[0] for c in candidatas)) else set())
     return resultado
 
 
 class ResaltadorCambios:
-    """Texto azul por celda, con el fondo y la fuente propios del Treeview."""
+    """Texto azul para cambios y rojo para métodos sin coincidencia."""
     def __init__(self, tabla, cambios, vertical, horizontal):
         self.tabla, self.cambios = tabla, cambios
         self.marcas, self.pendiente = [], None
+        self._estados_marcas = []
         tabla.configure(yscrollcommand=lambda *a: (vertical(*a), self.programar()),
                         xscrollcommand=lambda *a: (horizontal(*a), self.programar()))
         for evento in ("<Configure>", "<<TreeviewSelect>>", "<ButtonRelease-1>"):
@@ -188,36 +203,59 @@ class ResaltadorCambios:
         self.pendiente = None
         if not self.tabla.winfo_exists():
             return
-        for marca in self.marcas:
-            marca.destroy()
-        self.marcas.clear()
         estilo = ttk.Style(self.tabla)
         nombre = self.tabla.cget("style") or "Treeview"
         fondo = estilo.lookup(nombre, "fieldbackground") or ui.paleta()["panel"]
         fuente = estilo.lookup(nombre, "font") or (ui.PREFERENCIAS["fuente"], 10)
         seleccion = set(self.tabla.selection())
-        for iid in self.tabla.get_children():
+        hijos = self.tabla.get_children()
+        primero, ultimo = self.tabla.yview()
+        inicio = int(float(primero) * len(hijos))
+        fin = min(len(hijos), int(float(ultimo) * len(hijos)) + 2)
+        ancho_tabla = self.tabla.winfo_width()
+        usadas = 0
+        for iid in hijos[inicio:fin]:
+            campos = self.cambios.get(iid, set())
+            if not campos:
+                continue
             valores = self.tabla.item(iid, "values")
             for columna, campo in enumerate(CAMPOS, 1):
-                if campo not in self.cambios.get(iid, set()):
+                if campo not in campos:
                     continue
                 caja = self.tabla.bbox(iid, f"#{columna}")
                 if not caja:
                     continue
                 x, y, ancho, alto = caja
                 izquierda = max(0, x)
-                ancho = min(x + ancho, self.tabla.winfo_width()) - izquierda
+                ancho = min(x + ancho, ancho_tabla) - izquierda
                 if ancho <= 0:
                     continue
                 seleccionado = iid in seleccion
                 color_fondo = estilo.lookup(nombre, "background", ("selected",)) if seleccionado else fondo
-                marca = tk.Label(self.tabla, text=valores[columna - 1] or "*", anchor="w", padx=2,
-                                 background=color_fondo, foreground="#bfdbfe" if seleccionado else "#3b82f6",
-                                 font=fuente, borderwidth=0)
-                marca.place(x=izquierda, y=y, width=ancho, height=alto)
-                marca.bind("<Button-1>", lambda _e, i=iid: self.seleccionar(i))
-                marca.bind("<MouseWheel>", lambda e: self.tabla.event_generate("<MouseWheel>", delta=e.delta))
-                self.marcas.append(marca)
+                error = getattr(campos, "mensaje_metodo", "")
+                rojo = "#ff6b6b" if ui.paleta()["panel"].lower() != "#ffffff" else "#c62828"
+                color = ("#ffb3b3" if seleccionado else rojo) if error else ("#bfdbfe" if seleccionado else "#3b82f6")
+                estado = (iid, valores[columna - 1] or "*", color_fondo,
+                          color, str(fuente),
+                          izquierda, y, ancho, alto)
+                if usadas == len(self.marcas):
+                    marca = tk.Label(self.tabla, anchor="w", padx=2, borderwidth=0, cursor="arrow")
+                    marca.bind("<Button-1>", lambda _e, m=marca: self.seleccionar(m._fila_selector))
+                    marca.bind("<MouseWheel>", lambda e: self.tabla.event_generate("<MouseWheel>", delta=e.delta))
+                    self.marcas.append(marca)
+                    self._estados_marcas.append(None)
+                marca = self.marcas[usadas]
+                if self._estados_marcas[usadas] != estado:
+                    marca._fila_selector = iid
+                    marca.configure(text=estado[1], background=color_fondo,
+                                    foreground=estado[3], font=fuente)
+                    marca.place(x=izquierda, y=y, width=ancho, height=alto)
+                    self._estados_marcas[usadas] = estado
+                usadas += 1
+        for indice in range(usadas, len(self.marcas)):
+            if self._estados_marcas[indice] is not None:
+                self.marcas[indice].place_forget()
+                self._estados_marcas[indice] = None
 
     def seleccionar(self, iid):
         self.tabla.selection_set(iid)

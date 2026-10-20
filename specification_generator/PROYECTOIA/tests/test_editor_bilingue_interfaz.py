@@ -22,19 +22,21 @@ class EditorBilingueTests(unittest.TestCase):
         editor.maestro = [{"NOMBRE IQM": "DENSIDAD", "NOMBRE IQM INGLES": "DENSITY",
                            "UNIDADES": "g/ml", "UNITS": "g/ml", "METODO": "ASTM D445", "MÉTODO INGLÉS": "ASTM D445"}]
         contenido = {"idioma": "es", "nombre_producto": "Producto", "desarrollador": "Nombre", "fecha_reanalisis": "12",
-                     "control": {"codigo_unico_producto": "P1", "revision": "01", "nombre_cliente": "Cliente", "elaboro_y_aprobo": "Persona"},
+                     "control": {"codigo_unico_producto": "P1", "revision": "01", "nombre_cliente": "Cliente", "elaboro_y_aprobo": "Persona",
+                                 "folio_apqp": "-", "folio_vap": "-", "fecha": "13/10/26", "revision_cliente": "-"},
                      "notas": [NOTAS_PLANTILLA["es"]], "pruebas": [
                          {"prueba": "DENSIDAD", "metodo": "ASTM D445", "unidades": "g/ml", "especificacion": "149 MÍNIMO", "valor_tipico": "150", "periodicidad": "▶"}]}
         editor._bilingue = BorradoresBilingues(contenido, editor._traducir_campo_bilingue)
         editor._idioma_anterior = "es"
+        editor._idioma = Mock(get=Mock(return_value="Español"))
         editor.pruebas = copy.deepcopy(editor._bilingue.borradores["es"]["pruebas"])
         editor._capturar_bilingue = Mock()
         editor._rutas_idioma = {"es": Path(carpeta) / "es.json", "en": Path(carpeta) / "en.json"}
         editor._originales_idioma = {}
         editor._cambios_alineacion = {}
-        editor.app = SimpleNamespace(rutas={"json_alineadas": Path(carpeta)})
+        editor.app = SimpleNamespace(rutas={"json_alineadas": Path(carpeta)}, generar_hii=Mock())
         editor.nombre_producto = Mock(get=Mock(return_value="Producto"))
-        editor.variables_control = {"revision": Mock(get=Mock(return_value="01"))}
+        editor.variables_control = {campo: Mock(get=Mock(return_value=valor)) for campo, valor in contenido["control"].items()}
         editor.ventana = Mock()
         editor.al_guardar = Mock()
         editor._contenido_para_revision = Mock(return_value=())
@@ -238,6 +240,52 @@ class EditorBilingueTests(unittest.TestCase):
                 editor.entrada_desarrollador.focus_set.assert_called_once()
                 self.assertFalse(list(Path(carpeta).iterdir()))
 
+    def test_guardado_final_valida_tambien_celdas_del_otro_idioma(self):
+        with tempfile.TemporaryDirectory() as carpeta:
+            editor = self.editor(carpeta)
+            editor._bilingue.borradores["en"]["pruebas"][0]["valor_tipico"] = " "
+            with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch(
+                "interfaz_aplicacion_especificaciones.filedialog.asksaveasfilename"
+            ) as dialogo:
+                editor._guardar_bilingue()
+                mensajes.showerror.assert_called_once()
+                self.assertIn("ENG", mensajes.showerror.call_args.args[1])
+                self.assertIn("Typical values", mensajes.showerror.call_args.args[1])
+                dialogo.assert_not_called()
+            self.assertFalse(list(Path(carpeta).iterdir()))
+
+    def test_codigo_restringido_en_cualquier_borrador_impide_guardar_la_pareja(self):
+        for idioma in ("es", "en"):
+            for en_progreso in (True, False):
+                with self.subTest(idioma=idioma, en_progreso=en_progreso), tempfile.TemporaryDirectory() as carpeta:
+                    editor = self.editor(carpeta)
+                    editor._bilingue.borradores[idioma]["control"]["codigo_unico_producto"] = "20000000"
+                    with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch(
+                        "interfaz_aplicacion_especificaciones.filedialog.asksaveasfilename"
+                    ) as dialogo, patch("interfaz_aplicacion_especificaciones.guardar_pareja_json") as escribir:
+                        editor._guardar_bilingue(en_progreso=en_progreso)
+                        mensajes.showerror.assert_called_once()
+                        self.assertEqual(mensajes.showerror.call_args.args[1],
+                            "El código 20000000 corresponde al formato, está restringido para su uso")
+                        dialogo.assert_not_called()
+                        escribir.assert_not_called()
+                    self.assertFalse(list(Path(carpeta).iterdir()))
+
+    def test_revision_manual_cancelada_impide_escribir_ambos_json(self):
+        with tempfile.TemporaryDirectory() as carpeta:
+            editor = self.editor(carpeta)
+            editor._revision_calculada = ("P1", "08")
+            editor.variables_control["revision"].get.return_value = "09"
+            with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch(
+                "interfaz_aplicacion_especificaciones.filedialog.asksaveasfilename"
+            ) as dialogo:
+                mensajes.askyesno.return_value = False
+                editor._guardar_bilingue()
+                mensajes.askyesno.assert_called_once()
+                self.assertIn("sistema de gestión", mensajes.askyesno.call_args.args[1])
+                dialogo.assert_not_called()
+            self.assertFalse(list(Path(carpeta).iterdir()))
+
     def test_json_terminado_requiere_reanalisis_de_dos_digitos(self):
         for valor in ("", "6", "123", "ab", "12.0", "-1", "１２"):
             with self.subTest(valor=valor), tempfile.TemporaryDirectory() as carpeta:
@@ -262,10 +310,12 @@ class EditorBilingueTests(unittest.TestCase):
                 mensajes.askyesno.return_value = True
                 editor._guardar_bilingue()
                 mensajes.showerror.assert_not_called()
-            for ruta in editor._rutas_idioma.values():
+            for idioma, ruta in editor._rutas_idioma.items():
                 datos = json.loads(ruta.read_text(encoding="utf-8"))
-                self.assertEqual(datos["FECHA DE REANALISIS"], "06 meses")
+                self.assertEqual(datos["FECHA DE REANALISIS"], "06 months" if idioma == "en" else "06 meses")
                 self.assertNotIn("fecha_reanalisis", datos["control_documental"])
+                from generador_hii import preparar_datos
+                self.assertEqual(preparar_datos(ruta).reanalisis, datos["FECHA DE REANALISIS"])
 
     def test_maestro_traduce_con_fuente_intacta_y_no_usa_fallback_como_traduccion(self):
         with tempfile.TemporaryDirectory() as carpeta:
@@ -319,8 +369,29 @@ class EditorBilingueTests(unittest.TestCase):
             self.assertEqual(es["versiones_idioma"]["INGLES"][0]["archivo_json"], "en.json")
             self.assertNotIn("_id_bilingue", en["pruebas"][0])
             self.assertEqual(editor.al_guardar.call_count, 2)
+            editor.app.generar_hii.assert_called_once()
+            self.assertEqual(set(editor.app.generar_hii.call_args.kwargs["rutas_json"]),
+                             {Path(carpeta) / "es.json", Path(carpeta) / "en.json"})
+            editor.ventana.destroy.assert_called_once()
             catalogo = cargar_catalogo(Path(carpeta))
             self.assertEqual(len(parejas_idioma(catalogo.especificaciones)), 2)
+
+    def test_borrador_guardado_no_abre_hii_ni_cierra_editor(self):
+        with tempfile.TemporaryDirectory() as carpeta:
+            editor = self.editor(carpeta)
+            editor._confirmar_revision_manual = Mock(return_value=False)
+            rutas = [Path(carpeta) / "es_trabajo.json", Path(carpeta) / "en_trabajo.json"]
+            with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch(
+                "interfaz_aplicacion_especificaciones.filedialog.asksaveasfilename",
+                side_effect=[str(r) for r in rutas],
+            ):
+                mensajes.askyesno.return_value = True
+                editor._guardar_bilingue(en_progreso=True)
+                mensajes.showerror.assert_not_called()
+            self.assertTrue(all(r.exists() for r in rutas))
+            editor.app.generar_hii.assert_not_called()
+            editor.ventana.destroy.assert_not_called()
+            editor._confirmar_revision_manual.assert_not_called()
 
     def test_cancelar_y_rutas_iguales_no_guardan_archivos(self):
         with tempfile.TemporaryDirectory() as carpeta:

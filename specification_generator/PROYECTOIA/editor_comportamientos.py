@@ -1,8 +1,7 @@
 """Protección de notas de formato y consulta del historial fuera del editor."""
 import json
-import sqlite3
+import re
 import tkinter as tk
-from pathlib import Path
 
 
 def es_nota_formato(texto):
@@ -25,6 +24,41 @@ class NotasProtegidas(tk.Text):
         self.menu = tk.Menu(self, tearoff=False)
         self.menu.add_command(label="Editar nota del formato", command=self._desbloquear)
         self.bind("<Button-3>", self._menu)
+        self.bind("<<Copy>>", self._copiar)
+        self.bind("<Control-c>", self._copiar)
+        self.bind("<Control-C>", self._copiar)
+        self.bind("<<Paste>>", self._pegar)
+
+    def _copiar(self, _evento=None):
+        # Lee la selección sin pasar por el manejador de copia nativo de Text.
+        seleccion = self.tag_ranges("sel")
+        if not seleccion:
+            return "break"
+        contenido = self.tk.call(self._original, "get", seleccion[0], seleccion[1])
+        try:
+            self.clipboard_clear()
+            self.clipboard_append(contenido)
+        except tk.TclError:
+            self.bell()
+        return "break"
+
+    def _pegar(self, _evento=None):
+        try:
+            contenido = self.clipboard_get()
+        except tk.TclError:
+            return "break"
+        # Usa una sola edición: el pegado nativo elimina e inserta por separado.
+        # Así una selección que cruza una nota protegida se conserva completa.
+        contenido = contenido.replace("\r\n", "\n").replace("\r", "\n").replace("\x00", "")
+        if not contenido or not self.winfo_exists():
+            return "break"
+        seleccion = self.tag_ranges("sel")
+        if seleccion:
+            self.tk.call(self._w, "replace", seleccion[0], seleccion[1], contenido)
+        else:
+            self.tk.call(self._w, "insert", "insert", contenido)
+        self.see("insert")
+        return "break"
 
     def _menu(self, evento):
         self.menu.tk_popup(evento.x_root, evento.y_root)
@@ -83,35 +117,46 @@ class NotasProtegidas(tk.Text):
         super().destroy()
 
 
-def siguiente_revision(codigo, carpetas, base_datos, revision_actual="00"):
-    """Deduplica originales/alineados por nombre del JSON; solo consulta SQLite."""
-    nombres = set()
+def siguiente_revision(codigo, carpetas, base_datos=None, revision_actual="00", *, exigir_historial=False):
+    """Busca la mayor revisión terminada en las carpetas de alineados indicadas.
+
+    Los parámetros de SQLite y revisión inicial se conservan para llamadas antiguas;
+    el cálculo usa exclusivamente los JSON actuales de estas carpetas.
+    """
     from rutas_proyecto import resolver_ruta
-    base_datos = resolver_ruta(base_datos)
-    if base_datos.exists():
-        con = sqlite3.connect(base_datos.as_uri() + "?mode=ro", uri=True)
-        try:
-            for nombre, revision in con.execute(
-                "SELECT archivo_json, revision_especificacion FROM versiones WHERE part_id_final=?", (codigo,)
-            ):
-                nombres.add(Path(nombre).name.casefold())
-        except sqlite3.OperationalError:
-            # Una base nueva puede no tener todavía las tablas del extractor.
-            pass
-        finally:
-            con.close()
+    from especificaciones_wip import es_wip
+
+    codigo = str(codigo).strip().casefold()
+    revisiones = set()
+    invalidos = []
     for carpeta in dict.fromkeys(resolver_ruta(p) for p in carpetas):
-        if not carpeta.is_dir():
+        if not carpeta.exists():
             continue
         for ruta in carpeta.rglob("*"):
-            if ruta.suffix.lower() != ".json":
+            if not ruta.is_file() or ruta.suffix.lower() != ".json" or es_wip(ruta):
                 continue
             try:
                 datos = json.loads(ruta.read_text(encoding="utf-8-sig"))
-                control = datos.get("control_documental", {})
-                if str(control.get("codigo_unico_producto") or "").strip() != codigo:
-                    continue
-                nombres.add(ruta.name.casefold())
-            except (OSError, ValueError, AttributeError):
+            except (OSError, ValueError):
                 continue
-    return f"{len(nombres) + 1:02d}"
+            if not isinstance(datos, dict):
+                continue
+            control = datos.get("control_documental", {})
+            if not isinstance(control, dict):
+                continue
+            if str(control.get("codigo_unico_producto") or "").strip().casefold() != codigo:
+                continue
+            revision = str(control.get("revision", "")).strip()
+            if not re.fullmatch(r"[0-9]{1,2}", revision):
+                invalidos.append(ruta.name)
+            else:
+                revisiones.add(int(revision))
+    if invalidos:
+        raise ValueError("Hay alineados del Part ID con revisión vacía o inválida. "
+                         "Corrige estos archivos antes de calcular la siguiente revisión: " + ", ".join(sorted(invalidos)))
+    if not revisiones:
+        return "00"
+    siguiente = max(revisiones) + 1
+    if siguiente > 99:
+        raise ValueError("La última revisión es 99; no se puede asignar otra de dos dígitos automáticamente.")
+    return f"{siguiente:02d}"

@@ -1,6 +1,24 @@
 # Resumen del alineador de especificaciones
 
-**Versión documentada: 1.12.0** (`alinear_especificaciones_json.py`)
+**Versión documentada: 2.1.35** (`alinear_especificaciones_json.py`).
+Actualizado el 19 de octubre de 2026.
+
+Esta guía se abre por defecto en la pestaña **Instrucciones**. El selector de
+esa pestaña también permite consultar la guía del gestor y `README_INTERFAZ.md`.
+
+## Uso desde la aplicación portátil
+
+Ejecuta `AplicacionEspecificaciones_v4.exe` desde su carpeta completa, junto a
+`_internal`. No necesitas instalar Python. En **Configuración**, selecciona las
+carpetas de originales, JSON, resultados alineados, formatos y métodos.
+El maestro `METODOS_LAB_UNIFICADO.xlsx` debe estar en la carpeta de métodos elegida.
+Puedes trabajar con rutas relativas dentro de la carpeta portátil o seleccionar
+ubicaciones externas; estas últimas deben trasladarse también al cambiar de equipo.
+
+La distribución no incluye tus carpetas de datos, `CODIGOS_200.xlsx`, bases
+SQLite, archivos JSON, lanzadores BAT ni `.gitignore`. Los archivos de trabajo
+se generan o se incorporan al utilizar la aplicación. Para extraer Word con el
+gestor, proporciona el catálogo `CODIGOS_200.xlsx` junto al ejecutable.
 
 El alineador toma los JSON de origen seleccionados y genera o reemplaza sus
 versiones alineadas en `ESPECIFICACIONES_JSON_ALINEADAS`, conservando la ruta
@@ -53,8 +71,9 @@ relativa de cada archivo. Usa la hoja `METODOS` del archivo maestro
 - Normaliza espacios entre cantidades y unidades y el formato de números en
   unidades, valores típicos y notas. Los separadores numéricos ambiguos se
   conservan para evitar reinterpretarlos.
-- Reinicia los campos `FECHA DE REANALISIS`, `Desarrollador` y
-  `PERIODIDICAD DE ANALISIS`.
+- Prepara los controles de reanálisis, desarrollador y periodicidad para la
+  edición y generación de documentos. La periodicidad existente se conserva
+  cuando está declarada en la prueba.
 - Reconoce las notas estándar en español e inglés sobre la versión vigente del
   método. Si vienen como una fila de la tabla, las retira de `pruebas` y las
   agrega a `notas`; si están junto al contenido de una prueba, separa la nota
@@ -92,3 +111,16 @@ Para forzar una realineación completa:
 La API `ejecutar(..., forzar=True)` permite el mismo comportamiento.
 Las reglas de coincidencia y limpieza se mantienen; no se ejecutan archivos
 en paralelo. La comprobación incremental también admite origen y destino iguales.
+
+## Edición, idiomas e historial
+
+Al realinear conserva el historial HII existente y reajusta sus referencias si
+el JSON cambia de carpeta. Una traducción nueva tiene su propio historial.
+Los vínculos confirmados entre español e inglés permanecen en `versiones_idioma`,
+con rutas relativas al JSON; las coincidencias automáticas se calculan en memoria.
+El alineador no crea tablas HII ni duplica su catálogo en `especificaciones.db`.
+
+Las condiciones específicas de una prueba —temperatura, escala, secuencia,
+norma y unidades— participan en las comprobaciones. Las equivalencias confirmadas
+no autorizan a sustituir otras condiciones o normas. Las filas separadoras y
+las notas de formato se distinguen de las pruebas; los casos dudosos deben revisarse.

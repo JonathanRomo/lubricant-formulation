@@ -37,13 +37,20 @@ from openpyxl.utils import get_column_letter
 import estilo_interfaz as ui
 from estilo_interfaz import ttk
 from generador_especs_hii import clave_texto, leer_idioma_datos, detectar_json, _separar_notas_de_pruebas
+from generador_especs_hii import (
+    detectar_formatos as detectar_formatos_word,
+    seleccionar_plantilla as seleccionar_plantilla_word,
+    generar_documento,
+)
 from interfaz_seleccion_especificaciones import (
     preparar_vista_previa_alineada, cargar_catalogo, buscar_especificaciones,
     encabezados_tabla, crear_divisor_redimensionable, Catalogo, Especificacion,
 )
 
-from rutas_proyecto import BASE, resolver_ruta, rutas_configuradas, ruta_portatil, reubicar_ruta_heredada
+from rutas_proyecto import BASE, resolver_ruta, rutas_configuradas, ruta_portatil
 from especificaciones_wip import es_wip
+from editor_comportamientos import es_nota_formato
+from reconstruir_base_datos import suscribir_catalogo
 
 if __name__ == "__main__":
     # Las llamadas de recuperación reutilizan este módulo al ejecutar el archivo directamente.
@@ -100,8 +107,10 @@ def conservar_historial(datos: dict, origen: Path, destino: Path) -> None:
     for registro in historial:
         if isinstance(registro.get("archivo"), str) and registro["archivo"]:
             registro["archivo"] = ruta_relativa(origen.parent / registro["archivo"], destino.parent)
+    datos_actuales = {}
     if destino.is_file():
-        actuales = leer_historial(json.loads(destino.read_text(encoding="utf-8-sig")))
+        datos_actuales = json.loads(destino.read_text(encoding="utf-8-sig"))
+        actuales = leer_historial(datos_actuales)
         por_id = {r.get("id"): i for i, r in enumerate(historial) if r.get("id")}
         for registro in actuales:
             indice = por_id.get(registro.get("id"))
@@ -112,6 +121,16 @@ def conservar_historial(datos: dict, origen: Path, destino: Path) -> None:
                 if registro.get("id"):
                     por_id[registro["id"]] = len(historial) - 1
     datos["hii_generadas"] = historial
+    campo = "hii_registros_heredados"
+    if campo in datos or campo in datos_actuales:
+        heredados = leer_historial({"hii_generadas": datos.get(campo, [])})
+        for registro in heredados:
+            if isinstance(registro.get("archivo"), str) and registro["archivo"]:
+                registro["archivo"] = ruta_relativa(origen.parent / registro["archivo"], destino.parent)
+        for registro in leer_historial({"hii_generadas": datos_actuales.get(campo, [])}):
+            if registro not in heredados:
+                heredados.append(registro)
+        datos[campo] = heredados
 
 
 def crear_registro(destino: Path, especificacion: Path, huella: str) -> dict:
@@ -197,6 +216,8 @@ def guardar_con_historial(destino: Path, especificacion: Path, contenido: bytes,
 # Registro SQLite y relaciones entre versiones
 
 def _base_registro(con):
+    if isinstance(con, RegistroHII):
+        return con.base_hii
     archivo = con.execute("PRAGMA database_list").fetchone()[2]
     return Path(archivo).parent if archivo else BASE
 
@@ -209,70 +230,26 @@ def _ruta_registro(con, ruta):
     return resolver_ruta(ruta, _base_registro(con))
 
 
-def _migrar_rutas(con):
-    """Convierte registros anteriores una sola vez, conservando sus enlaces y sus HII."""
-    if con.execute("SELECT 1 FROM hii_estado WHERE clave='rutas_portatiles'").fetchone():
-        return
-    base = _base_registro(con)
-    cambios = {}
-    for fila in con.execute("SELECT * FROM hii_especificaciones").fetchall():
-        anterior = fila["ruta"]
-        nueva = ruta_portatil(reubicar_ruta_heredada(anterior, base), base)
-        if nueva != anterior:
-            cambios[anterior] = nueva
-            con.execute("INSERT OR IGNORE INTO hii_especificaciones VALUES (?, ?, ?, ?, ?)",
-                        (nueva, fila["codigo"], fila["revision"], fila["cliente"], fila["idioma"]))
-    # Se crean primero los destinos de las claves foráneas; los cambios son atómicos.
-    for tabla in ("hii_traducciones", "hii_enlaces_automaticos"):
-        for origen, destino in con.execute(f"SELECT origen, destino FROM {tabla}").fetchall():
-            pareja = (cambios.get(origen, origen), cambios.get(destino, destino))
-            if pareja != (origen, destino):
-                con.execute(f"INSERT OR IGNORE INTO {tabla} VALUES (?, ?)", pareja)
-                con.execute(f"DELETE FROM {tabla} WHERE origen=? AND destino=?", (origen, destino))
-    for anterior, nueva in cambios.items():
-        con.execute("UPDATE hii_generadas SET especificacion=? WHERE especificacion=?", (nueva, anterior))
-        con.execute("DELETE FROM hii_especificaciones WHERE ruta=?", (anterior,))
-    for fila in con.execute("SELECT * FROM hii_generadas").fetchall():
-        anterior = fila["ruta"]
-        nueva = ruta_portatil(reubicar_ruta_heredada(anterior, base), base)
-        if nueva != anterior:
-            con.execute("INSERT OR IGNORE INTO hii_generadas VALUES (?, ?, ?, ?)",
-                        (nueva, fila["especificacion"], fila["idioma"], fila["fecha"]))
-            con.execute("DELETE FROM hii_generadas WHERE ruta=?", (anterior,))
-    con.execute("INSERT OR IGNORE INTO hii_estado VALUES ('rutas_portatiles', '1')")
+class RegistroHII(sqlite3.Connection):
+    """Índice de trabajo por operación; los datos duraderos viven en los JSON."""
 
 
-@contextmanager
-def conectar(ruta, *, recuperar=True):
-    ruta = resolver_ruta(ruta)
-    if recuperar:
-        from reconstruir_base_datos import asegurar_base
-        asegurar_base(ruta.parent, destino=ruta)
-    con = sqlite3.connect(ruta, timeout=30)
-    try:
-        con.row_factory = sqlite3.Row
-        con.execute("PRAGMA busy_timeout=30000")
-        con.execute("PRAGMA foreign_keys=ON")
-        modo_journal = con.execute("PRAGMA journal_mode").fetchone()[0]
-        if str(modo_journal).lower() != "wal":
-            con.execute("PRAGMA journal_mode=WAL")
-        con.executescript("""
-            CREATE TABLE IF NOT EXISTS hii_especificaciones (
+def preparar_registro(con):
+    con.executescript("""
+            CREATE TEMP TABLE IF NOT EXISTS hii_especificaciones (
                 ruta TEXT PRIMARY KEY, codigo TEXT NOT NULL, revision TEXT NOT NULL,
                 cliente TEXT NOT NULL, idioma TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS hii_traducciones (
+            CREATE TEMP TABLE IF NOT EXISTS hii_traducciones (
                 origen TEXT NOT NULL REFERENCES hii_especificaciones(ruta),
                 destino TEXT NOT NULL REFERENCES hii_especificaciones(ruta),
                 PRIMARY KEY(origen, destino));
-            CREATE TABLE IF NOT EXISTS hii_enlaces_automaticos (
+            CREATE TEMP TABLE IF NOT EXISTS hii_enlaces_automaticos (
                 origen TEXT NOT NULL, destino TEXT NOT NULL,
                 PRIMARY KEY(origen, destino));
-            CREATE TABLE IF NOT EXISTS hii_generadas (
+            CREATE TEMP TABLE IF NOT EXISTS hii_generadas (
                 ruta TEXT PRIMARY KEY, especificacion TEXT NOT NULL REFERENCES hii_especificaciones(ruta),
                 idioma TEXT NOT NULL, fecha TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS hii_estado (
-                clave TEXT PRIMARY KEY, valor TEXT NOT NULL);
-            CREATE VIEW IF NOT EXISTS hii_versiones_idiomas AS
+            CREATE TEMP VIEW IF NOT EXISTS hii_versiones_idiomas AS
                 SELECT a.ruta AS hii_origen, a.idioma AS idioma_origen,
                        b.ruta AS hii_traduccion, b.idioma AS idioma_traduccion,
                        a.especificacion AS especificacion_origen,
@@ -281,15 +258,26 @@ def conectar(ruta, *, recuperar=True):
                 JOIN hii_traducciones t ON
                     (a.especificacion=t.origen AND b.especificacion=t.destino) OR
                     (a.especificacion=t.destino AND b.especificacion=t.origen);
-        """)
+    """)
+
+
+@contextmanager
+def conectar(ruta, *, recuperar=True):
+    """Conserva la API anterior sin crear, reconstruir ni escribir la base del gestor."""
+    con = sqlite3.connect(":memory:", factory=RegistroHII)
+    con.base_hii = resolver_ruta(ruta).parent
+    try:
+        con.row_factory = sqlite3.Row
+        con.execute("PRAGMA foreign_keys=ON")
+        con.execute("PRAGMA temp_store=MEMORY")
+        preparar_registro(con)
         with con:
-            _migrar_rutas(con)
             yield con
     finally:
         con.close()
 
 
-def indexar(con, ruta):
+def indexar(con, ruta, *, _visitadas=None):
     ruta = _ruta_registro(con, ruta)
     datos = json.loads(ruta.read_text(encoding="utf-8-sig"))
     control = datos.get("control_documental", {})
@@ -299,11 +287,42 @@ def indexar(con, ruta):
     con.execute("""INSERT INTO hii_especificaciones VALUES (?, ?, ?, ?, ?)
         ON CONFLICT(ruta) DO UPDATE SET codigo=excluded.codigo,
         revision=excluded.revision, cliente=excluded.cliente, idioma=excluded.idioma""", fila)
+    # Cargar solo el documento solicitado y sus vínculos confirmados. No recorrer
+    # todo el catálogo ni perder otros vínculos al exportar una pareja nueva.
+    visitadas = set() if _visitadas is None else _visitadas
+    visitadas.add(fila[0])
+    relaciones = datos.get("versiones_idioma", {})
+    if isinstance(relaciones, dict):
+        for referencias in relaciones.values():
+            if isinstance(referencias, dict):
+                referencias = [referencias]
+            if not isinstance(referencias, list):
+                continue
+            for referencia in referencias:
+                if not isinstance(referencia, dict) or not isinstance(referencia.get("archivo_json"), str):
+                    continue
+                destino = resolver_ruta(referencia["archivo_json"], ruta.parent)
+                clave = _clave_ruta(con, destino)
+                try:
+                    if clave in visitadas:
+                        otra = con.execute("SELECT * FROM hii_especificaciones WHERE ruta=?", (clave,)).fetchone()
+                    else:
+                        otra = indexar(con, destino, _visitadas=visitadas)
+                except (OSError, ValueError, AttributeError):
+                    continue
+                if otra and fila[1] and (fila[1], fila[3]) == (otra[1], otra[3]) and fila[4] != otra[4]:
+                    con.execute("INSERT OR IGNORE INTO hii_traducciones VALUES (?, ?)", tuple(sorted((fila[0], clave))))
     return fila
 
 
 def candidatas(con, origen, idioma, rutas_disponibles):
     fila = indexar(con, origen)
+    rutas_disponibles = list(rutas_disponibles)
+    for ruta in rutas_disponibles:
+        try:
+            indexar(con, ruta)
+        except (OSError, ValueError, AttributeError):
+            continue
     disponibles = {_clave_ruta(con, p) for p in rutas_disponibles}
     explicitas = con.execute("""SELECT DISTINCT e.* FROM hii_especificaciones e
         JOIN hii_traducciones t ON (e.ruta=t.destino AND t.origen=?)
@@ -343,7 +362,9 @@ def exportar_relaciones(con, rutas):
         relaciones = {}
         filas = con.execute("""SELECT DISTINCT e.* FROM hii_especificaciones e
             JOIN hii_traducciones t ON (t.origen=? AND t.destino=e.ruta)
-                OR (t.destino=? AND t.origen=e.ruta) ORDER BY e.ruta""", (clave, clave))
+                OR (t.destino=? AND t.origen=e.ruta)
+            WHERE NOT EXISTS (SELECT 1 FROM hii_enlaces_automaticos a
+                WHERE a.origen=t.origen AND a.destino=t.destino) ORDER BY e.ruta""", (clave, clave))
         actual = con.execute("SELECT * FROM hii_especificaciones WHERE ruta=?", (clave,)).fetchone()
         for fila in filas:
             destino = _ruta_registro(con, fila["ruta"])
@@ -376,7 +397,7 @@ def exportar_relaciones(con, rutas):
 
 
 def sincronizar_idiomas(con, carpeta):
-    """Autoenlaza solo grupos con una única versión por idioma y revisión."""
+    """Calcula coincidencias en memoria; solo los vínculos confirmados se exportan."""
     from collections import defaultdict
     grupos = defaultdict(list)
     rutas = []
@@ -655,10 +676,161 @@ def huella_datos(datos: DatosHII) -> str:
 
 
 def comentarios_simples(notas: list[str]) -> str:
-    # TODO: asignar aquí comportamientos especiales a TODO lo relacionado con
-    # comentarios (referencias, superíndices, reglas por prueba y por idioma).
-    # Por ahora únicamente conserva el texto, sin interpretar ni traducirlo.
+    """Conserva cada nota completa; la composición con la plantilla ocurre al exportar."""
     return "\n".join(dict.fromkeys(texto(nota) for nota in notas if texto(nota)))
+
+
+def _comentarios_excel(comentarios: str, original: str) -> tuple[str, int]:
+    notas, comunes = [], []
+    for linea in comentarios.splitlines():
+        linea = linea.strip()
+        if linea:
+            (comunes if es_nota_formato(linea) else notas).append(linea)
+    # La redacción oficial de la plantilla tiene prioridad sobre la del JSON.
+    comun = next((linea.strip() for linea in original.splitlines() if es_nota_formato(linea)),
+                 comunes[0] if comunes else "")
+    notas = list(dict.fromkeys(notas))
+    partes = ["\n".join(notas)] if notas else []
+    if comun:
+        partes.append(comun)
+    return "\n\n".join(partes), len(notas)
+
+
+def _altura_texto_comentarios(contenido, ancho_px, puntos, nombre, negrita=False, cursiva=False):
+    """Mide el texto con la fuente de Windows, sin abrir Excel ni crear widgets Tk."""
+    if os.name == "nt":
+        import ctypes
+        from ctypes import wintypes
+
+        gdi = ctypes.WinDLL("gdi32", use_last_error=True)
+        gdi.CreateCompatibleDC.argtypes = [wintypes.HDC]
+        gdi.CreateCompatibleDC.restype = wintypes.HDC
+        gdi.CreateFontW.argtypes = [ctypes.c_int] * 5 + [wintypes.DWORD] * 8 + [wintypes.LPCWSTR]
+        gdi.CreateFontW.restype = wintypes.HANDLE
+        gdi.SelectObject.argtypes = [wintypes.HDC, wintypes.HANDLE]
+        gdi.SelectObject.restype = wintypes.HANDLE
+        gdi.GetTextExtentPoint32W.argtypes = [wintypes.HDC, wintypes.LPCWSTR, ctypes.c_int,
+                                            ctypes.POINTER(wintypes.SIZE)]
+        gdi.GetTextExtentPoint32W.restype = wintypes.BOOL
+        gdi.DeleteObject.argtypes = [wintypes.HANDLE]
+        gdi.DeleteDC.argtypes = [wintypes.HDC]
+        dc = gdi.CreateCompatibleDC(None)
+        # Medición a cuatro veces la resolución para evitar redondear la fuente de 8 puntos.
+        escala = 4
+        fuente = gdi.CreateFontW(-round(puntos * 96 / 72 * escala), 0, 0, 0,
+                                700 if negrita else 400, int(cursiva), 0, 0, 1, 0, 0, 0, 0, nombre)
+        anterior = None
+        try:
+            if dc and fuente:
+                anterior = gdi.SelectObject(dc, fuente)
+
+                def medir(texto):
+                    dimensiones = wintypes.SIZE()
+                    longitud = len(texto.encode("utf-16-le")) // 2
+                    if not gdi.GetTextExtentPoint32W(dc, texto, longitud, ctypes.byref(dimensiones)):
+                        raise OSError("No se pudo medir el texto de las notas.")
+                    return dimensiones.cx, dimensiones.cy
+
+                limite = max(1, ancho_px * escala)
+                lineas = 0
+                for parrafo in contenido.expandtabs(4).split("\n"):
+                    actual = ""
+                    for palabra in parrafo.split():
+                        candidato = actual + " " + palabra if actual else palabra
+                        if actual and medir(candidato)[0] > limite:
+                            lineas += 1
+                            actual = ""
+                        while medir(palabra)[0] > limite:
+                            # Excel también divide cadenas sin espacios al alcanzar el ancho.
+                            bajo, alto = 1, len(palabra)
+                            while bajo < alto:
+                                medio = (bajo + alto + 1) // 2
+                                if medir(palabra[:medio])[0] <= limite:
+                                    bajo = medio
+                                else:
+                                    alto = medio - 1
+                            lineas += 1
+                            palabra = palabra[bajo:]
+                        actual = actual + " " + palabra if actual else palabra
+                    lineas += 1
+                alto_linea = medir("Ag")[1] / escala * 72 / 96
+                return math.ceil(lineas * (alto_linea + 0.5) + 5)
+        except OSError:
+            pass
+        finally:
+            if anterior:
+                gdi.SelectObject(dc, anterior)
+            if fuente:
+                gdi.DeleteObject(fuente)
+            if dc:
+                gdi.DeleteDC(dc)
+    # Alternativa para sistemas sin las métricas de Windows.
+    caracteres = max(1, int(ancho_px / (puntos * 4 / 3 * 0.6)))
+    lineas = sum(max(1, len(textwrap.wrap(linea, width=caracteres))) for linea in contenido.split("\n"))
+    return math.ceil(lineas * puntos * 1.3 + 5)
+
+
+def _ajustar_cuadro_comentarios(hoja, estilos, referencia, contenido, cantidad, anchos):
+    """Amplía solo la primera fila del cuadro, por encima de la leyenda."""
+    from openpyxl.worksheet.cell_range import CellRange
+
+    fila_inicio = int(re.search(r"\d+", referencia)[0])
+    rango = next((CellRange(n.get("ref")) for n in hoja.findall("s:mergeCells/s:mergeCell", NS)
+                  if CellRange(n.get("ref")).min_row == fila_inicio
+                  and CellRange(n.get("ref")).min_col == 4), None)
+    fila_fin = rango.max_row if rango else fila_inicio
+    celda = hoja.find(f"s:sheetData/s:row/s:c[@r='{referencia}']", NS)
+    formatos = estilos.find("s:cellXfs", NS)
+    fuentes = estilos.find("s:fonts", NS)
+    formato = copy.deepcopy(formatos[int(celda.get("s", "0"))])
+    fuente = copy.deepcopy(fuentes[int(formato.get("fontId", "0"))])
+    tamano = fuente.find("s:sz", NS)
+    puntos = float(tamano.get("val")) if tamano is not None else 11.0
+    if cantidad > 3:
+        puntos = max(1.0, puntos - 1)
+        if tamano is None:
+            tamano = ET.SubElement(fuente, f"{{{NS['s']}}}sz")
+        tamano.set("val", str(puntos))
+        formato.set("fontId", str(len(fuentes)))
+        formato.set("applyFont", "1")
+        fuentes.append(fuente)
+        fuentes.set("count", str(len(fuentes)))
+    alineacion = formato.find("s:alignment", NS)
+    if alineacion is None:
+        alineacion = ET.SubElement(formato, f"{{{NS['s']}}}alignment")
+    alineacion.set("wrapText", "1")
+    alineacion.set("shrinkToFit", "0")
+    alineacion.set("vertical", "top")
+    formato.set("applyAlignment", "1")
+    celda.set("s", str(len(formatos)))
+    formatos.append(formato)
+    # Los anchos guardados por Excel ya incluyen el margen de cada columna.
+    ancho_px = sum(math.floor(ancho * 7 + 0.5) for ancho in anchos[3:6]) - 8
+    nombre = fuente.find("s:name", NS)
+    negrita = fuente.find("s:b", NS)
+    cursiva = fuente.find("s:i", NS)
+    requerida = _altura_texto_comentarios(
+        contenido, ancho_px, puntos, nombre.get("val", "Arial") if nombre is not None else "Arial",
+        negrita is not None and negrita.get("val", "1") not in {"0", "false"},
+        cursiva is not None and cursiva.get("val", "1") not in {"0", "false"})
+    sheet_data = hoja.find("s:sheetData", NS)
+    predeterminado = hoja.find("s:sheetFormatPr", NS)
+    altura_base = float(predeterminado.get("defaultRowHeight", "15")) if predeterminado is not None else 15
+    alturas = []
+    for numero in range(fila_inicio, fila_fin + 1):
+        fila = next((f for f in sheet_data if f.get("r") == str(numero)), None)
+        alturas.append(float(fila.get("ht", str(altura_base))) if fila is not None else altura_base)
+    altura_necesaria = max(alturas[0], requerida - sum(alturas[1:]))
+    if altura_necesaria > 409:
+        raise ValueError("Las notas exceden la altura máxima de la fila libre de Excel (409 puntos). "
+                         "Reduce su contenido para conservar las alturas de la tabla de periodicidad.")
+    if altura_necesaria > alturas[0]:
+        fila = next((f for f in sheet_data if f.get("r") == str(fila_inicio)), None)
+        if fila is None:
+            fila = ET.SubElement(sheet_data, f"{{{NS['s']}}}row", r=str(fila_inicio))
+        fila.set("ht", str(round(altura_necesaria, 3)))
+        fila.set("customHeight", "1")
+        sheet_data[:] = sorted(sheet_data, key=lambda f: int(f.get("r")))
 
 
 def leer_reanalisis(datos: dict, notas: list[str]) -> str:
@@ -720,8 +892,8 @@ def seleccionar_plantilla(carpeta: Path, idioma: str) -> Path:
     return candidatas[0]
 
 
-def desplazar_referencia(valor: str, extra: int) -> str:
-    return REFERENCIA.sub(lambda m: m[1] + str(int(m[2]) + (extra if int(m[2]) >= 21 else 0)), valor)
+def desplazar_referencia(valor: str, extra: int, desde: int = 21) -> str:
+    return REFERENCIA.sub(lambda m: m[1] + str(int(m[2]) + (extra if int(m[2]) >= desde else 0)), valor)
 
 
 def escribir_celda(hoja, referencia: str, valor: str) -> None:
@@ -765,12 +937,31 @@ def _cargar_plantilla(ruta, firma):
         modelo_hoja = modelo_libro.worksheets[0]
         anchos = tuple(modelo_hoja.column_dimensions[get_column_letter(c)].width for c in range(1, 7))
         nombre_hoja = modelo_hoja.title
+        # El bloque de pruebas conserva su encabezado; su capacidad cambia entre versiones.
+        ultima_prueba = 15
+        while isinstance(modelo_hoja.cell(ultima_prueba + 1, 1).value, (int, float)):
+            ultima_prueba += 1
+        etiquetas = {clave_texto(texto(c.value)).rstrip(":"): c.row
+                     for fila in modelo_hoja.iter_rows(min_row=18, max_row=45, min_col=4, max_col=4)
+                     for c in fila if c.value is not None}
+        fila_comentarios = next((etiquetas[k] for k in ("COMENTARIOS", "COMMENTS") if k in etiquetas), None)
+        fila_reanalisis = next((etiquetas[k] for k in ("FECHA DE REANALISIS", "REANALYSIS DATE") if k in etiquetas), None)
+        if fila_comentarios is None or fila_reanalisis is None:
+            # Conserva la estructura anterior para plantillas sin etiquetas reconocibles.
+            ultima_prueba = 20
+            fila_comentarios = 23 if nombre_hoja.upper() == "NAME" else 24
+            fila_reanalisis = 32
+        comentario = next((r.min_row for r in modelo_hoja.merged_cells.ranges
+                           if r.min_col == 4 and r.min_row > fila_comentarios
+                           and r.max_row > r.min_row), fila_comentarios + 1)
+        estructura = (ultima_prueba, comentario, fila_reanalisis + 1,
+                      texto(modelo_hoja.cell(comentario, 4).value))
     finally:
         modelo_libro.close()
     with ZipFile(io.BytesIO(contenido)) as archivo:
         partes = {info.filename: archivo.read(info.filename) for info in archivo.infolist()}
         infos = tuple(archivo.infolist())
-    return partes, infos, anchos, nombre_hoja
+    return partes, infos, anchos, nombre_hoja, estructura
 
 
 _CERROJO_PLANTILLA = threading.Lock()
@@ -779,10 +970,13 @@ _TURNO_EXCEL = threading.Semaphore(1)
 
 def construir_excel(plantilla: Path, datos: DatosHII) -> bytes:
     """Edita copias de las partes necesarias; la plantilla preparada permanece intacta."""
-    extra = max(0, len(datos.pruebas) - 6)
     plantilla = Path(plantilla).resolve()
     with _CERROJO_PLANTILLA:
-        originales, infos, anchos, nombre_hoja = _cargar_plantilla(plantilla, _firma_plantilla(plantilla))
+        originales, infos, anchos, nombre_hoja, estructura = _cargar_plantilla(plantilla, _firma_plantilla(plantilla))
+    ultima_prueba, fila_comentario, fila_reanalisis, comentario_original = estructura
+    capacidad = ultima_prueba - 14
+    desde = ultima_prueba + 1
+    extra = max(0, len(datos.pruebas) - capacidad)
     partes = dict(originales)
     hoja_nombre = "xl/worksheets/sheet1.xml"
     hoja = ET.fromstring(partes[hoja_nombre])
@@ -791,23 +985,23 @@ def construir_excel(plantilla: Path, datos: DatosHII) -> bytes:
     estilos_envueltos = {}
     if extra:
         filas = hoja.find("s:sheetData", NS)
-        modelo = copy.deepcopy(next(f for f in filas if f.get("r") == "20"))
+        modelo = copy.deepcopy(next(f for f in filas if f.get("r") == str(ultima_prueba)))
         for elemento in hoja.iter():
             for atributo in ("r", "ref", "sqref"):
                 if elemento.get(atributo):
                     valor = elemento.get(atributo)
-                    elemento.set(atributo, str(int(valor) + extra) if atributo == "r" and valor.isdigit() and int(valor) >= 21
-                                 else desplazar_referencia(valor, extra))
+                    elemento.set(atributo, str(int(valor) + extra) if atributo == "r" and valor.isdigit() and int(valor) >= desde
+                                 else desplazar_referencia(valor, extra, desde))
             if ET.QName(elemento).localname in {"f", "formula1", "formula2"} and elemento.text:
-                elemento.text = desplazar_referencia(elemento.text, extra)
-        for numero in range(21, 21 + extra):
+                elemento.text = desplazar_referencia(elemento.text, extra, desde)
+        for numero in range(desde, desde + extra):
             fila = copy.deepcopy(modelo)
             fila.set("r", str(numero))
             for celda in fila:
                 celda.set("r", re.sub(r"\d+", str(numero), celda.get("r")))
             filas.append(fila)
         filas[:] = sorted(filas, key=lambda f: int(f.get("r")))
-    for indice in range(max(6, len(datos.pruebas))):
+    for indice in range(max(capacidad, len(datos.pruebas))):
         prueba = datos.pruebas[indice] if indice < len(datos.pruebas) else {}
         for col, campo in enumerate(COLUMNAS, 1):
             escribir_celda(hoja, f"{get_column_letter(col)}{15 + indice}", texto(prueba.get(campo)))
@@ -815,26 +1009,41 @@ def construir_excel(plantilla: Path, datos: DatosHII) -> bytes:
         for celda in fila:
             if re.match(r"^[A-F]\d+$", celda.get("r", "")):
                 estilo = int(celda.get("s", "0"))
-                if estilo not in estilos_envueltos:
+                clave_estilo = (estilo, celda.get("r").startswith("F"))
+                if clave_estilo not in estilos_envueltos:
                     nuevo = copy.deepcopy(formatos_celda[estilo])
+                    if clave_estilo[1]:
+                        bordes = estilos.find("s:borders", NS)
+                        borde = copy.deepcopy(bordes[int(nuevo.get("borderId", "0"))])
+                        derecho = borde.find("s:right", NS)
+                        if derecho is None:
+                            derecho = ET.SubElement(borde, f"{{{NS['s']}}}right")
+                        if not derecho.get("style"):
+                            derecho.set("style", "thin")
+                        nuevo.set("borderId", str(len(bordes)))
+                        nuevo.set("applyBorder", "1")
+                        bordes.append(borde)
+                        bordes.set("count", str(len(bordes)))
                     alineacion = nuevo.find("s:alignment", NS)
                     if alineacion is None:
                         alineacion = ET.SubElement(nuevo, f"{{{NS['s']}}}alignment")
                     alineacion.set("wrapText", "1")
                     nuevo.set("applyAlignment", "1")
-                    estilos_envueltos[estilo] = len(formatos_celda)
+                    estilos_envueltos[clave_estilo] = len(formatos_celda)
                     formatos_celda.append(nuevo)
-                celda.set("s", str(estilos_envueltos[estilo]))
+                celda.set("s", str(estilos_envueltos[clave_estilo]))
         lineas = max(max(1, sum(max(1, math.ceil(len(linea) / max(4, ancho - 2)))
                                    for linea in texto(prueba.get(campo)).split("\n")))
                      for ancho, campo in zip(anchos, COLUMNAS))
         fila.set("ht", str(max(float(fila.get("ht", "15")), lineas * 12 + 6)))
         fila.set("customHeight", "1")
-    comentario = "D24" if datos.idioma == "INGLES" else "D25"
-    # Comentarios: mantener toda lógica especial centralizada en comentarios_simples.
-    if datos.comentarios:
-        escribir_celda(hoja, desplazar_referencia(comentario, extra), datos.comentarios)
-    escribir_celda(hoja, f"D{33 + extra}", datos.reanalisis)
+    comentario = f"D{fila_comentario}"
+    comentarios, cantidad_notas = _comentarios_excel(datos.comentarios, comentario_original)
+    if comentarios:
+        referencia = desplazar_referencia(comentario, extra, desde)
+        escribir_celda(hoja, referencia, comentarios)
+        _ajustar_cuadro_comentarios(hoja, estilos, referencia, comentarios, cantidad_notas, anchos)
+    escribir_celda(hoja, f"D{fila_reanalisis + extra}", datos.reanalisis)
     partes[hoja_nombre] = ET.tostring(hoja, xml_declaration=True, encoding="UTF-8")
     formatos_celda.set("count", str(len(formatos_celda)))
     partes["xl/styles.xml"] = ET.tostring(estilos, xml_declaration=True, encoding="UTF-8")
@@ -854,16 +1063,16 @@ def construir_excel(plantilla: Path, datos: DatosHII) -> bytes:
                     for nodo in nodos[1:]:
                         nodo.text = ""
                 for nodo in ancla.findall(".//xdr:row", NS):
-                    if int(nodo.text) >= 20:
+                    if int(nodo.text) >= desde - 1:
                         nodo.text = str(int(nodo.text) + extra)
             partes[nombre] = ET.tostring(raiz, xml_declaration=True, encoding="UTF-8")
         elif extra and (nombre.startswith("xl/tables/") or nombre == "xl/workbook.xml") and nombre.endswith(".xml"):
             raiz = ET.fromstring(contenido)
             for elemento in raiz.iter():
                 if elemento.get("ref"):
-                    elemento.set("ref", desplazar_referencia(elemento.get("ref"), extra))
+                    elemento.set("ref", desplazar_referencia(elemento.get("ref"), extra, desde))
                 if ET.QName(elemento).localname == "definedName" and elemento.text:
-                    elemento.text = desplazar_referencia(elemento.text, extra)
+                    elemento.text = desplazar_referencia(elemento.text, extra, desde)
             partes[nombre] = ET.tostring(raiz, xml_declaration=True, encoding="UTF-8")
     # Limita la impresión a la HII, sin incluir el catálogo auxiliar de la plantilla inglesa.
     libro = ET.fromstring(partes["xl/workbook.xml"])
@@ -905,6 +1114,8 @@ def preparar_dibujo_excel(contenido, datos):
     libro = load_workbook(io.BytesIO(contenido), data_only=True)
     hoja = libro.worksheets[0]
     filas = 43 + max(0, len(datos.pruebas) - 6)
+    if hoja.print_area:
+        filas = int(re.search(r"\$(\d+)$", str(hoja.print_area))[1])
     xs, ys = [20], [20]
     for col in range(1, 7):
         xs.append(xs[-1] + max(45, hoja.column_dimensions[get_column_letter(col)].width * 7))
@@ -937,7 +1148,8 @@ def preparar_dibujo_excel(contenido, datos):
             canvas.create_rectangle(x, y, x2, y2, fill=relleno, outline="#666" if borde else relleno)
             if celda.value is not None:
                 canvas.create_text(x + 4, y + 3, text=texto(celda.value), anchor="nw", width=max(10, x2-x-8),
-                                   font=("Arial", 9, "bold" if celda.font.bold else "normal"))
+                                   font=(celda.font.name or "Arial", celda.font.sz or 9,
+                                         "bold" if celda.font.bold else "normal"))
     with ZipFile(io.BytesIO(contenido)) as z:
         for nombre in z.namelist():
             if not (nombre.startswith("xl/drawings/") and nombre.endswith(".xml") and "/_rels/" not in nombre):
@@ -1006,6 +1218,31 @@ def _procesar_trabajos_excel(entrada, salida):
         _trabajar_excel(trabajo, salida)
 
 
+def preparar_datos_word(ruta: Path) -> dict:
+    """Usa la misma instantánea alineada que la vista previa, sin modificar el JSON."""
+    datos = json.loads(ruta.read_text(encoding="utf-8-sig"))
+    vista = preparar_vista_previa_alineada(ruta, datos=datos)
+    preparar_datos(ruta, datos=datos, vista=vista)
+    datos["pruebas"] = [dict(prueba) for prueba in vista.pruebas]
+    datos["notas"] = list(vista.notas)
+    return datos
+
+
+def generar_archivos_word(salidas):
+    guardadas, errores = [], []
+    for origen, destino, datos, plantilla in salidas:
+        try:
+            # Publica el documento completo; un fallo conserva el archivo anterior.
+            with tempfile.TemporaryDirectory(prefix="word_", dir=destino.parent) as temporal:
+                archivo = Path(temporal) / destino.name
+                generar_documento(datos, plantilla, archivo, conservar_control=True)
+                os.replace(archivo, destino)
+            guardadas.append(destino)
+        except Exception as exc:
+            errores.append(f"{origen.name}: {exc}")
+    return guardadas, errores
+
+
 class GeneradorHII:
     def __init__(self, padre, carpeta_formatos=None, carpeta_json=None, app=None, base_datos=BASE / "especificaciones.db"):
         self.app = app
@@ -1022,6 +1259,8 @@ class GeneradorHII:
         self._revision_excel = 0
         self._revision_dibujo = 0
         self._cola_excel = queue.Queue()
+        self._cola_word = queue.Queue()
+        self._guardando_word = False
         self._pendientes_excel = queue.Queue()
         self._hilo_excel = None
         self._trabajos_excel = {}
@@ -1029,6 +1268,7 @@ class GeneradorHII:
         self._firma_excel = None
         self.datos = None
         self.marcadas = set()
+        self._rutas_abiertas = set()
         self.compacta = False
         self.actual = None
         self.vistas_visibles = {"tabla": True, "excel": False}
@@ -1067,13 +1307,15 @@ class GeneradorHII:
         self.zoom_contenido = ZoomHII(self.cuerpo)
         barra = ttk.Frame(self.cuerpo, padding=8)
         barra.pack(fill="x")
-        self.editar_seleccion = ttk.Button(barra, text="Ampliar", command=self.alternar_lista)
+        self.editar_seleccion = ttk.Button(barra, text="Ø", width=3, command=self.alternar_lista)
         self.editar_seleccion.pack(side="left")
-        self.lote_boton = ttk.Button(barra, text="Guardar seleccionadas", command=self.guardar_seleccionadas, state="disabled")
+        self.lote_boton = ttk.Button(barra, text="Guardar seleccionadas (0)", command=self.guardar_seleccionadas, state="disabled")
         self.lote_boton.pack(side="left", padx=8)
+        self.guardar_word_boton = ttk.Button(barra, text="Guardar Word", command=self.guardar_word, state="disabled")
+        self.guardar_word_boton.pack(side="left", padx=8)
         self.guardar_boton = ttk.Button(barra, text="Guardar HII", command=self.guardar, state="disabled")
         self.guardar_boton.pack(side="left", padx=8)
-        self.estado = ttk.Label(barra, text="Marca una especificación de la lista.")
+        self.estado = ttk.Label(barra, text="Selecciona una fila para ver su vista previa.")
         self.estado.pack(side="left")
         idiomas = ttk.Frame(self.cuerpo, padding=(8, 0, 8, 8))
         idiomas.pack(fill="x")
@@ -1150,6 +1392,7 @@ class GeneradorHII:
         self._programar("posicionar", 100, self.posicionar_paneles)
         self._programar("zoom", 150, self._aplicar_zoom)
         self._programar("idiomas", 150, self._actualizar_idiomas)
+        suscribir_catalogo(self.ventana, self.recargar_catalogo)
 
     def cambiar_zoom(self, cambio):
         self.zoom_factor = round(min(1.6, max(.6, self.zoom_factor + cambio)), 1)
@@ -1368,7 +1611,7 @@ class GeneradorHII:
             if not self.vistas_visibles[clave] or clave in self._vistas_renderizadas:
                 continue
             if self.actual is None:
-                mensaje = "Marca una especificación para ver su resumen." if clave == "tabla" else "Aquí verás la hoja Excel que se generará."
+                mensaje = "Selecciona una fila para ver su resumen." if clave == "tabla" else "Aquí verás la hoja Excel que se generará."
                 ttk.Label(panel, text=mensaje, anchor="center", wraplength=350).pack(fill="both", expand=True, padx=12)
             elif clave == "tabla":
                 self.mostrar_especificacion(self.actual)
@@ -1379,9 +1622,37 @@ class GeneradorHII:
 
     def alternar_lista(self):
         self.compacta = not self.compacta
-        self.editar_seleccion.configure(text="Ampliar" if self.compacta else "Compactar")
+        self.editar_seleccion.configure(text="Ø")
         self.actualizar_lista()
         self.posicionar_paneles()
+
+    def seleccionar_json_guardados(self, rutas):
+        rutas = tuple(dict.fromkeys(Path(ruta).resolve() for ruta in rutas))
+        if self._cerrada or not rutas:
+            return
+        self._rutas_abiertas.update(rutas)
+        self._cancelar_tarea("inicio")
+
+        def seleccionar():
+            disponibles = {e.ruta for e in self.catalogo.especificaciones}
+            self.marcadas = set(rutas) & disponibles
+            if not self.marcadas:
+                messagebox.showwarning(
+                    "JSON guardados", "No se pudieron cargar los JSON recién guardados. Actualiza la lista para reintentarlo.",
+                    parent=self.ventana,
+                )
+                return
+            self.consulta.set("")
+            self.compacta = True
+            self.idioma_objetivo = None
+            self.ambos_idiomas.set(False)
+            self._actualizar_idiomas()
+            self.actualizar_lista()
+            self.posicionar_paneles()
+            self.cargar_previa(next(r for r in rutas if r in self.marcadas))
+
+        self.recargar_catalogo(al_terminar=seleccionar)
+        self.ventana.lift()
 
     def recargar_catalogo(self, al_terminar=None):
         if self._cerrada:
@@ -1396,9 +1667,23 @@ class GeneradorHII:
         self.estado.configure(text="Cargando especificaciones…")
         # El trabajador solo recibe datos y una cola; no llama a Tk ni a SQLite.
         carpeta, cancelar, cola = self.carpeta_json, self._cancelar_catalogo, self._cola_catalogo
+        abiertas = tuple(self._rutas_abiertas)
         def trabajar():
             try:
                 catalogo = cargar_catalogo_hii(carpeta, cancelar=cancelar)
+                conocidas = {e.ruta for e in catalogo.especificaciones}
+                adicionales, errores = [], list(catalogo.errores)
+                for ruta in abiertas:
+                    if cancelar.is_set():
+                        return
+                    if ruta in conocidas:
+                        continue
+                    try:
+                        adicionales.append(self._leer_entrada(ruta))
+                    except (OSError, ValueError, IndexError) as exc:
+                        errores.append(f"{ruta.name}: {exc}")
+                if adicionales or len(errores) != len(catalogo.errores):
+                    catalogo = Catalogo((*catalogo.especificaciones, *adicionales), tuple(errores))
                 cola.put((catalogo, None))
             except Exception as exc:
                 cola.put((None, exc))
@@ -1431,12 +1716,12 @@ class GeneradorHII:
         if acciones:
             for accion in acciones:
                 accion()
-        elif self.origen_actual and self.origen_actual not in self.marcadas:
+        elif self.origen_actual and self.origen_actual not in {e.ruta for e in self.catalogo.especificaciones}:
             self.vaciar_previa()
         elif self.actual:
             self.cargar_previa(self.origen_actual or self.actual)
         else:
-            self.estado.configure(text="Marca una especificación de la lista.")
+            self.estado.configure(text="Selecciona una fila para ver su vista previa.")
 
     def programar_busqueda(self):
         self._cancelar_tarea("lista")
@@ -1454,11 +1739,15 @@ class GeneradorHII:
             candidatas = [e for e in candidatas if e.ruta in self.marcadas]
         self.visibles = buscar_especificaciones(candidatas, self.consulta.get())
         self._insertar_bloque(self._revision_lista, 0)
+        self._actualizar_contador()
+
+    def _actualizar_contador(self):
         ingles = sum(e.idioma == "INGLES" for e in self.catalogo.especificaciones)
         errores = f"\n{len(self.catalogo.errores)} archivos inválidos" if self.catalogo.errores else ""
         self.contador.configure(text=f"{len(self.catalogo.especificaciones)} especificaciones ({ingles} en inglés)\n"
                                f"{len(self.marcadas)} seleccionadas · {len(self.visibles)} visibles{errores}")
-        self.lote_boton.configure(state="normal" if self.marcadas else "disabled")
+        self.lote_boton.configure(text=f"Guardar seleccionadas ({len(self.marcadas)})",
+                                  state="normal" if self.marcadas else "disabled")
 
     def _insertar_bloque(self, revision, inicio):
         if self._cerrada or revision != self._revision_lista:
@@ -1499,25 +1788,17 @@ class GeneradorHII:
         especificacion = self.visibles[indice]
         if especificacion.ruta in self.marcadas:
             self.marcadas.remove(especificacion.ruta)
-            if self.origen_actual == especificacion.ruta:
-                siguiente = next((e for e in self.catalogo.especificaciones if e.ruta in self.marcadas), None)
-                if siguiente:
-                    self._actualizar_idiomas(siguiente.ruta)
-                    self.cargar_previa(siguiente.ruta)
-                else:
-                    self.vaciar_previa()
         else:
             self.marcadas.add(especificacion.ruta)
-            self._actualizar_idiomas(especificacion.ruta)
-            self.cargar_previa(especificacion.ruta)
-            self.compacta = True
-            self.consulta.set("")
-        if not self.marcadas:
-            self.compacta = False
-        self.editar_seleccion.configure(text="Ampliar" if self.compacta else "Compactar")
         self._actualizar_idiomas()
-        self.actualizar_lista()
-        self.posicionar_paneles()
+        if self.compacta:
+            self.actualizar_lista()
+        else:
+            fila = f"{self._revision_lista}:{indice}"
+            valores = list(self.lista.item(fila, "values"))
+            valores[0] = "☑" if especificacion.ruta in self.marcadas else "☐"
+            self.lista.item(fila, values=valores)
+            self._actualizar_contador()
 
     def seleccionar_fila(self, _evento=None):
         seleccion = self.lista.selection()
@@ -1526,7 +1807,7 @@ class GeneradorHII:
             if indice is None:
                 return
             especificacion = self.visibles[indice]
-            if especificacion.ruta in self.marcadas and especificacion.ruta != self.origen_actual:
+            if especificacion.ruta != self.origen_actual:
                 self.cargar_previa(especificacion.ruta)
 
     def vaciar_previa(self):
@@ -1536,12 +1817,13 @@ class GeneradorHII:
         self.imagenes.clear()
         self.plantilla_actual = None
         self.guardar_boton.configure(state="disabled")
+        self._actualizar_boton_word()
         self._vistas_renderizadas.clear()
         for panel in (self.izquierda, self.derecha):
             for widget in panel.winfo_children():
                 widget.destroy()
         self._actualizar_vistas()
-        self.estado.configure(text="Marca una especificación de la lista.")
+        self.estado.configure(text="Selecciona una fila para ver su vista previa.")
         self._actualizar_idiomas()
 
     def abrir(self):
@@ -1573,6 +1855,7 @@ class GeneradorHII:
             self._renderizar_vistas()
             self._actualizar_idiomas()
             self.guardar_boton.configure(state="normal")
+            self._actualizar_boton_word()
             aviso = " | Sin fecha de reanálisis en el JSON" if not datos.reanalisis else ""
             self.estado.configure(text=f"{datos.codigo} | {datos.idioma}{aviso}")
             self._aplicar_zoom()
@@ -1662,30 +1945,25 @@ class GeneradorHII:
         while destino.exists():
             destino = self.carpeta_json / f"{origen.stem} {sufijo}_{indice}.json"
             indice += 1
-        def guardada(ruta):
-            datos = preparar_datos(ruta)
-            if datos.idioma != idioma:
+        def guardadas(rutas):
+            traducida = next((ruta for ruta in rutas if preparar_datos(ruta).idioma == idioma), None)
+            if traducida is None:
                 raise ValueError("La traducción no tiene el idioma solicitado.")
             with conectar(self.base_datos) as con:
-                vincular(con, origen, ruta, permitir_revision_distinta=True)
-            self.recargar_catalogo(al_terminar=lambda: self.cargar_previa(origen))
+                vincular(con, origen, traducida, permitir_revision_distinta=True)
+            if self._cerrada and self.app is not None:
+                self.app.generar_hii(rutas_json=rutas)
+            else:
+                self.seleccionar_json_guardados(rutas)
         editor = GeneradorEspecificacion(app, archivo_inicial=origen, destino_inicial=destino,
-            idioma_destino="en" if idioma == "INGLES" else "es", al_guardar=guardada)
+            idioma_destino="en" if idioma == "INGLES" else "es", al_finalizar=guardadas)
         self.editores_traduccion[clave] = editor
-
-    def registrar_hii(self, destino, especificacion, datos):
-        with conectar(self.base_datos) as con:
-            registrar(con, destino, especificacion, datos.idioma, datos.fecha)
 
     def guardar_archivo(self, destino, especificacion, datos, contenido):
         huella = huella_datos(datos)
         if huella_datos(preparar_datos(especificacion)) != huella:
             raise ValueError("La especificación cambió después de preparar la HII. Vuelve a cargar su vista previa.")
         guardar_con_historial(destino, especificacion, contenido, huella)
-        try:
-            self.registrar_hii(destino, especificacion, datos)
-        except (sqlite3.Error, OSError, ValueError, RuntimeError) as exc:
-            return f"{destino.name}: Excel e historial JSON guardados; registro en SQLite pendiente: {exc}"
         return None
 
     def mostrar_especificacion(self, ruta):
@@ -1798,9 +2076,84 @@ class GeneradorHII:
         if avisos:
             messagebox.showwarning("HII guardadas con registro pendiente", "\n".join(avisos), parent=self.ventana)
 
-    def _validar_destino(self, destino):
-        if destino.resolve() in {p.resolve() for p in self.formatos.glob("*") if p.is_file()}:
-            raise ValueError("Guarda la HII con otro nombre para conservar la plantilla.")
+    def _validar_destino(self, destino, tipo="la HII"):
+        if destino.resolve() in {p.resolve() for p in self.formatos.rglob("*") if p.is_file()}:
+            raise ValueError(f"Guarda {tipo} con otro nombre para conservar la plantilla.")
+
+    def _actualizar_boton_word(self):
+        boton = getattr(self, "guardar_word_boton", None)
+        if boton is not None:
+            habilitado = self.datos is not None and not getattr(self, "_guardando_word", False)
+            boton.configure(state="normal" if habilitado else "disabled")
+
+    def guardar_word(self):
+        if self.datos is None or self._guardando_word:
+            return
+        ambos = self.ambos_idiomas.get()
+        try:
+            rutas = self._rutas_guardado(self.origen_actual or self.actual, ambos)
+            if not rutas:
+                return
+            plantillas = detectar_formatos_word(self.formatos)
+            preparados = []
+            for ruta in rutas:
+                datos = preparar_datos_word(ruta)
+                idioma = leer_idioma_datos(datos)
+                plantilla = seleccionar_plantilla_word(plantillas, idioma)
+                preparados.append((ruta, datos, plantilla, idioma))
+            if ambos:
+                elegida = filedialog.askdirectory(parent=self.ventana, title="Guardar ambas especificaciones Word")
+                if not elegida:
+                    return
+                destinos = [Path(elegida) / f"{ruta.stem} {idioma}.docx" for ruta, _, _, idioma in preparados]
+            else:
+                codigo = texto(preparados[0][1]["control_documental"]["codigo_unico_producto"])
+                elegida = filedialog.asksaveasfilename(
+                    parent=self.ventana, title="Guardar especificación Word", defaultextension=".docx",
+                    initialfile=f"{codigo} {preparados[0][3]}.docx", filetypes=[("Documento Word", "*.docx")],
+                )
+                if not elegida:
+                    return
+                destinos = [Path(elegida)]
+            salidas = []
+            for (ruta, datos, plantilla, _), destino in zip(preparados, destinos):
+                if destino.suffix.lower() != ".docx":
+                    raise ValueError("El documento Word debe guardarse con la extensión .docx.")
+                self._validar_destino(destino, "el Word")
+                salidas.append((ruta, destino, datos, plantilla))
+            if len({destino.resolve() for destino in destinos}) != len(destinos):
+                raise ValueError("Los idiomas necesitan archivos Word diferentes.")
+            existentes = [destino for destino in destinos if destino.exists()]
+            if ambos and existentes and not messagebox.askyesno(
+                "Archivos existentes", f"Se reemplazarán {len(existentes)} documentos Word. ¿Continuar?", parent=self.ventana,
+            ):
+                return
+        except (OSError, ValueError) as exc:
+            messagebox.showerror("No se pudo preparar el Word", str(exc), parent=self.ventana)
+            return
+        self._guardando_word = True
+        self._actualizar_boton_word()
+        self.estado.configure(text="Preparando documentos Word…")
+        cola = self._cola_word
+
+        def generar():
+            cola.put(generar_archivos_word(salidas))
+
+        threading.Thread(target=generar, daemon=True).start()
+        self._programar("word", 50, self._recibir_word)
+
+    def _recibir_word(self):
+        try:
+            guardadas, errores = self._cola_word.get_nowait()
+        except queue.Empty:
+            self._programar("word", 50, self._recibir_word)
+            return
+        self._guardando_word = False
+        self._actualizar_boton_word()
+        self.estado.configure(text=(f"Word guardado: {guardadas[0].name}" if len(guardadas) == 1
+                                    else f"{len(guardadas)} documentos Word guardados"))
+        if errores:
+            messagebox.showerror("No se pudieron generar todos los Word", "\n".join(errores), parent=self.ventana)
 
     def mostrar_excel(self, contenido, datos):
         """Dibuja el plano preparado en bloques breves dentro del hilo de Tk."""

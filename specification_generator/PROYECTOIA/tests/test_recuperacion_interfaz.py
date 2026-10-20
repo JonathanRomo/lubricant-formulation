@@ -6,6 +6,13 @@ from interfaz_aplicacion_especificaciones import AplicacionEspecificaciones
 
 
 class RecuperacionInterfazTests(unittest.TestCase):
+    def test_actualizar_listas_notifica_a_ventanas_sin_reconstruir_base(self):
+        app = SimpleNamespace(raiz=Mock(), _estado_progreso_carga=Mock())
+        with patch("interfaz_aplicacion_especificaciones.notificar_catalogo") as notificar:
+            AplicacionEspecificaciones.actualizar_listas_json(app)
+        notificar.assert_called_once_with(app.raiz)
+        app._estado_progreso_carga.configure.assert_called_once_with(text="Listas actualizadas.")
+
     def ejecutar(self, resultado=None, error=None):
         raiz = Mock()
         raiz.winfo_exists.return_value = True
@@ -34,7 +41,8 @@ class RecuperacionInterfazTests(unittest.TestCase):
             return accion, mensajes.showinfo.called, mensajes.showerror.called
 
     def test_recuperacion_automatica_termina_en_hilo_principal_y_reanuda_accion(self):
-        resultado = dict(documentos=20, versiones=20, relaciones=2, wip=1, omitidos=[], respaldo=None)
+        resultado = dict(documentos=20, versiones=20, relaciones=2, wip=1, omitidos=[], respaldo=None,
+                         duplicados=dict(json_duplicados=0, word_duplicados=0, advertencias=[]))
         accion, informacion, error = self.ejecutar(resultado=resultado)
         accion.assert_called_once()
         self.assertTrue(informacion)

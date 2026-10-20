@@ -4,7 +4,9 @@ from __future__ import annotations
 import estilo_interfaz as ui
 from rutas_proyecto import BASE, resolver_ruta, rutas_configuradas, ruta_maestro
 from especificaciones_wip import es_wip
+from reconstruir_base_datos import suscribir_catalogo
 from cambios_alineacion import cambios_documento, ResaltadorCambios
+from resumen_comparacion import resumir_diferencias_alineadas, formatear_resumen_diferencias
 
 
 import json
@@ -18,10 +20,11 @@ import tkinter as tk
 import tkinter.font as tkfont
 import unicodedata
 import webbrowser
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 from tkinter import messagebox
+from tkinter.scrolledtext import ScrolledText
 from estilo_interfaz import ttk
 
 from typing import Any, Callable
@@ -139,6 +142,7 @@ class OrdenadorColumnasTreeview:
         self.encabezados = dict(encabezados)
         self.orden_original: tuple[str, ...] = ()
         self.columna_ordenada: str | None = None
+        self._firma_encabezados = None
         self.registrar_orden_original()
         self._actualizar_encabezados()
         self.tabla.bind("<Configure>", self._al_cambiar_tamano, add="+")
@@ -160,10 +164,16 @@ class OrdenadorColumnasTreeview:
     def _actualizar_encabezados(self) -> None:
         estilo = ttk.Style(self.tabla)
         estilo_tabla = str(self.tabla.cget("style")) or "Treeview"
+        fuente_estilo = estilo.lookup(f"{estilo_tabla}.Heading", "font") or "TkDefaultFont"
+        firma = (tuple(self.encabezados.items()), self.columna_ordenada, str(fuente_estilo),
+                 tuple(int(self.tabla.column(c, "width")) for c in self.encabezados),
+                 str(self.tabla.tk.call("tk", "scaling")) if hasattr(self.tabla, "tk") else None)
+        if firma == self._firma_encabezados:
+            return
+        self._firma_encabezados = firma
         fuente = tkfont.Font(
             self.tabla,
-            font=estilo.lookup(f"{estilo_tabla}.Heading", "font")
-            or "TkDefaultFont",
+            font=fuente_estilo,
         )
         ancho_espacio = max(1, fuente.measure(" "))
         for columna, titulo in self.encabezados.items():
@@ -235,21 +245,149 @@ def etiqueta_control(campo: str, etiqueta: str, idioma: str) -> str:
     return etiqueta
 
 
-def crear_divisor_redimensionable(contenedor: tk.Misc, orientacion: str) -> tk.PanedWindow:
-    cursor = "sb_v_double_arrow" if orientacion == tk.HORIZONTAL else "sb_h_double_arrow"
-    return tk.PanedWindow(
+class _DetallesSelector(ttk.Frame):
+    """Conserva etiquetas y secciones al cambiar el documento mostrado."""
+
+    def __init__(self, padre):
+        super().__init__(padre, padding=20, cursor="arrow")
+        self._widgets = {}
+        self._configuraciones = {}
+        self._escala = 1.0
+        self._ui_preservar_fuentes = True
+
+    def _etiqueta(self, clave, padre, texto, *, tamano=9, negrita=False, color=None, ancho=780):
+        if clave not in self._widgets:
+            self._widgets[clave] = ttk.Label(padre, justify="left")
+        etiqueta = self._widgets[clave]
+        configuracion = dict(text=texto, wraplength=ancho,
+            foreground=color or ui.paleta()["texto"],
+            font=(ui.PREFERENCIAS["fuente"], max(7, round(tamano * self._escala)),
+                  "bold" if negrita else "normal"))
+        if self._configuraciones.get(clave) != configuracion:
+            etiqueta.configure(**configuracion)
+            self._configuraciones[clave] = configuracion
+        return etiqueta
+
+    def _grupo(self, clave, titulo):
+        if clave not in self._widgets:
+            self._widgets[clave] = ttk.LabelFrame(self, padding=10)
+        grupo = self._widgets[clave]
+        if str(grupo.cget("text")) != titulo:
+            grupo.configure(text=titulo)
+        for hijo in grupo.winfo_children():
+            if hijo.winfo_manager() == "grid":
+                hijo.grid_remove()
+            else:
+                hijo.pack_forget()
+        grupo.pack(fill="x", pady=(0, 14))
+        return grupo
+
+    def actualizar(self, previa, origen, *, alineada, escala):
+        self._escala = escala
+        for hijo in self.winfo_children():
+            hijo.pack_forget()
+        secundario = ui.paleta()["secundario"]
+        if previa.idioma == "INGLES":
+            self._etiqueta("idioma", self, "English version", color=secundario).pack(anchor="w")
+        self._etiqueta("origen", self, f"Origen: {origen}", color=secundario).pack(anchor="w", pady=(0, 12))
+        for clave, titulo, mensajes in (
+                ("avisos", "Avisos del control documental", previa.mensajes_control),
+                ("astm", "Pruebas ASTM no encontradas en la lista maestra", previa.mensajes_astm_no_encontradas)):
+            if mensajes:
+                grupo = self._grupo(clave, titulo)
+                for i, mensaje in enumerate(mensajes):
+                    self._etiqueta((clave, i), grupo, f"\u2022 {mensaje}", color="#9a3412").pack(anchor="w", pady=2)
+        grupo = self._grupo("control", "Document control" if previa.idioma == "INGLES" else "Control documental")
+        for i, (etiqueta, valor) in enumerate(previa.control):
+            fila, columna = divmod(i, 2)
+            self._etiqueta(("campo", i), grupo, f"{etiqueta}:", negrita=True).grid(
+                row=fila, column=columna * 2, sticky="w", padx=(4, 5), pady=4)
+            self._etiqueta(("valor", i), grupo, valor, ancho=280).grid(
+                row=fila, column=columna * 2 + 1, sticky="w", padx=(0, 18), pady=4)
+        grupo.columnconfigure(1, weight=1)
+        grupo.columnconfigure(3, weight=1)
+        if alineada:
+            texto = ("This table uses valores_alineados from alineacion_metodos_lab.detalle."
+                     if previa.idioma == "INGLES" else
+                     "Esta tabla se construye con los valores_alineados guardados en alineacion_metodos_lab.detalle del JSON alineado.")
+            self._etiqueta("alineacion", self, texto, color=secundario, ancho=800).pack(anchor="w", pady=(0, 7))
+        if previa.notas:
+            self._etiqueta("notas", self, "Notas", tamano=11, negrita=True,
+                           color=ui.paleta()["alineado"]).pack(anchor="w", pady=(14, 4))
+            for i, nota in enumerate(previa.notas):
+                self._etiqueta(("nota", i), self, f"\u2022 {nota}", ancho=800).pack(anchor="w", pady=2)
+        if previa.pie_pagina:
+            if "separador" not in self._widgets:
+                self._widgets["separador"] = ttk.Separator(self)
+            self._widgets["separador"].pack(fill="x", pady=(16, 8))
+            self._etiqueta("pie", self, previa.pie_pagina, color=secundario, ancho=800).pack(anchor="w")
+
+
+class _TiradorDivisor(tk.Canvas):
+    """Agarre plano que delega el arrastre al separador nativo de Tk."""
+
+    def __init__(self, divisor):
+        super().__init__(divisor, width=8, height=26, borderwidth=0,
+                         highlightthickness=0, cursor="sb_h_double_arrow",
+                         background=ui.paleta()["fondo"])
+        self.divisor = divisor
+        self._tarea = None
+        for y in (8, 13, 18):
+            self.create_line(2, y, 6, y, fill="#8090a0")
+        for secuencia in ("<ButtonPress-1>", "<B1-Motion>", "<ButtonRelease-1>"):
+            self.bind(secuencia, lambda evento, s=secuencia: self._reenviar(evento, s))
+        divisor.bind("<Configure>", self._programar_posicion, add="+")
+        divisor.bind("<ButtonRelease-1>", self._programar_posicion, add="+")
+        self.bind("<Destroy>", self._al_destruir, add="+")
+        self._programar_posicion()
+
+    def _reenviar(self, evento, secuencia):
+        self.divisor.event_generate(secuencia, x=self.winfo_x() + evento.x,
+                                    y=self.winfo_y() + evento.y, state=evento.state)
+        return "break"
+
+    def _programar_posicion(self, _evento=None):
+        if self._tarea is not None:
+            self.after_cancel(self._tarea)
+        self._tarea = self.after_idle(self._posicionar)
+
+    def _posicionar(self):
+        self._tarea = None
+        if len(self.divisor.panes()) < 2:
+            self.place_forget()
+            return
+        x, _ = self.divisor.sash_coord(0)
+        self.place(x=x, y=self.divisor.winfo_height() // 2, anchor="w",
+                   width=int(self.divisor.cget("sashwidth")), height=26)
+        tk.Misc.tkraise(self)
+
+    def _al_destruir(self, evento):
+        if evento.widget is self and self._tarea is not None:
+            self.after_cancel(self._tarea)
+            self._tarea = None
+
+
+def crear_divisor_redimensionable(
+    contenedor: tk.Misc, orientacion: str, *, mostrar_tirador: bool = False,
+) -> tk.PanedWindow:
+    cursor = "sb_h_double_arrow" if orientacion == tk.HORIZONTAL else "sb_v_double_arrow"
+    divisor = tk.PanedWindow(
         contenedor,
         orient=orientacion,
-        sashwidth=5,
+        sashwidth=8 if mostrar_tirador else 5,
         handlesize=0,
         showhandle=False,
         sashrelief=tk.FLAT,
         background="#f0f0f0",
         borderwidth=0,
         relief=tk.FLAT,
-        cursor=cursor,
+        cursor="arrow",
+        sashcursor=cursor,
         opaqueresize=False,
     )
+    if mostrar_tirador and orientacion == tk.HORIZONTAL:
+        divisor._tirador_agarre = _TiradorDivisor(divisor)
+    return divisor
 
 
 @dataclass
@@ -265,11 +403,22 @@ class PanelEspecificaciones:
     canvas_previa: tk.Canvas | None = None
     tabla_pruebas: ttk.Treeview | None = None
     boton_contraparte: ttk.Button | None = None
+    boton_diferencias: ttk.Button | None = None
     boton_idioma: ttk.Button | None = None
     boton_editar: ttk.Button | None = None
     boton_alinear: ttk.Button | None = None
     boton_realinear: ttk.Button | None = None
     boton_comparar: ttk.Button | None = None
+    boton_guardar_hii: ttk.Button | None = None
+    boton_compactar: ttk.Button | None = None
+    previa_compacta: bool = False
+    separador_previa: tk.PanedWindow | None = None
+    area_detalles: ttk.Frame | None = None
+    posicion_detalles: tuple[int, int] | None = None
+    widgets_previa: dict[str, Any] = field(default_factory=dict)
+    cache_previa: dict[tuple, tuple] = field(default_factory=dict)
+    firma_vista: tuple | None = None
+    busqueda_pendiente: str | None = None
     zoom_previa: float = 1.44
     especificacion_actual: Especificacion | None = None
 
@@ -474,6 +623,13 @@ def parejas_idioma(especificaciones: tuple[Especificacion, ...]) -> dict[Path, E
     }
 
 
+def _parejas_panel(panel):
+    if getattr(panel, "_catalogo_parejas", None) is not panel.catalogo:
+        panel._catalogo_parejas = panel.catalogo
+        panel._parejas_idioma = parejas_idioma(panel.catalogo.especificaciones)
+    return panel._parejas_idioma
+
+
 def buscar_especificaciones(
     especificaciones: tuple[Especificacion, ...] | list[Especificacion],
     consulta: str,
@@ -593,9 +749,10 @@ def especificaciones_pendientes_realineacion(
     ]
 
 
-def preparar_vista_previa(ruta: Path) -> VistaPrevia:
-    """Interpreta un JSON con las mismas transformaciones del generador Word."""
-    datos = leer_datos_json(ruta)
+def preparar_vista_previa(ruta: Path, *, datos: dict | None = None) -> VistaPrevia:
+    """Muestra los datos extraídos conservando el control documental del JSON."""
+    if datos is None:
+        datos = leer_datos_json(ruta)
     idioma = leer_idioma_datos(datos)
 
     producto = datos.get("producto")
@@ -613,11 +770,12 @@ def preparar_vista_previa(ruta: Path) -> VistaPrevia:
         raise ValueError("El campo 'control_documental' debe ser un objeto.")
     mensajes_control = ()
     try:
-        control_generado = preparar_control_generacion(control)
+        # Solo validar: la fecha de emisión y la revisión siguiente pertenecen
+        # a la generación de un documento nuevo, no a la consulta del original.
+        preparar_control_generacion(control)
     except ValueError as exc:
         if "control_documental.revision" not in str(exc):
             raise
-        control_generado = dict(control)
         mensajes_control = (str(exc),)
     notas = datos.get("notas", [])
     if not isinstance(notas, list):
@@ -631,9 +789,9 @@ def preparar_vista_previa(ruta: Path) -> VistaPrevia:
         raise ValueError("El campo 'datos_institucionales.pie_pagina' debe ser texto.")
 
     campos_control = tuple(
-        (etiqueta_control(campo, etiqueta, idioma), _texto(control_generado.get(campo)))
+        (etiqueta_control(campo, etiqueta, idioma), _texto(control.get(campo)))
         for etiqueta, campo in CAMPOS_CONTROL
-        if _texto(control_generado.get(campo))
+        if _texto(control.get(campo))
     )
     notas_finales = tuple(
         dict.fromkeys(_texto(nota) for nota in [*notas, *notas_en_pruebas] if _texto(nota))
@@ -736,11 +894,13 @@ class SelectorEspecificaciones:
         al_actualizar: Callable[[Path], None] | None = None,
         al_editar: Callable[[Path], None] | None = None,
         al_comparar: Callable[[list[Path]], None] | None = None,
+        al_generar_hii: Callable[[tuple[Path, ...]], None] | None = None,
     ):
         self.raiz = raiz
         self.al_actualizar = al_actualizar
         self.al_editar = al_editar
         self.al_comparar = al_comparar
+        self.al_generar_hii = al_generar_hii
         rutas = rutas_configuradas(BASE)
         self.carpetas_json = {
             "anteriores": resolver_ruta(carpeta_json_anterior if carpeta_json_anterior is not None else rutas["json_anteriores"], BASE),
@@ -762,6 +922,7 @@ class SelectorEspecificaciones:
         self._configurar_ventana()
         self._crear_interfaz()
         self.recargar_catalogos()
+        suscribir_catalogo(self.raiz, self.recargar_catalogos)
 
     def _configurar_ventana(self) -> None:
         self.raiz.title("Selector de especificaciones")
@@ -806,12 +967,12 @@ class SelectorEspecificaciones:
     def _crear_pestana(self, clave: str, titulo: str) -> None:
         pestaña = ttk.Frame(self.pestanas)
         self.pestanas.add(pestaña, text=titulo)
-        contenido = ttk.Panedwindow(pestaña, orient="horizontal")
+        contenido = crear_divisor_redimensionable(pestaña, tk.HORIZONTAL, mostrar_tirador=True)
         contenido.pack(fill="both", expand=True, padx=4, pady=8)
-        panel_busqueda = ttk.Frame(contenido, padding=12)
-        panel_previa = ttk.Frame(contenido, padding=12)
-        contenido.add(panel_busqueda, weight=1)
-        contenido.add(panel_previa, weight=4)
+        panel_busqueda = ttk.Frame(contenido, padding=12, cursor="arrow")
+        panel_previa = ttk.Frame(contenido, padding=12, cursor="arrow")
+        contenido.add(panel_busqueda, minsize=220, stretch="always")
+        contenido.add(panel_previa, minsize=280, stretch="always")
 
         ttk.Label(panel_busqueda, text="Buscar especificación", style="Seccion.TLabel").pack(
             anchor="w", pady=(0, 8)
@@ -851,6 +1012,7 @@ class SelectorEspecificaciones:
         boton_alinear = None
         boton_realinear = None
         boton_comparar = None
+        boton_guardar_hii = None
         if clave == "anteriores":
             acciones_alinear = ttk.Frame(panel_busqueda)
             acciones_alinear.pack(fill="x", pady=(12, 3))
@@ -879,6 +1041,11 @@ class SelectorEspecificaciones:
             boton_realinear.pack(fill="x", pady=(12, 0))
             boton_comparar = ttk.Button(panel_busqueda, text="Comparar especificaciones", height=28, command=lambda c=clave: self._comparar_seleccionadas(c), state="disabled")
             boton_comparar.pack(fill="x", pady=(6, 0))
+            boton_guardar_hii = ttk.Button(
+                panel_busqueda, text="Guardar HII", height=28,
+                command=lambda c=clave: self._guardar_hii_seleccionadas(c), state="disabled",
+            )
+            boton_guardar_hii.pack(fill="x", pady=(6, 0))
 
         barra_vista = ttk.Frame(panel_previa)
         barra_vista.pack(fill="x", pady=(0, 9))
@@ -893,6 +1060,11 @@ class SelectorEspecificaciones:
         ).pack(anchor="w")
         acciones_vista = ttk.Frame(barra_vista)
         acciones_vista.pack(fill="x", pady=(6, 0))
+        boton_compactar = ttk.Button(
+            acciones_vista, text="Ø", width=3, height=24,
+            variante="secundario", state="disabled",
+            command=lambda c=clave: self._alternar_previa_compacta(c),
+        )
         boton_editar = ttk.Button(
             acciones_vista,
             text="Editar",
@@ -925,8 +1097,16 @@ class SelectorEspecificaciones:
             width=3, height=28, variante="secundario",
             command=lambda c=clave: self._cerrar_vista_previa(c),
         ).pack(side="right", padx=(0, 6))
+        boton_compactar.pack(side="left", padx=(0, 6))
         boton_editar.pack(side="left")
         boton_contraparte.pack(side="left", padx=(8, 0))
+        boton_diferencias = None
+        if clave == "nuevas":
+            boton_diferencias = ttk.Button(
+                acciones_vista, text="Δ", width=4, height=30, font=("Segoe UI", 16, "bold"),
+                command=lambda c=clave: self._mostrar_diferencias_original(c),
+            )
+            ui.AyudaHover(boton_diferencias, "Ver y copiar los cambios respecto al JSON original")
         boton_idioma = None
         if clave == "nuevas":
             boton_idioma = ttk.Button(
@@ -954,14 +1134,18 @@ class SelectorEspecificaciones:
             estado_catalogo=estado,
             marco_previa=marco_previa,
             boton_contraparte=boton_contraparte,
+            boton_diferencias=boton_diferencias,
             boton_idioma=boton_idioma,
             boton_editar=boton_editar,
+            boton_compactar=boton_compactar,
             boton_alinear=boton_alinear,
             boton_realinear=boton_realinear,
             boton_comparar=boton_comparar,
+            boton_guardar_hii=boton_guardar_hii,
         )
         self._actualizar_estado_accion(clave)
-        entrada.bind("<KeyRelease>", lambda _evento, c=clave: self._actualizar_sugerencias(c))
+        entrada.bind("<Destroy>", lambda _e, c=clave: self._cancelar_sugerencias(c), add="+")
+        entrada.bind("<KeyRelease>", lambda _evento, c=clave: self._programar_sugerencias(c))
         entrada.bind("<Return>", lambda _evento, c=clave: self._seleccionar_primera_sugerencia(c))
         entrada.bind("<Down>", lambda _evento, c=clave: self._enfocar_sugerencias(c))
         lista.bind("<Return>", lambda _evento, c=clave: self._seleccionar_sugerencia_actual(c))
@@ -973,9 +1157,12 @@ class SelectorEspecificaciones:
                 panel.catalogo = cargar_catalogo(carpeta)
             except (OSError, ValueError) as exc:
                 panel.catalogo = Catalogo((), ())
+                panel.documentos_marcados.clear()
+                self._actualizar_sugerencias(clave)
                 panel.estado_catalogo.configure(text=f"No se pudo cargar:\n{exc}")
                 self._actualizar_estado_accion(clave)
                 continue
+            panel.documentos_marcados.intersection_update(e.ruta for e in panel.catalogo.especificaciones)
             self._actualizar_sugerencias(clave)
             disponibles = len(panel.catalogo.especificaciones)
             inglesas = sum(
@@ -990,10 +1177,33 @@ class SelectorEspecificaciones:
             self._actualizar_boton_idioma(clave)
             self._actualizar_boton_contraparte(clave)
             self._actualizar_estado_accion(clave)
+            panel = self.paneles[clave]
+            if panel.especificacion_actual is not None:
+                actual = next((e for e in panel.catalogo.especificaciones
+                               if e.ruta == panel.especificacion_actual.ruta), None)
+                if actual is None:
+                    self._cerrar_vista_previa(clave)
+                else:
+                    self._mostrar_previa(clave, actual)
+
+    def _cancelar_sugerencias(self, clave):
+        panel = self.paneles[clave]
+        if getattr(panel, "busqueda_pendiente", None) is not None:
+            self.raiz.after_cancel(panel.busqueda_pendiente)
+            panel.busqueda_pendiente = None
+
+    def _programar_sugerencias(self, clave: str) -> None:
+        panel = self.paneles[clave]
+        if getattr(panel, "busqueda_pendiente", None) is not None:
+            self.raiz.after_cancel(panel.busqueda_pendiente)
+        panel.busqueda_pendiente = self.raiz.after(150, lambda: self._actualizar_sugerencias(clave))
 
     def _actualizar_sugerencias(self, clave: str) -> None:
         panel = self.paneles[clave]
-        parejas = parejas_idioma(panel.catalogo.especificaciones) if clave == "nuevas" else {}
+        if getattr(panel, "busqueda_pendiente", None) is not None:
+            self.raiz.after_cancel(panel.busqueda_pendiente)
+            panel.busqueda_pendiente = None
+        parejas = _parejas_panel(panel) if clave == "nuevas" else {}
         resultados = buscar_especificaciones(
             panel.catalogo.especificaciones,
             panel.entrada_busqueda.get(),
@@ -1041,12 +1251,20 @@ class SelectorEspecificaciones:
             panel.documentos_marcados.remove(especificacion.ruta)
         else:
             panel.documentos_marcados.add(especificacion.ruta)
+        # Sustituye solo el texto de esta fila; conserva seleccion, color y desplazamiento.
+        texto = panel.lista.get(indice)
+        color = panel.lista.itemcget(indice, "foreground")
+        seleccion = indice in panel.lista.curselection()
         desplazamiento = panel.lista.yview()[0]
-        self._actualizar_sugerencias(clave)
-        panel.lista.yview_moveto(desplazamiento)
-        panel.lista.selection_set(indice)
+        marca = "\u2611" if especificacion.ruta in panel.documentos_marcados else "\u2610"
+        panel.lista.delete(indice)
+        panel.lista.insert(indice, marca + texto[1:])
+        if color:
+            panel.lista.itemconfigure(indice, foreground=color)
+        if seleccion:
+            panel.lista.selection_set(indice)
         panel.lista.activate(indice)
-        self._mostrar_previa(clave, especificacion)
+        panel.lista.yview_moveto(desplazamiento)
         self._actualizar_estado_accion(clave)
 
     def _actualizar_estado_accion(self, clave: str) -> None:
@@ -1068,6 +1286,10 @@ class SelectorEspecificaciones:
         if clave == "nuevas" and panel.boton_comparar is not None:
             cantidad = len(panel.documentos_marcados)
             panel.boton_comparar.configure(state="normal" if 2 <= cantidad <= 10 else "disabled")
+        boton_guardar_hii = getattr(panel, "boton_guardar_hii", None)
+        if clave == "nuevas" and boton_guardar_hii is not None:
+            seleccionadas = any(e.ruta in panel.documentos_marcados for e in panel.catalogo.especificaciones)
+            boton_guardar_hii.configure(state="normal" if seleccionadas else "disabled")
 
     def _seleccionar_primera_sugerencia(self, clave: str) -> str:
         panel = self.paneles[clave]
@@ -1093,248 +1315,165 @@ class SelectorEspecificaciones:
         if seleccion:
             self._mostrar_previa(clave, panel.sugerencias[seleccion[0]])
 
-    def _mostrar_previa(self, clave: str, especificacion: Especificacion) -> None:
-        panel = self.paneles[clave]
-        panel.especificacion_actual = especificacion
-        self._actualizar_boton_idioma(clave)
-        if panel.boton_editar is not None:
-            panel.boton_editar.configure(state="normal")
-        self._actualizar_boton_contraparte(clave)
+    @staticmethod
+    def _firma_archivo(ruta):
+        if ruta is None:
+            return None
         try:
-            preparar = (
-                preparar_vista_previa
-                if clave == "anteriores"
-                else preparar_vista_previa_alineada
-            )
-            previa = preparar(especificacion.ruta)
-            cambios_previa = []
-            if clave == "nuevas":
-                datos = leer_datos_json(especificacion.ruta)
-                contraparte = buscar_contraparte(especificacion, self.paneles["anteriores"].catalogo.especificaciones)
-                original = leer_datos_json(contraparte.ruta) if contraparte is not None else None
-                cambios_previa = cambios_documento(datos, previa.pruebas, original)
-        except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
-            self._mostrar_error(clave, str(exc))
-            return
+            info = ruta.stat()
+            return (ruta, info.st_mtime_ns, info.st_ctime_ns, info.st_size)
+        except FileNotFoundError:
+            return (ruta, None)
 
+    def _cargar_datos_previa(self, clave, especificacion):
+        panel = self.paneles[clave]
+        contraparte = (buscar_contraparte(especificacion, self.paneles["anteriores"].catalogo.especificaciones)
+                       if clave == "nuevas" else None)
+        firma = (self._firma_archivo(especificacion.ruta),
+                 self._firma_archivo(contraparte.ruta if contraparte else None),
+                 self._firma_archivo(ruta_maestro(BASE)))
+        if firma in panel.cache_previa:
+            datos = panel.cache_previa.pop(firma)
+            panel.cache_previa[firma] = datos
+            return firma, datos
+        datos = leer_datos_json(especificacion.ruta)
+        preparar = preparar_vista_previa if clave == "anteriores" else preparar_vista_previa_alineada
+        previa = preparar(especificacion.ruta, datos=datos)
+        original = leer_datos_json(contraparte.ruta) if contraparte else None
+        cambios = cambios_documento(datos, previa.pruebas, original) if clave == "nuevas" else []
+        resultado = (previa, cambios)
+        panel.cache_previa[firma] = resultado
+        while len(panel.cache_previa) > 12:
+            panel.cache_previa.pop(next(iter(panel.cache_previa)))
+        return firma, resultado
+
+    def _crear_widgets_previa(self, clave):
+        panel = self.paneles[clave]
         for widget in panel.marco_previa.winfo_children():
             widget.destroy()
         separador = crear_divisor_redimensionable(panel.marco_previa, tk.VERTICAL)
         separador.pack(fill="both", expand=True)
-        area_tabla = ttk.Frame(separador, padding=10)
-        area_detalles = ttk.Frame(separador)
+        area_tabla = ttk.Frame(separador, padding=10, cursor="arrow")
+        area_detalles = ttk.Frame(separador, cursor="arrow")
         separador.add(area_tabla, minsize=120, stretch="always")
         separador.add(area_detalles, minsize=80, stretch="always")
-        separador_inicializado = False
+        panel.separador_previa, panel.area_detalles = separador, area_detalles
+        separador.paneconfigure(area_detalles, hide=panel.previa_compacta)
+        inicializado = False
 
-        def posicionar_separador(evento: tk.Event) -> None:
-            nonlocal separador_inicializado
-            if not separador_inicializado and evento.height > 100:
-                separador_inicializado = True
-                separador.sash_place(0, 0, round(evento.height * 0.68))
+        def posicionar(evento):
+            nonlocal inicializado
+            if not inicializado and evento.height > 100:
+                inicializado = True
+                if not panel.previa_compacta:
+                    separador.sash_place(0, 0, round(evento.height * 0.68))
 
-        separador.bind("<Configure>", posicionar_separador)
-        canvas = tk.Canvas(area_detalles, background="#edf2f7", highlightthickness=0)
+        separador.bind("<Configure>", posicionar)
+        titulo = ttk.Label(area_tabla, font=("Segoe UI", 19, "bold"),
+                           foreground=ui.paleta()["alineado"], wraplength=780)
+        titulo.pack(anchor="w", pady=(0, 4))
+        contador = ttk.Label(area_tabla, font=("Segoe UI", 12, "bold"), foreground=ui.paleta()["alineado"])
+        contador.pack(anchor="w", pady=(0, 7))
+        marco = ttk.Frame(area_tabla)
+        marco.pack(fill="both", expand=True)
+        marco.rowconfigure(0, weight=1)
+        marco.columnconfigure(0, weight=1)
+        columnas = tuple(campo for _, campo in CAMPOS_PRUEBA)
+        tabla = ttk.Treeview(marco, columns=columnas, show="headings", style=f"{clave}.Preview.Treeview", cursor="arrow")
+        for campo, ancho in zip(columnas, (240, 95, 155, 210, 130)):
+            tabla.column(campo, width=ancho, minwidth=75, stretch=True)
+        vertical = ttk.Scrollbar(marco, orient="vertical", command=tabla.yview)
+        horizontal = ttk.Scrollbar(marco, orient="horizontal", command=tabla.xview)
+        tabla.grid(row=0, column=0, sticky="nsew")
+        vertical.grid(row=0, column=1, sticky="ns")
+        horizontal.grid(row=1, column=0, sticky="ew")
+        ordenador = OrdenadorColumnasTreeview(tabla, {})
+        tabla._resaltador_alineacion = ResaltadorCambios(tabla, {}, vertical.set, horizontal.set)
+        canvas = tk.Canvas(area_detalles, background=ui.paleta()["fondo"], highlightthickness=0, cursor="arrow")
         barra = ttk.Scrollbar(area_detalles, orient="vertical", command=canvas.yview)
         canvas.configure(yscrollcommand=barra.set)
         canvas.pack(side="left", fill="both", expand=True)
         barra.pack(side="right", fill="y")
-        panel.canvas_previa = canvas
-        pagina = ttk.Frame(canvas, padding=20)
+        pagina = _DetallesSelector(canvas)
         ventana = canvas.create_window((0, 0), window=pagina, anchor="nw")
-        pagina.bind(
-            "<Configure>",
-            lambda _evento: canvas.configure(scrollregion=canvas.bbox("all")),
-        )
-        canvas.bind(
-            "<Configure>",
-            lambda evento: canvas.itemconfigure(ventana, width=evento.width),
-        )
-
-        escala_fuente = panel.zoom_previa
-        escala_detalle = escala_fuente * 0.7
-        ttk.Label(
-            area_tabla,
-            text=previa.nombre_producto,
-            font=("Segoe UI", 19, "bold"),
-            foreground="#163b70",
-            wraplength=780,
-        ).pack(anchor="w", pady=(0, 4))
-        ttk.Label(
-            area_tabla,
-            text=(
-                f"Tests ({len(previa.pruebas)})"
-                if previa.idioma == "INGLES"
-                else f"Pruebas ({len(previa.pruebas)})"
-            ),
-            font=("Segoe UI", 12, "bold"),
-            foreground="#163b70",
-        ).pack(anchor="w", pady=(0, 7))
-        marco_tabla = ttk.Frame(area_tabla)
-        marco_tabla.pack(fill="both", expand=True)
-        marco_tabla.rowconfigure(0, weight=1)
-        marco_tabla.columnconfigure(0, weight=1)
-        columnas = tuple(campo for _, campo in CAMPOS_PRUEBA)
-        estilo_tabla = ttk.Style(self.raiz)
-        estilo_nombre = f"{clave}.Preview.Treeview"
-        estilo_nombre_encabezado = f"{estilo_nombre}.Heading"
-        estilo_tabla.configure(
-            estilo_nombre,
-            font=("Segoe UI", max(7, round(9 * escala_detalle))),
-            rowheight=max(18, round(25 * escala_detalle)),
-        )
-        estilo_tabla.configure(
-            estilo_nombre_encabezado,
-            font=("Segoe UI", max(7, round(9 * escala_detalle)), "bold"),
-        )
-        tabla = ttk.Treeview(
-            marco_tabla,
-            columns=columnas,
-            show="headings",
-            height=min(max(len(previa.pruebas), 5), 18),
-            style=estilo_nombre,
-        )
-        panel.tabla_pruebas = tabla
-        encabezados = {
-            campo: etiqueta for etiqueta, campo in encabezados_tabla(previa.idioma)
-        }
-        anchos = {
-            "prueba": 240,
-            "unidades": 95,
-            "metodo": 155,
-            "especificacion": 210,
-            "valor_tipico": 130,
-        }
-        for campo in columnas:
-            tabla.heading(campo, text=encabezados[campo])
-            tabla.column(campo, width=anchos[campo], minwidth=75, stretch=True)
-        barra_tabla = ttk.Scrollbar(marco_tabla, orient="vertical", command=tabla.yview)
-        tabla.configure(yscrollcommand=barra_tabla.set)
-        barra_tabla_x = ttk.Scrollbar(marco_tabla, orient="horizontal", command=tabla.xview)
-        tabla.configure(xscrollcommand=barra_tabla_x.set)
-        tabla.grid(row=0, column=0, sticky="nsew")
-        barra_tabla.grid(row=0, column=1, sticky="ns")
-        barra_tabla_x.grid(row=1, column=0, sticky="ew")
-        cambios_celdas = {}
-        for indice, prueba in enumerate(previa.pruebas):
-            iid = tabla.insert(
-                "",
-                tk.END,
-                values=tuple(_texto(prueba.get(campo)) for campo in columnas),
-            )
-            if indice < len(cambios_previa):
-                cambios_celdas[iid] = cambios_previa[indice]
-        OrdenadorColumnasTreeview(
-            tabla,
-            {campo: encabezados[campo] for campo in ("prueba", "metodo")},
-        )
-        if cambios_celdas:
-            tabla._resaltador_alineacion = ResaltadorCambios(tabla, cambios_celdas, barra_tabla.set, barra_tabla_x.set)
-
-        if previa.idioma == "INGLES":
-            ttk.Label(
-                pagina,
-                text="English version",
-                font=("Segoe UI", 9, "italic"),
-                foreground="#526174",
-            ).pack(anchor="w")
-        ttk.Label(
-            pagina,
-            text=f"Origen: {especificacion.ruta.relative_to(self.carpetas_json[clave])}",
-            foreground="#526174",
-        ).pack(anchor="w", pady=(0, 12))
-
-        if previa.mensajes_control:
-            marco_control_error = ttk.LabelFrame(
-                pagina, text="Avisos del control documental", padding=10
-            )
-            marco_control_error.pack(fill="x", pady=(0, 14))
-            for mensaje in previa.mensajes_control:
-                ttk.Label(
-                    marco_control_error,
-                    text=f"• {mensaje}",
-                    foreground="#9a3412",
-                    wraplength=780,
-                    justify="left",
-                ).pack(anchor="w", pady=2)
-
-        if previa.mensajes_astm_no_encontradas:
-            marco_astm = ttk.LabelFrame(
-                pagina,
-                text="Pruebas ASTM no encontradas en la lista maestra",
-                padding=10,
-            )
-            marco_astm.pack(fill="x", pady=(0, 14))
-            for mensaje in previa.mensajes_astm_no_encontradas:
-                ttk.Label(
-                    marco_astm,
-                    text=f"• {mensaje}",
-                    foreground="#9a3412",
-                    wraplength=780,
-                    justify="left",
-                ).pack(anchor="w", pady=2)
-
-        marco_control = ttk.LabelFrame(
-            pagina,
-            text="Document control" if previa.idioma == "INGLES" else "Control documental",
-            padding=10,
-        )
-        marco_control.pack(fill="x", pady=(0, 14))
-        for indice, (etiqueta, valor) in enumerate(previa.control):
-            fila, columna = divmod(indice, 2)
-            ttk.Label(marco_control, text=f"{etiqueta}:", font=("Segoe UI", 9, "bold")).grid(
-                row=fila, column=columna * 2, sticky="w", padx=(4, 5), pady=4
-            )
-            ttk.Label(
-                marco_control,
-                text=valor,
-                wraplength=280,
-            ).grid(row=fila, column=columna * 2 + 1, sticky="w", padx=(0, 18), pady=4)
-        marco_control.columnconfigure(1, weight=1)
-        marco_control.columnconfigure(3, weight=1)
-
-        if clave == "nuevas":
-            ttk.Label(
-                pagina,
-                text=(
-                    "This table uses valores_alineados from "
-                    "alineacion_metodos_lab.detalle."
-                    if previa.idioma == "INGLES"
-                    else "Esta tabla se construye con los valores_alineados guardados "
-                    "en alineacion_metodos_lab.detalle del JSON alineado."
-                ),
-                foreground="#526174",
-                wraplength=800,
-            ).pack(anchor="w", pady=(0, 7))
-
-        if previa.notas:
-            ttk.Label(
-                pagina,
-                text="Notas",
-                font=("Segoe UI", 11, "bold"),
-                foreground="#163b70",
-            ).pack(anchor="w", pady=(14, 4))
-            for nota in previa.notas:
-                ttk.Label(pagina, text=f"• {nota}", wraplength=800).pack(anchor="w", pady=2)
-        if previa.pie_pagina:
-            ttk.Separator(pagina).pack(fill="x", pady=(16, 8))
-            ttk.Label(
-                pagina,
-                text=previa.pie_pagina,
-                wraplength=800,
-                foreground="#526174",
-            ).pack(anchor="w")
-        _aplicar_zoom_vista_previa(pagina, escala_detalle)
+        pagina.bind("<Configure>", lambda _e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.bind("<Configure>", lambda e: canvas.itemconfigure(ventana, width=e.width))
+        panel.canvas_previa, panel.tabla_pruebas = canvas, tabla
+        panel.widgets_previa = dict(titulo=titulo, contador=contador, pagina=pagina,
+                                    ordenador=ordenador, vertical=vertical)
         panel.marco_previa._ui_preservar_fuentes = True
-        self.raiz._estilizar_hijos(panel.marco_previa, ajustar_fuentes=False)
-        self._vincular_scroll_preview(panel, pagina, tabla, barra_tabla)
+
+    def _mostrar_previa(self, clave: str, especificacion: Especificacion) -> None:
+        panel = self.paneles[clave]
+        panel.especificacion_actual = especificacion
+        try:
+            firma_datos, (previa, cambios) = self._cargar_datos_previa(clave, especificacion)
+        except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
+            self._mostrar_error(clave, str(exc))
+            return
+        firma = (firma_datos, panel.zoom_previa, self.zoom_aplicacion)
+        if firma == panel.firma_vista:
+            return
+        self._actualizar_boton_idioma(clave)
+        self._actualizar_boton_contraparte(clave)
+        if not panel.widgets_previa:
+            self._crear_widgets_previa(clave)
+        widgets = panel.widgets_previa
+        tabla = panel.tabla_pruebas
+        escala = panel.zoom_previa * 0.7
+        estilo = ttk.Style(self.raiz)
+        nombre = f"{clave}.Preview.Treeview"
+        estilo.configure(nombre, font=("Segoe UI", max(7, round(9 * escala))),
+                         rowheight=max(18, round(25 * escala)))
+        estilo.configure(f"{nombre}.Heading", font=("Segoe UI", max(7, round(9 * escala)), "bold"))
+        datos_nuevos = panel.firma_vista is None or panel.firma_vista[0] != firma_datos
+        if datos_nuevos:
+            widgets["titulo"].configure(text=previa.nombre_producto)
+            widgets["contador"].configure(text=f"{'Tests' if previa.idioma == 'INGLES' else 'Pruebas'} ({len(previa.pruebas)})")
+            columnas = tuple(campo for _, campo in CAMPOS_PRUEBA)
+            for texto, campo in encabezados_tabla(previa.idioma):
+                if campo not in {"prueba", "metodo"}:
+                    tabla.heading(campo, text=texto)
+            existentes = set(tabla.get_children())
+            cambios_celdas = {}
+            for i, prueba in enumerate(previa.pruebas):
+                iid = f"prueba:{i}"
+                valores = tuple(_texto(prueba.get(campo)) for campo in columnas)
+                if iid in existentes:
+                    tabla.item(iid, values=valores)
+                    existentes.remove(iid)
+                else:
+                    tabla.insert("", "end", iid=iid, values=valores)
+                tabla.move(iid, "", i)
+                if i < len(cambios):
+                    cambios_celdas[iid] = cambios[i]
+            if existentes:
+                tabla.delete(*existentes)
+            if tabla.selection():
+                tabla.selection_remove(*tabla.selection())
+            ordenador = widgets["ordenador"]
+            ordenador.columna_ordenada = None
+            ordenador.registrar_orden_original()
+            ordenador.establecer_encabezados({c: t for t, c in encabezados_tabla(previa.idioma) if c in {"prueba", "metodo"}})
+            tabla._resaltador_alineacion.establecer_cambios(cambios_celdas)
+            tabla.yview_moveto(0)
+            panel.canvas_previa.yview_moveto(0)
+        else:
+            widgets["ordenador"]._actualizar_encabezados()
+            tabla._resaltador_alineacion.programar()
+        widgets["pagina"].actualizar(previa, especificacion.ruta.relative_to(self.carpetas_json[clave]),
+                                     alineada=clave == "nuevas", escala=escala)
+        self._vincular_scroll_preview(panel, widgets["pagina"], tabla, widgets["vertical"])
+        panel.boton_editar.configure(state="normal")
+        panel.boton_compactar.configure(state="normal")
+        panel.firma_vista = firma
 
     def _actualizar_boton_idioma(self, clave: str) -> None:
         panel = self.paneles[clave]
         if panel.boton_idioma is None:
             return
         actual = panel.especificacion_actual
-        pareja = parejas_idioma(panel.catalogo.especificaciones).get(actual.ruta) if actual else None
+        pareja = _parejas_panel(panel).get(actual.ruta) if actual else None
         if pareja is None:
             panel.boton_idioma.pack_forget()
         else:
@@ -1344,7 +1483,7 @@ class SelectorEspecificaciones:
     def _cambiar_idioma(self) -> None:
         panel = self.paneles["nuevas"]
         actual = panel.especificacion_actual
-        pareja = parejas_idioma(panel.catalogo.especificaciones).get(actual.ruta) if actual else None
+        pareja = _parejas_panel(panel).get(actual.ruta) if actual else None
         if pareja is not None:
             self._mostrar_previa("nuevas", pareja)
 
@@ -1365,6 +1504,57 @@ class SelectorEspecificaciones:
         panel.boton_contraparte.configure(
             state="normal" if contraparte is not None else "disabled"
         )
+        boton_diferencias = getattr(panel, "boton_diferencias", None)
+        if boton_diferencias is not None:
+            if contraparte is not None:
+                boton_diferencias.pack(side="left", after=panel.boton_contraparte, padx=(6, 0))
+            else:
+                boton_diferencias.pack_forget()
+
+    def _mostrar_diferencias_original(self, clave: str) -> None:
+        panel = self.paneles[clave]
+        actual = panel.especificacion_actual
+        original = buscar_contraparte(actual, self.paneles["anteriores"].catalogo.especificaciones) if actual else None
+        if original is None:
+            self._actualizar_boton_contraparte(clave)
+            return
+        try:
+            antes, despues = leer_datos_json(original.ruta), leer_datos_json(actual.ruta)
+            maestro = cargar_maestro(ruta_maestro(BASE))
+            frases = resumir_diferencias_alineadas(antes, despues, maestro)
+            resumen = formatear_resumen_diferencias(
+                antes, despues, f"Original · {original.ruta.name}", f"Alineada · {actual.ruta.name}", frases,
+            )
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            messagebox.showerror("No se pueden comparar las especificaciones", str(exc), parent=self.raiz)
+            return
+        ventana_anterior = getattr(self, "_ventana_diferencias_original", None)
+        if ventana_anterior is not None and ventana_anterior.winfo_exists():
+            ventana_anterior.destroy()
+        ventana = self._ventana_diferencias_original = ui.Ventana(self.raiz)
+        ventana.title("Δ Cambios respecto al original")
+        ventana.geometry("820x580")
+        ventana.minsize(520, 360)
+        ventana.transient(self.raiz)
+        contenido = ttk.Frame(ventana, padding=14)
+        contenido.pack(fill="both", expand=True)
+        ttk.Label(contenido, text="Cambios del original al JSON alineado", font=("Segoe UI", 14, "bold")).pack(anchor="w", pady=(0, 8))
+        texto = ScrolledText(contenido, wrap="word", font=("Segoe UI", 11), padx=8, pady=8)
+        texto.insert("1.0", resumen)
+        texto.configure(state="disabled")
+        texto.pack(fill="both", expand=True)
+        barra = ttk.Frame(contenido)
+        barra.pack(fill="x", pady=(10, 0))
+        estado = ttk.Label(barra, text="")
+        estado.pack(side="left")
+
+        def copiar():
+            ventana.clipboard_clear()
+            ventana.clipboard_append(resumen)
+            estado.configure(text="Cambios copiados al portapapeles.")
+
+        ttk.Button(barra, text="Copiar", command=copiar).pack(side="right")
+        ventana.bind("<Escape>", lambda _evento: ventana.destroy())
 
     def _ir_a_contraparte(self, clave: str) -> None:
         panel = self.paneles[clave]
@@ -1383,7 +1573,7 @@ class SelectorEspecificaciones:
 
         entrada_lista = contraparte
         if otra_clave == "nuevas" and contraparte.idioma == "INGLES":
-            entrada_lista = parejas_idioma(otro_panel.catalogo.especificaciones).get(
+            entrada_lista = _parejas_panel(otro_panel).get(
                 contraparte.ruta, contraparte
             )
 
@@ -1437,8 +1627,35 @@ class SelectorEspecificaciones:
         if panel.especificacion_actual is not None:
             self._mostrar_previa(clave, panel.especificacion_actual)
 
+    def _alternar_previa_compacta(self, clave: str) -> None:
+        panel = self.paneles[clave]
+        separador = panel.separador_previa
+        if separador is None or not separador.winfo_exists():
+            return
+        if not panel.previa_compacta:
+            panel.posicion_detalles = separador.sash_coord(0)
+        panel.previa_compacta = not panel.previa_compacta
+        separador.paneconfigure(panel.area_detalles, hide=panel.previa_compacta)
+        if not panel.previa_compacta:
+            posicion = panel.posicion_detalles
+
+            def restaurar():
+                if (panel.separador_previa is separador and separador.winfo_exists()
+                        and not panel.previa_compacta):
+                    x, y = posicion or (0, round(separador.winfo_height() * 0.68))
+                    separador.sash_place(0, x, y)
+
+            separador.after_idle(restaurar)
+
     def _cerrar_vista_previa(self, clave: str) -> None:
         panel = self.paneles[clave]
+        panel.widgets_previa.clear()
+        panel.firma_vista = None
+        panel.separador_previa = None
+        panel.area_detalles = None
+        panel.posicion_detalles = None
+        if panel.boton_compactar is not None:
+            panel.boton_compactar.configure(state="disabled")
         panel.especificacion_actual = None
         self._actualizar_boton_idioma(clave)
         self._actualizar_boton_contraparte(clave)
@@ -1478,7 +1695,7 @@ class SelectorEspecificaciones:
                 subprocess.Popen(
                     [
                         sys.executable,
-                        str(aplicacion),
+                        *([] if getattr(sys, "frozen", False) else [str(aplicacion)]),
                         "--editar-json",
                         str(seleccionadas[0]),
                     ],
@@ -1563,6 +1780,29 @@ class SelectorEspecificaciones:
                 archivos_origen,
                 destinos_seleccionados=archivos_destino,
             )
+
+    def _guardar_hii_seleccionadas(self, clave: str) -> None:
+        if clave != "nuevas":
+            return
+        panel = self.paneles[clave]
+        rutas = tuple(e.ruta for e in panel.catalogo.especificaciones if e.ruta in panel.documentos_marcados)
+        if not rutas:
+            return
+        if self.al_generar_hii is not None:
+            self.al_generar_hii(rutas)
+        else:
+            from generador_hii import GeneradorHII
+
+            generador = getattr(self, "_generador_hii", None)
+            if generador is None or generador._cerrada or not generador.ventana.winfo_exists():
+                generador = GeneradorHII(
+                    self.raiz, carpeta_json=self.carpetas_json["nuevas"],
+                )
+                self._generador_hii = generador
+            generador.seleccionar_json_guardados(rutas)
+            if generador.ventana.state() == "iconic":
+                generador.ventana.deiconify()
+            generador.ventana.lift()
 
     def _comparar_seleccionadas(self, clave: str) -> None:
         if clave != "nuevas" or self.al_comparar is None:
@@ -1773,7 +2013,7 @@ class SelectorEspecificaciones:
                 subprocess.Popen(
                     [
                         sys.executable,
-                        str(aplicacion),
+                        *([] if getattr(sys, "frozen", False) else [str(aplicacion)]),
                         "--generar-json",
                         str(especificacion.ruta),
                     ],
@@ -1790,6 +2030,13 @@ class SelectorEspecificaciones:
 
     def _mostrar_error(self, clave: str, mensaje: str) -> None:
         panel = self.paneles[clave]
+        panel.widgets_previa.clear()
+        panel.firma_vista = None
+        panel.separador_previa = None
+        panel.area_detalles = None
+        panel.posicion_detalles = None
+        if panel.boton_compactar is not None:
+            panel.boton_compactar.configure(state="disabled")
         panel.canvas_previa = None
         for widget in panel.marco_previa.winfo_children():
             widget.destroy()
@@ -1809,24 +2056,19 @@ class SelectorEspecificaciones:
         barra_tabla: ttk.Scrollbar,
     ) -> None:
         def vincular(widget: tk.Widget) -> None:
-            widget.bind(
-                "<MouseWheel>",
-                lambda evento, origen=widget: self._desplazar_previa(
-                    evento, panel, tabla, barra_tabla, origen
-                ),
-            )
+            if not getattr(widget, "_rueda_selector_vinculada", False):
+                widget._rueda_selector_vinculada = True
+                widget.bind(
+                    "<MouseWheel>",
+                    lambda evento, origen=widget: self._desplazar_previa(
+                        evento, panel, tabla, barra_tabla, origen
+                    ),
+                )
             for hijo in widget.winfo_children():
                 vincular(hijo)
 
         vincular(pagina)
         vincular(tabla.master)
-        for widget in (tabla, barra_tabla):
-            widget.bind(
-                "<MouseWheel>",
-                lambda evento, origen=widget: self._desplazar_previa(
-                    evento, panel, tabla, barra_tabla, origen
-                ),
-            )
 
     @staticmethod
     def _es_descendiente(widget: tk.Widget, ancestro: tk.Widget) -> bool:

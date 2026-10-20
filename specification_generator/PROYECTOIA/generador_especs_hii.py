@@ -462,7 +462,7 @@ def _nombre_destino(carpeta: Path, nombre: str) -> Path:
     return destino
 
 
-def generar_documento(datos: dict, plantilla: Path, destino: Path) -> None:
+def generar_documento(datos: dict, plantilla: Path, destino: Path, *, conservar_control: bool = False) -> None:
     leer_idioma_datos(datos)
     with tempfile.TemporaryDirectory(prefix="generador_especs_hii_") as directorio_temporal:
         archivo_plantilla = preparar_plantilla(plantilla, Path(directorio_temporal))
@@ -479,7 +479,7 @@ def generar_documento(datos: dict, plantilla: Path, destino: Path) -> None:
     control = datos.get("control_documental", {})
     if not isinstance(control, dict):
         raise ValueError("el campo 'control_documental' debe ser un objeto")
-    control = preparar_control_generacion(control)
+    control = dict(control) if conservar_control else preparar_control_generacion(control)
 
     tabla_pruebas, mapeo = _buscar_tabla_pruebas(documento)
     tabla_control = _buscar_tabla_control(documento, tabla_pruebas)

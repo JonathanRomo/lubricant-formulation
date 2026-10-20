@@ -113,6 +113,7 @@ class WorkInProgressTests(unittest.TestCase):
             editor._bilingue.confirmar("en", clave)
             for contenido in editor._bilingue.borradores.values():
                 contenido["fecha_reanalisis"] = "06"
+                contenido["control"].update(nombre_cliente="Cliente", revision_cliente="-")
             editor.fecha_reanalisis.get.return_value = "06"
             with patch("interfaz_aplicacion_especificaciones.messagebox") as mensajes, patch("generador_hii.conectar"), patch("generador_hii.vincular"):
                 mensajes.askyesno.return_value = True
@@ -120,7 +121,9 @@ class WorkInProgressTests(unittest.TestCase):
                 mensajes.showerror.assert_not_called()
             self.assertTrue(all(not es_wip(r) for r in rutas))
             for ruta in rutas:
-                self.assertEqual(json.loads(ruta.read_text(encoding="utf-8"))["FECHA DE REANALISIS"], "06 meses")
+                datos = json.loads(ruta.read_text(encoding="utf-8"))
+                self.assertEqual(datos["FECHA DE REANALISIS"],
+                                 "06 months" if datos["documento"]["idioma"] == "en" else "06 meses")
             self.assertTrue(all(not e.en_progreso for e in cargar_catalogo(Path(carpeta)).especificaciones))
 
     def test_borrador_antiguo_recupera_reanalisis_desde_el_campo_json(self):

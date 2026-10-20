@@ -156,19 +156,15 @@ class ServicioTraductor:
             fecha = datetime.now(timezone(timedelta(hours=-6))).isoformat(timespec="seconds")
             estado = {"version": 1, "sha256_excel": huella, "ultima_comprobacion": fecha,
                       "ultima_modificacion": fecha if cambios else self.estado.get("ultima_modificacion", fecha),
-                      "registros": registros, "ultimos_cambios": cambios if cambios else self.estado.get("ultimos_cambios", [])}
+                      "registros": registros}
             archivos = {self.carpeta / ARCHIVO_ESTADO: json.dumps(estado, ensure_ascii=False, indent=2) + "\n"}
-            if cambios:
-                historial = self.carpeta / ARCHIVO_HISTORIAL
-                previo = historial.read_text(encoding="utf-8") if historial.exists() else ""
-                archivos[historial] = previo + f"\n[{fecha}] {len(cambios)} cambios\n" + "\n".join(cambios) + "\n"
             self._guardar(archivos)
             self.estado = estado
             self.diccionario = nuevo
             return {"cambios": len(cambios), "equivalencias": len(nuevo.mapas["es"])}
 
     def guardar_registros(self, registros, huella_inicial):
-        """Guarda la edición del panel Métodos y actualiza el estado e historial."""
+        """Guarda la edición del panel Métodos y actualiza el diccionario activo."""
         from openpyxl import load_workbook
         validar_registros(registros)
         with self.lock:

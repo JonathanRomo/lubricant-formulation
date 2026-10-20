@@ -47,6 +47,11 @@ class Lista:
     def get_children(self):
         return tuple(self.filas)
 
+    def item(self, fila, opcion=None, *, values=None):
+        if values is not None:
+            self.filas[fila] = tuple(values)
+        return self.filas[fila] if opcion == "values" else None
+
     def selection(self):
         return self.seleccion
 
@@ -389,6 +394,99 @@ class CargaGeneradorTests(unittest.TestCase):
             self.g._programar("tarde", 0, Mock())
             self.assertEqual(len(self.reloj.ventana.mock_calls), llamadas)
             self.assertEqual(self.g.catalogo.especificaciones, ())
+
+    def test_marcar_varias_conserva_lista_busqueda_y_previa(self):
+        self.g.catalogo = self.catalogo(3)
+        self.g._actualizar_idiomas = Mock()
+        self.g.cargar_previa = Mock()
+        self.g.vaciar_previa = Mock()
+        self.g.actualizar_lista()
+        filas = self.g.lista.get_children()
+        self.g.lista.seleccion = (filas[0],)
+        self.g.origen_actual = self.g.visibles[0].ruta
+        self.g.marcar(0)
+        self.g.marcar(1)
+        self.assertEqual(len(self.g.marcadas), 2)
+        self.assertFalse(self.g.compacta)
+        self.assertEqual(self.g.lista.get_children(), filas)
+        self.assertEqual(self.g.lista.selection(), (filas[0],))
+        self.g.consulta.set.assert_not_called()
+        self.g.lote_boton.configure.assert_called_with(text="Guardar seleccionadas (2)", state="normal")
+        self.g.marcar(0)
+        self.g.cargar_previa.assert_not_called()
+        self.g.vaciar_previa.assert_not_called()
+
+    def test_previsualizar_fila_sin_marcar_y_filtrar_manualmente(self):
+        self.g.catalogo = self.catalogo(3)
+        self.g.cargar_previa = Mock()
+        self.g.posicionar_paneles = Mock()
+        self.g.actualizar_lista()
+        self.g.lista.seleccion = (self.g.lista.get_children()[1],)
+        self.g.seleccionar_fila()
+        self.g.cargar_previa.assert_called_once_with(self.g.visibles[1].ruta)
+        self.assertFalse(self.g.marcadas)
+        self.g.marcadas.add(self.g.visibles[0].ruta)
+        self.g.alternar_lista()
+        self.assertEqual(len(self.g.visibles), 1)
+        self.g.alternar_lista()
+        self.assertEqual(len(self.g.visibles), 3)
+
+    def test_json_guardados_se_marcan_tras_cargar_y_se_muestra_su_previa(self):
+        g = self.g
+        catalogo = self.catalogo(3)
+        rutas = (catalogo.especificaciones[1].ruta, catalogo.especificaciones[0].ruta)
+        g._actualizar_idiomas = Mock()
+        g.cargar_previa = Mock()
+        g.posicionar_paneles = Mock()
+        with patch("generador_hii.threading.Thread") as hilo, patch(
+            "generador_hii.cargar_catalogo_hii", return_value=catalogo
+        ):
+            g.seleccionar_json_guardados(rutas)
+            self.assertNotIn("inicio", g._tareas)
+            self.assertFalse(g.marcadas)
+            hilo.call_args.kwargs["target"]()
+            self.reloj.ejecutar(g._tareas["catalogo"])
+        self.assertEqual(g.marcadas, set(rutas))
+        self.assertEqual({e.ruta for e in g.visibles}, set(rutas))
+        self.assertTrue(all(v[0] == "☑" for v in g.lista.filas.values()))
+        g.cargar_previa.assert_called_once_with(rutas[0])
+        g.lote_boton.configure.assert_called_with(text="Guardar seleccionadas (2)", state="normal")
+
+    def test_json_externo_guardado_se_incluye_y_se_conserva_al_recargar(self):
+        g = self.g
+        externo = replace(self.catalogo(1).especificaciones[0], ruta=self.base.parent / "externo.json")
+        g._actualizar_idiomas = Mock()
+        g.cargar_previa = Mock()
+        g.posicionar_paneles = Mock()
+        with patch("generador_hii.threading.Thread") as hilo, patch(
+            "generador_hii.cargar_catalogo_hii", return_value=self.catalogo(1)
+        ), patch.object(g, "_leer_entrada", return_value=externo) as leer:
+            g.seleccionar_json_guardados((externo.ruta,))
+            hilo.call_args.kwargs["target"]()
+            self.reloj.ejecutar(g._tareas["catalogo"])
+            self.assertEqual(g.marcadas, {externo.ruta})
+            self.assertEqual([e.ruta for e in g.visibles], [externo.ruta])
+            g.recargar_catalogo()
+            hilo.call_args.kwargs["target"]()
+            self.reloj.ejecutar(g._tareas["catalogo"])
+            self.assertEqual(g.marcadas, {externo.ruta})
+            self.assertEqual(leer.call_count, 2)
+
+    def test_traduccion_terminada_selecciona_la_pareja_en_el_mismo_hii(self):
+        g = self.g
+        origen, traducida = self.base / "es.json", self.base / "en.json"
+        rutas = (origen, traducida)
+        g.seleccionar_json_guardados = Mock()
+        with patch("interfaz_aplicacion_especificaciones.GeneradorEspecificacion") as editor, patch(
+            "generador_hii.preparar_datos",
+            side_effect=lambda ruta: SimpleNamespace(idioma="INGLES" if ruta == traducida else "ESPANOL"),
+        ), patch("generador_hii.conectar"), patch("generador_hii.vincular") as vincular:
+            g.abrir_traduccion(origen, "INGLES")
+            callback = editor.call_args.kwargs["al_finalizar"]
+            callback(rutas)
+            self.assertNotIn("al_guardar", editor.call_args.kwargs)
+            self.assertEqual(vincular.call_args.args[1:], (origen, traducida))
+            g.seleccionar_json_guardados.assert_called_once_with(rutas)
 
     def test_busqueda_espera_250_ms_y_solo_ejecuta_la_ultima(self):
         self.g.actualizar_lista = Mock()

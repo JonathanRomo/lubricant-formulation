@@ -52,9 +52,9 @@ def main():
         with closing(sqlite3.connect(base / "especificaciones.db")) as con:
             assert con.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
             assert con.execute("PRAGMA foreign_key_check").fetchall() == []
-            archivos = {f[0] for f in con.execute("SELECT archivo_json FROM recuperacion_documentos")}
+            archivos = {Path(f[0]).name for f in con.execute("SELECT archivo_json FROM versiones")}
             assert archivos == {p.name for p in copias}, "Se alteraron los nombres registrados."
-            actuales = con.execute("SELECT COUNT(*) FROM recuperacion_actuales").fetchone()[0]
+            actuales = con.execute("SELECT COUNT(*) FROM archivos").fetchone()[0]
 
         # Copiar solo Word presentes cuya huella y catálogo coincidan con un registro
         # recuperado. No se ejecuta Word: cualquier intento de extraer hace fallar la prueba.

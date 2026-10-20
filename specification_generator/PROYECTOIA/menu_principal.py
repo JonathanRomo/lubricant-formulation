@@ -215,8 +215,9 @@ class MenuPrincipal:
     def instrucciones(self):
         from interfaz_aplicacion_especificaciones import BASE
         pagina = self.pagina("Instrucciones", "Guía del gestor", "Consulta las instrucciones sin salir de la aplicación.")
-        selector = ctk.CTkOptionMenu(pagina, values=["README_ACTUALIZACION_CODIGOS_200.md", "RESUMEN_ALINEADOR_ESPECIFICACIONES.md"],
+        selector = ctk.CTkOptionMenu(pagina, values=["RESUMEN_ALINEADOR_ESPECIFICACIONES.md", "README_ACTUALIZACION_CODIGOS_200.md", "README_INTERFAZ.md"],
                                     command=lambda nombre: cargar(nombre))
+        selector.set("RESUMEN_ALINEADOR_ESPECIFICACIONES.md")
         selector.pack(anchor="w", padx=14, pady=(0, 12))
         texto = ctk.CTkTextbox(pagina, height=360, wrap="word")
         texto.pack(fill="both", expand=True, padx=14, pady=(0, 14))
@@ -290,11 +291,11 @@ class MenuPrincipal:
         secciones = (
             ("metodos", "Lista de métodos", "Consulta y edita los métodos del laboratorio.",
              (("Editar lista maestra", editar, "principal"),
-              ("Ubicación y edición manual", self.app.actualizar_metodos, "secundario"))),
+              ("Ubicación y edición manual", self.app.actualizar_metodos, "secundario"),
+              ("Historial de cambios", self.app.opciones_metodos, "secundario"))),
             ("traducciones", "Lista de traducciones", "Administra las equivalencias en español e inglés.",
              (("Editar traducciones", self.app.editar_traducciones, "principal"),
-              ("Actualizar traducciones desde Excel", self.app.actualizar_traducciones, "secundario"),
-              ("Ubicación e historial", self.app.opciones_traducciones, "secundario"))),
+              ("Actualizar traducciones desde Excel", self.app.actualizar_traducciones, "secundario"))),
         )
         for clave, titulo, descripcion, acciones in secciones:
             tarjeta = ctk.CTkFrame(rejilla, fg_color=color_tarjeta, corner_radius=12, border_width=1, border_color=("#d8e2ef", "#34465d"))
@@ -345,7 +346,7 @@ class MenuPrincipal:
         carpeta = self.app.rutas.get("metodos_lab", BASE / "METODOS_LAB")
         fechas = {
             "metodos": fecha_actualizacion_maestro(Path(carpeta) / "METODOS_LAB_UNIFICADO.xlsx"),
-            "traducciones": fecha_actualizacion(carpeta, ".estado_traductor.json", "CAMBIOS_TRADUCTOR.txt"),
+            "traducciones": fecha_actualizacion_maestro(Path(carpeta) / "TRADUCCIONES_ESPECIFICACIONES.xlsx"),
         }
         for clave, texto in fechas.items():
             etiqueta = self._fechas_metodos[clave]
@@ -378,9 +379,6 @@ class MenuPrincipal:
             except (OSError, ValueError) as exc:
                 messagebox.showerror("Configuración", str(exc), parent=self.raiz)
         ui.Boton(pagina, text="Guardar carpetas", command=guardar).pack(anchor="w", padx=14, pady=18)
-        ui.Boton(pagina, text="Reconstruir base desde JSON", command=self.app.reconstruir_base_datos).pack(anchor="w", padx=14, pady=(0, 10))
-        ctk.CTkLabel(pagina, text="Recupera el registro conservando los JSON. La base anterior se respalda y los eventos exclusivos de SQLite no se reconstruyen.",
-                     anchor="w", justify="left", wraplength=760).pack(anchor="w", padx=14, pady=(0, 14))
 
     def personalizar(self):
         pagina = ctk.CTkScrollableFrame(self.pestanas.tab("Personalizar"), fg_color="transparent", corner_radius=0)
@@ -407,8 +405,8 @@ class MenuPrincipal:
             variable = tk.BooleanVar(value=ui.PREFERENCIAS[clave])
             variables[clave] = variable
             ctk.CTkSwitch(pagina, text=etiqueta, variable=variable).pack(anchor="w", padx=14, pady=7)
-        def aplicar(restaurar=False):
-            datos = dict(ui.PREDETERMINADAS) if restaurar else {**{k: v.get() for k, v in variables.items()}, "escala": escala.get()}
+        def aplicar():
+            datos = {**{k: v.get() for k, v in variables.items()}, "escala": escala.get()}
             try:
                 ui.guardar_preferencias(datos)
             except OSError as exc:
@@ -428,7 +426,15 @@ class MenuPrincipal:
         acciones = ctk.CTkFrame(pagina, fg_color="transparent")
         acciones.pack(fill="x", padx=14, pady=20)
         ui.Boton(acciones, text="Aplicar y guardar", command=aplicar).pack(side="left", padx=(0, 10))
-        ui.Boton(acciones, text="Restaurar valores", command=lambda: aplicar(True)).pack(side="left")
+        ui.Boton(acciones, text="Reconstruir base desde JSON", command=self.app.reconstruir_base_datos).pack(side="left")
+        actualizar = ui.Boton(acciones, text="⭮", cuadrado=True,
+                              font=("Segoe UI Symbol", 16), command=self.app.actualizar_listas_json)
+        actualizar._ui_preservar_fuentes = True
+        actualizar.pack(side="left", padx=(10, 0))
+        ui.AyudaHover(actualizar, "Actualiza las listas de especificaciones para incluir los JSON añadidos manualmente a las carpetas del programa.")
+        boton_duplicados = ui.Boton(acciones, text="Revisar duplicados", command=self.app.revisar_duplicados)
+        boton_duplicados.pack(side="left", padx=(10, 0))
+        ui.AyudaHover(boton_duplicados, "Revisa si existen especificaciones repetidas y las mueve al folder de REVISAR/DUPLICADOS.")
 
 
 def crear_menu_principal(app):

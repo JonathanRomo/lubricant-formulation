@@ -1,0 +1,2039 @@
+{
+  "ultima_modificacion": "2026-10-19T21:59:27-06:00",
+  "filas": [
+    [
+      "METODO",
+      "MÉTODO INGLÉS",
+      "NOMBRE IQM",
+      "LOWER POUR POINT",
+      "UNIDADES",
+      "UNITS",
+      "ACREDITACION NOMBRE"
+    ],
+    [
+      "AZUFRE",
+      "SULFUR",
+      "YODOMÉTRICO",
+      "IODOMETRIC",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2161",
+      "ASTM D2161",
+      "VISCOSIDAD SAYBOLT A 210 °F",
+      "SAYBOLT VISCOSITY AT 210 °F",
+      "SUS",
+      "SUS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2161",
+      "ASTM D2161",
+      "VISCOSIDAD SAYBOLT A 100 °F",
+      "SAYBOLT VISCOSITY AT 100 °F",
+      "SUS",
+      "SUS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2983",
+      "ASTM D2983",
+      "VISCOSIDAD DINÁMICA BROOKFIELD A X °C",
+      "DYNAMIC BROOKFIELD VISCOSITY AT X °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2983",
+      "ASTM D2983",
+      "VISCOSIDAD DINÁMICA BROOKFIELD A - 55 °C",
+      "DYNAMIC BROOKFIELD VISCOSITY AT - 55 °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2983",
+      "ASTM D2983",
+      "VISCOSIDAD DINÁMICA BROOKFIELD A - 40 °C",
+      "DYNAMIC BROOKFIELD VISCOSITY AT - 40 °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2983",
+      "ASTM D2983",
+      "VISCOSIDAD DINÁMICA BROOKFIELD A - 26 °C",
+      "DYNAMIC BROOKFIELD VISCOSITY AT - 26 °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2983",
+      "ASTM D2983",
+      "VISCOSIDAD DINÁMICA BROOKFIELD A - 12 °C",
+      "DYNAMIC BROOKFIELD VISCOSITY AT - 12 °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D445",
+      "ASTM D445",
+      "VISCOSIDAD DINÁMICA A X °C",
+      "DYNAMIC VISCOSITY AT X °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "VISCOSIDAD DINÁMICA A X °C",
+      "DYNAMIC VISCOSITY AT X °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D445",
+      "ASTM D445",
+      "VISCOSIDAD DINÁMICA A 40 °C",
+      "DYNAMIC VISCOSITY AT 40 °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "VISCOSIDAD DINÁMICA A 40 °C",
+      "DYNAMIC VISCOSITY AT 40 °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D445",
+      "ASTM D445",
+      "VISCOSIDAD DINÁMICA A 100 °C",
+      "DYNAMIC VISCOSITY AT 100 °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "VISCOSIDAD DINÁMICA A 100 °C",
+      "DYNAMIC VISCOSITY AT 100 °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2983 MODIF-03",
+      "ASTM D2983 MODIF-03",
+      "VISCOSIDAD DINÁMICA (VISCOSÍMETRO ROTACIONAL, SPINDLE 2, 100 RPM, 25°C)",
+      "DYNAMIC VISCOSITY (ROTATIONAL VISCOMETER, SPINDLE 2, 100 RPM, 25°C)",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2983 MODIF-02",
+      "ASTM D2983 MODIF-02",
+      "VISCOSIDAD DINÁMICA (VISCOSÍMETRO ROTACIONAL, RV61, 40°C)",
+      "DYNAMIC VISCOSITY (ROTATIONAL VISCOMETER, RV61, 40°C)",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2983 MODIF-01",
+      "ASTM D2983 MODIF-01",
+      "VISCOSIDAD DINÁMICA (VISCOSÍMETRO ROTACIONAL, RV2, 25°C)",
+      "DYNAMIC VISCOSITY (ROTATIONAL VISCOMETER, RV2, 25°C)",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+      "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+      "VISCOSIDAD CINEMÁTICA A X °C",
+      "KINEMATIC VISCOSITY AT X °C",
+      "mm²/s",
+      "mm²/s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D445",
+      "ASTM D445",
+      "VISCOSIDAD CINEMÁTICA A X °C",
+      "KINEMATIC VISCOSITY AT X °C",
+      "mm²/s",
+      "mm²/s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "VISCOSIDAD CINEMÁTICA A X °C",
+      "KINEMATIC VISCOSITY AT X °C",
+      "mm²/s",
+      "mm²/s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+      "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+      "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "KINEMATIC VISCOSITY AT 40 °C",
+      "mm²/s",
+      "mm²/s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D445",
+      "ASTM D445",
+      "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "KINEMATIC VISCOSITY AT 40 °C",
+      "mm²/s",
+      "mm²/s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "KINEMATIC VISCOSITY AT 40 °C",
+      "mm²/s",
+      "mm²/s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+      "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+      "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "KINEMATIC VISCOSITY AT 100 °C",
+      "mm²/s",
+      "mm²/s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D445",
+      "ASTM D445",
+      "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "KINEMATIC VISCOSITY AT 100 °C",
+      "mm²/s",
+      "mm²/s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "KINEMATIC VISCOSITY AT 100 °C",
+      "mm²/s",
+      "mm²/s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2983",
+      "ASTM D2983",
+      "VISCOSIDAD APARENTE A X °C",
+      "APPARENT VISCOSITY AT X °C",
+      "mPa*s",
+      "mPa*s",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2622",
+      "ASTM D2622",
+      "TOTAL SULFUR BY X-RAY FLUORESCENCE (WDXRF)",
+      "AZUFRE TOTAL POR FLUORESCENCIA X (WDXRF)",
+      "% en masa",
+      "wt %",
+      "NO ACREDITADO"
+    ],
+    [
+      "ORGANOLÉPTICO",
+      "ORGANOLEPTIC",
+      "TEXTURA",
+      "TEXTURE",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "VISUAL",
+      "VISUAL",
+      "TEXTURA",
+      "TEXTURE",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D971",
+      "ASTM D971",
+      "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+      "INTERFACIAL TENSION BY THE RING METHOD",
+      "mN/m",
+      "mN/m",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D971 / NMX-J-123-ANCE-2019 P 6,6",
+      "ASTM D971 / NMX-J-123-ANCE-2019 P 6,6",
+      "TENSIÓN INTERFACIAL POR EL MÉTODO DEL ANILLO",
+      "INTERFACIAL TENSION BY THE RING METHOD",
+      "mN/m",
+      "mN/m",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1816",
+      "ASTM D1816",
+      "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS SEMIESFÉRICOS",
+      "DIELECTRIC BREAKDOWN VOLTAGE, VDE ELECTRODES",
+      "kV",
+      "kV",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1816 / NMX-J-123-ANCE-2019 P 6,17",
+      "ASTM D1816 / NMX-J-123-ANCE-2019 P 6,17",
+      "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS SEMIESFÉRICOS",
+      "DIELECTRIC BREAKDOWN VOLTAGE, VDE ELECTRODES",
+      "kV",
+      "kV",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D877 / D877M",
+      "ASTM D877 / D877M",
+      "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS PLANOS (2,54 mm) PROCEDIMIENTO B",
+      "DIELECTRIC BREAKDOWN VOLTAGE, DISK ELECTRODES (2,54 mm) PROCEDURE B",
+      "kV",
+      "kV",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D877 / D877M / NMX-J-123-ANCE-2019 A. I",
+      "ASTM D877 / D877M / NMX-J-123-ANCE-2019 A. I",
+      "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS PLANOS (2,54 mm) PROCEDIMIENTO B",
+      "DIELECTRIC BREAKDOWN VOLTAGE, DISK ELECTRODES (2,54 mm) PROCEDURE B",
+      "kV",
+      "kV",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D877 / D877M",
+      "ASTM D877 / D877M",
+      "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS PLANOS (2,54 mm) PROCEDIMIENTO A",
+      "DIELECTRIC BREAKDOWN VOLTAGE, DISK ELECTRODES (2,54 mm) PROCEDURE A",
+      "kV",
+      "kV",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D877 / D877M / NMX-J-123-ANCE-2019 A. I",
+      "ASTM D877 / D877M / NMX-J-123-ANCE-2019 A. I",
+      "TENSIÓN DE RUPTURA DIELÉCTRICA, ELECTRODOS PLANOS (2,54 mm) PROCEDIMIENTO A",
+      "DIELECTRIC BREAKDOWN VOLTAGE, DISK ELECTRODES (2,54 mm) PROCEDURE A",
+      "kV",
+      "kV",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2300",
+      "ASTM D2300",
+      "TENDENCIA A LA GASIFICACIÓN A 10 kV, 50 min A 80 °C CON H2",
+      "TENDENCY TO GASIFICATION AT 10 kV, 50 min AT 80 °C WITH H2",
+      "µL/min",
+      "µL/min",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2300 / NMX-J-123-ANCE-2019 P 6,18",
+      "ASTM D2300 / NMX-J-123-ANCE-2019 P 6,18",
+      "TENDENCIA A LA GASIFICACIÓN A 10 kV, 50 min A 80 °C CON H2",
+      "TENDENCY TO GASIFICATION AT 10 kV, 50 min AT 80 °C WITH H2",
+      "µL/min",
+      "µL/min",
+      "NO ACREDITADO"
+    ],
+    [
+      "FEUM (MGA. 0471)",
+      "FEUM (MGA. 0471)",
+      "TEMPERATURA DE FUSIÓN",
+      "MELTING POINT",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "SUSTANCIAS FÁCILMENTE CARBONIZABLES",
+      "READILY CARBONIZABLE SUBSTANCES",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "FEUM",
+      "FEUM",
+      "SOLUBILIDAD",
+      "SOLUBILITY",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "PH. EUR",
+      "PH. EUR",
+      "SOLUBILIDAD",
+      "SOLUBILITY",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1742",
+      "ASTM D1742",
+      "SEPARACIÓN DE ACEITE DURANTE EL ALMACENAJE A 25 °C, 0.25 PSI, 24 H",
+      "OIL SEPARATION DURING STORAGE AT 25 °C, 0.25 PSI, 24 H",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1401",
+      "ASTM D1401",
+      "SEPARABILIDAD AGUA-ACEITE A 82 °C",
+      "WATER-OIL SEPARABILITY AT 82 °C",
+      "mL/mL/mL (min)",
+      "mL/mL/mL (min)",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1401",
+      "ASTM D1401",
+      "SEPARABILIDAD AGUA-ACEITE A 54 °C",
+      "WATER-OIL SEPARABILITY AT 54 °C",
+      "mL/mL/mL (min)",
+      "mL/mL/mL (min)",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1169",
+      "ASTM D1169",
+      "RESISTIVVIDAD, PROCEDIMIENTO DE RUTINA, 0 Hz A X °C",
+      "RESISTIVITY, ROUTINE PROCEDURE, 0 Hz AT X °C",
+      "x10^12 Ω*cm",
+      "x10^12 Ω*cm",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO",
+      "INTERNAL METHOD",
+      "RESIDUOS A LA EVAPORACIÓN",
+      "RESIDUE ON EVAPORATION",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "RESIDUO DE LA IGNICIÓN",
+      "RESIDUE ON IGNITION",
+      "% en masa",
+      "wt %",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP",
+      "USP",
+      "REACCIÓN",
+      "REACTION",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D56",
+      "ASTM D56",
+      "PUNTO DE INFLAMACIÓN COPA CERRADA (LT/HT)",
+      "FLASH POINT CLOSED CUP (LT/HT)",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D92",
+      "ASTM D92",
+      "PUNTO DE INFLAMACIÓN A 760 mmHg, COPA ABIERTA CLEVELAND",
+      "FLASH POINT AT 760 mmHg, CLEVELAND OPEN CUP",
+      "°C, °F",
+      "°C, °F",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D92",
+      "ASTM D92",
+      "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+      "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D92 / NMX-J-123-ANCE- 2019 P 6,5",
+      "ASTM D92 / NMX-J-123-ANCE- 2019 P 6,5",
+      "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+      "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D92",
+      "ASTM D92",
+      "PUNTO DE IGNICIÓN A 760 mmHg, COPA ABIERTA CLEVELAND",
+      "FIRE POINT AT 760 mmHg, CLEVELAND OPEN CUP",
+      "°C, °F",
+      "°C, °F",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D92",
+      "ASTM D92",
+      "PUNTO DE IGNICIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+      "FIRE POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D92 / NMX-J-123-ANCE- 2019 P 6,5",
+      "ASTM D92 / NMX-J-123-ANCE- 2019 P 6,5",
+      "PUNTO DE IGNICIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+      "FIRE POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2265",
+      "ASTM D2265",
+      "PUNTO DE GOTEO DE GRASAS LUBRICANTES",
+      "DROPPING POINT OF LUBRICATING GREASE",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D127",
+      "ASTM D127",
+      "PUNTO DE FUSIÓN DE PETROLATO",
+      "MELTING POINT OF PETROLATUM",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "PUNTO DE FUSIÓN DE PETROLATO",
+      "MELTING POINT OF PETROLATUM",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D97",
+      "ASTM D97",
+      "PUNTO DE FLUIDEZ SUPERIOR",
+      "HIGHER POUR POINT",
+      "°C, °F",
+      "°C, °F",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D97",
+      "ASTM D97",
+      "PUNTO DE FLUIDEZ INFERIOR",
+      "LOWER POUR POINT",
+      "°C, °F",
+      "°C, °F",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D97",
+      "ASTM D97",
+      "PUNTO DE FLUIDEZ",
+      "POUR POINT",
+      "°C, °F",
+      "°C, °F",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D938",
+      "ASTM D938",
+      "PUNTO DE CONGELACIÓN DE CERA DE PETRÓLEO / PETROLATO",
+      "CONGEALING POINT OF PETROLEUM WAX / PETROLATUM",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D611",
+      "ASTM D611",
+      "PUNTO DE ANILINA, MÉTODO E",
+      "ANILINE POINT, METHOD E",
+      "°C, °F",
+      "°C, °F",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO",
+      "INTERNAL METHOD",
+      "PRUEBA DE LODOS Y BARNICES",
+      "VARNISH AND SLUDGE DEPOSIT CONTROL TEST",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO",
+      "INTERNAL METHOD",
+      "PRUEBA DE LODOS Y BARNICES",
+      "VARNISH AND SLUDGE DEPOSIT CONTROL TEST",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO",
+      "INTERNAL METHOD",
+      "PRUEBA DE LODOS Y BARNICES",
+      "VARNISH AND SLUDGE DEPOSIT CONTROL TEST",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO",
+      "INTERNAL METHOD",
+      "PRUEBA DE CORROSIÓN Y DEPOSICIÓN DE LODOS",
+      "CORROSION AND MUD DEPOSITION TEST",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO",
+      "INTERNAL METHOD",
+      "PRUEBA DE CORROSIÓN Y DEPOSICIÓN DE LODOS",
+      "CORROSION AND MUD DEPOSITION TEST",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO",
+      "INTERNAL METHOD",
+      "PRUEBA DE CORROSIÓN Y DEPOSICIÓN DE LODOS",
+      "CORROSION AND MUD DEPOSITION TEST",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D665",
+      "ASTM D665",
+      "PROCEDIMIENTO B CON AGUA DE MAR SINTÉTICA 4 H",
+      "PROCEDURE B WITH SYNTHETIC SEAWATER 4 H",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D665",
+      "ASTM D665",
+      "PREVENCIÓN DE HERRUMBRE EN ACEITES MINERALES INHIBIDOS",
+      "RUST PREVENTION OF INHIBITED MINERAL OILS",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2502",
+      "ASTM D2502",
+      "PESO MOLECULAR RELATIVA (POR VISCOSIDAD)",
+      "RELATIVE MOLECULAR MASS (FROM VISCOSITY)",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924",
+      "ASTM D924",
+      "PERMITIVIDAD RELATIVA, 60 Hz A X °C",
+      "RELATIVE PERMITTIVITY, 60 Hz, X °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D972",
+      "ASTM D972",
+      "PÉRDIDA POR EVAPORACIÓN DE GRASAS LUBRICANTES Y ACEITES",
+      "EVAPORATION LOSS OF LUBRICATING GREASES AND OILS",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1264",
+      "ASTM D1264",
+      "PERDIDA DE GRASA POR LAVADO CON AGUA, 3 H A 79 °C",
+      "WATER WASHOUT OF LUBRICATING GREASE, 3 H AT 79 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D217",
+      "ASTM D217",
+      "PENETRACIÓN DE CONO EN GRASAS LUBRICANTES",
+      "CONE PENETRATION OF LUBRICATING GREASE",
+      "1/10 mm",
+      "1/10 mm",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D217",
+      "ASTM D217",
+      "PENETRACIÓN DE CONO EN GRASAS A 25°C, 0 GOLPES (SIN TRABAJAR)",
+      "CONE PENETRATION OF GREASES AT 25°C (0 STROKES, UNWORKED)",
+      "1/10 mm",
+      "1/10 mm",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D217",
+      "ASTM D217",
+      "PENETRACIÓN DE CONO EN GRASAS A 25 °C (60 GOLPES)",
+      "CONE PENETRATION OF GREASES AT 25 °C (60 STROKES)",
+      "1/10 mm",
+      "1/10 mm",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1321",
+      "ASTM D1321",
+      "PENETRACIÓN CON AGUJA DE CERAS",
+      "NEEDLE PENETRATION OF WAXES",
+      "1/10 mm",
+      "1/10 mm",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP",
+      "USP",
+      "PARAFINA SÓLIDA",
+      "SOLID PARAFFIN",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ORGANOLÉPTICO",
+      "ORGANOLEPTIC",
+      "OLOR",
+      "ODOR",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D94",
+      "ASTM D94",
+      "NÚMERO DE SAPONIFICACIÓN",
+      "SAPONIFICATION NUMBER",
+      "mgKOH/g",
+      "mgKOH/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2896",
+      "ASTM D2896",
+      "NÚMERO BÁSICO (TITULACIÓN POTENCIOMÉTRICA)",
+      "BASE NUMBER (POTENTIOMETRIC TITRATION)",
+      "mgKOH/g",
+      "mgKOH/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D974",
+      "ASTM D974",
+      "NÚMERO BÁSICO",
+      "BASIC NUMBER",
+      "mgKOH/g",
+      "mgKOH/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D974",
+      "ASTM D974",
+      "NÚMERO ÁCIDO FUERTE",
+      "STRONG ACID NUMBER",
+      "mgKOH/g",
+      "mgKOH/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D974 / NMX-J-123-ANCE-2019 P 6,14",
+      "ASTM D974 / NMX-J-123-ANCE-2019 P 6,14",
+      "NÚMERO ÁCIDO / NÚMERO DE NEUTRALIZACIÓN",
+      "ACID NUMBER / NEUTRALIZATION NUMBER",
+      "mgKOH/g",
+      "mgKOH/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D974",
+      "ASTM D974",
+      "NÚMERO ÁCIDO",
+      "ACID NUMBER",
+      "mgKOH/g",
+      "mgKOH/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "EPA SW-846 MÉTODO 9079",
+      "EPA SW-846 METHOD 9079",
+      "MÉTODO DE ENSAYO PARA BIFENILOS POLICLORADOS (PCB)",
+      "TEST METHOD FOR POLYCHLORINATED BIPHENYLS",
+      "mg/kg",
+      "mg/kg",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2266",
+      "ASTM D2266",
+      "MÉTODO DE 4 BOLAS DESGASTE EN GRASAS",
+      "4-BALL WEAR TEST METHOD IN GREASES",
+      "mm",
+      "mm",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D4172",
+      "ASTM D4172",
+      "MÉTODO DE 4 BOLAS DESGASTE (MODIFICADO)",
+      "4-BALL WEAR TEST METHOD (MODIFIED)",
+      "mm",
+      "mm",
+      "NO ACREDITADO"
+    ],
+    [
+      "EPA",
+      "EPA",
+      "METALES Y ELEMENTOS TRAZA POR ABSORCIÓN ATÓMICA (PLOMO)",
+      "TRACE METALS AND ELEMENTS BY ATOMIC ABSORPTION SPECTROMETRY (LEAD)",
+      "mg/kg",
+      "mg/kg",
+      "NO ACREDITADO"
+    ],
+    [
+      "EPA",
+      "EPA",
+      "METALES Y ELEMENTOS TRAZA POR ABSORCIÓN ATÓMICA (ARSENICO)",
+      "TRACE METALS AND ELEMENTS BY ATOMIC ABSORPTION SPECTROMETRY (ARSENIC)",
+      "mg/kg",
+      "mg/kg",
+      "NO ACREDITADO"
+    ],
+    [
+      "FEUM",
+      "FEUM",
+      "LIMITES MICROBIANOS: MOHOS",
+      "MICROBIAL LIMITS: MOLDS",
+      "UFC/g",
+      "UFC/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "FEUM",
+      "FEUM",
+      "LIMITES MICROBIANOS: MESOFÍLICOS AEROBIOS",
+      "ICROBIAL LIMITS: AEROBIC MESOPHILIC MICROORGANISMS",
+      "UFC/g",
+      "UFC/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "FEUM",
+      "FEUM",
+      "LIMITES MICROBIANOS: LEVADURAS",
+      "MICROBIAL LIMITS: YEASTS",
+      "UFC/g",
+      "UFC/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "FEUM",
+      "FEUM",
+      "LIMITES MICROBIANOS",
+      "MICROBIAL LIMITS",
+      "UFC/g",
+      "UFC/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "PH. EUR",
+      "PH. EUR",
+      "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS",
+      "LIMIT OF POLYCYCLIC AROMATIC HYDROCARBONS",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP",
+      "USP",
+      "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS",
+      "LIMIT OF POLYCYCLIC AROMATIC HYDROCARBONS",
+      "A",
+      "A",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP",
+      "USP",
+      "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS",
+      "LIMIT OF POLYCYCLIC AROMATIC HYDROCARBONS",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP",
+      "USP",
+      "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS",
+      "LIMIT OF POLYCYCLIC AROMATIC HYDROCARBONS",
+      "A",
+      "A",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP",
+      "USP",
+      "LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS",
+      "LIMIT OF POLYCYCLIC AROMATIC HYDROCARBONS",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP",
+      "USP",
+      "LÍMITE DE COMPUESTOS DE AZUFRE",
+      "LIMIT OF SULFUR COMPOUNDS",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2270",
+      "ASTM D2270",
+      "ÍNDICE DE VISCOSIDAD",
+      "VISCOSITY INDEX",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1218",
+      "ASTM D1218",
+      "ÍNDICE DE REFRACCIÓN A 20 °C",
+      "REFRACTIVE INDEX AT 20 °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D4737",
+      "ASTM D4737",
+      "ÍNDICE DE CETANO, PROCEDIMIENTO B",
+      "CETANE INDEX, PROCEDURE B",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D4737",
+      "ASTM D4737",
+      "ÍNDICE DE CETANO, PROCEDIMIENTO A",
+      "CETANE INDEX, PROCEDURE A",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO (91300029)",
+      "INTERNAL METHOD (91300029)",
+      "HUMEDAD POR CREPITACIÓN",
+      "MOISTURE BY CRACKLE TEST",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP",
+      "USP",
+      "GRAVEDAD ESPECÍFICA A X °C/X °C",
+      "SPECIFIC GRAVITY AT X °C/X °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "GRAVEDAD ESPECÍFICA A X °C/X °C",
+      "SPECIFIC GRAVITY AT X °C/X °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "GRAVEDAD ESPECÍFICA A 60 °F",
+      "SPECIFIC GRAVITY AT 60 °F",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "GRAVEDAD ESPECÍFICA A 60 °C",
+      "SPECIFIC GRAVITY AT 60 °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "GRAVEDAD ESPECÍFICA A 25 °C",
+      "SPECIFIC GRAVITY AT 25 °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "GRAVEDAD API",
+      "API GRAVITY",
+      "°API",
+      "°API",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D217",
+      "ASTM D217",
+      "GRADO NLGI",
+      "NLGI GRADE",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2422",
+      "ASTM D2422",
+      "GRADO DE VISCOSIDAD ISO DE LUBRICANTE",
+      "ISO VISCOSITY GRADE OF LUBRICANTS",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D892",
+      "ASTM D892",
+      "FORMACIÓN DE ESPUMA (SECUENCIA III)",
+      "FOAMING CHARACTERISTICS (SEQUENCE III)",
+      "ml/ml",
+      "ml/ml",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D892",
+      "ASTM D892",
+      "FORMACIÓN DE ESPUMA (SECUENCIA II)",
+      "FOAMING CHARACTERISTICS (SEQUENCE II)",
+      "ml/ml",
+      "ml/ml",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D892",
+      "ASTM D892",
+      "FORMACIÓN DE ESPUMA (SECUENCIA I)",
+      "FOAMING CHARACTERISTICS (SEQUENCE I)",
+      "ml/ml",
+      "ml/ml",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO",
+      "INTERNAL METHOD",
+      "FLUORESCENCIA A LA LUZ UV",
+      "UV FLUORESCENCE",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "FDA 21 CFR 172.878",
+      "FDA 21 CFR 172.878",
+      "FDA 21 CFR 172.878",
+      "FDA 21 CFR 172.878",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924",
+      "ASTM D924",
+      "FACTOR DE POTENCIA, 60 Hz A 90 °C",
+      "POWER FACTOR, 60 Hz, 90 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "FACTOR DE POTENCIA, 60 Hz A 90 °C",
+      "POWER FACTOR, 60 Hz, 90 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924",
+      "ASTM D924",
+      "FACTOR DE POTENCIA, 60 Hz A 25 °C",
+      "POWER FACTOR, 60 Hz, 25 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "FACTOR DE POTENCIA, 60 Hz A 25 °C",
+      "POWER FACTOR, 60 Hz, 25 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924",
+      "ASTM D924",
+      "FACTOR DE POTENCIA, 60 Hz A 100 °C",
+      "POWER FACTOR, 60 Hz,100 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "FACTOR DE POTENCIA, 60 Hz A 100 °C",
+      "POWER FACTOR, 60 Hz,100 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924",
+      "ASTM D924",
+      "FACTOR DE DISIPACIÓN, 60 Hz A 90 °C",
+      "DISSIPATION FACTOR, 60 Hz, 90 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "FACTOR DE DISIPACIÓN, 60 Hz A 90 °C",
+      "DISSIPATION FACTOR, 60 Hz, 90 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924",
+      "ASTM D924",
+      "FACTOR DE DISIPACIÓN, 60 Hz A 25 °C",
+      "DISSIPATION FACTOR, 60 Hz, 25 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "FACTOR DE DISIPACIÓN, 60 Hz A 25 °C",
+      "DISSIPATION FACTOR, 60 Hz, 25 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924",
+      "ASTM D924",
+      "FACTOR DE DISIPACIÓN, 60 Hz A 100 °C",
+      "DISSIPATION FACTOR, 60 Hz,100 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "FACTOR DE DISIPACIÓN, 60 Hz A 100 °C",
+      "DISSIPATION FACTOR, 60 Hz, 100 °C",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2783",
+      "ASTM D2783",
+      "EXTREMA PRESIÓN DE LUBRICANTES POR 4 BOLAS",
+      "EXTREME PRESSURE OF LUBRICATING FLUIDS BY 4-BALL METHOD",
+      "kgf",
+      "kgf",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2596",
+      "ASTM D2596",
+      "EXTREMA PRESIÓN DE GRASAS POR 4 BOLAS",
+      "EXTREME PRESSURE OF GREASES BY 4-BALL METHOD",
+      "kgf",
+      "kgf",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2112 / NMX-J-123-ANCE-2019 P 6,13,3",
+      "ASTM D2112 / NMX-J-123-ANCE-2019 P 6,13,3",
+      "ESTABILIDAD A LA OXIDACIÓN, MÉTODO C",
+      "OXIDATION STABILITY, METHOD C",
+      "min",
+      "min",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2272",
+      "ASTM D2272",
+      "ESTABILIDAD A LA OXIDACIÓN, MÉTODO B",
+      "OXIDATION STABILITY, METHOD B",
+      "min",
+      "min",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2272",
+      "ASTM D2272",
+      "ESTABILIDAD A LA OXIDACIÓN, MÉTODO A",
+      "OXIDATION STABILITY, METHOD A",
+      "min",
+      "min",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2440",
+      "ASTM D2440",
+      "ESTABILIDAD A LA OXIDACIÓN -NÚMERO DE NEUTRALIZACIÓN",
+      "OXIDATION STABILITY NEUTRALIZATION NUMBER",
+      "mgKOH/g",
+      "mgKOH/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2440 / NMX-J-123-ANCE-2019 P 6,13,2",
+      "ASTM D2440 / NMX-J-123-ANCE-2019 P 6,13,2",
+      "ESTABILIDAD A LA OXIDACIÓN MÉTODO B, LODO",
+      "OXIDATION STABILITY METHOD B SLUDGE",
+      "% en masa",
+      "wt %",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2440 / NMX-J-123-ANCE-2019 P 6,13,2",
+      "ASTM D2440 / NMX-J-123-ANCE-2019 P 6,13,2",
+      "ESTABILIDAD A LA OXIDACIÓN MÉTODO B -NÚMERO DE NEUTRALIZACIÓN",
+      "OXIDATION STABILITY METHOD B, NEUTRALIZATION NUMBER",
+      "mgKOH/g",
+      "mgKOH/g",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2440",
+      "ASTM D2440",
+      "ESTABILIDAD A LA OXIDACIÓN , LODOS",
+      "OXIDATION STABILITY, SLUDGE",
+      "% en masa",
+      "wt %",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM E1252",
+      "ASTM E1252",
+      "ESPECTRO INFRARROJO",
+      "INFRARED SPECTRUM",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D4951",
+      "ASTM D4951",
+      "DETERMINACIÓN DE ZINC (ZN) EN ACEITES LUBRICANTES POR ICP-OES",
+      "DETERMINATION OF ZINC (ZN) IN LUBRICATING OILS BY ICP-OES",
+      "mg/kg , % en masa",
+      "mg/kg , % wt",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO",
+      "INTERNAL METHOD",
+      "DETERMINACIÓN DE pH POR TIRAS REACTIVAS",
+      "DETERMINATION OF pH USING TEST STRIPS",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D6481",
+      "ASTM D6481",
+      "DETERMINACIÓN DE P, S, CA Y ZN EN ACEITE POR EDXRF",
+      "DETERMINATION OF P, S, CA AND ZN IN OIL BY EDXRF",
+      "% en masa",
+      "wt %",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D4951",
+      "ASTM D4951",
+      "DETERMINACIÓN DE FÓSFORO (P) EN ACEITES LUBRICANTES POR ICP-OES",
+      "DETERMINATION OF PHOSPHORUS (P) IN LUBRICATING OILS BY ICP-OES",
+      "mg/kg , % en masa",
+      "mg/kg , % wt",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2668",
+      "ASTM D2668",
+      "DETERMINACIÓN CUANTITATIVA DE INHIBIDORES",
+      "QUANTITATIVE DETERMINATION OF INHIBITORS",
+      "A",
+      "A",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2668 / NMX-J-123- ANCE-2019 P 6,12",
+      "ASTM D2668 / NMX-J-123- ANCE-2019 P 6,12",
+      "DETERMINACIÓN CUANTITATIVA DE INHIBIDORES",
+      "QUANTITATIVE DETERMINATION OF INHIBITORS",
+      "% en masa",
+      "wt %",
+      "NO ACREDITADO"
+    ],
+    [
+      "IEC 62697",
+      "IEC 62697",
+      "DETERMINACIÓN CUANTITATIVA DE DIBENCIL DISULFURO (DBDS)",
+      "QUANTITATIVE DETERMINATION OF DIBENZYL DISULFIDE (DBDS)",
+      "mg/kg",
+      "mg/kg",
+      "NO ACREDITADO"
+    ],
+    [
+      "IEC 62697 / NMX-J-123- ANCE-2019 P 6,10",
+      "IEC 62697 / NMX-J-123- ANCE-2019 P 6,10",
+      "DETERMINACIÓN CUANTITATIVA DE DIBENCIL DISULFURO (DBDS)",
+      "QUANTITATIVE DETERMINATION OF DIBENZYL DISULFIDE (DBDS)",
+      "mg/kg",
+      "mg/kg",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2887",
+      "ASTM D2887",
+      "DESTILACIÓN POR CROMATOGRAFÍA DE GASES (GC), 5 %",
+      "GAS CHROMATOGRAPHY (GC) DISTILLATION, 5 %",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2887",
+      "ASTM D2887",
+      "DESTILACIÓN POR CROMATOGRAFÍA DE GASES (GC), 10 %",
+      "GAS CHROMATOGRAPHY (GC) DISTILLATION, 10 %",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2887",
+      "ASTM D2887",
+      "DESTILACIÓN POR CROMATOGRAFÍA DE GASES (GC), \"X\" %",
+      "GAS CHROMATOGRAPHY (GC) DISTILLATION, \"X\" %",
+      "°C",
+      "°C",
+      "NO ACREDITADO"
+    ],
+    [
+      "FEUM (MGA 0251)",
+      "FEUM (MGA 0251)",
+      "DENSIDAD RELATIVA X°C (PICNÓMETRO)",
+      "RELATIVE DENSITY X°C (PYCNOMETER)",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "DENSIDAD RELATIVA X °C (PICNÓMETRO)",
+      "RELATIVE DENSITY X °C (PYCNOMETER)",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298 / NMX-J-123-ANCE-2019 P 6,3",
+      "ASTM D1298 / NMX-J-123-ANCE-2019 P 6,3",
+      "DENSIDAD RELATIVA A 20 °C/4 °C",
+      "RELATIVE DENSITY AT 20 °C/4 °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298 / NMX-J-123-ANCE-2019 P 6,3",
+      "ASTM D1298 / NMX-J-123-ANCE-2019 P 6,3",
+      "DENSIDAD RELATIVA A 15,6 °C/15,6 °C",
+      "RELATIVE DENSITY AT 15,6 °C/15,6 °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "DENSIDAD RELATIVA 60 °C (PICNÓMETRO)",
+      "RELATIVE DENSITY 60 °C (PYCNOMETER)",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "DENSIDAD RELATIVA 25 °C (PICNÓMETRO)",
+      "RELATIVE DENSITY 25 °C (PYCNOMETER)",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD RELATIVA 20 °C/4 °C",
+      "RELATIVE DENSITY AT 20 °C/4 °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD RELATIVA 20 °C/20 °C",
+      "RELATIVE DENSITY AT 20 °C/20 °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "DENSIDAD RELATIVA 20 °C (PICNÓMETRO)",
+      "RELATIVE DENSITY 20 °C (PYCNOMETER)",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD RELATIVA 15,6 °C/15,6 °C",
+      "RELATIVE DENSITY AT 15,6 °C/15,6 °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD APARENTE A X °C/X °C",
+      "APPARENT DENSITY AT X °C/X °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD APARENTE A X °C/X °C",
+      "APPARENT DENSITY AT X °C/X °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD ABSOLUTA A X °C",
+      "ABSOLUTE DENSITY AT X °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "DENSIDAD A X °C",
+      "DENSITY AT X °C",
+      "g/cm³",
+      "g/cm³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD A 40 °C",
+      "DENSITY AT 40 °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "DENSIDAD A 40 °C",
+      "DENSITY AT 40 °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD A 25 °C",
+      "DENSITY AT 25 °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "DENSIDAD A 25 °C",
+      "DENSITY AT 25 °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD A 20 °C",
+      "DENSITY AT 20 °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "DENSIDAD A 20 °C",
+      "DENSITY AT 20 °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD A 15,6 °C",
+      "DENSITY AT 15,6 °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "DENSIDAD A 15,6 °C",
+      "DENSITY AT 15,6 °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1298",
+      "ASTM D1298",
+      "DENSIDAD A 15 °C",
+      "DENSITY AT 15 °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D7042",
+      "ASTM D7042",
+      "DENSIDAD A 15 °C",
+      "DENSITY AT 15 °C",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "g/cm³ , g/ml , kg/L , kg/m³",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D4048",
+      "ASTM D4048",
+      "CORROSIVIDAD AL COBRE (TIRA DE COBRE) 24H/100 °C",
+      "COPPER CORROSION, COPPER STRIP, 24 H AT 100 °C",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D130",
+      "ASTM D130",
+      "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (TIEMPO/TEMPERATURA)",
+      "COPPER CORROSION (COPPER STRIP) (TIME/TEMPERATURE)",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D130",
+      "ASTM D130",
+      "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (6 H/100 °C)",
+      "COPPER CORROSION (COPPER STRIP) (6 H/100 °C)",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D130",
+      "ASTM D130",
+      "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (3 H/50 °C)",
+      "COPPER CORROSION (COPPER STRIP) (3 H/50 °C)",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D130",
+      "ASTM D130",
+      "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (3 H/100 °C)",
+      "COPPER CORROSION (COPPER STRIP) (3 H/100 °C)",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D130",
+      "ASTM D130",
+      "CORROSIVIDAD AL COBRE (TIRA DE COBRE) (24 H/100 °C)",
+      "COPPER CORROSION (COPPER STRIP) (24 H/100 °C)",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1533",
+      "ASTM D1533",
+      "CONTENIDO DE AGUA POR KARL FISCHER (LIQUIDOS AISLANTES)",
+      "WATER CONTENT BY KARL FISCHER (INSULATING LIQUIDS)",
+      "mg/kg , ppm",
+      "mg/kg , ppm",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1533 / NMX-J-123-ANCE-2019 P 6,11",
+      "ASTM D1533 / NMX-J-123-ANCE-2019 P 6,11",
+      "CONTENIDO DE AGUA POR KARL FISCHER (LIQUIDOS AISLANTES)",
+      "WATER CONTENT BY KARL FISCHER (INSULATING LIQUIDS)",
+      "mg/kg , ppm",
+      "mg/kg , ppm",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D6304",
+      "ASTM D6304",
+      "CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)",
+      "WATER CONTENT BY KARL FISCHER (COULOMETRIC)",
+      "mg/kg , % en masa",
+      "mg/kg , % en masa",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2501",
+      "ASTM D2501",
+      "CONSTANTE VISCOSIDAD-GRAVEDAD (VGC)",
+      "VISCOSITY-GRAVITY CONSTANT (VGC)",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924",
+      "ASTM D924",
+      "CONSTANTE DIELÉCTRICA, 60 Hz A X °C",
+      "DIELECTRIC CONSTANT, 60 Hz, X °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "ASTM D924 / NMX-J-123-ANCE-2019 P 6,16",
+      "CONSTANTE DIELÉCTRICA, 60 Hz A X °C",
+      "DIELECTRIC CONSTANT, 60 Hz, X °C",
+      "ADIMENSIONAL",
+      "DIMENSIONLESS",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D937",
+      "ASTM D937",
+      "CONSISTENCIA DE PETROLATOS",
+      "CONSISTENCY OF PETROLATUMS",
+      "1/10 mm",
+      "1/10 mm",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "CONSISTENCIA DE PETROLATOS",
+      "CONSISTENCY OF PETROLATUMS",
+      "1/10 mm",
+      "1/10 mm",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D5837",
+      "ASTM D5837",
+      "COMPUESTOS FURÁNICOS POR HPLC",
+      "FURANIC COMPOUNDS BY HPLC",
+      "µg/L",
+      "µg/L",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2140",
+      "ASTM D2140",
+      "PORCENTAJE DE CARBONOS EN ANILLOS AROMÁTICOS (%CA)",
+      "PERCENTAGE OF AROMATIC RING CARBONS (%CA)",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2140",
+      "ASTM D2140",
+      "PORCENTAJE DE CARBONOS EN ANILLOS NAFTÉNICOS (%CN)",
+      "PERCENTAGE OF NAPHTHENIC RING CARBONS (%CN)",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2140",
+      "ASTM D2140",
+      "PORCENTAJE DE CARBONOS EN CADENAS PARAFÍNICAS (%CP)",
+      "PERCENTAGE OF PARAFFINIC CHAIN CARBONS (%CP)",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "",
+      "",
+      "COMPOSICIÓN POR TIPO DE CARBONO (%CA, %CN, %CP)",
+      "CARBON TYPE COMPOSITION (%CA, %CN, %CP)",
+      "%",
+      "%",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D156",
+      "ASTM D156",
+      "COLOR SAYBOLT",
+      "SAYBOLT COLOR",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "IP17 A",
+      "IP17 A",
+      "COLOR LOVIBOND RYBN",
+      "LOVIBOND COLOR RYBN",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1544",
+      "ASTM D1544",
+      "COLOR ESCALA GARDNER",
+      "COLOR (GARDNER SCALE)",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1500",
+      "ASTM D1500",
+      "COLOR ASTM",
+      "ASTM COLOR",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1500 / NMX-J-123-ANCE-2019 P 6,2",
+      "ASTM D1500 / NMX-J-123-ANCE-2019 P 6,2",
+      "COLOR ASTM",
+      "ASTM COLOR",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1209",
+      "ASTM D1209",
+      "COLOR (PLATINO-COBALTO) / HAZEN - APHA",
+      "COLOR (PLATINUM-COBALT / HAZEN-APHA",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "COLOR",
+      "COLOR",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "VISUAL",
+      "VISUAL",
+      "COLOR",
+      "COLOR",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ISO 4406",
+      "ISO 4406",
+      "CÓDIGO DE LIMPIEZA",
+      "CLEANLINESS CODE",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D878 / NMX-J-123-ANCE-2019 A. H",
+      "ASTM D878 / NMX-J-123-ANCE-2019 A. H",
+      "CLORUROS Y SULFATOS EN ACEITES AISLANTES",
+      "CHLORIDES & SULFATES IN INSULATING OILS",
+      "PARÁMETRO , REPORTE CLORUROS PRESENTE , AUSENTE SULFATOS PRESENTE , AUSENTE LÍMITE DE DETECCIÓN , ppm",
+      "PARÁMETRO , REPORTE CLORUROS PRESENTE , AUSENTE SULFATOS PRESENTE , AUSENTE LÍMITE DE DETECCIÓN , ppm",
+      "NO ACREDITADO"
+    ],
+    [
+      "MÉTODO INTERNO",
+      "INTERNAL METHOD",
+      "CANTIDAD DE ADITIVO FLUORESCENTE",
+      "QUANTITY OF FLUORESCENT UV DYE",
+      "mg/kg",
+      "mg/kg",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D217",
+      "ASTM D217",
+      "CAMBIO DE PENETRACIÓN (60 A 100 000 GOLPES)",
+      "PENETRATION CHANGE (60 TO 100 000 STROKES)",
+      "1/10 mm",
+      "1/10 mm",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D217",
+      "ASTM D217",
+      "CAMBIO DE PENETRACIÓN (60 A 10 000 GOLPES)",
+      "PENETRATION CHANGE (60 TO 10 000 STROKES)",
+      "1/10 mm",
+      "1/10 mm",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D4059",
+      "ASTM D4059",
+      "BIFENILOS POLICLORADOS (PCB)",
+      "POLYCHLORINATED BIPHENYLS (PCB)",
+      "mg/kg",
+      "mg/kg",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D4059 / NMX-J-123- ANCE-2019 P 6,15",
+      "ASTM D4059 / NMX-J-123- ANCE-2019 P 6,15",
+      "BIFENILOS POLICLORADOS (PCB)",
+      "POLYCHLORINATED BIPHENYLS (PCB)",
+      "mg/kg",
+      "mg/kg",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D4294",
+      "ASTM D4294",
+      "AZUFRE TOTAL POR EDXRF",
+      "TOTAL SULFUR BY EDXRF",
+      "% m/m , mg/kg ",
+      "% m/m , mg/kg ",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D4294 / NMX-J-123 ANCE-2019 P 6,9",
+      "ASTM D4294 / NMX-J-123 ANCE-2019 P 6,9",
+      "AZUFRE TOTAL POR EDXRF",
+      "TOTAL SULFUR BY EDXRF",
+      "% en masa",
+      "wt %",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D1275 / NMX-J-123-ANCE-2019 P 6,8",
+      "ASTM D1275 / NMX-J-123-ANCE-2019 P 6,8",
+      "AZUFRE CORROSIVO EN ACEITES AISLANTES",
+      "CORROSIVE SULFUR IN ELECTRICAL INSULATING LIQUIDS",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ORGANOLÉPTICO",
+      "ORGANOLEPTIC",
+      "APARIENCIA VISUAL",
+      "VISUAL APPEAREANCE",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ORGANOLÉPTICO / NMX-J-123-ANCE-2019 P 6,1",
+      "ORGANOLEPTIC / NMX-J-123-ANCE-2019 P 6,1",
+      "APARIENCIA VISUAL",
+      "VISUAL APPEAREANCE",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "ALCALINIDAD",
+      "ALKALINITY",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "ÁCIDOS ORGÁNICOS",
+      "ORGANIC ACIDS",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP",
+      "USP",
+      "ACIDEZ",
+      "ACIDITY",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "ACIDEZ",
+      "ACIDITY",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "USP / FEUM",
+      "USP / FEUM",
+      "ACEITES FIJOS, GRASAS Y RESINA",
+      "FIXED OILS, FATS, AND RESINS",
+      "NA",
+      "NA",
+      "NO ACREDITADO"
+    ],
+    [
+      "ASTM D2008",
+      "ASTM D2008",
+      "ABSORBANCIA UV",
+      "UV ABSORBANCE",
+      "A",
+      "A",
+      "NO ACREDITADO"
+    ]
+  ]
+}

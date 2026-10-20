@@ -46,10 +46,12 @@ class ReconstruccionTests(unittest.TestCase):
                 pass
         self.assertEqual(ruta.read_bytes(), contenido)
 
-    def test_auto_relaciones_crea_tambien_tablas_del_gestor(self):
-        escribir(self.base)
+    def test_relaciones_funcionan_sin_crear_base_del_gestor(self):
+        ruta = escribir(self.base)
         with hii.conectar(self.db) as con:
-            self.assertEqual(con.execute("SELECT COUNT(*) FROM versiones").fetchone()[0], 1)
+            hii.indexar(con, ruta)
+            self.assertEqual(con.execute("SELECT COUNT(*) FROM hii_especificaciones").fetchone()[0], 1)
+        self.assertFalse(self.db.exists())
 
     def test_recupera_archivo_de_cero_bytes_con_respaldo(self):
         ruta = escribir(self.base)
@@ -69,12 +71,14 @@ class ReconstruccionTests(unittest.TestCase):
         with closing(gestor.conectar(self.db)) as con:
             self.assertEqual(con.execute("SELECT COUNT(*) FROM versiones").fetchone()[0], 1)
 
-    def test_registro_hii_recupera_sqlite_vacio(self):
+    def test_registro_hii_no_modifica_sqlite_vacio(self):
         with closing(sqlite3.connect(self.db)):
             pass
-        escribir(self.base)
+        ruta = escribir(self.base)
         with hii.conectar(self.db) as con:
+            hii.indexar(con, ruta)
             self.assertEqual(con.execute("SELECT COUNT(*) FROM hii_especificaciones").fetchone()[0], 1)
+        self.assertEqual(self.db.read_bytes(), b"")
 
     def test_catalogo_solo_no_equivale_a_especificaciones_registradas(self):
         with closing(gestor.conectar(self.db, recuperar=False)) as con:
@@ -137,7 +141,7 @@ class ReconstruccionTests(unittest.TestCase):
         escribir(self.base, "reciente.json", documento(fecha="2026-01-01", fecha_creacion_json="2026-01-01"))
         recuperacion.reconstruir(self.base)
         with closing(sqlite3.connect(self.db)) as con:
-            self.assertEqual(con.execute("SELECT archivo_json FROM recuperacion_actuales").fetchone()[0], "reciente.json")
+            self.assertEqual(con.execute("SELECT archivo_json FROM versiones ORDER BY fecha_documento DESC, fecha_creacion DESC LIMIT 1").fetchone()[0], "reciente.json")
             self.assertEqual(con.execute("SELECT COUNT(*) FROM versiones").fetchone()[0], 2)
 
     def test_restaura_referencias_explicitamente_sin_escribir_json(self):
@@ -233,7 +237,8 @@ class ReconstruccionTests(unittest.TestCase):
         word.write_bytes(b"documento previamente procesado")
         ruta = escribir(self.base, datos=documento(archivo_origen="ESPECIFICACIONES_VIEJAS/documento.docx",
             hash_sha256_origen=hashlib.sha256(word.read_bytes()).hexdigest(),
-            hash_sha256_catalogo=hashlib.sha256(catalogo.read_bytes()).hexdigest()))
+            hash_sha256_catalogo=hashlib.sha256(catalogo.read_bytes()).hexdigest(),
+            version_lector=gestor.VERSION_LECTOR))
         contenido = ruta.read_bytes()
         with patch.object(gestor, "preparar", side_effect=AssertionError("No extraer nuevamente")), patch("builtins.print"):
             resultado = gestor.procesar(self.base)

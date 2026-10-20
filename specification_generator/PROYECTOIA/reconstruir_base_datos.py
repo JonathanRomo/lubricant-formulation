@@ -1,22 +1,445 @@
-"""Recupera SQLite desde JSON existentes sin modificar especificaciones ni nombres."""
+"""Recupera SQLite desde JSON y aparta duplicados confirmados en REVISAR/DUPLICADOS."""
 from __future__ import annotations
 
 import argparse
+import errno
 import hashlib
 import json
 import os
+import re
 import shutil
 import sqlite3
+import sys
 import tempfile
 import time
+import tkinter as tk
+import unicodedata
 import uuid
 from collections import defaultdict
 from contextlib import closing, contextmanager
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from zipfile import BadZipFile
 
-from rutas_proyecto import BASE, resolver_ruta, ruta_portatil, rutas_configuradas
+from rutas_proyecto import BASE, resolver_ruta, ruta_portatil, rutas_configuradas, reubicar_ruta_heredada
+from especificaciones_wip import es_wip
+
+
+if __name__ == "__main__":
+    sys.modules.setdefault("reconstruir_base_datos", sys.modules[__name__])
+
+
+EVENTO_CATALOGO = "<<CatalogoEspecificacionesActualizado>>"
+
+
+def suscribir_catalogo(ventana, recargar):
+    """Escucha mientras exista la ventana y libera su suscripción al cerrarla."""
+    raiz = ventana._root()
+
+    def actualizar(_evento):
+        if ventana.winfo_exists():
+            recargar()
+
+    enlace = raiz.bind(EVENTO_CATALOGO, actualizar, add="+")
+
+    def cerrar(evento):
+        nonlocal enlace
+        if evento.widget is ventana and enlace is not None:
+            try:
+                raiz.unbind(EVENTO_CATALOGO, enlace)
+            except tk.TclError:
+                pass  # La raíz puede estar cerrándose junto con las ventanas.
+            enlace = None
+
+    ventana.bind("<Destroy>", cerrar, add="+")
+
+
+def notificar_catalogo(raiz):
+    """Encola la recarga tras finalizar los cambios en los archivos y SQLite."""
+    raiz.event_generate(EVENTO_CATALOGO, when="tail")
+
+
+METADATOS = {
+    "esquema", "archivo_origen", "archivo_json", "hash_sha256_origen",
+    "hash_sha256_catalogo", "formato_origen", "conversion_temporal",
+    "revision_json", "fecha_creacion_json", "extractor_version", "version_lector",
+    "estructura_detectada", "validacion_codigos_200", "alineacion_metodos_lab",
+    "versiones_idioma", "hii_generadas", "hii_registros_heredados",
+}
+
+
+def _normalizar(valor):
+    if isinstance(valor, str):
+        return re.sub(r"\s+", " ", unicodedata.normalize("NFC", valor)).strip()
+    if isinstance(valor, list):
+        return [_normalizar(v) for v in valor]
+    if isinstance(valor, dict):
+        return {k: _normalizar(v) for k, v in valor.items()}
+    return valor
+
+
+def contenido_comparable(datos):
+    """Devuelve datos conservadores, o None si la extracción no permite confirmarlos."""
+    from generador_especs_hii import leer_idioma_datos
+    if not isinstance(datos, dict):
+        return None
+    producto, control, documento = (datos.get(c) for c in ("producto", "control_documental", "documento"))
+    pruebas = datos.get("pruebas")
+    if not all(isinstance(v, dict) for v in (producto, control, documento)):
+        return None
+    if not producto.get("nombre") or not control.get("codigo_unico_producto"):
+        return None
+    if not isinstance(pruebas, list) or not pruebas:
+        return None
+    campos = {"prueba", "metodo", "unidades", "especificacion"}
+    if any(not isinstance(p, dict) or not campos.issubset(p) for p in pruebas):
+        return None
+    if not any(p.get("prueba") and p.get("metodo") and p.get("especificacion") for p in pruebas):
+        return None
+    try:
+        idioma = leer_idioma_datos(datos)
+    except ValueError:
+        return None
+    resultado = {k: v for k, v in datos.items() if k not in METADATOS}
+    resultado["documento"] = dict(documento)
+    resultado["documento"]["idioma"] = idioma
+    resultado["control_documental"] = {k: v for k, v in control.items() if not k.endswith("_fuente")}
+    resultado["pruebas"] = [
+        {k: v for k, v in p.items() if k not in {"numero", "fila_origen"}} for p in pruebas
+    ]
+    if "alineacion_metodos_lab" in datos:
+        alineacion = datos["alineacion_metodos_lab"]
+        detalle = alineacion.get("detalle") if isinstance(alineacion, dict) else None
+        if (not isinstance(detalle, list) or len(detalle) != len(pruebas)
+                or any(not isinstance(d, dict) or not isinstance(d.get("valores_alineados"), dict)
+                       or not campos.issubset(d["valores_alineados"]) for d in detalle)):
+            return None
+        # Esta instantánea es la que muestra el selector, y puede incluir ediciones manuales.
+        resultado["valores_alineados"] = [d["valores_alineados"] for d in detalle]
+    return _normalizar(resultado)
+
+
+def _bytes_json(datos):
+    return json.dumps(datos, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
+
+
+def _sha(ruta):
+    digest = hashlib.sha256()
+    with ruta.open("rb") as archivo:
+        for bloque in iter(lambda: archivo.read(1024 * 1024), b""):
+            digest.update(bloque)
+    return digest.hexdigest()
+
+
+def _firma(ruta):
+    estado = ruta.stat()
+    return estado.st_size, estado.st_mtime_ns
+
+
+def _dentro(ruta, carpetas):
+    return any(ruta.is_relative_to(carpeta) for carpeta in carpetas)
+
+
+@dataclass
+class PlanDuplicados:
+    destino: Path
+    equivalencias: dict = field(default_factory=dict)
+    word_duplicados: dict = field(default_factory=dict)
+    firmas: dict = field(default_factory=dict)
+    ediciones: dict = field(default_factory=dict)
+    revisados: int = 0
+    omitidos: int = 0
+    advertencias: list = field(default_factory=list)
+
+    def resumen(self):
+        return {"json_duplicados": len(self.equivalencias), "word_duplicados": len(self.word_duplicados),
+                "revisados": self.revisados, "omitidos": self.omitidos,
+                "advertencias": list(self.advertencias), "destino": str(self.destino)}
+
+
+def _antiguedad_registrada(db, base, rutas):
+    json_registrados, word_registrados = {}, {}
+    if not db.is_file():
+        return json_registrados, word_registrados
+    try:
+        with closing(sqlite3.connect(db)) as con:
+            tablas = {f[0] for f in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            if "versiones" in tablas:
+                for archivo, fecha in con.execute("SELECT archivo_json,fecha_creacion FROM versiones ORDER BY id"):
+                    json_registrados.setdefault(resolver_ruta(archivo, rutas["json_anteriores"]), fecha or "")
+            if "archivos" in tablas:
+                for archivo, fecha in con.execute("SELECT ruta_relativa,primera_deteccion FROM archivos ORDER BY id"):
+                    word_registrados.setdefault(resolver_ruta(archivo, base), fecha or "")
+    except sqlite3.DatabaseError:
+        # Una reconstrucción debe poder revisar también una base dañada.
+        pass
+    return json_registrados, word_registrados
+
+
+def planificar_duplicados(base, rutas, db, al_progreso=None):
+    """Solo lee. Separa originales/alineados y protege orígenes compartidos y WIP."""
+    base, db = resolver_ruta(base), resolver_ruta(db)
+    destino = base / "REVISAR" / "DUPLICADOS"
+    plan = PlanDuplicados(destino)
+    from gestor_especificaciones import archivo_bloqueado_word
+    anteriores, fuentes_registradas = _antiguedad_registrada(db, base, rutas)
+    carpetas_word = {rutas["especificaciones_viejas"].resolve(),
+                     (rutas["especificaciones_viejas"].parent / "ESPECIFICACIONES_VIEJAS_ENG").resolve()}
+    archivos, documentos, referencias = {}, {}, defaultdict(set)
+    grupos = defaultdict(list)
+    for tipo, carpeta in (("original", rutas["json_anteriores"]), ("alineada", rutas["json_alineadas"])):
+        for ruta in sorted(carpeta.rglob("*")):
+            ruta = ruta.resolve()
+            if ruta.is_file() and ruta.suffix.lower() == ".json" and not ruta.name.startswith(".") and not ruta.is_relative_to(destino):
+                archivos.setdefault(ruta, tipo)
+    for indice, (ruta, tipo) in enumerate(archivos.items(), 1):
+        if al_progreso:
+            al_progreso(indice, len(archivos), ruta.name)
+        try:
+            firma = _firma(ruta)
+            bruto = ruta.read_bytes()
+            datos = json.loads(bruto.decode("utf-8-sig"))
+            if not isinstance(datos, dict):
+                raise ValueError("El JSON no es un objeto")
+            origen = datos.get("archivo_origen")
+            fuente = reubicar_ruta_heredada(origen, base) if isinstance(origen, str) and origen.strip() else None
+            if fuente:
+                referencias[fuente].add(ruta)
+            documentos[ruta] = (datos, fuente, bruto)
+            plan.firmas[ruta] = firma
+            plan.revisados += 1
+            comparable = None if es_wip(ruta) else contenido_comparable(datos)
+            if comparable is None:
+                plan.omitidos += 1
+                continue
+            canonico = _bytes_json(comparable)
+            grupos[(tipo, hashlib.sha256(canonico).digest())].append((ruta, canonico))
+        except (OSError, ValueError, TypeError) as exc:
+            plan.omitidos += 1
+            plan.advertencias.append(f"No se pudo revisar {ruta.name}: {exc}")
+    def orden(ruta):
+        fecha = anteriores.get(ruta) or documentos[ruta][0].get("fecha_creacion_json") or "9999"
+        return ruta not in anteriores, str(fecha), str(ruta).casefold()
+    for tipo in ("original", "alineada"):
+        fuentes_conservadas = {fuente for r, (_, fuente, _) in documentos.items()
+                               if archivos[r] == "original" and r not in plan.equivalencias and fuente}
+        for (tipo_grupo, _), grupo in grupos.items():
+            if tipo_grupo != tipo or len(grupo) < 2:
+                continue
+            por_contenido = {}
+            def orden_grupo(item):
+                ruta = item[0]
+                return (tipo == "alineada" and documentos[ruta][1] not in fuentes_conservadas, *orden(ruta))
+            for ruta, contenido in sorted(grupo, key=orden_grupo):
+                conservada = por_contenido.setdefault(contenido, ruta)
+                if conservada != ruta:
+                    plan.equivalencias[ruta] = conservada
+
+    # Un Word con JSON propios solo se mueve si TODOS ellos son copias descartadas.
+    # Se verifican los bytes actuales contra la huella de la extracción antes de moverlo.
+    candidatos = set()
+    huellas_word = {}
+    def huella_word(ruta):
+        if ruta not in huellas_word:
+            firma = _firma(ruta)
+            huellas_word[ruta] = _sha(ruta)
+            if _firma(ruta) != firma:
+                raise RuntimeError(f"El Word cambió durante la revisión: {ruta.name}")
+            plan.firmas[ruta] = firma
+        return huellas_word[ruta]
+    for fuente, refs in referencias.items():
+        if refs.issubset(plan.equivalencias) and fuente.is_file() and _dentro(fuente, carpetas_word):
+            if archivo_bloqueado_word(fuente) is not None:
+                continue
+            actual = huella_word(fuente)
+            if all(documentos[r][0].get("hash_sha256_origen") == actual for r in refs):
+                candidatos.add(fuente)
+            else:
+                plan.advertencias.append(f"Word modificado desde su extracción; se conserva: {fuente.name}")
+    for fuente in candidatos:
+        # La copia de referencia sigue disponible aunque no conserve su Word original.
+        plan.word_duplicados[fuente] = None
+
+    # Copias Word exactas todavía sin JSON: tamaño primero, SHA-256 solo en tamaños repetidos.
+    tamanos = defaultdict(set)
+    for carpeta in carpetas_word:
+        for ruta in carpeta.rglob("*"):
+            ruta = ruta.resolve()
+            if ruta.is_file() and ruta.suffix.lower() in {".doc", ".docx", ".docm"} and not ruta.name.startswith("~$") and not ruta.is_relative_to(destino):
+                tamanos[_firma(ruta)[0]].add(ruta)
+    total_word = sum(len(g) for tamano, g in tamanos.items() if tamano and len(g) > 1)
+    indice_word = 0
+    for tamano, grupo in tamanos.items():
+        if not tamano or len(grupo) < 2:
+            continue
+        hashes = defaultdict(list)
+        for ruta in grupo:
+            indice_word += 1
+            if al_progreso:
+                al_progreso(indice_word, total_word, ruta.name)
+            hashes[huella_word(ruta)].append(ruta)
+        for iguales in hashes.values():
+            iguales.sort(key=lambda r: (r in plan.word_duplicados, not bool(referencias[r] - plan.equivalencias.keys()),
+                                       r not in fuentes_registradas, fuentes_registradas.get(r, ""), str(r).casefold()))
+            for ruta in iguales[1:]:
+                if not referencias[ruta] and archivo_bloqueado_word(ruta) is None:
+                    plan.word_duplicados[ruta] = iguales[0]
+
+    # Las referencias de idioma de los JSON conservados deben seguir apuntando a archivos activos.
+    for ruta, (datos, _, bruto) in documentos.items():
+        if ruta in plan.equivalencias or not isinstance(datos.get("versiones_idioma"), dict):
+            continue
+        cambio = False
+        for referencias_idioma in datos["versiones_idioma"].values():
+            for ref in ([referencias_idioma] if isinstance(referencias_idioma, dict) else referencias_idioma if isinstance(referencias_idioma, list) else []):
+                if isinstance(ref, dict) and isinstance(ref.get("archivo_json"), str):
+                    anterior = resolver_ruta(ref["archivo_json"], ruta.parent)
+                    if anterior in plan.equivalencias:
+                        nueva = plan.equivalencias[anterior]
+                        try:
+                            ref["archivo_json"] = Path(os.path.relpath(nueva, ruta.parent)).as_posix()
+                        except ValueError:
+                            ref["archivo_json"] = str(nueva)
+                        cambio = True
+        if cambio:
+            plan.ediciones[ruta] = (bruto, (json.dumps(datos, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
+    cache = rutas["json_alineadas"] / ".cache_alineacion"
+    if plan.equivalencias and cache.is_file():
+        try:
+            firma = _firma(cache)
+            bruto = cache.read_bytes()
+            entradas = json.loads(bruto.decode("utf-8"))
+            if isinstance(entradas, dict):
+                vigentes = {k: v for k, v in entradas.items()
+                            if resolver_ruta(k, base) not in plan.equivalencias
+                            and not (isinstance(v, dict) and isinstance(v.get("origen"), str)
+                                     and resolver_ruta(v["origen"], base) in plan.equivalencias)}
+                if len(vigentes) != len(entradas):
+                    plan.firmas[cache] = firma
+                    plan.ediciones[cache] = (bruto, _bytes_json(vigentes))
+        except (OSError, ValueError, TypeError) as exc:
+            plan.advertencias.append(f"No se pudo depurar la caché de alineación: {exc}")
+    return plan
+
+
+def _mover_archivo(origen, destino):
+    try:
+        origen.rename(destino)
+    except OSError as exc:
+        if exc.errno != errno.EXDEV and getattr(exc, "winerror", None) != 17:
+            raise
+        # Las carpetas configuradas también pueden estar en otra unidad.
+        creado = False
+        try:
+            with destino.open("xb") as salida:
+                creado = True
+                with origen.open("rb") as entrada:
+                    shutil.copyfileobj(entrada, salida, 1024 * 1024)
+            shutil.copystat(origen, destino)
+            origen.unlink()
+        except BaseException:
+            if creado:
+                destino.unlink(missing_ok=True)
+            raise
+
+
+def _escribir_atomico(ruta, contenido):
+    temporal = None
+    try:
+        with tempfile.NamedTemporaryFile(prefix=".duplicados_", suffix=".tmp", dir=ruta.parent, delete=False) as archivo:
+            temporal = Path(archivo.name)
+            archivo.write(contenido)
+            archivo.flush()
+            os.fsync(archivo.fileno())
+        os.replace(temporal, ruta)
+    finally:
+        if temporal is not None:
+            temporal.unlink(missing_ok=True)
+
+
+@contextmanager
+def aplicar_plan(plan):
+    """No sobrescribe archivos; deshace movimientos y enlaces si falla SQLite o la publicación."""
+    movimientos, editados = [], []
+    try:
+        for ruta, firma in plan.firmas.items():
+            if not ruta.is_file() or _firma(ruta) != firma:
+                raise RuntimeError(f"El archivo cambió durante la revisión: {ruta.name}. Vuelve a revisar.")
+        for ruta in sorted(set(plan.equivalencias) | set(plan.word_duplicados), key=str):
+            plan.destino.mkdir(parents=True, exist_ok=True)
+            destino = plan.destino / ruta.name
+            indice = 1
+            while destino.exists():
+                destino = plan.destino / f"{ruta.stem}_{indice:02d}{ruta.suffix}"
+                indice += 1
+            # Solo se mueven archivos individuales resueltos por el plan, nunca carpetas.
+            if ruta.is_relative_to(plan.destino) or not destino.resolve().is_relative_to(plan.destino.resolve()):
+                raise ValueError("Destino de duplicados inválido")
+            # rename no sobrescribe en Windows y permite revertir sin copiar documentos grandes.
+            _mover_archivo(ruta, destino)
+            movimientos.append((ruta, destino))
+        for ruta, (anterior, nuevo) in plan.ediciones.items():
+            editados.append((ruta, anterior))
+            _escribir_atomico(ruta, nuevo)
+        yield plan.resumen()
+    except BaseException as exc:
+        errores = []
+        for ruta, anterior in reversed(editados):
+            try:
+                _escribir_atomico(ruta, anterior)
+            except OSError as error:
+                errores.append(str(error))
+        for ruta, destino in reversed(movimientos):
+            try:
+                if ruta.exists():
+                    raise FileExistsError(f"Ya existe otro archivo en {ruta}")
+                _mover_archivo(destino, ruta)
+            except OSError as error:
+                errores.append(str(error))
+        if errores:
+            raise RuntimeError(f"{exc}; no se pudo revertir por completo: {'; '.join(errores)}") from exc
+        raise
+
+
+def depurar_indices(con, plan, base, rutas):
+    """Elimina del catálogo activo las copias trasladadas; no registra sus destinos."""
+    tablas = {f[0] for f in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    eliminados = set(plan.equivalencias)
+    def rutas_json(valor, carpeta=base):
+        return resolver_ruta(valor, carpeta) in eliminados
+    if "versiones" in tablas:
+        ids = [f[0] for f in con.execute("SELECT id,archivo_json FROM versiones") if rutas_json(f[1], rutas["json_anteriores"])]
+        for identidad in ids:
+            if "gestor_historial_cache" in tablas:
+                con.execute("DELETE FROM gestor_historial_cache WHERE version_id=?", (identidad,))
+            con.execute("DELETE FROM versiones WHERE id=?", (identidad,))
+    if "archivos" in tablas:
+        for identidad, origen, ultimo in con.execute("SELECT id,ruta_relativa,ultimo_json FROM archivos").fetchall():
+            movido = resolver_ruta(origen, base) in plan.word_duplicados
+            if movido or (ultimo and rutas_json(ultimo, rutas["json_anteriores"])):
+                if movido and "versiones" in tablas:
+                    if "gestor_historial_cache" in tablas:
+                        con.execute("DELETE FROM gestor_historial_cache WHERE version_id IN (SELECT id FROM versiones WHERE archivo_id=?)", (identidad,))
+                    con.execute("DELETE FROM versiones WHERE archivo_id=?", (identidad,))
+                superviviente = con.execute("SELECT archivo_json,revision_json FROM versiones WHERE archivo_id=? ORDER BY revision_json DESC LIMIT 1", (identidad,)).fetchone() if "versiones" in tablas else None
+                if superviviente:
+                    con.execute("UPDATE archivos SET ultimo_json=?,ultima_revision_json=? WHERE id=?", (*superviviente, identidad))
+                else:
+                    con.execute("DELETE FROM archivos WHERE id=?", (identidad,))
+    for tabla in ("hii_traducciones", "hii_enlaces_automaticos"):
+        if tabla in tablas:
+            for origen, destino in con.execute(f"SELECT origen,destino FROM {tabla}").fetchall():
+                if rutas_json(origen) or rutas_json(destino):
+                    con.execute(f"DELETE FROM {tabla} WHERE origen=? AND destino=?", (origen, destino))
+    for tabla, columna in (("hii_generadas", "especificacion"), ("hii_especificaciones", "ruta"), ("recuperacion_documentos", "ruta")):
+        if tabla in tablas:
+            for (ruta,) in con.execute(f"SELECT {columna} FROM {tabla}").fetchall():
+                if rutas_json(ruta):
+                    con.execute(f"DELETE FROM {tabla} WHERE {columna}=?", (ruta,))
+    # Se recrearán las parejas de idioma al volver a cargar el selector.
+    if "gestor_estado" in tablas and eliminados:
+        con.execute("DELETE FROM gestor_estado WHERE clave='historial_revisado'")
 
 
 @contextmanager
@@ -74,21 +497,22 @@ def _huella(valor):
     return texto if len(texto) == 64 and all(c in "0123456789abcdef" for c in texto) else ""
 
 
-def _leer_documentos(base, rutas, progreso, resumen):
+def _leer_documentos(base, rutas, progreso, resumen, *, excluidos=(), ediciones=None):
     from gestor_especificaciones import clave, parsear_fecha_documento
     from generador_especs_hii import leer_idioma_datos
     from especificaciones_wip import es_wip
     archivos = {}
     for tipo, carpeta in (("original", rutas["json_anteriores"]), ("alineada", rutas["json_alineadas"])):
         for ruta in sorted(carpeta.rglob("*")):
-            if ruta.is_file() and ruta.suffix.lower() == ".json" and not ruta.name.startswith("."):
+            if (ruta.is_file() and ruta.suffix.lower() == ".json" and not ruta.name.startswith(".")
+                    and ruta.resolve() not in excluidos and not ruta.resolve().is_relative_to(base / "REVISAR")):
                 archivos.setdefault(ruta.resolve(), tipo)
     documentos = []
     for indice, (ruta, tipo) in enumerate(archivos.items(), 1):
         if progreso:
             progreso(indice, len(archivos), ruta.name)
         try:
-            contenido = ruta.read_bytes()
+            contenido = ediciones[ruta][1] if ediciones and ruta in ediciones else ruta.read_bytes()
             datos = json.loads(contenido.decode("utf-8-sig"))
             if not isinstance(datos, dict):
                 raise ValueError("El JSON debe contener un objeto.")
@@ -106,7 +530,8 @@ def _leer_documentos(base, rutas, progreso, resumen):
             revision_orden = int(revision) if revision.isdigit() and len(revision) < 18 else -1
             # El índice necesita metadatos, no todas las pruebas y auditorías en memoria.
             metadatos = {c: datos[c] for c in ("producto", "documento", "control_documental", "validacion_codigos_200",
-                "versiones_idioma", "hii_generadas", "archivo_origen", "hash_sha256_origen", "hash_sha256_catalogo", "formato_origen") if c in datos}
+                "versiones_idioma", "hii_generadas", "archivo_origen", "hash_sha256_origen", "hash_sha256_catalogo",
+                "formato_origen", "version_lector") if c in datos}
             documentos.append(dict(ruta=ruta, tipo=tipo, datos=metadatos, nombre=nombre or codigo,
                 codigo=codigo, cliente=clave(control.get("nombre_cliente")), revision=revision,
                 revision_orden=revision_orden, idioma=leer_idioma_datos(datos),
@@ -123,29 +548,6 @@ def _leer_documentos(base, rutas, progreso, resumen):
 
 def _orden(d):
     return (d["fecha_doc"], d["revision_orden"], d["fecha_creacion"], str(d["ruta"]).casefold())
-
-
-def _registrar_documentos(con, documentos, base):
-    con.executescript("""
-        CREATE TABLE recuperacion_documentos (
-            ruta TEXT PRIMARY KEY, archivo_json TEXT NOT NULL, tipo TEXT NOT NULL,
-            producto_clave TEXT NOT NULL, producto_nombre TEXT NOT NULL, codigo TEXT NOT NULL,
-            cliente TEXT NOT NULL, revision TEXT NOT NULL, revision_orden INTEGER NOT NULL,
-            idioma TEXT NOT NULL, fecha_documento TEXT, fecha_creacion TEXT,
-            hash_json TEXT NOT NULL, en_progreso INTEGER NOT NULL);
-        CREATE VIEW recuperacion_actuales AS
-            SELECT * FROM (SELECT d.*, ROW_NUMBER() OVER (
-                PARTITION BY producto_clave, cliente, idioma, tipo
-                ORDER BY fecha_documento DESC, revision_orden DESC, fecha_creacion DESC, ruta DESC
-            ) AS orden_actual FROM recuperacion_documentos d WHERE en_progreso=0)
-            WHERE orden_actual=1;
-    """)
-    from gestor_especificaciones import clave
-    for d in documentos:
-        con.execute("INSERT INTO recuperacion_documentos VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (ruta_portatil(d["ruta"], base), d["ruta"].name, d["tipo"], clave(d["codigo"] or d["nombre"]),
-             d["nombre"], d["codigo"], d["cliente"], d["revision"], d["revision_orden"],
-             d["idioma"], d["fecha_doc"], d["fecha_creacion"], d["hash_json"], int(d["wip"])))
 
 
 def _registrar_extraccion(con, documentos, base, rutas):
@@ -206,6 +608,8 @@ def _registrar_extraccion(con, documentos, base, rutas):
                  valores["validacion_catalogo"], valores["nombre_fuente"], valores["resolucion_nombre"], d["revision"],
                  valores["codigo_formato"], valores["revision_formato"], valores["formato_origen"], d["idioma"],
                  d["fecha_doc"] or None, d["fecha_creacion"], archivo_json))
+            con.execute("UPDATE versiones SET version_lector=? WHERE archivo_json=?",
+                        (datos.get("version_lector"), archivo_json))
     # Un mismo Word puede haber cambiado de nombre de producto entre extracciones.
     # Su huella vigente debe ser la de su versión más reciente, incluso entre grupos.
     for _, valores in fuentes_actuales.values():
@@ -381,35 +785,39 @@ def reconstruir(base=BASE, *, destino=None, rutas=None, reemplazar=False, al_pro
             return None
         motivo = motivo_recuperacion(base, destino=destino) if automatica else "manual"
         resumen = {"documentos": 0, "wip": 0, "relaciones": 0, "omitidos": [], "advertencias": [], "base": str(destino), "respaldo": None, "motivo": motivo}
-        documentos = _leer_documentos(base, rutas, al_progreso, resumen)
+        plan = planificar_duplicados(base, rutas, destino, al_progreso)
+        resumen["duplicados"] = plan.resumen()
+        documentos = _leer_documentos(base, rutas, al_progreso, resumen,
+            excluidos=plan.equivalencias, ediciones=plan.ediciones)
         if destino.exists() and not documentos:
             raise ValueError("No se encontraron JSON para reconstruir. Se conserva la base anterior; revisa las carpetas configuradas.")
         with tempfile.NamedTemporaryFile(prefix=".reconstruccion_", suffix=".db", dir=destino.parent, delete=False) as archivo:
             temporal = Path(archivo.name)
         try:
-            from gestor_especificaciones import conectar, leer_catalogo, registrar_catalogo, APP_VERSION
+            from gestor_especificaciones import conectar, leer_catalogo, registrar_catalogo, VERSION_NORMALIZACION
             import generador_hii as hii
             with closing(conectar(temporal, recuperar=False)) as con:
-                _registrar_documentos(con, documentos, base)
+                con.execute("PRAGMA temp_store=MEMORY")
                 _registrar_extraccion(con, documentos, base, rutas)
                 catalogo = base / "CODIGOS_200.xlsx"
                 if catalogo.is_file():
                     try:
                         registros, digest = leer_catalogo(catalogo)
                         registrar_catalogo(con, registros, digest, datetime.now().isoformat(timespec="seconds"), catalogo)
-                        con.execute("INSERT OR REPLACE INTO gestor_estado VALUES ('historial_revisado', ?)", (f"{APP_VERSION}:{digest}",))
+                        con.execute("INSERT OR REPLACE INTO gestor_estado VALUES ('historial_revisado', ?)", (f"{VERSION_NORMALIZACION}:{digest}",))
                     except (OSError, ValueError, BadZipFile) as exc:
                         resumen["advertencias"].append(f"Catálogo no recuperado: {exc}")
-                con.commit()
-            with hii.conectar(temporal, recuperar=False) as con:
+                hii.preparar_registro(con)
                 _registrar_relaciones(con, documentos, base, resumen)
                 _registrar_hii_generadas(con, documentos, base, resumen)
                 resumen["versiones"] = con.execute("SELECT COUNT(*) FROM versiones").fetchone()[0]
                 _validar(con)
+                con.commit()
             with closing(sqlite3.connect(temporal)) as con:
                 con.execute("PRAGMA wal_checkpoint(TRUNCATE)")
                 con.execute("PRAGMA journal_mode=DELETE")
-            _publicar(temporal, destino, base, resumen)
+            with aplicar_plan(plan):
+                _publicar(temporal, destino, base, resumen)
             resumen["advertencias"].append("Las HII sin historial en los JSON y los eventos que solo estaban en la base anterior no se pueden recuperar con certeza.")
             reporte = base / "REPORTE_RECONSTRUCCION_BASE.json"
             try:
@@ -429,13 +837,45 @@ def asegurar_base(base=BASE, *, destino=None, rutas=None, al_progreso=None):
     return reconstruir(base, destino=destino, rutas=rutas, al_progreso=al_progreso, automatica=True)
 
 
+def revisar_duplicados(base=BASE, *, destino=None, rutas=None, al_progreso=None):
+    """Revisa las extracciones y limpia sus índices sin reconstruir el resto del historial."""
+    base = resolver_ruta(base)
+    db = resolver_ruta(destino, base) if destino is not None else base / "especificaciones.db"
+    db.parent.mkdir(parents=True, exist_ok=True)
+    rutas = rutas_configuradas(base) if rutas is None else {k: resolver_ruta(v, base) for k, v in rutas.items()}
+    with _bloqueo(db):
+        plan = planificar_duplicados(base, rutas, db, al_progreso)
+        if not plan.equivalencias and not plan.word_duplicados:
+            return plan.resumen()
+        if not db.exists():
+            with aplicar_plan(plan) as resumen:
+                return resumen
+        with closing(sqlite3.connect(db, timeout=30)) as con:
+            con.execute("PRAGMA foreign_keys=ON")
+            _validar(con)
+            try:
+                con.execute("BEGIN IMMEDIATE")
+                depurar_indices(con, plan, base, rutas)
+                _validar(con)
+                with aplicar_plan(plan) as resumen:
+                    con.commit()
+                return resumen
+            except BaseException:
+                con.rollback()
+                raise
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", type=resolver_ruta, default=BASE)
     parser.add_argument("--reemplazar", action="store_true", help="Reconstruye una base existente y conserva un respaldo.")
+    parser.add_argument("--revisar-duplicados", action="store_true", help="Mueve copias confirmadas a REVISAR/DUPLICADOS y las quita del índice activo.")
     args = parser.parse_args()
     try:
-        resultado = reconstruir(args.base, reemplazar=True) if args.reemplazar else asegurar_base(args.base)
+        if args.revisar_duplicados:
+            resultado = revisar_duplicados(args.base)
+        else:
+            resultado = reconstruir(args.base, reemplazar=True) if args.reemplazar else asegurar_base(args.base)
         print(json.dumps(resultado, ensure_ascii=False, indent=2) if resultado else "No se requiere reconstrucción automática; la base no se modificó.")
         return 0
     except (OSError, ValueError, sqlite3.Error, RuntimeError) as exc:

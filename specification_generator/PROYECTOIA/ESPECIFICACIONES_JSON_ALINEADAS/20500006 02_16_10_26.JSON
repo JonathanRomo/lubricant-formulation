@@ -1,0 +1,537 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "CUTTING SCHUTZ DM CAIX"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-10-05"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "-",
+    "codigo_unico_producto": "20500006",
+    "fecha": "05/10/2026",
+    "revision": "02",
+    "nombre_cliente": "",
+    "revision_cliente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "DENSIDAD RELATIVA A 15.6 °C",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D1298 / D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "0,870",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "COLOR VISUAL",
+      "unidades": "NA",
+      "metodo": "ORGANOLEPTICO",
+      "especificacion": "AMBAR, CLARO Y BRILLANTE",
+      "valor_tipico": "AMBAR, CLARO Y BRILLANTE",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "14,00 - 17,00",
+      "valor_tipico": "15,07",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "unidades": "mm2/s",
+      "metodo": "ASTM D445 / D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "3,500",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD SAYBOLT A 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D2161",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "85",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+      "unidades": "°C",
+      "metodo": "ASTM D92",
+      "especificacion": "170 MÍNIMO",
+      "valor_tipico": "180",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "HUMEDAD POR CREPITACIÓN",
+      "unidades": "NA",
+      "metodo": "MÉTODO INTERNO (91300029)",
+      "especificacion": "NEGATIVA",
+      "valor_tipico": "NEGATIVA",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    }
+  ],
+  "notas": [
+    "La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+  ],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 8,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "CUTTING SCHUTZ DM CAIX",
+    "part_id_fuente": "20500006",
+    "part_id_final": "20500006",
+    "coincidencias_nombre": 4,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80500186",
+        "descripcion": "CUTTING SCHUTZ DM CAIX"
+      },
+      {
+        "part_id": "80500058",
+        "descripcion": "CUTTING SCHUTZ DM CAIX"
+      },
+      {
+        "part_id": "80500040",
+        "descripcion": "CUTTING SCHUTZ DM CAIX"
+      },
+      {
+        "part_id": "20500006",
+        "descripcion": "CUTTING SCHUTZ DM CAIX"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20500006"
+    ],
+    "nombre_catalogo": "CUTTING SCHUTZ DM CAIX",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3182,
+      "part_id": "20500006",
+      "descripcion": "CUTTING SCHUTZ DM CAIX",
+      "part_id_clave": "20500006",
+      "descripcion_clave": "CUTTING SCHUTZ DM CAIX"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/CUTTING SCHUTZ DM CAIX.docx",
+  "hash_sha256_origen": "e994516de42613627150c24f9beb86a2467dde374705cc39579a9ae36585984e",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "01",
+  "fecha_creacion_json": "2026-10-16T12:17:39",
+  "archivo_json": "20500006 02_16_10_26.JSON",
+  "extractor_version": "0.8.7",
+  "version_lector": "1",
+  "FECHA DE REANALISIS": "",
+  "Desarrollador": "",
+  "alineacion_metodos_lab": {
+    "version_programa": "2.1.3",
+    "fecha": "2026-10-19T17:21:11",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 4,
+      "revision": 2,
+      "sin_coincidencia": 1
+    },
+    "detalle": [
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 1,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "DENSIDAD RELATIVA A 15.6 °C",
+        "metodo_original": "ASTM D1298 / D7042",
+        "nombre_maestro_propuesto": "",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": true,
+        "mensaje_condiciones": "No hay candidato compatible con las unidades, la temperatura o la escala C/F originales.",
+        "tipo_pendiente": "CONDICIONES_INCOMPATIBLES",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D1298 / ASTM D7042",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "ASTM D1298 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D1298",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "ADIMENSIONAL",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "0,870",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DENSIDAD RELATIVA A 15.6 °C",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D1298 / D7042",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "0,870"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 2,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "COLOR VISUAL",
+        "metodo_original": "ORGANOLEPTICO",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "reglas_equivalencia": [
+          "UNIDAD DECLARADA: N/A = NA"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "NOMBRE_SIN_EQUIVALENCIA",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "ORGANOLEPTICO",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "219",
+        "nombre_segunda_opcion": "OLOR",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO",
+        "fila_segunda_opcion": "85",
+        "margen_puntaje": 0.043,
+        "unidades_originales": "N/A",
+        "especificacion_original": "AMBAR, CLARO Y BRILLANTE",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "AMBAR, CLARO Y BRILLANTE",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "NA",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.703,
+        "puntaje_nombre": 0.5632,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR VISUAL",
+          "unidades": "NA",
+          "metodo": "ORGANOLEPTICO",
+          "especificacion": "AMBAR, CLARO Y BRILLANTE",
+          "valor_tipico": "AMBAR, CLARO Y BRILLANTE"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 3,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "metodo_original": "ASTM D445 / D7042",
+        "nombre_maestro_propuesto": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "22",
+        "nombre_segunda_opcion": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "metodo_segunda_opcion": "ASTM D445",
+        "fila_segunda_opcion": "23",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "especificacion_original": "14,00 – 17,00",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "15,07",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.994,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445 / ASTM D7042",
+          "especificacion": "14,00 - 17,00",
+          "valor_tipico": "15,07"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 4,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 100 °C",
+        "metodo_original": "ASTM D445 / D7042",
+        "nombre_maestro_propuesto": "VISCOSIDAD CINEMÁTICA A 100 °C",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 100 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "25",
+        "nombre_segunda_opcion": "VISCOSIDAD CINEMÁTICA A 100 °C",
+        "metodo_segunda_opcion": "ASTM D445",
+        "fila_segunda_opcion": "26",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "3,500",
+        "observaciones_limpieza": [
+          "Separador numérico ambiguo en valor_tipico: 3,500"
+        ],
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.994,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+          "unidades": "mm2/s",
+          "metodo": "ASTM D445 / D7042",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "3,500"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 5,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSIDAD SAYBOLT A 100 °F",
+        "metodo_original": "ASTM D2161",
+        "nombre_maestro_propuesto": "VISCOSIDAD SAYBOLT A 100 °F",
+        "reglas_equivalencia": [
+          "SAYBOLT ASTM D2161: equivalencia nominal de temperatura a 100 °F"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "SAYBOLT VISCOSITY AT 100 °F",
+        "metodo_original_normalizado": "ASTM D2161",
+        "metodo_maestro_fuente": "ASTM D2161",
+        "metodo_maestro_propuesto": "ASTM D2161",
+        "referencias_astm_originales": [
+          "D2161"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2161"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "4",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 1.0,
+        "unidades_originales": "SUS",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "85",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "SUS",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD SAYBOLT A 100 °F",
+          "unidades": "SUS",
+          "metodo": "ASTM D2161",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "85"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 6,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+        "metodo_original": "ASTM D92",
+        "nombre_maestro_propuesto": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "FLASH POINT AT 101,3 kPa, CLEVELAND OPEN CUP",
+        "metodo_original_normalizado": "ASTM D92",
+        "metodo_maestro_fuente": "ASTM D92",
+        "metodo_maestro_propuesto": "ASTM D92",
+        "referencias_astm_originales": [
+          "D92"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D92"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "55",
+        "nombre_segunda_opcion": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+        "metodo_segunda_opcion": "ASTM D92 / NMX-J-123-ANCE- 2019 P 6,5",
+        "fila_segunda_opcion": "56",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "°C",
+        "especificacion_original": "170 MINIMO",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "180",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "°C",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "170 MÍNIMO",
+          "valor_tipico": "180"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "HUMEDAD POR CREPITACIÓN",
+        "metodo_original": "MÉTODO INTERNO (91300029)",
+        "nombre_maestro_propuesto": "HUMEDAD POR CREPITACIÓN",
+        "reglas_equivalencia": [
+          "IDENTIFICADOR CREPITACIÓN = INS-CCA-07 / INS-CCA-07-00 / 91300029",
+          "UNIDAD DECLARADA: N/A = NA"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "MOISTURE BY CRACKLE TEST",
+        "metodo_original_normalizado": "MÉTODO INTERNO (91300029)",
+        "metodo_maestro_fuente": "MÉTODO INTERNO (91300029)",
+        "metodo_maestro_propuesto": "MÉTODO INTERNO (91300029)",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "111",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 1.0,
+        "unidades_originales": "N/A",
+        "especificacion_original": "NEGATIVA",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "NEGATIVA",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "NA",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "HUMEDAD POR CREPITACIÓN",
+          "unidades": "NA",
+          "metodo": "MÉTODO INTERNO (91300029)",
+          "especificacion": "NEGATIVA",
+          "valor_tipico": "NEGATIVA"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": [],
+    "encabezados_omitidos": []
+  },
+  "hii_generadas": []
+}

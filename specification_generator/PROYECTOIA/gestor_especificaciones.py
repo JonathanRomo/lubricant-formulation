@@ -25,11 +25,17 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Callable
 from zipfile import ZipFile
+from xml.etree import ElementTree
 
 from docx import Document
 from openpyxl import load_workbook
 
-APP_VERSION = "0.8.4"
+APP_VERSION = "0.8.7"
+VERSION_LECTOR = "1"
+VERSION_NORMALIZACION = "1"
+MARCADORES_INGLES_ESPECIFICACION = (
+    "CLEAR", "BRIGHT", "AMBER", "PASS", "REPORT", "TYPICAL", "MINIMUM", "MAXIMUM",
+)
 PYTHON_REQUERIDO = (3, 11)
 ENTRADA = "ESPECIFICACIONES_VIEJAS"
 ENTRADA_ENG = "ESPECIFICACIONES_VIEJAS_ENG"
@@ -42,9 +48,14 @@ TIEMPO_LIMITE_CONVERSION_WORD = 30
 _PROCESOS_WORD_PREEXISTENTES: set[int] | None = None
 _ERROR_INICIO_WORD: str | None = None
 _LECTURA_WORD = ContextVar("lectura_word_gestor", default=None)
+_SESION_WORD = ContextVar("sesion_word_gestor", default=None)
 
 COLUMNAS = {
-    "PRUEBA": "prueba", "UNIDAD": "unidades", "UNIDADES": "unidades",
+    "PRUEBAS": "prueba", "PREUBA": "prueba", "TEST DESCRIPTION": "prueba",
+    "ASTM METHOD": "metodo", "TYPICAL": "valor_tipico", "TYPICAL RESULTS": "valor_tipico",
+    "TEST TYPE": "tipo_prueba", "TIPO DE PRUEBA": "tipo_prueba",
+    "PRUEBA": "prueba", "NOMBRE DE LA PRUEBA": "prueba",
+    "UNIDAD": "unidades", "UNIDADES": "unidades",
     "METODO": "metodo", "ESPECIFICACION": "especificacion",
     "VALOR TIPICO": "valor_tipico", "VALORES TIPICOS": "valor_tipico",
     "TEST": "prueba", "UNITS": "unidades", "UNIT": "unidades",
@@ -53,6 +64,7 @@ COLUMNAS = {
     "TYPICAL VALUE": "valor_tipico", "TYPICAL VALUES": "valor_tipico",
 }
 CONTROL = {
+    "ELABORO": "elaboro_y_aprobo", "ELABORADO POR": "elaboro_y_aprobo",
     "ELABORO Y APROBO": "elaboro_y_aprobo",
     "ELABORADO Y APROBADO POR": "elaboro_y_aprobo",
     "PREPARED AND APPROVED BY": "elaboro_y_aprobo",
@@ -73,8 +85,13 @@ CONTROL = {
     "NUMERO DE REVISION": "revision_cliente",
     "NAME CLIENT": "nombre_cliente", "CLIENT NAME": "nombre_cliente",
     "CUSTOMER NAME": "nombre_cliente", "CUSTOMERS NAME": "nombre_cliente",
+    "NOMBRE DEL CLIENTE": "nombre_cliente", "CLIENTS NAME": "nombre_cliente",
+    "NUMERO DE REVISION DEL CLIENTE": "revision_cliente",
+    "DEVELOPED AND APPROVED BY": "elaboro_y_aprobo",
+    "CUSTOMER REVIEW NUMBER": "revision_cliente",
     "REVISION CLIENT": "revision_cliente", "CLIENT REVISION": "revision_cliente",
     "CUSTOMER REVISION": "revision_cliente",
+    "CUSTOMERS REVISION": "revision_cliente",
     "CUSTOMERS REVISION NUMBER": "revision_cliente",
     "CUSTOMER S REVISION NUMBER": "revision_cliente",
     "FECHA DE ELABORACION": "fecha", "FECHA ELABORACION": "fecha",
@@ -219,6 +236,9 @@ def conectar(path: Path, *, recuperar: bool = True) -> sqlite3.Connection:
         requeridas_versiones = {k: v for k, v in requeridas_archivos.items() if k != "formato_origen"}
         requeridas_versiones["formato_origen"] = "TEXT"
         requeridas_versiones["fecha_documento"] = "TEXT"
+        requeridas_versiones["version_lector"] = "TEXT"
+        requeridas_versiones["base_extraccion_json"] = "TEXT"
+        requeridas_versiones["campos_protegidos_json"] = "TEXT"
         existentes = {r["name"] for r in con.execute("PRAGMA table_info(versiones)")}
         for nombre, tipo in requeridas_versiones.items():
             if nombre not in existentes:
@@ -230,6 +250,9 @@ def conectar(path: Path, *, recuperar: bool = True) -> sqlite3.Connection:
                             (ruta_portatil(ruta, path.parent), fila["id"]))
             con.execute("INSERT OR IGNORE INTO gestor_estado VALUES ('rutas_catalogo_portatiles', '1')")
         con.commit()
+        if recuperar:
+            from optimizar_base_datos import retirar_indices_auxiliares
+            retirar_indices_auxiliares(con, path.parent)
         return con
     except BaseException:
         con.close()
@@ -382,6 +405,10 @@ def registrar_catalogo(con: sqlite3.Connection, registros: list[dict], digest: s
       (archivo.name, ruta_portatil(archivo, base), digest, stat.st_size, stat.st_mtime_ns, fecha, len(registros)))
     con.execute("UPDATE catalogo_fuentes SET ruta_archivo=? WHERE hash_catalogo=?",
                 (ruta_portatil(archivo, base), digest))
+    # Son copias derivadas del Excel: las huellas históricas se conservan en
+    # archivos/versiones, sin duplicar miles de filas por cada edición del libro.
+    con.execute("DELETE FROM catalogo_codigos WHERE hash_catalogo<>?", (digest,))
+    con.execute("DELETE FROM catalogo_fuentes WHERE hash_catalogo<>?", (digest,))
     existentes = con.execute("SELECT COUNT(*) FROM catalogo_codigos WHERE hash_catalogo=?", (digest,)).fetchone()[0]
     if existentes == len(registros):
         con.commit()
@@ -486,11 +513,15 @@ def _terminar_proceso_word(pid: int) -> None:
         pass
 
 
-def _procesos_word_automatizacion() -> set[int]:
+class ErrorConversionWord(RuntimeError):
+    """Conversión pendiente; todavía no se ha podido validar el documento."""
+
+
+def _procesos_word_automatizacion(*, todos: bool = False) -> set[int]:
+    filtro = "" if todos else "-and $_.CommandLine -match '(?i)(/automation|-embedding)' "
     consulta = (
         "$p = @(Get-CimInstance Win32_Process | "
-        "Where-Object { $_.Name -eq 'WINWORD.EXE' -and "
-        "$_.CommandLine -match '(?i)/automation' } | "
+        "Where-Object { $_.Name -eq 'WINWORD.EXE' " + filtro + "} | "
         "Select-Object -ExpandProperty ProcessId); "
         "ConvertTo-Json -InputObject $p -Compress"
     )
@@ -525,8 +556,24 @@ def _limpiar_word_iniciado(
 
 
 def _restablecer_error_inicio_word() -> None:
-    global _ERROR_INICIO_WORD
+    global _ERROR_INICIO_WORD, _PROCESOS_WORD_PREEXISTENTES
     _ERROR_INICIO_WORD = None
+    _PROCESOS_WORD_PREEXISTENTES = None
+
+
+@contextmanager
+def sesion_word_compartida():
+    from conversion_word import SesionWord
+    sesion = SesionWord(_procesos_word_automatizacion, _terminar_proceso_word,
+                        inspeccionar_preexistentes=lambda: _procesos_word_automatizacion(todos=True))
+    token = _SESION_WORD.set(sesion)
+    try:
+        yield sesion
+    finally:
+        try:
+            sesion.cerrar()
+        finally:
+            _SESION_WORD.reset(token)
 
 
 def _convertir_word_com(
@@ -541,6 +588,14 @@ def _convertir_word_com(
             "Se omitió el intento con Microsoft Word porque ya falló su inicio "
             f"en esta carga: {_ERROR_INICIO_WORD}"
         )
+    sesion = _SESION_WORD.get()
+    if sesion is not None and worker is _convertir_word_com_worker:
+        try:
+            return sesion.convertir(path, destino, tiempo_limite=TIEMPO_LIMITE_CONVERSION_WORD)
+        except Exception as exc:
+            if getattr(exc, "inicio", False):
+                _ERROR_INICIO_WORD = str(exc)
+            raise
     if _PROCESOS_WORD_PREEXISTENTES is None:
         _PROCESOS_WORD_PREEXISTENTES = _procesos_word_automatizacion()
     procesos_word_antes = set(_PROCESOS_WORD_PREEXISTENTES)
@@ -605,6 +660,8 @@ def _convertir_word_com(
                 f"(código {proceso.exitcode})."
             )
         if resultado[0] != "ok":
+            if etapa == "iniciar Microsoft Word":
+                _ERROR_INICIO_WORD = str(resultado[1])
             if pid_word is not None:
                 _terminar_proceso_word(pid_word)
             raise RuntimeError(f"Microsoft Word no pudo convertir el documento: {resultado[1]}")
@@ -614,18 +671,25 @@ def _convertir_word_com(
             proceso.join()
         resultados.close()
         resultados.cancel_join_thread()
+        _PROCESOS_WORD_PREEXISTENTES = None
 
 
 def convertir_word_legacy(path: Path, tmp: Path) -> Path:
     destino = tmp / f"{path.stem}.docx"
     error_word = None
     if sys.platform == "win32":
-        try:
-            _convertir_word_com(path, destino)
-            if destino.exists():
-                return destino
-        except Exception as exc:
-            error_word = str(exc)
+        inicio_ya_fallido = _ERROR_INICIO_WORD is not None
+        for intento in range(2):
+            try:
+                _convertir_word_com(path, destino)
+                if destino.exists():
+                    return destino
+            except Exception as exc:
+                error_word = str(exc)
+                if intento == 0 and not inicio_ya_fallido and _ERROR_INICIO_WORD is not None:
+                    _restablecer_error_inicio_word()
+                    continue
+            break
     exe = shutil.which("soffice") or shutil.which("libreoffice")
     if exe:
         try:
@@ -636,14 +700,16 @@ def convertir_word_legacy(path: Path, tmp: Path) -> Path:
                 check=False,
             )
         except subprocess.TimeoutExpired as exc:
-            raise TimeoutError(
+            raise ErrorConversionWord(
                 f"LibreOffice no terminó la conversión en "
                 f"{TIEMPO_LIMITE_CONVERSION_WORD} segundos."
             ) from exc
+        except OSError as exc:
+            raise ErrorConversionWord(f"No se pudo iniciar LibreOffice: {exc}") from exc
         if destino.exists():
             return destino
     detalle = f" Error de Microsoft Word: {error_word}" if error_word else ""
-    raise RuntimeError(
+    raise ErrorConversionWord(
         "No se pudo convertir el archivo .doc o .docm. "
         "Revisa Microsoft Word y pywin32, o usa LibreOffice como alternativa."
         f"{detalle}"
@@ -689,23 +755,29 @@ def texto_ooxml(path: Path) -> str:
         for nombre in z.namelist():
             if nombre.startswith("word/") and nombre.endswith(".xml"):
                 contenido = z.read(nombre).decode("utf-8", "ignore")
-                partes.extend(re.findall(r"<w:t[^>]*>(.*?)</w:t>", contenido, re.S))
-                partes.extend(re.findall(r"<a:t[^>]*>(.*?)</a:t>", contenido, re.S))
+                partes.extend(re.findall(r"<w:t\b[^>]*>(.*?)</w:t>", contenido, re.S))
+                partes.extend(re.findall(r"<a:t\b[^>]*>(.*?)</a:t>", contenido, re.S))
     resultado = limpiar(html.unescape(" ".join(re.sub(r"<[^>]+>", " ", x) for x in partes)))
     if cache is not None:
         cache[clave_cache] = resultado
     return resultado
 
 
+def _partes_word(path: Path) -> dict:
+    from lectura_estructuras_word import leer_partes
+    cache = _LECTURA_WORD.get()
+    llave = ("partes_xml", str(path.resolve()))
+    if cache is not None and llave in cache:
+        return cache[llave]
+    partes = leer_partes(path)
+    if cache is not None:
+        cache[llave] = partes
+    return partes
+
+
 def metadatos_formato(path: Path) -> dict:
-    texto = texto_ooxml(path)
-    datos = {}
-    m = re.search(r"\b(R\d{2}-[A-Z]{2,}-[A-Z]{2,}-\d{2})\b", texto, re.I)
-    if m:
-        datos["codigo_formato"] = m.group(1).upper()
-        cerca = texto[m.end():m.end() + 100]
-        rev = re.search(r"\b(\d{1,2})\b", cerca)
-        if rev: datos["revision_formato"] = rev.group(1).zfill(2)
+    from lectura_estructuras_word import metadatos_formato as leer_metadatos
+    datos = leer_metadatos(_partes_word(path))
     exe = shutil.which("tesseract")
     if not exe:
         return datos
@@ -721,9 +793,36 @@ def metadatos_formato(path: Path) -> dict:
             t = limpiar(r.stdout)
             cod = re.search(r"C[OÓ]DIGO\s*[:.]?\s*([A-Z0-9-]+)", t, re.I)
             rev = re.search(r"REV(?:ISI[OÓ]N)?\s*[.:]?\s*([A-Z0-9.-]+)", t, re.I)
-            if cod: datos["codigo_formato"] = cod.group(1)
-            if rev: datos["revision_formato"] = rev.group(1).strip(".").zfill(2)
+            if cod: datos.setdefault("codigo_formato", cod.group(1))
+            if rev: datos.setdefault("revision_formato", rev.group(1).strip(".").zfill(2))
     return datos
+
+
+def marcadores_ingles_especificacion(path: Path) -> tuple[str, ...]:
+    """Busca palabras distintas solo en las celdas de especificación de la tabla principal."""
+    cache = _LECTURA_WORD.get()
+    clave_cache = ("ingles_especificacion", str(path.resolve()))
+    if cache is not None and clave_cache in cache:
+        return cache[clave_cache]
+    from lectura_estructuras_word import seleccionar_tabla
+    encontradas = set()
+    try:
+        tablas, indice, encabezado, campos = seleccionar_tabla(_partes_word(path)["word/document.xml"], COLUMNAS)
+    except ValueError:
+        tablas = []
+    if tablas:
+        columnas = [i for i, campo in enumerate(campos) if campo == "especificacion"]
+        for fila in tablas[indice][1][encabezado + 1:]:
+            if fila and re.match(r"^(?:NOTAS?|NOTES?)\b", clave(fila[0])):
+                continue
+            for columna in columnas:
+                if columna < len(fila):
+                    palabras = set(re.findall(r"\b[A-Z]+\b", clave(fila[columna])))
+                    encontradas.update(palabras.intersection(MARCADORES_INGLES_ESPECIFICACION))
+    resultado = tuple(p for p in MARCADORES_INGLES_ESPECIFICACION if p in encontradas)
+    if cache is not None:
+        cache[clave_cache] = resultado
+    return resultado
 
 
 def contiene_marcadores_ingles(path: Path) -> bool:
@@ -741,7 +840,8 @@ def contiene_marcadores_ingles(path: Path) -> bool:
     )
     ingles = sum(bool(re.search(rf"\b{re.escape(m)}\b", texto)) for m in marcadores_ingles)
     espanol = sum(bool(re.search(rf"\b{re.escape(m)}\b", texto)) for m in marcadores_espanol)
-    return ingles > espanol
+    # El contenido prevalece aunque se haya utilizado una plantilla en español.
+    return len(marcadores_ingles_especificacion(path)) >= 2 or ingles > espanol
 
 
 def menciones_yves_yoi(path: Path) -> list[str]:
@@ -849,6 +949,7 @@ def reindexar_revisiones(
     salida: Path,
     catalogo: list[dict],
     producto_claves: set[str] | None = None,
+    *, versiones_protegidas: set[int] | None = None,
 ) -> dict[str, int]:
     filtro = ""
     parametros: tuple[str, ...] = ()
@@ -864,12 +965,15 @@ def reindexar_revisiones(
         f"""SELECT v.id, v.archivo_id, v.producto_clave, v.revision_json,
                   v.archivo_json, v.fecha_creacion, v.fecha_documento, a.ruta_relativa,
                   v.part_id_fuente, v.part_id_final, v.validacion_catalogo,
-                  v.nombre_fuente, v.resolucion_nombre
+                  v.nombre_fuente, v.resolucion_nombre, v.campos_protegidos_json
            FROM versiones v JOIN archivos a ON a.id=v.archivo_id
            {filtro}
            ORDER BY v.producto_clave, v.revision_json, v.id""",
         parametros,
     ).fetchall()
+    versiones_protegidas = set(versiones_protegidas or ())
+    versiones_protegidas.update(fila["id"] for fila in filas if fila["campos_protegidos_json"]
+                                and fila["campos_protegidos_json"] != "[]")
     totales_por_producto: dict[str, int] = defaultdict(int)
     productos_con_json_invalido: set[str] = set()
     errores_json: list[tuple[str, str]] = []
@@ -917,6 +1021,8 @@ def reindexar_revisiones(
     # complete view of that history.
     if not errores_json:
         for version in versiones_cargadas:
+            if versiones_protegidas and version["fila"]["id"] in versiones_protegidas:
+                continue
             datos = version["datos"]
             producto = datos.get("producto")
             control = datos.get("control_documental")
@@ -1036,7 +1142,9 @@ def reindexar_revisiones(
             control = version["datos"].get("control_documental")
             if isinstance(control, dict):
                 revision_fuente = str(control.get("revision") or "").strip()
-                if re.fullmatch(r"-{1,3}", revision_fuente):
+                if re.fullmatch(r"-{1,3}", revision_fuente) and not (
+                    versiones_protegidas and fila["id"] in versiones_protegidas
+                ):
                     control.setdefault("revision_fuente", revision_fuente)
                     control["revision"] = revision_texto
             version["datos"]["revision_json"] = revision_texto
@@ -1164,65 +1272,12 @@ def reindexar_revisiones(
     }
 
 
-def extraer(path: Path, idioma: str = "es") -> dict:
-    doc = Document(path)
-    encabezados = [
-        limpiar(p.text) for s in doc.sections for p in s.header.paragraphs
-        if limpiar(p.text) and clave(p.text) not in {"ESPECIFICACION", "SPECIFICATION"}
-    ]
-    producto = encabezados[0] if encabezados else ""
-    if not producto:
-        candidatos = [
-            limpiar(p.text) for p in doc.paragraphs
-            if limpiar(p.text) and clave(p.text) not in {"ESPECIFICACION", "SPECIFICATION"}
-        ]
-        producto = candidatos[0] if candidatos else ""
-    if not producto:
-        raise ValueError("No se encontro el nombre del producto.")
-
-    tablas = []
-    for i, tabla in enumerate(doc.tables):
-        if tabla.rows:
-            enc = [clave(c.text) for c in tabla.rows[0].cells]
-            tablas.append((sum(x in COLUMNAS for x in enc), i, tabla, enc))
-    if not tablas:
-        raise ValueError("El documento no contiene tablas.")
-    puntos, indice, tabla, enc = max(tablas, key=lambda x: x[0])
-    if puntos < 3:
-        raise ValueError("No se encontro la tabla de pruebas.")
-    mapa = [COLUMNAS.get(x) for x in enc]
-    pruebas, notas = [], []
-    for fila_origen, fila in enumerate(tabla.rows[1:], 2):
-        valores = [limpiar(c.text) for c in fila.cells]
-        no_vacios = [v for v in valores if v]
-        if not no_vacios: continue
-        if len({clave(v) for v in no_vacios}) == 1 and re.search(r"\b(?:NOTA|NOTES?)\b", clave(no_vacios[0])):
-            notas.append(re.sub(r"^(?:Notas?|Notes?)\s*:\s*", "", no_vacios[0], flags=re.I)); continue
-        item = {"numero": len(pruebas) + 1, "fila_origen": fila_origen}
-        for j, valor in enumerate(valores):
-            if j < len(mapa) and mapa[j]: item[mapa[j]] = valor
-        for campo in ("prueba", "unidades", "metodo", "especificacion", "valor_tipico"):
-            item.setdefault(campo, "")
-        pruebas.append(item)
-
-    control, mejor, puntos_mejor = {}, None, 0
-    for i, candidata in enumerate(doc.tables):
-        if i == indice or len(candidata.columns) < 2: continue
-        puntos = sum(clave(r.cells[0].text) in CONTROL for r in candidata.rows)
-        if puntos > puntos_mejor: mejor, puntos_mejor = candidata, puntos
-    if mejor:
-        for fila in mejor.rows:
-            etiqueta = CONTROL.get(clave(fila.cells[0].text))
-            if etiqueta: control[etiqueta] = limpiar(fila.cells[1].text)
-
-    pie = " ".join(limpiar(p.text) for s in doc.sections for p in s.footer.paragraphs if limpiar(p.text))
-    return {"esquema": "especificacion_producto_es_v3", "producto": {"nombre": producto},
-            "documento": {"tipo": "ESPECIFICACION", "idioma": idioma, **metadatos_formato(path)},
-            "control_documental": control, "pruebas": pruebas, "notas": notas,
-            "datos_institucionales": {"pie_pagina": pie},
-            "estructura_detectada": {"numero_tablas": len(doc.tables), "tabla_pruebas_indice": indice,
-                                      "filas_pruebas": len(pruebas),
-                                      "encabezados": [limpiar(c.text) for c in tabla.rows[0].cells]}}
+def extraer(path: Path, idioma: str = "es", *, catalogo=None) -> dict:
+    from lectura_estructuras_word import extraer as leer_estructura
+    datos = leer_estructura(_partes_word(path), COLUMNAS, CONTROL, catalogo)
+    return {"esquema": "especificacion_producto_es_v3",
+            **datos,
+            "documento": {"tipo": "ESPECIFICACION", "idioma": idioma, **metadatos_formato(path)}}
 
 
 def validar_catalogo(
@@ -1351,6 +1406,16 @@ def procesar(
     al_progreso: Callable[[int, int, str], None] | None = None,
     json_generados: list[Path] | None = None,
 ) -> dict:
+    with sesion_word_compartida():
+        return _procesar(base, archivos_seleccionados, al_progreso, json_generados)
+
+
+def _procesar(
+    base: Path,
+    archivos_seleccionados: list[Path] | None = None,
+    al_progreso: Callable[[int, int, str], None] | None = None,
+    json_generados: list[Path] | None = None,
+) -> dict:
     from rutas_proyecto import resolver_ruta, ruta_portatil, rutas_configuradas
     base = resolver_ruta(base)
     _restablecer_error_inicio_word()
@@ -1383,20 +1448,26 @@ def procesar(
 
     salida.mkdir(parents=True, exist_ok=True)
     con = conectar(base / DB)
+    # La recuperación automática puede haber apartado copias incluidas en la lista inicial.
+    archivos = [(ruta, ingles) for ruta, ingles in archivos if ruta.is_file()]
+    total_archivos = len(archivos)
     ahora_inicio = datetime.now().isoformat(timespec="seconds")
     catalogo, hash_catalogo = obtener_catalogo(con, base / CATALOGO)
     ids_catalogo = {r["part_id_clave"] for r in catalogo if r["part_id_clave"]}
     registrar_catalogo(con, catalogo, hash_catalogo, ahora_inicio, base / CATALOGO)
     catalogo = CatalogoPreparado(catalogo)
-    huella_historial = f"{APP_VERSION}:{hash_catalogo}"
+    huella_historial = f"{VERSION_NORMALIZACION}:{hash_catalogo}"
     estado_historial = con.execute("SELECT valor FROM gestor_estado WHERE clave='historial_revisado'").fetchone()
     revisar_todo = estado_historial is None or estado_historial["valor"] != huella_historial
     resumen = {"nuevos": 0, "actualizados": 0, "ignorados": 0, "bloqueados": 0,
+               "pendientes_conversion": 0,
+               "reextraidos": 0, "ediciones_conservadas": 0, "pendientes_actualizacion": 0,
                "movidos_eng": 0,
                "movidos_revisar": 0, "conflictos": 0, "completados": 0,
                "yves_yoi_a_revisar": 0, "errores": 0, "revisiones_reordenadas": 0}
     productos_afectados = productos_historial_modificados(con, salida) if not revisar_todo else set()
     archivos_json_reindexados: list[int] = []
+    versiones_protegidas = set()
 
     def informar_progreso(indice: int, ruta: str) -> None:
         if al_progreso is not None:
@@ -1407,6 +1478,7 @@ def procesar(
         ahora = datetime.now(); fecha_iso = ahora.isoformat(timespec="seconds")
         digest = ""
         stat = None
+        refrescando = None
         print(f"PROCESANDO: {rel}", flush=True)
         try:
             bloqueo = archivo_bloqueado_word(origen)
@@ -1422,16 +1494,22 @@ def procesar(
             digest = sha256(origen)
             stat = origen.stat()
             registrado = con.execute(
-                """SELECT id FROM archivos
-                   WHERE hash_actual=? AND hash_catalogo=? AND estado='OK'
-                   ORDER BY id DESC LIMIT 1""",
-                (digest, hash_catalogo),
+                """SELECT a.id, a.producto_clave, v.id version_id, v.archivo_json,
+                          v.revision_json, v.fecha_creacion, v.version_lector, v.base_extraccion_json,
+                          v.hash_catalogo version_hash_catalogo
+                   FROM archivos a JOIN versiones v ON v.archivo_id=a.id AND v.hash_fuente=?
+                   WHERE a.hash_actual=? AND a.estado='OK'
+                   ORDER BY v.id DESC LIMIT 1""",
+                (digest, digest),
             ).fetchone()
-            if registrado:
+            if (registrado and registrado["version_lector"] == VERSION_LECTOR
+                    and registrado["version_hash_catalogo"] == hash_catalogo
+                    and (salida / registrado["archivo_json"]).is_file()):
                 resumen["ignorados"] += 1
                 print(f"IGNORADO (sin cambios): {rel}", flush=True)
                 informar_progreso(indice_archivo, rel)
                 continue
+            refrescando = registrado
             with tempfile.TemporaryDirectory(prefix="espec_") as td, lectura_word_compartida():
                 lectura, convertido = preparar(origen, Path(td))
                 menciones = menciones_yves_yoi(lectura)
@@ -1475,8 +1553,8 @@ def procesar(
                     informar_progreso(indice_archivo, rel)
                     continue
                 idioma = "en" if ya_esta_en_ingles or contiene_marcadores_ingles(lectura) else "es"
-                datos = extraer(lectura, idioma)
-            if idioma == "en" and not ya_esta_en_ingles:
+                datos = extraer(lectura, idioma, catalogo=catalogo)
+            if idioma == "en" and not ya_esta_en_ingles and refrescando is None:
                 destino_eng = destino_movimiento_sin_colision(entrada_eng / origen.name)
                 shutil.move(str(origen), str(destino_eng))
                 origen = destino_eng
@@ -1521,6 +1599,21 @@ def procesar(
             productos_afectados.add(pk)
             if anterior and anterior["producto_clave"]:
                 productos_afectados.add(anterior["producto_clave"])
+            if refrescando is not None:
+                from cache_extraccion import actualizar
+                productos_afectados.add(refrescando["producto_clave"])
+                datos.update(archivo_origen=rel, hash_sha256_origen=digest, hash_sha256_catalogo=hash_catalogo,
+                             formato_origen=origen.suffix[1:].lower(), conversion_temporal=convertido,
+                             extractor_version=APP_VERSION, version_lector=VERSION_LECTOR)
+                protegidos = actualizar(con, refrescando, salida, datos, VERSION_LECTOR, fecha_iso)
+                if protegidos:
+                    versiones_protegidas.add(refrescando["version_id"])
+                    resumen["ediciones_conservadas"] += 1
+                resumen["reextraidos"] += 1
+                archivos_json_reindexados.append(refrescando["id"])
+                print(f"ACTUALIZADA EXTRACCIÓN: {refrescando['archivo_json']}")
+                informar_progreso(indice_archivo, rel)
+                continue
             ultima = con.execute("SELECT MAX(revision_json) m FROM versiones WHERE producto_clave=?", (pk,)).fetchone()["m"]
             revision = 0 if ultima is None else ultima + 1
             rev_esp = datos["control_documental"].get("revision", "")
@@ -1538,7 +1631,7 @@ def procesar(
             datos.update(archivo_origen=rel, hash_sha256_origen=digest, hash_sha256_catalogo=hash_catalogo,
                          formato_origen=origen.suffix[1:].lower(), conversion_temporal=convertido,
                          revision_json=f"{revision:02d}", fecha_creacion_json=fecha_iso,
-                         archivo_json=archivo_json, extractor_version=APP_VERSION)
+                         archivo_json=archivo_json, extractor_version=APP_VERSION, version_lector=VERSION_LECTOR)
             destino.write_text(json.dumps(datos, ensure_ascii=False, indent=2), encoding="utf-8")
             cod_fmt = datos["documento"].get("codigo_formato", "")
             rev_fmt = datos["documento"].get("revision_formato", "")
@@ -1572,6 +1665,9 @@ def procesar(
                validacion["estado"], nombre if nombre_final != nombre else "",
                validacion.get("resolucion_nombre", ""), rev_esp, cod_fmt, rev_fmt, origen.suffix[1:].lower(),
                idioma.upper(), fecha_documento_iso, fecha_iso, archivo_json))
+            from cache_extraccion import base_extraida
+            con.execute("""UPDATE versiones SET version_lector=?, base_extraccion_json=? WHERE archivo_json=?""",
+                        (VERSION_LECTOR, json.dumps(base_extraida(datos), ensure_ascii=False), archivo_json))
             con.commit()
             archivos_json_reindexados.append(archivo_id)
             resumen["actualizados" if anterior else "nuevos"] += 1
@@ -1579,8 +1675,21 @@ def procesar(
             if prefijo == "&&& ": resumen["completados"] += 1
             print(f"GENERADO: {archivo_json} [{validacion['estado']}]")
             informar_progreso(indice_archivo, rel)
+        except ErrorConversionWord as exc:
+            con.rollback()
+            resumen["pendientes_conversion"] += 1
+            if resumen["pendientes_conversion"] == 1:
+                print(f"CONVERSIÓN PENDIENTE: {exc}. Los documentos se conservan para reintentar.",
+                      flush=True)
+            informar_progreso(indice_archivo, rel)
         except Exception as exc:
             con.rollback()
+            if refrescando is not None:
+                resumen["pendientes_actualizacion"] += 1
+                versiones_protegidas.add(refrescando["version_id"])
+                print(f"ACTUALIZACIÓN PENDIENTE: {rel}: {exc}. Se conserva la extracción anterior.")
+                informar_progreso(indice_archivo, rel)
+                continue
             ruta_original = rel
             try:
                 carpeta_revisar = base / REVISAR
@@ -1622,6 +1731,7 @@ def procesar(
             salida,
             catalogo,
             None if revisar_todo else productos_afectados,
+            versiones_protegidas=versiones_protegidas,
         )
         if resumen_revisiones["revisiones_historial_omitidas"] == 0:
             import generador_hii as hii

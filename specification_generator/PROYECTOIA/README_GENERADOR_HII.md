@@ -1,16 +1,17 @@
 # Generador HII
 
 `generador_hii.py` reúne la generación de Excel, el zoom, la trazabilidad, el
-registro SQLite y la caché del catálogo. El alineador, el editor y la recuperación
+índice de trabajo en memoria y la caché del catálogo. El alineador, el editor y la recuperación
 importan de ese archivo las funciones HII que necesitan.
 
 En el gestor, pulsa **GENERAR HII**. Busca por código, nombre, cliente o revisión
-y marca las casillas de las especificaciones alineadas. La lista se compacta
-automáticamente y muestra las seleccionadas; **Ampliar** permite agregar
-más. La barra espaciadora también marca o desmarca una fila.
+y marca las casillas de las especificaciones alineadas para agregarlas al lote.
+La lista permanece completa al marcar; **Ø** alterna manualmente entre todas
+las especificaciones y solo las marcadas. La barra espaciadora también marca
+o desmarca una fila. **Guardar seleccionadas (N)** indica el total del lote.
 
-Al pulsar una especificación marcada se muestra su resumen con tabla de pruebas
-y control documental. La vista previa del Excel inicia colapsada. Cada vista
+Al seleccionar cualquier fila se muestra su resumen con tabla de pruebas
+y control documental, sin cambiar las casillas del lote. La vista previa del Excel inicia colapsada. Cada vista
 conserva su encabezado con dos botones: **+** muestra solo esa vista y cambia
 a **−** para restaurar la disposición anterior; **∅** oculta o muestra su propia
 vista. Se pueden colapsar ambas. Al ocultar una vista se liberan sus widgets;
@@ -127,12 +128,12 @@ Se conserva la confirmación antes de reemplazar archivos existentes.
 Si falta una versión, se debe crear y guardar desde el editor de especificaciones
 y pulsar **Actualizar lista**. El generador no abre automáticamente una traducción
 al pulsar un idioma ausente. Los enlaces explícitos y la trazabilidad de cada
-archivo siguen guardándose en los JSON y en SQLite cuando está disponible.
+archivo se guardan en los JSON, con rutas relativas cuando están en la misma unidad.
 
-Las tablas `hii_especificaciones`, `hii_traducciones` y `hii_generadas` se crean
-de forma aditiva en `especificaciones.db`; conservan las relaciones y los archivos
-HII guardados. La vista `hii_versiones_idiomas` permite consultar cada HII junto
-a las HII guardadas de su traducción. No se modifican las tablas del extractor.
+HII utiliza un índice temporal en memoria que se descarta al terminar cada
+operación. Generar Excel o vincular traducciones no crea ni actualiza
+`especificaciones.db`. Las coincidencias automáticas se calculan al consultar;
+solo los vínculos confirmados se guardan en `versiones_idioma` de los JSON.
 
 ## Historial de HII en el JSON
 
@@ -179,9 +180,9 @@ guardado parcial, incluyendo el ID. Los dos archivos no forman una transacción
 única; editar el mismo JSON simultáneamente desde varios programas requiere
 coordinación externa.
 
-SQLite se actualiza después del JSON. Si ese registro falla, se avisa que Excel e
-historial se guardaron y que el índice quedó pendiente. La reconstrucción de la
-base recupera `hii_generadas` desde los JSON sin modificarlos: conserva la última
-generación por ruta en la tabla existente y avisa de Excel no localizados o
-registros incompletos. Los registros antiguos que solo existían en SQLite no se
-añaden retroactivamente a los JSON.
+La reconstrucción comprueba el historial desde los JSON sin modificarlos y
+avisa de Excel no localizados o registros incompletos. No duplica ese historial
+en tablas permanentes. La migración de bases anteriores guarda un respaldo y
+rescata los vínculos exclusivos de SQLite. Un registro antiguo de Excel que no
+tenga historial JSON se conserva como `hii_registros_heredados`, con archivo,
+idioma y fecha originales; no se inventan ID, huellas ni horas de generación.

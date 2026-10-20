@@ -1,0 +1,126 @@
+# Resumen del alineador de especificaciones
+
+**Versión documentada: 2.1.35** (`alinear_especificaciones_json.py`).
+Actualizado el 19 de octubre de 2026.
+
+Esta guía se abre por defecto en la pestaña **Instrucciones**. El selector de
+esa pestaña también permite consultar la guía del gestor y `README_INTERFAZ.md`.
+
+## Uso desde la aplicación portátil
+
+Ejecuta `AplicacionEspecificaciones_v4.exe` desde su carpeta completa, junto a
+`_internal`. No necesitas instalar Python. En **Configuración**, selecciona las
+carpetas de originales, JSON, resultados alineados, formatos y métodos.
+El maestro `METODOS_LAB_UNIFICADO.xlsx` debe estar en la carpeta de métodos elegida.
+Puedes trabajar con rutas relativas dentro de la carpeta portátil o seleccionar
+ubicaciones externas; estas últimas deben trasladarse también al cambiar de equipo.
+
+La distribución no incluye tus carpetas de datos, `CODIGOS_200.xlsx`, bases
+SQLite, archivos JSON, lanzadores BAT ni `.gitignore`. Los archivos de trabajo
+se generan o se incorporan al utilizar la aplicación. Para extraer Word con el
+gestor, proporciona el catálogo `CODIGOS_200.xlsx` junto al ejecutable.
+
+El alineador toma los JSON de origen seleccionados y genera o reemplaza sus
+versiones alineadas en `ESPECIFICACIONES_JSON_ALINEADAS`, conservando la ruta
+relativa de cada archivo. Usa la hoja `METODOS` del archivo maestro
+`METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx`.
+
+## Cómo encuentra coincidencias
+
+- Compara el nombre de cada prueba con los nombres del maestro en español e
+  inglés. Si el JSON declara idioma, usa también el método maestro de ese idioma.
+- Combina similitud de texto, orden y conjunto de palabras. Cuando existe un
+  método en el JSON, el puntaje pondera 68 % el nombre y 32 % el método; si no
+  existe, pondera 88 % el nombre y 12 % el método.
+- Las referencias ASTM se comparan por designación, ignorando diferencias de
+  espacios, guiones y edición/año. También reconoce métodos conjugados y ciertas
+  referencias de farmacopea (USP, FEUM y Ph. Eur.).
+- Un puntaje de 0.84 o más permite alinear automáticamente; entre 0.72 y 0.84
+  requiere revisión; por debajo de 0.72 se clasifica sin coincidencia.
+- Si la diferencia entre las dos mejores opciones es menor que 0.035, considera
+  ambigua la coincidencia cuando los métodos difieren o cuando el mismo nombre
+  tiene unidades distintas. Una coincidencia ambigua no se aplica
+  automáticamente.
+- Si una referencia ASTM del método de origen no aparece en el maestro, la
+  registra para revisión. Si el nombre del maestro no está disponible, tampoco
+  reemplaza automáticamente el nombre de la prueba.
+
+## Qué modifica y qué conserva
+
+- Para coincidencias automáticas, sustituye el nombre y método por sus formas
+  canónicas del maestro y usa las unidades correspondientes. Las unidades del
+  maestro separadas por comas son alternativas: conserva la unidad original si
+  coincide con cualquiera de ellas; si no coincide, propone solo la primera
+  unidad alternativa, nunca la lista completa.
+- Conserva los valores de especificación y típico, sin convertir unidades ni
+  redondear. Normaliza separadores decimales, agrupación de millares, ceros
+  iniciales, separación y símbolos comunes de unidades, operadores y notación
+  científica. Protege fechas, identificadores y referencias normativas.
+- Si un separador decimal puede confundirse con agrupación de millares, conserva
+  el valor original y marca la prueba como `REVISION_REQUERIDA`, indicando el
+  campo y el valor ambiguo en la auditoría.
+- Normaliza variantes de `MINIMO` y `MAXIMO` en mayúsculas a `MÍNIMO` y
+  `MÁXIMO`; preserva `min` en minúsculas para no confundirlo con minutos.
+- Normaliza términos frecuentes de especificación y valor típico, como
+  `TÍPICO/TYPICAL`, `PASA/PASS`, `REPORTAR/REPORT` y
+  `NEGATIVO/NEGATIVA/NEGATIVE`, con ortografía correcta y en mayúsculas.
+  Las variantes de género y número en español se estandarizan a `NEGATIVA`.
+  Evita que las unidades `m` o `M` alteren palabras con letras acentuadas.
+- No aplica automáticamente propuestas a coincidencias que requieren revisión
+  o no tienen coincidencia.
+- Normaliza espacios entre cantidades y unidades y el formato de números en
+  unidades, valores típicos y notas. Los separadores numéricos ambiguos se
+  conservan para evitar reinterpretarlos.
+- Prepara los controles de reanálisis, desarrollador y periodicidad para la
+  edición y generación de documentos. La periodicidad existente se conserva
+  cuando está declarada en la prueba.
+- Reconoce las notas estándar en español e inglés sobre la versión vigente del
+  método. Si vienen como una fila de la tabla, las retira de `pruebas` y las
+  agrega a `notas`; si están junto al contenido de una prueba, separa la nota
+  sin descartar la prueba. Evita duplicarlas cuando ya estaban en `notas`.
+- Guarda en cada JSON una auditoría con versión, fecha, resumen, propuestas,
+  puntajes, estado de cada prueba y referencias ASTM no encontradas. También
+  genera `REPORTE_ALINEACION.txt` con el resultado por archivo.
+
+Los resultados dudosos, sin coincidencia o con errores deben revisarse; el
+puntaje de similitud no sustituye la validación técnica de la especificación.
+
+## Rendimiento y ejecuciones incrementales
+
+El maestro se prepara una sola vez por lote: se reutilizan textos normalizados,
+referencias ASTM y partes de métodos. Las coincidencias repetidas se guardan en
+memoria por nombre, método e idioma; la caché se descarta al terminar el lote.
+Se conservan solo los dos mejores candidatos sin ordenar toda la lista y se
+respeta el orden original cuando hay empates.
+
+En la carpeta de salida se guarda `.cache_alineacion`, un índice auxiliar.
+Un archivo se omite únicamente si coinciden las huellas SHA-256 del origen,
+del maestro y del resultado, además de la versión del alineador y las rutas.
+Si cambia cualquiera, falta el resultado o no hay un índice válido, se procesa.
+La primera ejecución crea el índice; las posteriores pueden aprovecharlo.
+Los omitidos aparecen como `SIN CAMBIOS` y se cuentan por separado en el reporte.
+El índice no tiene extensión JSON para evitar que los selectores lo confundan
+con una especificación.
+
+Para forzar una realineación completa:
+
+```powershell
+.venv\Scripts\python.exe alinear_especificaciones_json.py --forzar
+```
+
+La API `ejecutar(..., forzar=True)` permite el mismo comportamiento.
+Las reglas de coincidencia y limpieza se mantienen; no se ejecutan archivos
+en paralelo. La comprobación incremental también admite origen y destino iguales.
+
+## Edición, idiomas e historial
+
+Al realinear conserva el historial HII existente y reajusta sus referencias si
+el JSON cambia de carpeta. Una traducción nueva tiene su propio historial.
+Los vínculos confirmados entre español e inglés permanecen en `versiones_idioma`,
+con rutas relativas al JSON; las coincidencias automáticas se calculan en memoria.
+El alineador no crea tablas HII ni duplica su catálogo en `especificaciones.db`.
+
+Las condiciones específicas de una prueba —temperatura, escala, secuencia,
+norma y unidades— participan en las comprobaciones. Las equivalencias confirmadas
+no autorizan a sustituir otras condiciones o normas. Las filas separadoras y
+las notas de formato se distinguen de las pruebas; los casos dudosos deben revisarse.

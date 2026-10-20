@@ -85,6 +85,8 @@ class ComparadorResaltadoTests(unittest.TestCase):
         c.paneles = paneles
         c.resaltado_activo = False
         c.boton_resaltar = Mock()
+        c.boton_diferencias = Mock()
+        c.ventana_diferencias = None
         c.estado_resaltado = Mock()
         return c
 
@@ -115,6 +117,17 @@ class ComparadorResaltadoTests(unittest.TestCase):
             c.alternar_resaltado()
             self.assertFalse(c.resaltado_activo)
             resaltador.return_value.establecer_cambios.assert_called_with({})
+
+    def test_delta_solo_aparece_con_dos_alineadas(self):
+        c = self.comparador([self.panel("50", True), self.panel("30", False)])
+        c.actualizar_resaltado()
+        c.boton_diferencias.pack_forget.assert_called_once()
+        c.paneles[1].vista["alineada"] = True
+        c.actualizar_resaltado()
+        c.boton_diferencias.pack.assert_called_once()
+        c.paneles[1].vista = None
+        c.actualizar_resaltado()
+        self.assertEqual(c.boton_diferencias.pack_forget.call_count, 2)
 
 
 if __name__ == "__main__":

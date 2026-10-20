@@ -1,0 +1,854 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ PRO AD MVI 505 A"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2023-12-20"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "INVESTIGACIÓN Y DESARROLLO",
+    "folio_apqp": "------",
+    "folio_vap": "------",
+    "codigo_unico_producto": "20300118",
+    "fecha": "20/12/2023",
+    "revision": "2023",
+    "nombre_cliente": "-----",
+    "revision_cliente": "NA",
+    "codigo_unico_producto_fuente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "DENSIDAD A 40 °C",
+      "unidades": "g/cm³",
+      "metodo": "ASTM D1298 / ASTM D7042",
+      "especificacion": "0,850 - 0,950",
+      "valor_tipico": "0,907",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "DENSIDAD A 15,6 °C",
+      "unidades": "g/cm³",
+      "metodo": "ASTM D1298 / ASTM D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "24,0",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "COLOR ASTM",
+      "unidades": "NA",
+      "metodo": "ASTM D1500",
+      "especificacion": "L 0,5 MÁXIMO",
+      "valor_tipico": "L 0,5",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "90,0 - 100,0",
+      "valor_tipico": "97,00",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "8,700",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "VISCOSIDAD SAYBOLT A 100 °F",
+      "unidades": "SUS",
+      "metodo": "ASTM D2161",
+      "especificacion": "450 - 550",
+      "valor_tipico": "510",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "VGC",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D-2501",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "0,845 8",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "PUNTO DE INFLAMACIÓN A 760 mmHg, COPA ABIERTA CLEVELAND",
+      "unidades": "°C",
+      "metodo": "ASTM D92",
+      "especificacion": "180 MÍNIMO",
+      "valor_tipico": "230",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 9,
+      "fila_origen": 10,
+      "prueba": "PUNTO DE FLUIDEZ",
+      "unidades": "°C",
+      "metodo": "ASTM D97",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "− 15",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 10,
+      "fila_origen": 11,
+      "prueba": "PUNTO DE ANILINA, MÉTODO E",
+      "unidades": "°C",
+      "metodo": "ASTM D611",
+      "especificacion": "80 MÍNIMO",
+      "valor_tipico": "93,5",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 11,
+      "fila_origen": 12,
+      "prueba": "INDICE DE REFRACCIÓN A 20 °C",
+      "unidades": "ADIMENSIONAL",
+      "metodo": "ASTM D-1747 / ASTM D-1218",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "1.4890",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 12,
+      "fila_origen": 13,
+      "prueba": "NÚMERO ÁCIDO / NÚMERO DE NEUTRALIZACIÓN",
+      "unidades": "mgKOH/g",
+      "metodo": "ASTM D974",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "< 0,02",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    }
+  ],
+  "notas": [],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: 01 449 235 2575, 01 449 235 2572, 01 55 10837051 y 01 55 36050464"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 12,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TIPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "NOMBRE_ANTIGUO_MAPEADO_CODIGO_200",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ PRO AD MVI 505 A",
+    "part_id_fuente": "",
+    "part_id_final": "20300118",
+    "coincidencias_nombre": 3,
+    "coincidencias_part_id": 0,
+    "coincidencias_contenido": [
+      {
+        "part_id": "80300165",
+        "descripcion": "SCHUTZ PRO AD MVI 505 A"
+      },
+      {
+        "part_id": "80300164",
+        "descripcion": "SCHUTZ PRO AD MVI 505 A"
+      },
+      {
+        "part_id": "20300118",
+        "descripcion": "SCHUTZ PRO AD MVI 505 A"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "20300118"
+    ],
+    "nombre_catalogo": "SCHUTZ PRO AD MVI 505 A",
+    "resolucion_nombre": "CODIGO_200_EN_CONTENIDO",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 3267,
+      "part_id": "20300118",
+      "descripcion": "SCHUTZ PRO AD MVI 505 A",
+      "part_id_clave": "20300118",
+      "descripcion_clave": "SCHUTZ PRO AD MVI 505 A"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/SCHUTZ PRO AD MVI 505 A.docx",
+  "hash_sha256_origen": "8b81bf12c0aa6a079b605c595ae740a2bbbe0db743292a011cdd30864d74e32e",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-16T12:24:57",
+  "archivo_json": "20300118 2023_16_10_26.JSON",
+  "extractor_version": "0.8.7",
+  "version_lector": "1",
+  "FECHA DE REANALISIS": "",
+  "Desarrollador": "",
+  "alineacion_metodos_lab": {
+    "version_programa": "2.1.10",
+    "fecha": "2026-10-19T21:54:21",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 10,
+      "revision": 1,
+      "sin_coincidencia": 1
+    },
+    "detalle": [
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 1,
+        "estado": "ALINEADO",
+        "nombre_original": "DENSIDAD A 60 °F",
+        "metodo_original": "ASTM D-1298 / ASTM D-7042",
+        "nombre_maestro_propuesto": "DENSIDAD A 40 °C",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "DENSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D1298 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D1298",
+        "metodo_maestro_propuesto": "ASTM D1298 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D1298",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "172",
+        "nombre_segunda_opcion": "DENSIDAD A 40 °C",
+        "metodo_segunda_opcion": "ASTM D7042",
+        "fila_segunda_opcion": "173",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "g/cm³",
+        "especificacion_original": "0.850 – 0.950",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "0.907",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "g/cm³ , g/ml , kg/L , kg/m³",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8865,
+        "puntaje_nombre": 0.8567,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DENSIDAD A 40 °C",
+          "unidades": "g/cm³",
+          "metodo": "ASTM D1298 / ASTM D7042",
+          "especificacion": "0,850 - 0,950",
+          "valor_tipico": "0,907"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "GRAVEDAD API A 60 °F",
+        "metodo_original": "ASTM D-1298 / ASTM D-7042",
+        "nombre_maestro_propuesto": "DENSIDAD A 15,6 °C",
+        "reglas_equivalencia": [
+          "UNIDAD DECLARADA: AD = g/cm³"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "DENSITY AT 15,6 °C",
+        "metodo_original_normalizado": "ASTM D1298 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D1298",
+        "metodo_maestro_propuesto": "ASTM D1298 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D1298",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "178",
+        "nombre_segunda_opcion": "DENSIDAD A 15,6 °C",
+        "metodo_segunda_opcion": "ASTM D7042",
+        "fila_segunda_opcion": "179",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "AD",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "24.0",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "g/cm³ , g/ml , kg/L , kg/m³",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5417,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DENSIDAD A 15,6 °C",
+          "unidades": "g/cm³",
+          "metodo": "ASTM D1298 / ASTM D7042",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "24,0"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 3,
+        "estado": "ALINEADO",
+        "nombre_original": "COLOR ASTM",
+        "metodo_original": "ASTM D-1500",
+        "nombre_maestro_propuesto": "COLOR ASTM",
+        "reglas_equivalencia": [
+          "UNIDAD DECLARADA: N/A = NA"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "ASTM COLOR",
+        "metodo_original_normalizado": "ASTM D1500",
+        "metodo_maestro_fuente": "ASTM D1500",
+        "metodo_maestro_propuesto": "ASTM D1500",
+        "referencias_astm_originales": [
+          "D1500"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1500"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "204",
+        "nombre_segunda_opcion": "COLOR ASTM",
+        "metodo_segunda_opcion": "ASTM D1500 / NMX-J-123-ANCE-2019 P 6,2",
+        "fila_segunda_opcion": "205",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "N/A",
+        "especificacion_original": "L 0.5 MAXIMO",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "L 0.5",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "NA",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR ASTM",
+          "unidades": "NA",
+          "metodo": "ASTM D1500",
+          "especificacion": "L 0,5 MÁXIMO",
+          "valor_tipico": "L 0,5"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 4,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "metodo_original": "ASTM D-445 / ASTM D-7042",
+        "nombre_maestro_propuesto": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "22",
+        "nombre_segunda_opcion": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "metodo_segunda_opcion": "ASTM D445",
+        "fila_segunda_opcion": "23",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "especificacion_original": "90.0 – 100.0",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "97.00",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.984,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 40 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445 / ASTM D7042",
+          "especificacion": "90,0 - 100,0",
+          "valor_tipico": "97,00"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 5,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 100 °C",
+        "metodo_original": "ASTM D-445 / ASTM D-7042",
+        "nombre_maestro_propuesto": "VISCOSIDAD CINEMÁTICA A 100 °C",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 100 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "25",
+        "nombre_segunda_opcion": "VISCOSIDAD CINEMÁTICA A 100 °C",
+        "metodo_segunda_opcion": "ASTM D445",
+        "fila_segunda_opcion": "26",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm2/s",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "8.700",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.984,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 100 °C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445 / ASTM D7042",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "8,700"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 6,
+        "estado": "ALINEADO",
+        "nombre_original": "VISCOSIDAD SAYBOLT A 100 °F",
+        "metodo_original": "ASTM D-2161",
+        "nombre_maestro_propuesto": "VISCOSIDAD SAYBOLT A 100 °F",
+        "reglas_equivalencia": [
+          "SAYBOLT ASTM D2161: equivalencia nominal de temperatura a 100 °F"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "SAYBOLT VISCOSITY AT 100 °F",
+        "metodo_original_normalizado": "ASTM D2161",
+        "metodo_maestro_fuente": "ASTM D2161",
+        "metodo_maestro_propuesto": "ASTM D2161",
+        "referencias_astm_originales": [
+          "D2161"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2161"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "4",
+        "nombre_segunda_opcion": "VISCOSIDAD SAYBOLT A 210 °F",
+        "metodo_segunda_opcion": "ASTM D2161",
+        "fila_segunda_opcion": "3",
+        "margen_puntaje": 0.0262,
+        "unidades_originales": "SUS",
+        "especificacion_original": "450 – 550",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "510",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "SUS",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD SAYBOLT A 100 °F",
+          "unidades": "SUS",
+          "metodo": "ASTM D2161",
+          "especificacion": "450 - 550",
+          "valor_tipico": "510"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 7,
+        "estado": "SIN_COINCIDENCIA",
+        "nombre_original": "VGC",
+        "metodo_original": "ASTM D-2501",
+        "nombre_maestro_propuesto": "CONSTANTE VISCOSIDAD-GRAVEDAD (VGC)",
+        "reglas_equivalencia": [
+          "UNIDAD DECLARADA: AD = ADIMENSIONAL"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "NOMBRE_SIN_EQUIVALENCIA",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "VISCOSITY-GRAVITY CONSTANT (VGC)",
+        "metodo_original_normalizado": "ASTM D2501",
+        "metodo_maestro_fuente": "ASTM D2501",
+        "metodo_maestro_propuesto": "ASTM D2501",
+        "referencias_astm_originales": [
+          "D2501"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D2501"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "191",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.4993,
+        "unidades_originales": "AD",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "0.8458",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "ADIMENSIONAL",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.4993,
+        "puntaje_nombre": 0.2636,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VGC",
+          "unidades": "ADIMENSIONAL",
+          "metodo": "ASTM D-2501",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "0,845 8"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE INFLAMACIÓN",
+        "metodo_original": "ASTM D-92",
+        "nombre_maestro_propuesto": "PUNTO DE INFLAMACIÓN A 760 mmHg, COPA ABIERTA CLEVELAND",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "FLASH POINT AT 760 mmHg, CLEVELAND OPEN CUP",
+        "metodo_original_normalizado": "ASTM D92",
+        "metodo_maestro_fuente": "ASTM D92",
+        "metodo_maestro_propuesto": "ASTM D92",
+        "referencias_astm_originales": [
+          "D92"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D92"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "54",
+        "nombre_segunda_opcion": "PUNTO DE INFLAMACIÓN A 101,3 kPa, COPA ABIERTA CLEVELAND",
+        "metodo_segunda_opcion": "ASTM D92",
+        "fila_segunda_opcion": "55",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "especificacion_original": "180 MINIMO",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "230",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "°C, °F",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.5865,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE INFLAMACIÓN A 760 mmHg, COPA ABIERTA CLEVELAND",
+          "unidades": "°C",
+          "metodo": "ASTM D92",
+          "especificacion": "180 MÍNIMO",
+          "valor_tipico": "230"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 9,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE ESCURRIMIENTO",
+        "metodo_original": "ASTM D-97",
+        "nombre_maestro_propuesto": "PUNTO DE FLUIDEZ",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "POUR POINT",
+        "metodo_original_normalizado": "ASTM D97",
+        "metodo_maestro_fuente": "ASTM D97",
+        "metodo_maestro_propuesto": "ASTM D97",
+        "referencias_astm_originales": [
+          "D97"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D97"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "65",
+        "nombre_segunda_opcion": "PUNTO DE FLUIDEZ SUPERIOR",
+        "metodo_segunda_opcion": "ASTM D97",
+        "fila_segunda_opcion": "63",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "°C",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "-15",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "°C, °F",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.84,
+        "puntaje_nombre": 0.6351,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE FLUIDEZ",
+          "unidades": "°C",
+          "metodo": "ASTM D97",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "− 15"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 10,
+        "estado": "ALINEADO",
+        "nombre_original": "PUNTO DE ANILINA",
+        "metodo_original": "ASTM D-611",
+        "nombre_maestro_propuesto": "PUNTO DE ANILINA, MÉTODO E",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "ANILINE POINT, METHOD E",
+        "metodo_original_normalizado": "ASTM D611",
+        "metodo_maestro_fuente": "ASTM D611",
+        "metodo_maestro_propuesto": "ASTM D611",
+        "referencias_astm_originales": [
+          "D611"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D611"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "67",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.8657,
+        "unidades_originales": "°C",
+        "especificacion_original": "80 MINIMO",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "93.5",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "°C, °F",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8657,
+        "puntaje_nombre": 0.8024,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "PUNTO DE ANILINA, MÉTODO E",
+          "unidades": "°C",
+          "metodo": "ASTM D611",
+          "especificacion": "80 MÍNIMO",
+          "valor_tipico": "93,5"
+        }
+      },
+      {
+        "metodo_no_encontrado": true,
+        "mensaje_metodo": "Método no encontrado en lista maestra: ASTM D-1747 / ASTM D-1218",
+        "numero_prueba": 11,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "INDICE DE REFRACCIÓN A 20 °C",
+        "metodo_original": "ASTM D-1747 / ASTM D-1218",
+        "nombre_maestro_propuesto": "",
+        "reglas_equivalencia": [
+          "UNIDAD DECLARADA: AD = ADIMENSIONAL"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "REFERENCIA_AUSENTE",
+        "referencias_no_encontradas": [
+          "ASTM D1747"
+        ],
+        "nombre_maestro_ingles_propuesto": "",
+        "metodo_original_normalizado": "ASTM D1747 / ASTM D1218",
+        "metodo_maestro_fuente": "",
+        "metodo_maestro_propuesto": "ASTM D1747 / ASTM D1218",
+        "referencias_astm_originales": [
+          "D1747",
+          "D1218"
+        ],
+        "referencias_astm_no_encontradas": [
+          "D1747"
+        ],
+        "mensaje_astm_no_encontradas": "Prueba 11 (INDICE DE REFRACCIÓN A 20 °C): Referencias no encontradas en la lista maestra: ASTM D1747.",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "AD",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "1.4890",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.0,
+        "puntaje_nombre": 0.0,
+        "puntaje_metodo": 0.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "INDICE DE REFRACCIÓN A 20 °C",
+          "metodo": "ASTM D-1747 / ASTM D-1218",
+          "unidades": "ADIMENSIONAL",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "1.4890"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 12,
+        "estado": "ALINEADO",
+        "nombre_original": "NÚMERO DE NEUTRALIZACIÓN",
+        "metodo_original": "ASTM D-974",
+        "nombre_maestro_propuesto": "NÚMERO ÁCIDO / NÚMERO DE NEUTRALIZACIÓN",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "ACID NUMBER / NEUTRALIZATION NUMBER",
+        "metodo_original_normalizado": "ASTM D974",
+        "metodo_maestro_fuente": "ASTM D974 / NMX-J-123-ANCE-2019 P 6,14",
+        "metodo_maestro_propuesto": "ASTM D974",
+        "referencias_astm_originales": [
+          "D974"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D974"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "90",
+        "nombre_segunda_opcion": "NÚMERO ÁCIDO",
+        "metodo_segunda_opcion": "ASTM D974",
+        "fila_segunda_opcion": "91",
+        "margen_puntaje": 0.0136,
+        "unidades_originales": "mg KOH/g",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "<0.02",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "mgKOH/g",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.8536,
+        "puntaje_nombre": 0.8082,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "NÚMERO ÁCIDO / NÚMERO DE NEUTRALIZACIÓN",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D974",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "< 0,02"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": [
+      "Prueba 11 (INDICE DE REFRACCIÓN A 20 °C): Referencias no encontradas en la lista maestra: ASTM D1747."
+    ],
+    "encabezados_omitidos": []
+  },
+  "hii_generadas": []
+}

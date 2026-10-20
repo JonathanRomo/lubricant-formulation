@@ -1,4 +1,36 @@
-# Gestor v0.8.4
+# Gestor v0.8.7
+
+Guía actualizada el 19 de octubre de 2026. Interfaz 1.1.4 y alineador 2.1.35.
+
+## Inicio portátil
+
+Extrae la distribución completa y ejecuta `AplicacionEspecificaciones_v4.exe`.
+Mantén la carpeta `_internal` junto al ejecutable; no necesitas instalar Python
+ni ejecutar un BAT. Selecciona tus carpetas en **Configuración** y proporciona
+`CODIGOS_200.xlsx` junto al ejecutable cuando necesites extraer documentos Word.
+Los formatos y las listas maestras se administran desde **Formatos** y **Métodos**.
+
+El paquete se distribuye sin carpetas de trabajo, catálogo `CODIGOS_200.xlsx`,
+bases SQLite ni sus diarios, archivos JSON, BAT o `.gitignore`. La configuración,
+las preferencias y la base se crean o recuperan durante el uso. Los temporales
+del programa se alojan en `TEMPORAL/sesion_*`, junto al ejecutable, y se limpian
+al terminar normalmente. Word y otras herramientas externas pueden crear sus
+propios temporales.
+
+En **Instrucciones**, la guía del alineador es la selección inicial; también
+puedes consultar este documento y `README_INTERFAZ.md`.
+
+## Datos que conserva la base
+
+`archivos` y `versiones` mantienen las extracciones y su historial necesario
+para detectar cambios y evitar reprocesar documentos. La caché de códigos
+conserva una sola edición del catálogo, no una copia completa por actualización.
+Los estados y firmas auxiliares del gestor evitan revisar JSON sin cambios.
+
+Los catálogos y relaciones HII se calculan en memoria. Los vínculos confirmados
+y el historial de Excel permanecen en los JSON. Las tablas antiguas `hii_*` y
+`recuperacion_documentos` se retiran con un respaldo previo, rescatando primero
+los registros que solo estaban en SQLite. La reconstrucción no vuelve a crearlas.
 
 ## Formatos Word compatibles
 
@@ -22,13 +54,84 @@ haya usado una plantilla visual en español.
 
 `CODIGOS_200.xlsx` también permanece estrictamente en modo de solo lectura. Toda la información derivada se almacena en `especificaciones.db`.
 
+Durante una carga se reutiliza una instancia propia de Word, iniciada solo si
+hay documentos que convertir. Un proceso supervisor mantiene el límite de
+tiempo por documento y reinicia el trabajador tras un error. La sesión se
+recicla cada 50 conversiones y se cierra al terminar la carga. Las instancias
+de Word que ya estaban abiertas quedan protegidas.
+
+## Actualización del lector y caché
+
+`VERSION_LECTOR` identifica las reglas de extracción, independientemente de
+`APP_VERSION` y de `VERSION_NORMALIZACION`. La caché comprueba la huella del
+Word, la del catálogo, la versión del lector y la existencia del JSON.
+
+Si el Word no cambió y hay que renovar la extracción, se actualizan el mismo
+JSON y registro de versión, conservando la revisión y la fecha de creación.
+Una mejora del lector o un cambio de catálogo no inventan otra revisión del
+producto. Un cambio real en los bytes del Word conserva el flujo de versiones
+documentales habitual.
+
+La base guarda una instantánea de los campos extraídos para distinguir los
+datos derivados de cambios manuales al actualizar. Los campos editados, listas
+de pruebas modificadas y campos adicionales del JSON se conservan. En JSON
+heredados sin esa instantánea, se aplica una regla conservadora: rellenar datos
+ausentes o vacíos y conservar los valores existentes. Las diferencias que no
+se pueden renovar con seguridad se muestran en el resumen de la carga.
+
+Si la relectura falla, se conservan el Word y la extracción anterior. Estas
+comprobaciones están en `tests/test_actualizacion_extraccion.py`; la sesión de
+Word se verifica en `tests/test_sesion_word.py`. La prueba con Office real se
+activa mediante `WORD_INTEGRATION=1` y usa únicamente documentos de solo lectura
+y conversiones temporales.
+
 ## Documentos para revisión manual
+
+Si Word o LibreOffice no pueden convertir un `.doc` o `.docm`, el documento
+permanece en su carpeta para reintentarlo en la siguiente carga. Estos fallos
+no crean entradas de error ni versiones por archivo en SQLite y no mueven los
+originales a `REVISAR`. El resumen de la carga muestra cuántos documentos
+quedaron pendientes de conversión. El inicio de Word se reintenta una sola
+vez; si vuelve a fallar, se evita reiniciarlo para cada archivo del lote.
+Los `.docx` continúan procesándose y los errores de estructura detectados
+después de la conversión siguen enviándose a revisión.
+
+Las comprobaciones de estos casos están en
+`tests/test_conversion_pendiente.py`, usan datos sintéticos y carpetas
+temporales, y no generan informes, inventarios ni muestras en la aplicación.
 
 Antes de extraer la especificación, el gestor busca las palabras completas
 `Yves` y `YOI` en el contenido Word, sin distinguir mayúsculas y minúsculas.
 Si encuentra alguna, mueve el documento a `REVISAR/`, registra
 `REVISAR_YVES_YOI` en la base de datos y continúa con los demás archivos sin
 generar un JSON para ese documento.
+
+## Lectura de formatos antiguos
+
+El extractor usa `lectura_estructuras_word.py` para reconocer los encabezados
+en cualquier fila y dentro de tablas anidadas. Busca el título también en
+celdas y cuadros de texto, y contrasta los candidatos con el catálogo. Admite
+etiquetas como `PRUEBAS`, `PREUBA`, `TEST DESCRIPTION`, `ASTM METHOD`,
+`TYPICAL RESULTS`, `Elaboró` y nombres de cliente con apóstrofes.
+
+Las notas fuera de las tablas, los símbolos de característica crítica y los
+subtítulos de análisis se conservan en `notas`. Las filas `NOTAS` y los códigos
+de producto incrustados no se cuentan como pruebas. La columna `TEST TYPE`,
+cuando existe, se conserva en el campo opcional `tipo_prueba` de cada prueba.
+Un texto como `15.86 TYPICAL` permanece literal en `especificacion`.
+
+El registro de calidad del pie identifica el código y la revisión del formato
+sin sustituir la fecha, revisión o código del producto. Los metadatos que estén
+únicamente en imágenes requieren el OCR opcional ya existente. Una plantilla
+vacía, una tabla sin encabezados o columnas `PRUEBA` duplicadas con contenidos
+distintos requieren revisión; no se adivina su significado.
+
+Las pruebas automáticas están en `tests/test_estructuras_word.py`. La utilidad
+`tests/validar_formatos_word_reales.py` convierte el corpus real en modo de solo
+lectura y compara versiones usando exclusivamente una carpeta temporal. Con
+`WORD_CORPUS_TEMP` apuntando a esa carpeta se pueden ejecutar también los tests
+optativos `tests/test_word_reales.py`. Estas herramientas no se ejecutan desde
+la aplicación ni actualizan su base de datos.
 
 ## Numeración cronológica de revisiones
 
@@ -94,33 +197,34 @@ prefijo `DUPLICADO` ya no se asigna automáticamente.
 ## Estructura
 
 ```text
-C:\Users\JonathanRomo\Music\PROYECTOIA\
-├── gestor_especificaciones.py
-├── requirements.txt
-├── CODIGOS_200.xlsx
-├── especificaciones.db
-├── ESPECIFICACIONES_VIEJAS\
-├── ESPECIFICACIONES_VIEJAS_ENG\
-└── ESPECIFICACIONES_JSON\
+AplicacionEspecificaciones_v4\
+├── AplicacionEspecificaciones_v4.exe
+├── _internal\
+├── RESUMEN_ALINEADOR_ESPECIFICACIONES.md
+├── README_ACTUALIZACION_CODIGOS_200.md
+├── README_INTERFAZ.md
+└── LEEME_PORTATIL.txt
 ```
+
+Este es el contenido inicial de la distribución. Añade tus recursos de trabajo
+cuando vayas a utilizarlos. Las rutas internas se guardan relativas a la carpeta
+del programa; si eliges recursos externos, copia esos recursos también al trasladarlo.
 
 ## Instalación y ejecución con Python 3.11
 
-En Linux, puedes ejecutar el lanzador desde cualquier carpeta. Siempre usa
-`.venv/bin/python` y crea el entorno e instala los requisitos si hacen falta:
-
-```bash
-/home/jonathan/Documents/lubricant-formulation/specification_generator/PROYECTOIA/EJECUTAR_GESTOR.sh
-```
-
-En VS Code, abre `PROYECTOIA` como carpeta (no solamente `Documents`) para que
-se apliquen los ajustes locales de `.vscode`.
-
-En Windows:
+Esta sección corresponde al código fuente; el ejecutable portátil ya incluye
+Python y sus bibliotecas. Desde la carpeta del proyecto, instala las dependencias
+en un entorno virtual y abre la interfaz:
 
 ```powershell
-cd "C:\Users\JonathanRomo\Music\PROYECTOIA"
-.\EJECUTAR_GESTOR.bat
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe interfaz_aplicacion_especificaciones.py
+```
+
+Para utilizar únicamente el gestor de consola desde el código fuente:
+
+```powershell
+.venv\Scripts\python.exe gestor_especificaciones.py
 ```
 
 Para consultar el registro:
@@ -175,33 +279,25 @@ sustituido por el canonico de la lista. Cada JSON incluye
 referencias ASTM y farmacopeicas detectadas, puntajes, alternativas y conteos;
 los casos no alineados se detallan en `REPORTE_ALINEACION.txt`.
 
-Para ejecutar consecutivamente la extraccion, alineacion y generacion de Word
-en Windows, coloca las plantillas `.doc`, `.docx` o `.docm` en `FORMATOS` y
-ejecuta:
+En la aplicación portátil, **SUBIR ESPEC** realiza la extracción y alineación
+de los documentos seleccionados. Después puedes revisar los resultados en
+**SELECCIONAR ESPEC** o generar documentos desde el editor y **GENERAR HII**.
+Coloca las plantillas en la carpeta configurada de formatos; los documentos
+generados se guardan en la ubicación que elijas.
+
+Desde el código fuente, para ejecutar una sola etapa:
 
 ```powershell
-.\EJECUTAR_PIPELINE_ESPECIFICACIONES.bat
+.venv\Scripts\python.exe gestor_especificaciones.py
+.venv\Scripts\python.exe alinear_especificaciones_json.py --base .
 ```
 
-El lanzador crea `.venv` con Python 3.11 si hace falta, instala
-`requirements.txt`, pasa al generador exclusivamente los JSON alineados y
-guarda los Word en `HISTORICO_ESPECIFICACIONES`. Si no existe `FORMATOS`, se
-detiene despues de dejar los JSON alineados. Para ejecutar solo una etapa,
-usa `EJECUTAR_GESTOR.bat` para extraer o
-`.venv\Scripts\python.exe alinear_especificaciones_json.py --base .` para
-alinear.
-
-Para ejecutar **únicamente la alineación** en Linux o WSL, usa
-`./EJECUTAR_ALINEACION_ESPECIFICACIONES.sh`. El script prepara `.venv` con
-Python 3.11 y las dependencias del alineador si hacen falta; no ejecuta la
-extracción ni genera documentos Word.
-
-En Windows, ejecuta `EJECUTAR_ALINEACION_ESPECIFICACIONES.bat` para realizar
-solo esta misma etapa.
+Estos comandos son alternativas de desarrollo y no se necesitan para abrir
+el ejecutable portátil. No se distribuyen lanzadores BAT ni scripts de pipeline.
 
 ## Aplicación gráfica
 
-En Windows, inicia `EJECUTAR_APLICACION_ESPECIFICACIONES.bat` para abrir el
+En Windows, inicia `AplicacionEspecificaciones_v4.exe` para abrir el
 menú principal. `SUBIR ESPEC` permite elegir varios archivos `.doc`, `.docm` y
 `.docx` y copiarlos a `ESPECIFICACIONES_VIEJAS`; los formatos no compatibles se
 omiten individualmente. La extracción y alineación se limitan a los documentos
@@ -220,7 +316,7 @@ pueden determinar sin ambigüedad. El formulario ofrece hasta cinco Part ID del
 catálogo y bloquea el guardado si el código no existe. También precarga las
 notas de la plantilla y «Investigación y desarrollo» (traducido al inglés
 cuando corresponde).
-La periodicidad es obligatoria por fila: se elige de uno a cuatro símbolos
+La periodicidad es obligatoria por fila: se elige de uno a tres símbolos
 distintos en desplegables separados; el JSON los concatena en un mismo valor
 (por ejemplo, `QIP`) y el encabezado abre su leyenda localizada.
 Ese campo se conserva en `PERIODIDICAD DE ANALISIS` dentro del JSON y no se
@@ -296,7 +392,7 @@ encabezados de la tabla y las etiquetas del control documental.
 
 ## Selector y vista previa
 
-Ejecuta `EJECUTAR_SELECTOR_ESPECIFICACIONES.bat` para abrir el selector visual.
+Pulsa **SELECCIONAR ESPEC** en el menú principal para abrir el selector visual.
 La pestaña `Anteriores · JSON extraídos` busca especificaciones extraídas desde
 los documentos fuente en `ESPECIFICACIONES_JSON`; `Nuevas · JSON alineados`
 busca la versión normalizada por la lista maestra en
@@ -351,6 +447,8 @@ El gestor sigue calculando SHA-256 del catálogo y de los Word para detectar
 cambios de contenido. Si el Excel coincide con una carga completa registrada,
 recupera sus registros de SQLite sin interpretar el libro otra vez. Si cambia
 o la caché está incompleta, lee el Excel. Nunca modifica el catálogo original.
+Al registrar una edición, descarta las copias anteriores de la caché; las huellas
+históricas de las extracciones permanecen en `archivos` y `versiones`.
 
 La validación prepara una vez por carga los índices por nombre y Part ID,
 respetando duplicados, prioridades y conflictos del catálogo. El texto OOXML
@@ -372,11 +470,11 @@ Se mantienen las conversiones Word, el OCR y los controles de bloqueo actuales.
 Los JSON pueden contener `versiones_idioma`, con listas `ESPANOL` o `INGLES`.
 Cada referencia incluye `archivo_json` (ruta relativa al JSON que la contiene),
 código, revisión y cliente de la contraparte. La relación se escribe en ambos
-archivos y también se conserva en `hii_especificaciones` y `hii_traducciones`.
+archivos. El índice HII se calcula en memoria y no se duplica en SQLite.
 
 Solo se infiere automáticamente cuando hay una única especificación por idioma
-con el mismo Part ID, revisión y cliente dentro de la carpeta. Si aparecen
-varias candidatas, se retira el enlace inferido. Las relaciones confirmadas
+con el mismo Part ID, revisión y cliente dentro de la carpeta. Estas coincidencias
+no se guardan como vínculos permanentes. Las relaciones confirmadas
 explícitamente en el generador HII se conservan, incluso con distinta revisión.
 Los archivos faltantes no se exportan como referencias.
 

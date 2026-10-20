@@ -19,7 +19,7 @@ ARCHIVO = BASE / "preferencias_interfaz.json"
 PREDETERMINADAS = {"apariencia": "Claro", "acento": "Azul", "escala": 1.0,
                   "densidad": "Cómoda", "fuente": "Segoe UI", "maximizar": False,
                   "control_compacto": False, "adaptacion_auto": True}
-ACENTOS = {"Azul": "#1765c1", "Petróleo": "#087f8c", "Índigo": "#6152c7", "Verde": "#16826a"}
+ACENTOS = {"Azul": "#1765c1", "Petróleo": "#087f8c", "Índigo": "#6152c7", "Verde": "#16826a", "Rosa": "#c9347c"}
 VENTANAS = weakref.WeakSet()
 
 
@@ -205,13 +205,15 @@ class VentanaAdaptable:
                                      height=widget._altura_fija if widget._altura_fija is not None else
                                      ((18 if PREFERENCIAS["densidad"] == "Compacta" else 20) if widget._boton_pequeno else
                                       (26 if PREFERENCIAS["densidad"] == "Compacta" else 30)))
+                    if widget._cuadrado:
+                        widget.configure(width=widget.cget("height"))
                 elif isinstance(widget, ctk.CTkOptionMenu):
                     widget.configure(fg_color=colores["acento"], button_color=colores["acento"])
                 elif isinstance(widget, ctk.CTkSlider):
                     widget.configure(button_color=colores["acento"], progress_color=colores["acento"])
                 elif isinstance(widget, ctk.CTkSwitch):
                     widget.configure(progress_color=colores["acento"])
-                if ajustar_fuentes and isinstance(widget, (ctk.CTkButton, ctk.CTkLabel, ctk.CTkEntry, ctk.CTkOptionMenu, ctk.CTkTextbox)):
+                if ajustar_fuentes and not getattr(widget, "_ui_preservar_fuentes", False) and isinstance(widget, (ctk.CTkButton, ctk.CTkLabel, ctk.CTkEntry, ctk.CTkOptionMenu, ctk.CTkTextbox)):
                     fuente = widget.cget("font")
                     if isinstance(fuente, ctk.CTkFont):
                         fuente.configure(family=PREFERENCIAS["fuente"], size=12 if abs(fuente.cget("size")) < 18 else fuente.cget("size"))
@@ -301,10 +303,11 @@ class Boton(ctk.CTkButton):
     """Botón CTk compatible con las llamadas existentes de ttk.Button."""
     def __init__(self, master=None, **kwargs):
         self._variante = kwargs.pop("variante", "principal")
+        self._cuadrado = kwargs.pop("cuadrado", False)
         self._fondo_control = kwargs.pop("fondo", None)
         ancho = kwargs.pop("width", None)
-        self._ancho_automatico = ancho is None
-        self._boton_pequeno = ancho is not None and ancho <= 4
+        self._ancho_automatico = ancho is None and not self._cuadrado
+        self._boton_pequeno = ancho is not None and ancho <= 4 and not self._cuadrado
         self._altura_fija = kwargs.get("height")
         kwargs.pop("style", None)
         kwargs.pop("padding", None)
@@ -313,6 +316,8 @@ class Boton(ctk.CTkButton):
         kwargs.setdefault("height", (18 if PREFERENCIAS["densidad"] == "Compacta" else 20) if self._boton_pequeno else
                           (26 if PREFERENCIAS["densidad"] == "Compacta" else 30))
         kwargs.setdefault("corner_radius", 6)
+        if self._cuadrado:
+            kwargs["width"] = kwargs["height"]
         kwargs.setdefault("bg_color", self._fondo_control or paleta()["fondo"])
         kwargs.setdefault("fg_color", paleta()["seleccion"] if self._variante == "secundario" else paleta()["acento"])
         kwargs.setdefault("hover_color", paleta()["borde"] if self._variante == "secundario" else "#10446f")

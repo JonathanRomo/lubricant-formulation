@@ -1,11 +1,12 @@
-REPORTE DE ALINEACION 2026-10-14T23:09:30
+REPORTE DE ALINEACION 2026-10-19T21:55:38
 ========================================================================
-OK | 20100005 00_11_10_26.JSON | alineados=9 revision=2 sin_coincidencia=10
+SIN CAMBIOS | 20300118 2023_16_10_26.JSON
+OK | 20300120 2024_16_10_26.JSON | alineados=12 revision=0 sin_coincidencia=0
 
 RESUMEN
 archivos: 1
-alineados: 9
-revision: 2
-sin_coincidencia: 10
+alineados: 12
+revision: 0
+sin_coincidencia: 0
 errores: 0
-omitidos: 0
+omitidos: 1

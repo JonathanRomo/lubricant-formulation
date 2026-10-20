@@ -1,0 +1,623 @@
+{
+  "esquema": "especificacion_producto_es_v3",
+  "producto": {
+    "nombre": "SCHUTZ VACCINE GRADE AE PLUS"
+  },
+  "documento": {
+    "tipo": "ESPECIFICACION",
+    "idioma": "es",
+    "fecha_documento_normalizada": "2026-08-07"
+  },
+  "control_documental": {
+    "elaboro_y_aprobo": "Investigación y Desarrollo",
+    "folio_apqp": "-",
+    "folio_vap": "-",
+    "codigo_unico_producto": "21200007",
+    "fecha": "07/08/2026",
+    "revision": "02",
+    "nombre_cliente": "",
+    "revision_cliente": ""
+  },
+  "pruebas": [
+    {
+      "numero": 1,
+      "fila_origen": 2,
+      "prueba": "APARIENCIA VISUAL",
+      "unidades": "NA",
+      "metodo": "ORGANOLÉPTICO",
+      "especificacion": "LÍQUIDO OLEOSO, TRASPARENTE Y LIGERAMENTE AMARILLO",
+      "valor_tipico": "LÍQUIDO OLEOSO, TRASPARENTE Y LIGERAMENTE AMARILLO",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 2,
+      "fila_origen": 3,
+      "prueba": "DENSIDAD A 20 °C",
+      "unidades": "g/cm³",
+      "metodo": "ASTM D1298 / ASTM D7042",
+      "especificacion": "0,800 - 0,890",
+      "valor_tipico": "0,839",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 3,
+      "fila_origen": 4,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 40 º C",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "8,500 - 15,500",
+      "valor_tipico": "11,060",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 4,
+      "fila_origen": 5,
+      "prueba": "VISCOSIDAD CINEMÁTICA A 100 ºC",
+      "unidades": "mm²/s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "2,985",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 5,
+      "fila_origen": 6,
+      "prueba": "VISCOSIDAD DINÁMICA A 40°C",
+      "unidades": "MPa*s",
+      "metodo": "ASTM D445 / ASTM D7042",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "9,142",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 6,
+      "fila_origen": 7,
+      "prueba": "COLOR ASTM",
+      "unidades": "NA",
+      "metodo": "ASTM D1500",
+      "especificacion": "1 MÁXIMO",
+      "valor_tipico": "L 0,5",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 7,
+      "fila_origen": 8,
+      "prueba": "ESPECTRO INFRARROJO",
+      "unidades": "NA",
+      "metodo": "ASTM E1252",
+      "especificacion": "IGUAL A STD DE REFERENCIA",
+      "valor_tipico": "IGUAL A STD DE REFERENCIA",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    },
+    {
+      "numero": 8,
+      "fila_origen": 9,
+      "prueba": "NÚMERO ÁCIDO",
+      "unidades": "mgKOH/g",
+      "metodo": "ASTM D974",
+      "especificacion": "REPORTAR",
+      "valor_tipico": "0,11",
+      "PERIODIDICAD DE ANALISIS": "▶"
+    }
+  ],
+  "notas": [
+    "La versión vigente del método aplicable corresponderá a la versión emitida proporcionada por el laboratorio."
+  ],
+  "datos_institucionales": {
+    "pie_pagina": "Planta: Km. 68.3 Carretera Ojuelos Aguascalientes, El Retoño, El Llano, Aguascalientes, México, C.P. 20337. Teléfonos: + 52 449 925 2400, + 52 449 264 9198"
+  },
+  "estructura_detectada": {
+    "numero_tablas": 2,
+    "tabla_pruebas_indice": 0,
+    "filas_pruebas": 9,
+    "encabezados": [
+      "PRUEBA",
+      "UNIDADES",
+      "MÉTODO",
+      "ESPECIFICACIÓN",
+      "VALORES TÍPICOS"
+    ]
+  },
+  "validacion_codigos_200": {
+    "estado": "COINCIDENCIA_EXACTA",
+    "prefijo_archivo": "",
+    "nombre_fuente": "SCHUTZ VACCINE GRADE AE PLUS",
+    "part_id_fuente": "21200007",
+    "part_id_final": "21200007",
+    "coincidencias_nombre": 7,
+    "coincidencias_part_id": 1,
+    "coincidencias_contenido": [
+      {
+        "part_id": "81200038",
+        "descripcion": "SCHUTZ VACCINE GRADE AE PLUS"
+      },
+      {
+        "part_id": "81200037",
+        "descripcion": "SCHUTZ VACCINE GRADE AE PLUS"
+      },
+      {
+        "part_id": "81200017",
+        "descripcion": "SCHUTZ VACCINE GRADE AE PLUS"
+      },
+      {
+        "part_id": "81200016",
+        "descripcion": "SCHUTZ VACCINE GRADE AE PLUS"
+      },
+      {
+        "part_id": "81200015",
+        "descripcion": "SCHUTZ VACCINE GRADE AE PLUS"
+      },
+      {
+        "part_id": "81200014",
+        "descripcion": "SCHUTZ VACCINE GRADE AE PLUS"
+      },
+      {
+        "part_id": "21200007",
+        "descripcion": "SCHUTZ VACCINE GRADE AE PLUS"
+      }
+    ],
+    "candidatos_codigo_200": [
+      "21200007"
+    ],
+    "nombre_catalogo": "SCHUTZ VACCINE GRADE AE PLUS",
+    "resolucion_nombre": "CODIGO_CATALOGO_EXISTENTE",
+    "registro_catalogo": {
+      "hoja": "Hoja1",
+      "fila_excel": 2691,
+      "part_id": "21200007",
+      "descripcion": "SCHUTZ VACCINE GRADE AE PLUS",
+      "part_id_clave": "21200007",
+      "descripcion_clave": "SCHUTZ VACCINE GRADE AE PLUS"
+    }
+  },
+  "archivo_origen": "ESPECIFICACIONES_VIEJAS/ESPECIFICACIÓN SCHUTZ VACCINE GRADE AE PLUS REV. 03.docx",
+  "hash_sha256_origen": "101dbae4f49845b10b39c2aa729a7d7434538dccccb287c3c6ff78c4fb598dc8",
+  "hash_sha256_catalogo": "85a367748b67b2b6a811a66353d886e6db15e11673a9a721ab361a99c4a45e26",
+  "formato_origen": "docx",
+  "conversion_temporal": false,
+  "revision_json": "00",
+  "fecha_creacion_json": "2026-10-16T12:18:15",
+  "archivo_json": "21200007 02_16_10_26.JSON",
+  "extractor_version": "0.8.7",
+  "version_lector": "1",
+  "FECHA DE REANALISIS": "",
+  "Desarrollador": "",
+  "alineacion_metodos_lab": {
+    "version_programa": "2.1.3",
+    "fecha": "2026-10-19T17:21:12",
+    "archivo_maestro": "METODOS_LAB/METODOS_LAB_UNIFICADO.xlsx",
+    "resumen": {
+      "alineados": 5,
+      "revision": 3,
+      "sin_coincidencia": 0
+    },
+    "detalle": [
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 1,
+        "estado": "ALINEADO",
+        "nombre_original": "APARIENCIA VISUAL",
+        "metodo_original": "ORGANOLÉPTICO",
+        "nombre_maestro_propuesto": "APARIENCIA VISUAL",
+        "reglas_equivalencia": [
+          "APARIENCIA / ASPECTO / ASPCTO, VISUAL = APARIENCIA VISUAL, ORGANOLÉPTICO",
+          "UNIDAD DECLARADA: N/A = NA"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "VISUAL APPEAREANCE",
+        "metodo_original_normalizado": "ORGANOLÉPTICO",
+        "metodo_maestro_fuente": "ORGANOLÉPTICO",
+        "metodo_maestro_propuesto": "ORGANOLÉPTICO",
+        "referencias_astm_originales": [],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "219",
+        "nombre_segunda_opcion": "TEXTURA",
+        "metodo_segunda_opcion": "ORGANOLÉPTICO",
+        "fila_segunda_opcion": "30",
+        "margen_puntaje": 0.51,
+        "unidades_originales": "N/A",
+        "especificacion_original": "LÍQUIDO OLEOSO, TRASPARENTE Y LIGERAMENTE AMARILLO",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "LÍQUIDO OLEOSO, TRASPARENTE Y LIGERAMENTE AMARILLO",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "NA",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "APARIENCIA VISUAL",
+          "unidades": "NA",
+          "metodo": "ORGANOLÉPTICO",
+          "especificacion": "LÍQUIDO OLEOSO, TRASPARENTE Y LIGERAMENTE AMARILLO",
+          "valor_tipico": "LÍQUIDO OLEOSO, TRASPARENTE Y LIGERAMENTE AMARILLO"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 2,
+        "estado": "ALINEADO",
+        "nombre_original": "DENSIDAD A 20 °C",
+        "metodo_original": "ASTM D1298 / ASTM D7042",
+        "nombre_maestro_propuesto": "DENSIDAD A 20 °C",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "DENSITY AT 20 °C",
+        "metodo_original_normalizado": "ASTM D1298 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D1298",
+        "metodo_maestro_propuesto": "ASTM D1298 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D1298",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1298"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "176",
+        "nombre_segunda_opcion": "DENSIDAD A 20 °C",
+        "metodo_segunda_opcion": "ASTM D7042",
+        "fila_segunda_opcion": "177",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "g/cm³",
+        "especificacion_original": "0,800 – 0,890",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "0,839",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "g/cm³ , g/ml , kg/L , kg/m³",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.994,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "DENSIDAD A 20 °C",
+          "unidades": "g/cm³",
+          "metodo": "ASTM D1298 / ASTM D7042",
+          "especificacion": "0,800 - 0,890",
+          "valor_tipico": "0,839"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 3,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 40 º C",
+        "metodo_original": "ASTM D445 / ASTM D7042",
+        "nombre_maestro_propuesto": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "22",
+        "nombre_segunda_opcion": "VISCOSIDAD CINEMÁTICA A 40 °C",
+        "metodo_segunda_opcion": "ASTM D445",
+        "fila_segunda_opcion": "23",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm²/s",
+        "especificacion_original": "8,500 – 15,500",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "11,060",
+        "observaciones_limpieza": [
+          "Separador numérico ambiguo en especificacion: 8,500, 15,500",
+          "Separador numérico ambiguo en valor_tipico: 11,060"
+        ],
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.994,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 40 º C",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445 / ASTM D7042",
+          "especificacion": "8,500 - 15,500",
+          "valor_tipico": "11,060"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 4,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD CINEMÁTICA A 100 ºC",
+        "metodo_original": "ASTM D445 / ASTM D7042",
+        "nombre_maestro_propuesto": "VISCOSIDAD CINEMÁTICA A 100 °C",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "KINEMATIC VISCOSITY AT 100 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445 / NMX-J-123-ANCE-2019 P 6,7",
+        "metodo_maestro_propuesto": "ASTM D445 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "25",
+        "nombre_segunda_opcion": "VISCOSIDAD CINEMÁTICA A 100 °C",
+        "metodo_segunda_opcion": "ASTM D445",
+        "fila_segunda_opcion": "26",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "mm²/s",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "2,985",
+        "observaciones_limpieza": [
+          "Separador numérico ambiguo en valor_tipico: 2,985"
+        ],
+        "unidades_maestras_propuestas": "mm²/s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.994,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD CINEMÁTICA A 100 ºC",
+          "unidades": "mm²/s",
+          "metodo": "ASTM D445 / ASTM D7042",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "2,985"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 5,
+        "estado": "REVISION_REQUERIDA",
+        "nombre_original": "VISCOSIDAD DINÁMICA A 40°C",
+        "metodo_original": "ASTM D445 / ASTM D7042",
+        "nombre_maestro_propuesto": "VISCOSIDAD DINÁMICA A 40 °C",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "DYNAMIC VISCOSITY AT 40 °C",
+        "metodo_original_normalizado": "ASTM D445 / ASTM D7042",
+        "metodo_maestro_fuente": "ASTM D445",
+        "metodo_maestro_propuesto": "ASTM D445 / ASTM D7042",
+        "referencias_astm_originales": [
+          "D445",
+          "D7042"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D445"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "12",
+        "nombre_segunda_opcion": "VISCOSIDAD DINÁMICA A 40 °C",
+        "metodo_segunda_opcion": "ASTM D7042",
+        "fila_segunda_opcion": "13",
+        "margen_puntaje": 0.0,
+        "unidades_originales": "MPa*s",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "9,142",
+        "observaciones_limpieza": [
+          "Separador numérico ambiguo en valor_tipico: 9,142"
+        ],
+        "unidades_maestras_propuestas": "mPa*s",
+        "idioma": "ESPANOL",
+        "puntaje_total": 0.994,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 0.95,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "VISCOSIDAD DINÁMICA A 40°C",
+          "unidades": "MPa*s",
+          "metodo": "ASTM D445 / ASTM D7042",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "9,142"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 6,
+        "estado": "ALINEADO",
+        "nombre_original": "COLOR ASTM",
+        "metodo_original": "ASTM D1500",
+        "nombre_maestro_propuesto": "COLOR ASTM",
+        "reglas_equivalencia": [
+          "UNIDAD DECLARADA: N/A = NA"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "ASTM COLOR",
+        "metodo_original_normalizado": "ASTM D1500",
+        "metodo_maestro_fuente": "ASTM D1500",
+        "metodo_maestro_propuesto": "ASTM D1500",
+        "referencias_astm_originales": [
+          "D1500"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D1500"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "204",
+        "nombre_segunda_opcion": "COLOR ASTM",
+        "metodo_segunda_opcion": "ASTM D1500 / NMX-J-123-ANCE-2019 P 6,2",
+        "fila_segunda_opcion": "205",
+        "margen_puntaje": 0.016,
+        "unidades_originales": "N/A",
+        "especificacion_original": "1 MÁXIMO",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "L 0,5",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "NA",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "COLOR ASTM",
+          "unidades": "NA",
+          "metodo": "ASTM D1500",
+          "especificacion": "1 MÁXIMO",
+          "valor_tipico": "L 0,5"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 7,
+        "estado": "ALINEADO",
+        "nombre_original": "ESPECTRO INFRARROJO",
+        "metodo_original": "ASTM E1252",
+        "nombre_maestro_propuesto": "ESPECTRO INFRARROJO",
+        "reglas_equivalencia": [
+          "ASTM E1252 = ESPECTRO INFRARROJO, sin depender del nombre",
+          "UNIDAD DECLARADA: N/A = NA"
+        ],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "INFRARED SPECTRUM",
+        "metodo_original_normalizado": "ASTM E1252",
+        "metodo_maestro_fuente": "ASTM E1252",
+        "metodo_maestro_propuesto": "ASTM E1252",
+        "referencias_astm_originales": [
+          "E1252"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "E1252"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "146",
+        "nombre_segunda_opcion": "",
+        "metodo_segunda_opcion": "",
+        "fila_segunda_opcion": "",
+        "margen_puntaje": 1.0,
+        "unidades_originales": "N/A",
+        "especificacion_original": "IGUAL A STD DE REFERENCIA",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "IGUAL A STD DE REFERENCIA",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "NA",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "ESPECTRO INFRARROJO",
+          "unidades": "NA",
+          "metodo": "ASTM E1252",
+          "especificacion": "IGUAL A STD DE REFERENCIA",
+          "valor_tipico": "IGUAL A STD DE REFERENCIA"
+        }
+      },
+      {
+        "metodo_no_encontrado": false,
+        "mensaje_metodo": "",
+        "numero_prueba": 8,
+        "estado": "ALINEADO",
+        "nombre_original": "NUMERO ÁCIDO",
+        "metodo_original": "ASTM D974",
+        "nombre_maestro_propuesto": "NÚMERO ÁCIDO",
+        "reglas_equivalencia": [],
+        "condiciones_incompatibles": false,
+        "mensaje_condiciones": "",
+        "tipo_pendiente": "",
+        "referencias_no_encontradas": [],
+        "nombre_maestro_ingles_propuesto": "ACID NUMBER",
+        "metodo_original_normalizado": "ASTM D974",
+        "metodo_maestro_fuente": "ASTM D974",
+        "metodo_maestro_propuesto": "ASTM D974",
+        "referencias_astm_originales": [
+          "D974"
+        ],
+        "referencias_astm_no_encontradas": [],
+        "mensaje_astm_no_encontradas": "",
+        "referencias_astm_maestras": [
+          "D974"
+        ],
+        "referencias_farmacopea_originales": [],
+        "referencias_farmacopea_maestras": [],
+        "fila_maestro": "91",
+        "nombre_segunda_opcion": "NÚMERO BÁSICO",
+        "metodo_segunda_opcion": "ASTM D974",
+        "fila_segunda_opcion": "88",
+        "margen_puntaje": 0.136,
+        "unidades_originales": "mgKOH/g",
+        "especificacion_original": "REPORTAR",
+        "regla_formato_numerico": "GENERAL",
+        "valor_tipico_original": "0,11",
+        "observaciones_limpieza": [],
+        "unidades_maestras_propuestas": "mgKOH/g",
+        "idioma": "ESPANOL",
+        "puntaje_total": 1.0,
+        "puntaje_nombre": 1.0,
+        "puntaje_metodo": 1.0,
+        "ambiguo": false,
+        "valores_alineados": {
+          "prueba": "NÚMERO ÁCIDO",
+          "unidades": "mgKOH/g",
+          "metodo": "ASTM D974",
+          "especificacion": "REPORTAR",
+          "valor_tipico": "0,11"
+        }
+      }
+    ],
+    "mensajes_astm_no_encontradas": [],
+    "encabezados_omitidos": []
+  },
+  "hii_generadas": []
+}

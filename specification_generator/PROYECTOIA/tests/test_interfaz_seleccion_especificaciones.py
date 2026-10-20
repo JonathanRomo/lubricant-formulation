@@ -7,6 +7,7 @@ from types import SimpleNamespace
 from pathlib import Path
 from unittest.mock import Mock, patch
 
+import interfaz_seleccion_especificaciones as modulo
 from interfaz_seleccion_especificaciones import (
     Especificacion,
     OrdenadorColumnasTreeview,
@@ -90,6 +91,119 @@ def json_especificacion(
 
 
 class SelectorEspecificacionesTests(unittest.TestCase):
+    def test_guardar_hii_se_habilita_por_checkbox_incluso_para_mas_de_diez(self):
+        especificaciones = tuple(Especificacion(Path(f"producto_{i}.json"), f"PRODUCTO {i}",
+                                               str(i), "Cliente", "01", "") for i in range(12))
+        panel = SimpleNamespace(catalogo=modulo.Catalogo(especificaciones, ()), documentos_marcados=set(),
+                                boton_comparar=Mock(), boton_realinear=None, boton_guardar_hii=Mock())
+        selector = SelectorEspecificaciones.__new__(SelectorEspecificaciones)
+        selector.paneles = {"nuevas": panel}
+        for cantidad in (0, 1, 12):
+            with self.subTest(cantidad=cantidad):
+                panel.documentos_marcados = {e.ruta for e in especificaciones[:cantidad]}
+                selector._actualizar_estado_accion("nuevas")
+                panel.boton_guardar_hii.configure.assert_called_with(state="normal" if cantidad else "disabled")
+        panel.boton_comparar.configure.assert_called_with(state="disabled")
+        panel.documentos_marcados = {Path("ya_no_existe.json")}
+        selector._actualizar_estado_accion("nuevas")
+        panel.boton_guardar_hii.configure.assert_called_with(state="disabled")
+
+    def test_guardar_hii_entrega_todas_las_marcas_y_no_la_fila_sin_marcar(self):
+        especificaciones = tuple(Especificacion(Path(f"producto_{i}.json"), f"PRODUCTO {i}",
+                                               str(i), "Cliente", "01", "") for i in range(3))
+        marcadas = {especificaciones[0].ruta, especificaciones[2].ruta}
+        selector = SelectorEspecificaciones.__new__(SelectorEspecificaciones)
+        selector.al_generar_hii = Mock()
+        selector.paneles = {"nuevas": SimpleNamespace(
+            catalogo=modulo.Catalogo(especificaciones, ()), documentos_marcados=marcadas.copy(),
+            sugerencias=[especificaciones[1]], especificacion_actual=especificaciones[1],
+        )}
+        selector._guardar_hii_seleccionadas("nuevas")
+        selector.al_generar_hii.assert_called_once_with((especificaciones[0].ruta, especificaciones[2].ruta))
+        self.assertEqual(selector.paneles["nuevas"].documentos_marcados, marcadas)
+        selector.al_generar_hii.reset_mock()
+        selector.paneles["nuevas"].documentos_marcados.clear()
+        selector._guardar_hii_seleccionadas("nuevas")
+        selector._guardar_hii_seleccionadas("anteriores")
+        selector.al_generar_hii.assert_not_called()
+
+    def test_selector_independiente_abre_hii_y_reutiliza_la_ventana(self):
+        especificacion = Especificacion(Path("producto.json"), "PRODUCTO", "20100001", "Cliente", "01", "")
+        selector = SelectorEspecificaciones.__new__(SelectorEspecificaciones)
+        selector.raiz = Mock()
+        selector.carpetas_json = {"nuevas": Path("mis_alineadas")}
+        selector.al_generar_hii = None
+        selector.paneles = {"nuevas": SimpleNamespace(catalogo=modulo.Catalogo((especificacion,), ()),
+                                                      documentos_marcados={especificacion.ruta})}
+        generador = Mock()
+        generador._cerrada = False
+        generador.ventana.state.return_value = "iconic"
+        with patch("generador_hii.GeneradorHII", return_value=generador) as crear:
+            selector._guardar_hii_seleccionadas("nuevas")
+            selector._guardar_hii_seleccionadas("nuevas")
+            crear.assert_called_once_with(selector.raiz, carpeta_json=Path("mis_alineadas"))
+        self.assertEqual(generador.seleccionar_json_guardados.call_count, 2)
+        generador.seleccionar_json_guardados.assert_called_with((especificacion.ruta,))
+        generador.ventana.deiconify.assert_called()
+
+    def test_delta_solo_aparece_con_original_y_a_la_derecha_del_boton(self):
+        actual = Especificacion(Path("alineada.json"), "PRODUCTO", "20100001", "Cliente", "01", "")
+        original = replace(actual, ruta=Path("original.json"))
+        panel = SimpleNamespace(especificacion_actual=actual, boton_contraparte=Mock(), boton_diferencias=Mock())
+        anteriores = SimpleNamespace(catalogo=SimpleNamespace(especificaciones=(original,)))
+        selector = SelectorEspecificaciones.__new__(SelectorEspecificaciones)
+        selector.paneles = {"nuevas": panel, "anteriores": anteriores}
+
+        selector._actualizar_boton_contraparte("nuevas")
+        panel.boton_contraparte.configure.assert_called_with(state="normal")
+        panel.boton_diferencias.pack.assert_called_once_with(
+            side="left", after=panel.boton_contraparte, padx=(6, 0))
+
+        for sin_original in (True, False):
+            anteriores.catalogo.especificaciones = () if sin_original else (original,)
+            panel.especificacion_actual = actual if sin_original else None
+            selector._actualizar_boton_contraparte("nuevas")
+            panel.boton_contraparte.configure.assert_called_with(state="disabled")
+        self.assertEqual(panel.boton_diferencias.pack_forget.call_count, 2)
+
+    def test_delta_compara_original_con_instantanea_alineada_y_copia_resumen(self):
+        with tempfile.TemporaryDirectory() as carpeta:
+            base = Path(carpeta)
+            antes = json_especificacion()
+            despues = json_especificacion()
+            despues["alineacion_metodos_lab"] = {"detalle": [{"valores_alineados": {
+                **despues["pruebas"][0], "especificacion": "20 MIN"}},
+                {"valores_alineados": despues["pruebas"][1]}]}
+            origen, destino = base / "original.json", base / "alineada.json"
+            for ruta, datos in ((origen, antes), (destino, despues)):
+                ruta.write_text(json.dumps(datos), encoding="utf-8")
+            originales = {ruta: ruta.read_bytes() for ruta in (origen, destino)}
+            actual = Especificacion(destino, "Aceite Hidráulico", "20100001", "Cliente de Prueba", "00", "")
+            original = replace(actual, ruta=origen)
+            selector = SelectorEspecificaciones.__new__(SelectorEspecificaciones)
+            selector.raiz = Mock()
+            selector.paneles = {
+                "nuevas": SimpleNamespace(especificacion_actual=actual),
+                "anteriores": SimpleNamespace(catalogo=SimpleNamespace(especificaciones=(original,))),
+            }
+            with patch.object(modulo.ui, "Ventana") as ventana, patch.multiple(
+                modulo.ttk, Frame=Mock(), Label=Mock(), Button=Mock()
+            ), patch.object(modulo, "ScrolledText") as texto, patch.object(
+                modulo, "cargar_maestro", return_value=()
+            ), patch.object(modulo, "messagebox") as mensajes:
+                selector._mostrar_diferencias_original("nuevas")
+                mensajes.showerror.assert_not_called()
+                resumen = texto.return_value.insert.call_args.args[1]
+                self.assertIn("«10 MIN» a «20 MIN»", resumen)
+                self.assertIn("Origen: Original · original.json", resumen)
+                self.assertIn("Destino: Alineada · alineada.json", resumen)
+                self.assertIn("Hash JSON origen (SHA-256, contenido):", resumen)
+                self.assertIn("Hash JSON destino (SHA-256, contenido):", resumen)
+                texto.return_value.configure.assert_called_once_with(state="disabled")
+                modulo.ttk.Button.call_args.kwargs["command"]()
+                ventana.return_value.clipboard_append.assert_called_once_with(resumen)
+            self.assertEqual(originales, {ruta: ruta.read_bytes() for ruta in originales})
+
     def test_parejas_idioma_exige_relacion_vigente_y_revision_igual(self):
         es = Especificacion(Path("es.json"), "Producto", "P1", "Cliente", "01", "",
                             version_alineador=VERSION_ALINEADOR,
@@ -370,6 +484,12 @@ class SelectorEspecificacionesTests(unittest.TestCase):
         )
         lista = SimpleNamespace(
             nearest=Mock(return_value=0),
+            get=Mock(return_value="\u2610  Producto"),
+            itemcget=Mock(return_value="blue"),
+            curselection=Mock(return_value=(0,)),
+            delete=Mock(),
+            insert=Mock(),
+            itemconfigure=Mock(),
             yview=Mock(return_value=(0.0, 1.0)),
             yview_moveto=Mock(),
             selection_set=Mock(),
@@ -407,6 +527,12 @@ class SelectorEspecificacionesTests(unittest.TestCase):
         )
         lista = SimpleNamespace(
             nearest=Mock(return_value=0),
+            get=Mock(return_value="\u2610  Producto"),
+            itemcget=Mock(return_value="blue"),
+            curselection=Mock(return_value=(0,)),
+            delete=Mock(),
+            insert=Mock(),
+            itemconfigure=Mock(),
             yview=Mock(return_value=(0.0, 1.0)),
             yview_moveto=Mock(),
             selection_set=Mock(),
@@ -603,7 +729,8 @@ class SelectorEspecificacionesTests(unittest.TestCase):
 
             self.assertEqual(previa.idioma, "INGLES")
             self.assertEqual(previa.nombre_producto, "Hydraulic Oil")
-            self.assertIn(("Revision", "01"), previa.control)
+            self.assertIn(("Revision", "00"), previa.control)
+            self.assertIn(("Date", "01-01-24"), previa.control)
             self.assertEqual(previa.pruebas[0]["prueba"], "Kinematic viscosity")
             self.assertEqual(
                 encabezados_tabla(previa.idioma),
@@ -701,7 +828,8 @@ class SelectorEspecificacionesTests(unittest.TestCase):
             self.assertEqual(previa_anterior.pruebas[0]["metodo"], "D130")
             self.assertEqual(previa_anterior.pruebas[0]["especificacion"], "50-70")
             self.assertEqual(previa_anterior.pruebas[0]["valor_tipico"], "5.0mL")
-            self.assertIn(("Revisión", "01"), previa_anterior.control)
+            self.assertIn(("Revisión", "00"), previa_anterior.control)
+            self.assertIn(("Fecha", "01-01-24"), previa_anterior.control)
             self.assertEqual(
                 previa_nueva.pruebas[0]["prueba"],
                 "NOMBRE PROPUESTO DESDE DETALLE",
@@ -761,7 +889,7 @@ class SelectorEspecificacionesTests(unittest.TestCase):
 
             self.assertEqual(previa.mensajes_astm_no_encontradas, (mensaje,))
 
-    def test_vista_previa_aplica_reglas_del_generador_sin_modificar_json(self):
+    def test_vista_previa_conserva_control_original_y_separa_notas_sin_modificar_json(self):
         with tempfile.TemporaryDirectory() as temporal:
             ruta = Path(temporal) / "producto.json"
             original = json_especificacion()
@@ -771,8 +899,8 @@ class SelectorEspecificacionesTests(unittest.TestCase):
             despues = json.loads(ruta.read_text(encoding="utf-8"))
 
             self.assertEqual(previa.nombre_producto, "Aceite Hidráulico")
-            self.assertIn(("Revisión", "01"), previa.control)
-            self.assertTrue(any(etiqueta == "Fecha" for etiqueta, _ in previa.control))
+            self.assertIn(("Revisión", "00"), previa.control)
+            self.assertIn(("Fecha", "01-01-24"), previa.control)
             self.assertEqual(len(previa.pruebas), 1)
             self.assertEqual(
                 previa.notas,
@@ -781,6 +909,41 @@ class SelectorEspecificacionesTests(unittest.TestCase):
             self.assertEqual(previa.pie_pagina, "Dirección de prueba")
             self.assertEqual(despues["control_documental"]["revision"], "00")
             self.assertEqual(len(despues["pruebas"]), 2)
+
+    def test_vistas_sin_fecha_original_no_usan_fecha_de_generacion_ni_metadatos(self):
+        ausente = object()
+        with tempfile.TemporaryDirectory() as temporal:
+            ruta = Path(temporal) / "producto_19_10_26.json"
+            for idioma in ("es", "en"):
+                for fecha in (ausente, None, "", "   "):
+                    for preparar in (preparar_vista_previa, preparar_vista_previa_alineada):
+                        with self.subTest(idioma=idioma, fecha=fecha, vista=preparar.__name__):
+                            datos = json_especificacion(idioma=idioma)
+                            if fecha is ausente:
+                                del datos["control_documental"]["fecha"]
+                            else:
+                                datos["control_documental"]["fecha"] = fecha
+                            datos["fecha_creacion_json"] = "2026-10-19T10:00:00"
+                            datos["alineacion_metodos_lab"] = {
+                                "fecha": "2026-10-19T11:00:00",
+                                "detalle": [{"valores_alineados": p} for p in datos["pruebas"]],
+                            }
+                            ruta.write_text(json.dumps(datos, ensure_ascii=False), encoding="utf-8")
+                            original = ruta.read_bytes()
+                            with patch.object(modulo, "_referencias_maestras_astm", return_value=frozenset()):
+                                previa = preparar(ruta)
+                            self.assertFalse(any(etiqueta in ("Fecha", "Date") for etiqueta, _ in previa.control))
+                            self.assertIn(("Revision" if idioma == "en" else "Revisión", "00"), previa.control)
+                            self.assertEqual(ruta.read_bytes(), original)
+
+    def test_vista_anterior_no_modifica_los_datos_recibidos_en_memoria(self):
+        datos = json_especificacion()
+        datos["control_documental"].pop("fecha")
+        original = json.dumps(datos, ensure_ascii=False, sort_keys=True)
+        with patch.object(modulo, "_referencias_maestras_astm", return_value=frozenset()):
+            previa = preparar_vista_previa(Path("producto.json"), datos=datos)
+        self.assertFalse(any(etiqueta == "Fecha" for etiqueta, _ in previa.control))
+        self.assertEqual(json.dumps(datos, ensure_ascii=False, sort_keys=True), original)
 
     def test_vista_previa_muestra_especificacion_con_revision_no_numerica(self):
         with tempfile.TemporaryDirectory() as temporal:

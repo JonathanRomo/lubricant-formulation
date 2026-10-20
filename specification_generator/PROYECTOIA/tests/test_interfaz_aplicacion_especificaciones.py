@@ -88,6 +88,7 @@ class RevisionAutomaticaTests(unittest.TestCase):
                 editor = self.editor()
                 if nueva:
                     editor.datos_originales = None
+                    editor._contenido_para_revision.return_value = editor._contenido_inicial_revision
                 else:
                     editor._contenido_para_revision.return_value = editor._contenido_inicial_revision
                 self.assertTrue(editor._actualizar_revision_automatica())
@@ -108,9 +109,10 @@ class RevisionAutomaticaTests(unittest.TestCase):
 
 class DatosNuevaEspecificacionTests(unittest.TestCase):
     def test_reanalisis_guarda_meses_y_reabre_sin_duplicar_unidad(self):
-        for entrada in ("06", "06 meses", " 06 MESES "):
+        for entrada in ("06", "06 meses", " 06 MESES ", "06 months", " 06 MONTHS "):
             with self.subTest(entrada=entrada):
                 self.assertEqual(_valor_reanalisis_json(entrada), "06 meses")
+                self.assertEqual(_valor_reanalisis_json(entrada, "en"), "06 months")
                 self.assertEqual(_valor_reanalisis_editor(entrada), "06")
                 contenido = _datos_generador_desde_json({"FECHA DE REANALISIS": entrada})
                 self.assertEqual(contenido["fecha_reanalisis"], "06")
@@ -495,12 +497,12 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
         self.assertEqual(valores["nombre_cliente"], "-")
         self.assertEqual(valores["revision_cliente"], "-")
 
-    def test_periodicidad_requiere_de_uno_a_cuatro_simbolos_validos(self):
+    def test_periodicidad_requiere_de_uno_a_tres_simbolos_validos(self):
         self.assertEqual(_normalizar_periodicidad("◊, ▶ I", 1), "◊▶I")
         self.assertEqual(_normalizar_periodicidad("QIP", 1), "QIP")
         self.assertEqual(_normalizar_periodicidad("", 1), "▶")
         self.assertEqual(_normalizar_periodicidad("  ", 1), "▶")
-        for valor in ("◊ ▶ C I P", "X", "◊ ◊"):
+        for valor in ("◊ ▶ C I", "◊ ▶ C I P", "X", "◊ ◊"):
             with self.subTest(valor=valor), self.assertRaises(ValueError):
                 _normalizar_periodicidad(valor, 1)
         self.assertEqual(len(LEYENDA_PERIODICIDAD["es"]), 8)
@@ -668,7 +670,7 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
                 "prueba": "Viscosidad cinemática ¹",
                 "unidades": "mm²/s",
                 "metodo": "ASTM D445 ²",
-                "especificacion": "30 max",
+                "especificacion": "30 max ³",
                 "valor_tipico": "typical",
                 "periodicidad": "▶",
             }
@@ -680,10 +682,10 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
         self.assertEqual(alineadas[0]["prueba"], "Viscosidad cinemática ¹")
         self.assertEqual(alineadas[0]["metodo"], "ASTM D445 ²")
         self.assertEqual(alineadas[0]["unidades"], "mm²/s")
-        self.assertEqual(alineadas[0]["especificacion"], "30 MÁXIMO")
+        self.assertEqual(alineadas[0]["especificacion"], "30 MÁXIMO ³")
         self.assertEqual(alineadas[0]["valor_tipico"], "TYPICAL")
         self.assertEqual(alineadas[0]["periodicidad"], "▶")
-        self.assertEqual(pruebas[0]["especificacion"], "30 max")
+        self.assertEqual(pruebas[0]["especificacion"], "30 max ³")
 
     def test_alinear_generador_no_cuenta_filas_vacias_con_periodicidad(self):
         fila_vacia = {
@@ -706,6 +708,28 @@ class DatosNuevaEspecificacionTests(unittest.TestCase):
 
 
 class DocumentoAlineadoManualTests(unittest.TestCase):
+    def test_especificacion_comparte_numeracion_y_conserva_comentarios(self):
+        pruebas = [{"prueba": "Viscosidad", "metodo": "ASTM D445", "especificacion": "30 max"}]
+        notas = _agregar_comentario_a_celda(pruebas, "Nota base", 0, "especificacion", "30 max")
+        notas = notas.replace("¹ ", "¹ Nota de especificación")
+        notas = _actualizar_comentarios_celda(pruebas, notas, "metodo", 0)
+        notas = notas.replace("¹ ", "¹ Nota de método")
+        notas = _actualizar_comentarios_celda(pruebas, notas, "prueba", 0)
+        self.assertEqual(pruebas[0], {
+            "prueba": "Viscosidad ¹", "metodo": "ASTM D445 ²", "especificacion": "30 max ³",
+        })
+        self.assertEqual(notas, "Nota base\n¹ \n² Nota de método\n³ Nota de especificación")
+        notas_editadas = _guardar_celda_con_comentario(pruebas, notas, 0, "especificacion", "40 max ³")
+        self.assertEqual(notas_editadas, notas)
+        self.assertEqual(pruebas[0]["especificacion"], "40 max ³")
+        notas = _guardar_celda_con_comentario(pruebas, notas, 0, "metodo", "ASTM D445")
+        self.assertEqual(pruebas[0]["especificacion"], "40 max ²")
+        self.assertEqual(notas, "Nota base\n¹ \n² Nota de especificación")
+
+    def test_no_permite_comentarios_en_especificacion_vacia(self):
+        with self.assertRaisesRegex(ValueError, "Agrega primero una especificación"):
+            _actualizar_comentarios_celda([{"especificacion": ""}], "", "especificacion", 0)
+
     def test_comentarios_metodo_se_numeran_segun_orden_de_filas(self):
         pruebas = [
             {"metodo": "ASTM D445"},
