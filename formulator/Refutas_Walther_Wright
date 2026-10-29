@@ -1,0 +1,29 @@
+1. Refutas Equation (Viscosity Blend Index - VBI)
+This equation is widely used in the petroleum and lubricant industries to estimate the resulting kinematic viscosity of blending two or more oils.
+Formula to calculate the viscosity of the blend (V{blend}) in Excel:
+
+If your Excel sheet is set up as follows:
+  Cell A1: Viscosity of Oil 1 (V1).
+  Cell B1: Viscosity of Oil 2 (V2).
+  Cell C1: Mass fraction (or percentage expressed from 0 to 1) of Oil 1 (x1). 
+  (The fraction for Oil 2 is implicitly (1 - C1)).
+
+Paste this formula into the cell where you want the blend viscosity to appear:
+Excel=EXP(EXP((($C$1*(14.534*LN(LN(A1+0.8))+10.975)+(1-$C$1)*(14.534*LN(LN(B1+0.8))+10.975))-10.975)/14.534))-0.8
+
+
+2. Walther Equation (ASTM D341 Standard)This relates a fluid's kinematic viscosity to its absolute temperature and serves as the foundation for viscosity-temperature charts.
+
+Excel formulas:To calculate the Walther function ($W$) from a known viscosity:
+If the viscosity is in cell A1:Excel=LOG10(LOG10(A1 + 0.7))
+To solve and calculate Viscosity (v) at a given temperature:
+If you have constant $A$ in A1, constant $B$ in B1, and the temperature in degrees Celsius in C1:Excel=10^(10^(A1 - B1 * LOG10(C1 + 273.15))) - 0.7
+
+
+3. Wright Equation (MacCoull-Walther-Wright Function)
+An enhanced version of the Walther equation that includes an exponential correction term, 
+offering greater precision when working with low viscosities (v < 2 cSt) or across wide temperature ranges.Excel formula:
+If you have the kinematic viscosity (v) in cell A1, you can calculate its transformed Wright function like this:
+
+Excel=LOG10(LOG10(A1 + 0.7 + EXP(-1.47 - 1.84*A1 - 0.51*A1^2)))
+(Note: For viscosities above 2 cSt, the exponential term drops close to zero, behaving similarly to the classic Walther equation).
