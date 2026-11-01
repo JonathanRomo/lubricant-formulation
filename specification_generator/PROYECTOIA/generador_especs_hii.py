@@ -14,8 +14,11 @@ import unicodedata
 from datetime import date
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
+from rutas_proyecto import validar_archivo_office, ejecutable_conocido, ruta_contenida
 
 from docx import Document
+from docx.oxml.ns import qn
+from docx.shared import Pt
 from rutas_proyecto import BASE, resolver_ruta, rutas_configuradas
 
 
@@ -204,6 +207,7 @@ def _convertir_docm_temporal(origen: Path, destino: Path) -> None:
 
 
 def preparar_plantilla(path: Path, temporal: Path) -> Path:
+    validar_archivo_office(path)
     if path.suffix.lower() == ".docx":
         return path
     destino = temporal / f"{path.stem}.docx"
@@ -212,10 +216,10 @@ def preparar_plantilla(path: Path, temporal: Path) -> Path:
         return destino
 
     if path.suffix.lower() == ".doc":
-        ejecutable = shutil.which("soffice") or shutil.which("libreoffice")
+        ejecutable = ejecutable_conocido("soffice") or ejecutable_conocido("libreoffice")
         if ejecutable:
             proceso = subprocess.run(
-                [ejecutable, "--headless", "--convert-to", "docx", "--outdir", str(temporal), str(path)],
+                [ejecutable, "--headless", "--convert-to", "docx", "--outdir", str(temporal.resolve()), str(path.resolve())],
                 capture_output=True,
                 text=True,
                 timeout=120,
@@ -236,7 +240,13 @@ def _poner_texto(parrafo, texto: str) -> None:
         for corrida in corridas[1:]:
             corrida.text = ""
     else:
-        parrafo.add_run(texto)
+        corrida = parrafo.add_run(texto)
+        # Word guarda el formato de las celdas vacias en la marca de parrafo.
+        # add_run() no lo copia: sin esto el texto vuelve a la fuente de Normal.
+        propiedades = parrafo._p.pPr
+        formato = propiedades.find(qn("w:rPr")) if propiedades is not None else None
+        if formato is not None:
+            corrida._r.insert(0, copy.deepcopy(formato))
 
 
 def _buscar_tabla_pruebas(documento):
@@ -296,6 +306,11 @@ def _llenar_pruebas(tabla, mapeo: list[str | None], pruebas: list[dict]) -> None
                 continue
             valor = prueba.get(campo, "") if isinstance(prueba, dict) else ""
             _poner_texto(fila.cells[columna].paragraphs[0], "" if valor is None else str(valor))
+            # Unificar las celdas de datos: las plantillas contienen algunas
+            # corridas residuales de 9 puntos, aunque el formato es Helvetica 10.
+            for corrida in fila.cells[columna].paragraphs[0].runs:
+                corrida.font.name = "Helvetica"
+                corrida.font.size = Pt(10)
 
 
 def _normalizar_nota(texto: str) -> str:
@@ -400,34 +415,40 @@ def _llenar_control(tabla, control: dict) -> None:
         _poner_texto(fila.cells[1].paragraphs[0], "" if valor is None else str(valor))
 
 
-def _reemplazar_texto_parte(parte, buscar: str, reemplazo: str) -> bool:
+def _reemplazar_texto_parte(parte, buscar: str, reemplazo: str, *, parrafo_completo=False) -> bool:
     patron = re.compile(buscar, re.IGNORECASE)
+    encontrado = False
     for elemento in parte._element.xpath('.//*[local-name()="p"]'):
         nodos = elemento.xpath('.//*[local-name()="t"]')
         texto = "".join(nodo.text or "" for nodo in nodos)
         coincidencia = patron.search(texto)
         if not coincidencia:
             continue
-        texto_nuevo = texto[:coincidencia.start()] + reemplazo + texto[coincidencia.end():]
+        texto_nuevo = reemplazo if parrafo_completo else texto[:coincidencia.start()] + reemplazo + texto[coincidencia.end():]
         if nodos:
             nodos[0].text = texto_nuevo
             for nodo in nodos[1:]:
                 nodo.text = ""
             if texto_nuevo.startswith(" ") or texto_nuevo.endswith(" "):
                 nodos[0].set("{http://www.w3.org/XML/1998/namespace}space", "preserve")
-        return True
-    return False
+        encontrado = True
+    return encontrado
 
 
 def _poner_nombre_producto(documento, nombre: str) -> None:
     encontrado = False
+    procesadas = set()
     for seccion in documento.sections:
-        encontrado = _reemplazar_texto_parte(
-            seccion.header, r"ESPECIFICACI[ÓO]N\s+NOMBRE", f"ESPECIFICACIÓN {nombre}"
-        ) or encontrado
-        if not encontrado:
+        for encabezado in (seccion.header, seccion.first_page_header, seccion.even_page_header):
+            if encabezado.is_linked_to_previous:
+                continue
+            elemento = encabezado._element
+            if elemento in procesadas:
+                continue
+            procesadas.add(elemento)
             encontrado = _reemplazar_texto_parte(
-                seccion.header, r"\bNOMBRE\b", nombre
+                encabezado, r"\b(?:NOMBRE|PRODUCT\s+NAME|SPECIFICATION\s+NAME)\b", nombre,
+                parrafo_completo=True,
             ) or encontrado
     if not encontrado:
         raise ValueError("No se encontro el campo del nombre del producto en el encabezado de la plantilla.")
@@ -454,10 +475,10 @@ def _poner_pie_pagina(documento, texto: str) -> None:
 
 
 def _nombre_destino(carpeta: Path, nombre: str) -> Path:
-    destino = carpeta / f"{nombre}.docx"
+    destino = ruta_contenida(carpeta / f"{nombre}.docx", carpeta)
     indice = 1
     while destino.exists():
-        destino = carpeta / f"{nombre}_{indice:02d}.docx"
+        destino = ruta_contenida(carpeta / f"{nombre}_{indice:02d}.docx", carpeta)
         indice += 1
     return destino
 

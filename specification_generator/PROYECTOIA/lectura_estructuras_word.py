@@ -5,6 +5,7 @@ import re
 import unicodedata
 from xml.etree import ElementTree
 from zipfile import ZipFile
+from rutas_proyecto import validar_archivo_office
 
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 
@@ -34,6 +35,7 @@ def texto(elemento):
 
 
 def leer_partes(path):
+    validar_archivo_office(path)
     with ZipFile(path) as archivo:
         return {nombre: ElementTree.fromstring(archivo.read(nombre))
                 for nombre in archivo.namelist()

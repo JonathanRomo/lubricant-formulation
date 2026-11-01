@@ -12,7 +12,7 @@ import unicodedata
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from pathlib import Path
-from rutas_proyecto import resolver_ruta, carpeta_listas
+from rutas_proyecto import resolver_ruta, carpeta_listas, validar_archivo_office
 
 BASE = carpeta_listas()
 ARCHIVO_EXCEL = "TRADUCCIONES_ESPECIFICACIONES.xlsx"
@@ -34,21 +34,24 @@ class DiccionarioTraductor:
             # Las variantes comparten inglés; la primera define la inversa.
             mapas["en"].setdefault(clave(fila["en"]), fila["es"])
         self.mapas = mapas
-        self.patrones = {}
-        for idioma, mapa in mapas.items():
-            palabras = sorted(mapa, key=lambda p: (-len(p), p))
-            alternativas = [r"\s+".join(re.escape(parte) for parte in p.split()) for p in palabras]
-            self.patrones[idioma] = re.compile(r"(?<!\w)(?:" + "|".join(alternativas) + r")(?!\w)", re.I) if palabras else None
+        palabras = sorted(set(mapas["es"]) | set(mapas["en"]), key=lambda p: (-len(p), p))
+        alternativas = [r"\s+".join(re.escape(parte) for parte in p.split()) for p in palabras]
+        self.patron_bilingue = re.compile(r"(?<!\w)(?:" + "|".join(alternativas) + r")(?!\w)", re.I) if palabras else None
         self.traducir = lru_cache(maxsize=4096)(self._traducir)
 
     def _traducir(self, texto, origen, destino):
         if origen not in self.mapas or destino not in self.mapas:
             raise ValueError("El idioma debe ser es o en.")
-        if origen == destino or not texto.strip():
+        if not texto.strip():
             return texto, True
-        patron = self.patrones[origen]
+        # El documento puede contener celdas de ambos idiomas. Reconocer tambien
+        # el texto ya escrito en el destino evita retraducirlo o marcarlo como error.
+        fuente = origen if origen != destino else ("en" if destino == "es" else "es")
+        mapa = self.mapas[fuente]
+        patron = self.patron_bilingue
         # Una sola pasada sobre el original: ninguna traducción se retraduce.
-        salida = patron.sub(lambda m: self.mapas[origen][clave(m.group())], texto) if patron else texto
+        salida = patron.sub(lambda m: (m.group() if clave(m.group()) in self.mapas[destino]
+                                       else mapa[clave(m.group())]), texto) if patron else texto
         resto = patron.sub("", texto) if patron else texto
         resto = re.sub(r"\b(?:ASTM\s+[A-Z]\s*\d+(?:-\d+)?|INS-[A-Z0-9-]+|N/A|NA)\b", "", resto, flags=re.I)
         seguro = re.fullmatch(r"[\d\s.,+−\-–—/<>=≤≥±%():;°]*", resto) is not None
@@ -71,6 +74,7 @@ def validar_registros(registros):
 
 def leer_excel(contenido):
     from openpyxl import load_workbook
+    validar_archivo_office(contenido)
     libro = load_workbook(io.BytesIO(contenido), read_only=True, data_only=False)
     try:
         hoja = libro["Traducciones"]
@@ -172,7 +176,8 @@ class ServicioTraductor:
             anterior = ruta.read_bytes()
             if hashlib.sha256(anterior).hexdigest() != huella_inicial:
                 raise ValueError("El Excel cambió desde que abriste el editor. Cierra y vuelve a abrir la lista para incorporar esos cambios.")
-            libro = load_workbook(io.BytesIO(anterior))
+            validar_archivo_office(anterior)
+            libro = load_workbook(io.BytesIO(anterior), keep_links=False)
             try:
                 hoja = libro["Traducciones"]
                 if hoja.max_row > 1:

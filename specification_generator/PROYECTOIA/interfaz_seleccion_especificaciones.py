@@ -100,6 +100,7 @@ class Especificacion:
     versiones_idioma: tuple[Path, ...] = ()
     edicion_bilingue: bool = False
     en_progreso: bool = False
+    comentario: str = ""
 
     @property
     def etiqueta(self) -> str:
@@ -405,6 +406,7 @@ class PanelEspecificaciones:
     boton_contraparte: ttk.Button | None = None
     boton_diferencias: ttk.Button | None = None
     boton_idioma: ttk.Button | None = None
+    boton_comentario: ttk.Button | None = None
     boton_editar: ttk.Button | None = None
     boton_alinear: ttk.Button | None = None
     boton_realinear: ttk.Button | None = None
@@ -586,6 +588,7 @@ def cargar_catalogo(carpeta: Path, *, archivos: list[Path] | None = None) -> Cat
                         if isinstance(referencia, dict)
                         and isinstance(referencia.get("archivo_json"), str)
                     ) if isinstance(datos.get("versiones_idioma"), dict) else (),
+                    comentario=_texto(datos.get("comentario")).strip(),
                 )
             )
         except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
@@ -1114,6 +1117,14 @@ class SelectorEspecificaciones:
                 variante="secundario", command=self._cambiar_idioma,
                 state="disabled",
             )
+        boton_comentario = ttk.Button(
+            acciones_vista,
+            text="💬",
+            width=3,
+            height=28,
+            variante="secundario",
+            command=lambda c=clave: self._mostrar_comentario_especificacion(c),
+        )
         marco_previa = ttk.Frame(panel_previa)
         marco_previa.pack(fill="both", expand=True)
         ttk.Label(
@@ -1136,6 +1147,7 @@ class SelectorEspecificaciones:
             boton_contraparte=boton_contraparte,
             boton_diferencias=boton_diferencias,
             boton_idioma=boton_idioma,
+            boton_comentario=boton_comentario,
             boton_editar=boton_editar,
             boton_compactar=boton_compactar,
             boton_alinear=boton_alinear,
@@ -1412,6 +1424,7 @@ class SelectorEspecificaciones:
             self._mostrar_error(clave, str(exc))
             return
         firma = (firma_datos, panel.zoom_previa, self.zoom_aplicacion)
+        self._actualizar_boton_comentario(clave)
         if firma == panel.firma_vista:
             return
         self._actualizar_boton_idioma(clave)
@@ -1486,6 +1499,61 @@ class SelectorEspecificaciones:
         pareja = _parejas_panel(panel).get(actual.ruta) if actual else None
         if pareja is not None:
             self._mostrar_previa("nuevas", pareja)
+
+    def _actualizar_boton_comentario(self, clave: str) -> None:
+        panel = self.paneles[clave]
+        boton = panel.boton_comentario
+        actual = panel.especificacion_actual
+        if boton is None:
+            return
+        if actual is None or not actual.comentario.strip():
+            boton.pack_forget()
+        else:
+            boton.configure(state="normal")
+            boton.pack(side="left", padx=(8, 0))
+
+    def _mostrar_comentario_especificacion(self, clave: str) -> None:
+        panel = self.paneles[clave]
+        actual = panel.especificacion_actual
+        comentario = actual.comentario.strip() if actual is not None else ""
+        if not comentario:
+            self._actualizar_boton_comentario(clave)
+            return
+
+        ventana_anterior = getattr(self, "_ventana_comentario", None)
+        if ventana_anterior is not None and ventana_anterior.winfo_exists():
+            ventana_anterior.destroy()
+        ventana = self._ventana_comentario = ui.Ventana(self.raiz)
+        ventana.title("Comentario de la especificación")
+        ventana.geometry("560x320")
+        ventana.minsize(420, 240)
+        ventana.transient(self.raiz)
+        contenido = ttk.Frame(ventana, padding=14)
+        contenido.pack(fill="both", expand=True)
+        ttk.Label(
+            contenido,
+            text=actual.nombre_producto or actual.ruta.name,
+            font=("Segoe UI", 13, "bold"),
+            wraplength=520,
+        ).pack(anchor="w", pady=(0, 8))
+        texto = ScrolledText(contenido, wrap="word", font=("Segoe UI", 11), padx=8, pady=8)
+        texto.insert("1.0", comentario)
+        texto.configure(state="disabled")
+        texto.pack(fill="both", expand=True)
+        barra = ttk.Frame(contenido)
+        barra.pack(fill="x", pady=(10, 0))
+        estado = ttk.Label(barra, text="")
+        estado.pack(side="left")
+
+        def copiar():
+            ventana.clipboard_clear()
+            ventana.clipboard_append(comentario)
+            ventana.update_idletasks()
+            estado.configure(text="Comentario copiado al portapapeles.")
+
+        ttk.Button(barra, text="Cerrar", variante="secundario", command=ventana.destroy).pack(side="right")
+        ttk.Button(barra, text="Copiar", command=copiar).pack(side="right", padx=(0, 8))
+        ventana.bind("<Escape>", lambda _evento: ventana.destroy())
 
     def _actualizar_boton_contraparte(self, clave: str) -> None:
         panel = self.paneles[clave]
@@ -1658,6 +1726,7 @@ class SelectorEspecificaciones:
             panel.boton_compactar.configure(state="disabled")
         panel.especificacion_actual = None
         self._actualizar_boton_idioma(clave)
+        self._actualizar_boton_comentario(clave)
         self._actualizar_boton_contraparte(clave)
         panel.canvas_previa = None
         panel.tabla_pruebas = None

@@ -1,6 +1,6 @@
 # Gestor v0.8.7
 
-Guía actualizada el 19 de octubre de 2026. Interfaz 1.1.4 y alineador 2.1.35.
+Guía actualizada el 20 de octubre de 2026. Interfaz 1.1.4 y alineador 2.1.35.
 
 ## Inicio portátil
 
@@ -155,6 +155,23 @@ mantiene el original. El nombre del JSON también usa la revisión cronológica,
 no el marcador de guiones. Al ejecutar el gestor, se normalizan estos nombres,
 se reordena el historial ya guardado en `especificaciones.db` y se actualiza
 el campo `revision_json` de cada JSON.
+
+## Revisión al editar alineados
+
+La revisión al **editar** un alineado usa el historial de ese Part ID, no el
+año que declare el documento fuente. Una versión de origen `2023` propone
+`01`; ESP/ENG cuentan juntos solo con vínculo confirmado compatible y sin
+ambigüedad. Si existen `00`, `02` y `05`,
+continúa en `06`. Los años no se incrementan y `revision_json` no se usa para
+contar traducciones por separado. La revisión original se conserva en
+`control_documental.revision_fuente` cuando cambia. La confirmación de guardado
+explica el conteo y el consecutivo calculado. Esto es independiente de la
+numeración cronológica de extracciones descrita en la sección anterior.
+
+Repetir el número de revisión no convierte dos documentos en duplicados.
+El cálculo reutiliza la comparación del verificador de duplicados y cuenta
+por separado documentos con contenido diferente, aunque compartan número,
+año y fecha. No mueve ni elimina archivos al calcular la siguiente revisión.
 
 ## Resolución del nombre y del código de producto
 

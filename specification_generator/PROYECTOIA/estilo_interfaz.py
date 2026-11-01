@@ -96,6 +96,41 @@ def dimensiones_seguras(ancho, alto, pantalla_ancho, pantalla_alto, escala=1.0):
 
 
 class VentanaAdaptable:
+    def after(self, ms, func=None, *args):
+        # CTk restaura el foco despues de redibujar la barra de titulo. El
+        # control que tenia el foco puede haber desaparecido durante ese dibujo.
+        destino = getattr(func, "__self__", None)
+        if (isinstance(destino, tk.Misc)
+                and getattr(func, "__func__", None) in (tk.Misc.focus_set, tk.Misc.focus_force)):
+            pendientes = self.__dict__.setdefault("_focos_diferidos", set())
+            identificador = None
+
+            def enfocar_si_existe():
+                pendientes.discard(identificador)
+                try:
+                    existe = destino.winfo_exists()
+                except tk.TclError:
+                    return  # El interprete o la ventana ya se cerraron.
+                if existe:
+                    func(*args)
+
+            identificador = super().after(ms, enfocar_si_existe)
+            pendientes.add(identificador)
+            return identificador
+        return super().after(ms, func, *args)
+
+    def after_cancel(self, identificador):
+        self.__dict__.get("_focos_diferidos", set()).discard(identificador)
+        return super().after_cancel(identificador)
+
+    def destroy(self):
+        for identificador in tuple(self.__dict__.get("_focos_diferidos", ())):
+            try:
+                self.after_cancel(identificador)
+            except tk.TclError:
+                pass
+        return super().destroy()
+
     def _iniciar_estilo(self):
         VENTANAS.add(self)
         self._escala_tk_original = getattr(self._root(), "_escala_tk_original", float(self.tk.call("tk", "scaling")))

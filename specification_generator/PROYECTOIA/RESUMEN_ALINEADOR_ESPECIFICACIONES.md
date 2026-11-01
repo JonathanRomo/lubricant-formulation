@@ -1,7 +1,7 @@
 # Resumen del alineador de especificaciones
 
 **Versión documentada: 2.1.35** (`alinear_especificaciones_json.py`).
-Actualizado el 19 de octubre de 2026.
+Actualizado el 20 de octubre de 2026.
 
 Esta guía se abre por defecto en la pestaña **Instrucciones**. El selector de
 esa pestaña también permite consultar la guía del gestor y `README_INTERFAZ.md`.
@@ -113,6 +113,14 @@ Las reglas de coincidencia y limpieza se mantienen; no se ejecutan archivos
 en paralelo. La comprobación incremental también admite origen y destino iguales.
 
 ## Edición, idiomas e historial
+
+Una revisión de origen como `2023` se conserva al alinear. Al editar se propone
+el consecutivo del historial de ese Part ID. Las copias se identifican con el
+verificador de contenido y los idiomas solo se agrupan mediante un vínculo
+confirmado compatible y sin ambigüedad. Un número repetido con contenido
+diferente conserva versiones separadas. Los consecutivos existentes continúan sin
+retroceder (`00`, `02`, `05` → `06`). El guardado explica el cálculo y conserva
+la revisión de origen en `control_documental.revision_fuente` cuando cambia.
 
 Al realinear conserva el historial HII existente y reajusta sus referencias si
 el JSON cambia de carpeta. Una traducción nueva tiene su propio historial.

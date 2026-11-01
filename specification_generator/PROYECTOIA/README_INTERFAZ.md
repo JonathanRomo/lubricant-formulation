@@ -36,6 +36,14 @@ Se entrega sin carpetas de trabajo, `CODIGOS_200.xlsx`, bases SQLite y diarios,
 archivos JSON, BAT ni `.gitignore`. Incorpora tus recursos al utilizarla y
 configura sus ubicaciones. La base y las preferencias se generan durante el uso.
 
+## Conversión y consultas en segundo plano
+
+Al subir especificaciones, las consultas de procesos de Word y las utilidades
+de conversión y OCR se ejecutan sin consola visible en Windows. PowerShell
+trabaja en segundo plano para distinguir las instancias de Word preexistentes
+de la automatización del programa. Los errores siguen mostrándose en los avisos
+y detalles de la carga.
+
 ## Recuperación de la base
 
 Si falta `especificaciones.db`, la aplicación reconstruye su registro desde las
@@ -94,6 +102,32 @@ Para migrar y compactar manualmente:
 La compactación puede requerir cerrar los visores de SQLite que mantengan una
 transacción abierta. Los archivos `-wal` y `-shm` son diarios de SQLite en uso;
 no se eliminan manualmente.
+
+## Revisión al editar una especificación
+
+El documento de origen puede declarar una revisión como `2023`. Alinear el
+archivo conserva ese dato. Cuando se modifica en el editor, la revisión se
+calcula desde el historial terminado del mismo Part ID en los JSON alineados.
+Las copias confirmadas por el verificador de contenido cuentan una sola vez;
+los borradores se excluyen. Un mismo número, año o fecha no demuestra que dos
+archivos sean duplicados: las diferencias en pruebas, métodos, unidades,
+límites, notas o control documental conservan versiones independientes.
+Los años identifican versiones de origen y no se
+incrementan como si fueran consecutivos. Si ya existen revisiones `00`, `02`
+y `05`, la siguiente es `06`, aunque haya huecos en el historial.
+
+Si solo existe una versión de origen `2023`, al editar corresponde `01`.
+ESP y ENG solo se agrupan con un vínculo explícito compatible y sin ambigüedad;
+compartir revisión y fecha no basta. Tres documentos distintos mal etiquetados
+como `01` cuentan tres versiones y proponen `03`, sin reescribir sus números
+históricos. El año se conserva en `control_documental.revision_fuente`
+al guardar la revisión editada. `revision_json` es un ordinal del extractor y
+no se usa para contar idiomas como revisiones independientes.
+
+La confirmación de guardado muestra el Part ID, la revisión propuesta, la que
+se guardará y cómo se calculó. En una pareja ESP/ENG se incluye en la misma
+confirmación de ambos archivos. La edición manual de una revisión distinta
+mantiene su advertencia correspondiente.
 
 ## Revisión de duplicados
 
@@ -514,3 +548,22 @@ se vinculan a PERDIDA POR EVAPORACION DE GRASAS LUBRICANTES Y ACEITES.
 Por confirmacion del laboratorio, el nombre generico del maestro sustituye
 los detalles de tiempo y temperatura del titulo; el original queda auditado.
 No se extiende la equivalencia a otras normas como ASTM D5800.
+
+
+### Limpieza de temporales de la aplicación portátil
+
+Los temporales se guardan en `TEMPORAL/sesion_*` junto al ejecutable. Se eliminan al cerrar normalmente. Al iniciar, la aplicación también retira los restos de sesiones anteriores, incluidos los de cierres forzados. Cada instancia mantiene un bloqueo para proteger su carpeta mientras siga abierta; los archivos ocupados se reintentan en el siguiente inicio. La limpieza se limita a las carpetas de sesión y no sigue enlaces a otras ubicaciones. Antes de cambiar de versión, cierre todas las instancias anteriores, que no disponen de este bloqueo.
+
+### Equivalencias e idiomas mezclados en el editor
+
+La edición bilingüe está disponible al abrir tanto especificaciones alineadas como originales sin alinear. Cambiar de idioma no ejecuta el alineador ni modifica el archivo original: los cambios permanecen en los borradores hasta guardar.
+
+El editor reutiliza la coincidencia del alineador para los nombres y métodos de las pruebas. Solo acepta coincidencias alineadas y conserva las temperaturas de la prueba. Las unidades reconocidas se conservan sin convertir magnitudes; los alias adimensionales se expresan en el idioma seleccionado.
+
+Al abrir una especificación o cambiar de idioma, el borrador resuelve las equivalencias conocidas del maestro y del diccionario de traducciones, incluido el texto mezclado dentro de una celda. Por ejemplo, `88 MÁXIMO` se muestra como `88 MAXIMUM` en English. El texto ya escrito en el idioma correcto se reconoce sin retraducirlo. Las correcciones manuales y las confirmaciones se respetan; las diferencias numéricas entre versiones y los campos vaciados en un borrador siguen pendientes de revisión. Los archivos originales solo se modifican al guardar.
+
+### Comprobaciones de seguridad de documentos
+
+La carga comprueba el tamaño antes de interpretar documentos Office: hasta 128 MiB por archivo. En DOCX, DOCM, XLSX y XLSM se permiten hasta 4096 partes internas, 64 MiB por parte y 256 MiB de contenido expandido; también se rechazan paquetes cifrados, rutas internas inseguras, enlaces simbólicos y expansiones desproporcionadas. Si un documento excede estos límites, debe revisarse antes de incorporarlo.
+
+Las referencias de idioma se abren automáticamente solo dentro de la carpeta del documento o de las carpetas JSON configuradas. Las carpetas externas seleccionadas por el usuario siguen siendo válidas; una referencia incluida en un JSON no autoriza por sí sola a explorar cualquier ubicación. La automatización de Word desactiva macros y actualización de vínculos antes de abrir documentos. Los procesos auxiliares se buscan por rutas absolutas, evitando la carpeta de trabajo, los temporales y la distribución como ubicaciones de búsqueda. La búsqueda se reutiliza brevemente en memoria, sin crear registros adicionales.

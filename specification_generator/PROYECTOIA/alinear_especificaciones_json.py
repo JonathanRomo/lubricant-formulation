@@ -28,7 +28,7 @@ except ModuleNotFoundError as exc:
         ) from None
     raise
 
-VERSION = "2.1.35"
+VERSION = "2.2.0"
 PYTHON_REQUERIDO = (3, 11)
 ENTRADA = "ESPECIFICACIONES_JSON"
 SALIDA = "ESPECIFICACIONES_JSON_ALINEADAS"
@@ -902,6 +902,8 @@ def referencias_normativas(valor: Any) -> frozenset[str]:
 
 
 def cargar_maestro(path: Path) -> list[dict[str, str]]:
+    from rutas_proyecto import validar_archivo_office
+    validar_archivo_office(path)
     if not path.exists():
         raise FileNotFoundError(f"No se encontro la lista maestra: {path}")
     with pd.ExcelFile(path, engine="openpyxl") as libro:
@@ -1199,9 +1201,15 @@ def equivalencias_confirmadas(nombre, metodo):
         nombre_busqueda, metodo_busqueda = 'L\u00cdMITE DE COMPUESTOS DE AZUFRE', 'USP'
         reglas.append('AZUFRE CONFIRMADO: USP/FEUM = LIMITE DE COMPUESTOS DE AZUFRE, USP')
     nombre_inflamacion = re.sub(r',?\s*[\u00b0\u00ba]\s*C\s*$', '', limpiar_marca_acreditacion(nombre), flags=re.IGNORECASE)
-    if normalizar(nombre_inflamacion) in {'PUNTO DE INFLAMACION', 'FLASH POINT'} and refs == {'ASTM D92'}:
-        nombre_busqueda = 'PUNTO DE INFLAMACI\u00d3N A 101,3 kPa, COPA ABIERTA CLEVELAND'
-        reglas.append('PUNTO DE INFLAMACION, ASTM D92 = CLEVELAND A 101,3 kPa')
+    clave_inflamacion = normalizar(nombre_inflamacion)
+    if (refs == {'ASTM D92'} and re.match(
+            r'^(?:PUNTO DE INFLAMACION|FLASH POINT)(?:\b|$)', clave_inflamacion)):
+        if re.search(r'\b760\s*MMHG\b', clave_inflamacion):
+            nombre_busqueda = 'PUNTO DE INFLAMACI\u00d3N A 760 mmHg, COPA ABIERTA CLEVELAND'
+            reglas.append('PUNTO DE INFLAMACION, ASTM D92, 760 mmHg = CLEVELAND A 760 mmHg')
+        else:
+            nombre_busqueda = 'PUNTO DE INFLAMACI\u00d3N A 101,3 kPa, COPA ABIERTA CLEVELAND'
+            reglas.append('PUNTO DE INFLAMACION, ASTM D92 = CLEVELAND A 101,3 kPa')
     if (re.fullmatch(r'PUNTO\s*DE ANILINA(?: METODO E)?', n)
             and refs == {'ASTM D611'}
             and re.search(r'\b(?:METODO|METHOD) E\b', m)

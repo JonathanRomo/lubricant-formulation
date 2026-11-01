@@ -3,43 +3,64 @@
 venv/
 env/
 
-# Cache y archivos compilados de Python
+# Python: cachés, bytecode y herramientas de pruebas
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
 
-# Configuracion local y secretos
+# Configuración local y secretos
 .env
 .env.*
 !.env.example
+/configuracion_interfaz.json
 
-# Configuracion del editor
+# Editores y sistema operativo
 .vscode/
 .idea/
-
-# Archivos temporales del sistema
 .DS_Store
 Thumbs.db
+desktop.ini
+~$*
 
-# Carpetas con informacion confidencial o generada
-ESPECIFICACIONES_JSON/
-ESPECIFICACIONES_VIEJAS/
-ESPECIFICACIONES_VIEJAS_ENG/
-REVISAR/
-FORMATOS/
+# Compilaciones y entregables generados
+/build/
+/dist/
+*.exe
+*.msi
+*.zip
 
-# Base de datos local y archivos auxiliares de SQLite
+# Datos operativos y documentos internos
+/CODIGOS_200.xlsx
+/ESPECIFICACIONES_JSON/
+/ESPECIFICACIONES_JSON_ALINEADAS/
+/ESPECIFICACIONES_VIEJAS/
+/ESPECIFICACIONES_VIEJAS_ENG/
+/HISTORICO_ESPECIFICACIONES/
+/METODOS_LAB/
+/FORMATOS/
+/RESPALDOS_BASE_DATOS/
+/REVISAR/
+
+# Bases de datos locales y archivos auxiliares de SQLite
 *.db
 *.db-shm
 *.db-wal
 *.sqlite
 *.sqlite3
+*.recuperacion.lock
 
-# Archivos temporales
+# Cachés, reportes y temporales de ejecución
+.cache_alineacion
+.cache_catalogo_hii
+REPORTE_ALINEACION.txt
+/REPORTE_RECONSTRUCCION_BASE.json
+/tests/REPORTE_RECUPERACION_20_JSON.json
 *.tmp
 *.temp
 *.log
-.*.recuperacion.lock
-RESPALDOS_BASE_DATOS/
-REPORTE_RECONSTRUCCION_BASE.json
-.cache_catalogo_hii

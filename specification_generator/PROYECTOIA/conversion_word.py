@@ -36,6 +36,7 @@ def trabajador_word(ordenes, resultados):
         word.Visible = False
         word.DisplayAlerts = 0
         word.AutomationSecurity = 3
+        word.Options.UpdateLinksAtOpen = False
         resultados.put(("ready", None))
         inicio = False
         while True:

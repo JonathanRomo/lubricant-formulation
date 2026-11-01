@@ -25,6 +25,7 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Callable
 from zipfile import ZipFile
+from rutas_proyecto import validar_archivo_office, ejecutable_conocido, ruta_contenida
 from xml.etree import ElementTree
 
 from docx import Document
@@ -269,6 +270,7 @@ def leer_catalogo(path: Path, *, digest: str | None = None) -> tuple[list[dict],
     if not path.exists():
         raise FileNotFoundError(f"No se encontro el catalogo obligatorio: {path.name}")
     digest = digest or sha256(path)
+    validar_archivo_office(path)
     wb = load_workbook(path, read_only=True, data_only=True, keep_links=False)
     registros = []
     for ws in wb.worksheets:
@@ -456,6 +458,8 @@ def _convertir_word_com_worker(path: str, destino: str, resultados) -> None:
         word = win32com.client.DispatchEx("Word.Application")
         word.Visible = False
         word.DisplayAlerts = 0
+        word.AutomationSecurity = 3
+        word.Options.UpdateLinksAtOpen = False
         resultados.put(("stage", "abrir documento .doc"))
         documento = word.Documents.Open(
             path,
@@ -517,6 +521,16 @@ class ErrorConversionWord(RuntimeError):
     """Conversión pendiente; todavía no se ha podido validar el documento."""
 
 
+def _opciones_subproceso_oculto() -> dict:
+    """Las utilidades de fondo no necesitan una consola al abrirse desde la GUI."""
+    if sys.platform != "win32":
+        return {}
+    inicio = subprocess.STARTUPINFO()
+    inicio.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    inicio.wShowWindow = subprocess.SW_HIDE
+    return {"startupinfo": inicio, "creationflags": subprocess.CREATE_NO_WINDOW}
+
+
 def _procesos_word_automatizacion(*, todos: bool = False) -> set[int]:
     filtro = "" if todos else "-and $_.CommandLine -match '(?i)(/automation|-embedding)' "
     consulta = (
@@ -526,11 +540,12 @@ def _procesos_word_automatizacion(*, todos: bool = False) -> set[int]:
         "ConvertTo-Json -InputObject $p -Compress"
     )
     resultado = subprocess.run(
-        ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", consulta],
+        [ejecutable_conocido("powershell.exe"), "-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", consulta],
         capture_output=True,
         text=True,
         timeout=5,
         check=False,
+        **_opciones_subproceso_oculto(),
     )
     if resultado.returncode:
         raise RuntimeError(
@@ -690,14 +705,15 @@ def convertir_word_legacy(path: Path, tmp: Path) -> Path:
                     _restablecer_error_inicio_word()
                     continue
             break
-    exe = shutil.which("soffice") or shutil.which("libreoffice")
+    exe = ejecutable_conocido("soffice") or ejecutable_conocido("libreoffice")
     if exe:
         try:
             subprocess.run(
-                [exe, "--headless", "--convert-to", "docx", "--outdir", str(tmp), str(path)],
+                [exe, "--headless", "--convert-to", "docx", "--outdir", str(tmp.resolve()), str(path.resolve())],
                 capture_output=True,
                 timeout=TIEMPO_LIMITE_CONVERSION_WORD,
                 check=False,
+                **_opciones_subproceso_oculto(),
             )
         except subprocess.TimeoutExpired as exc:
             raise ErrorConversionWord(
@@ -717,6 +733,7 @@ def convertir_word_legacy(path: Path, tmp: Path) -> Path:
 
 
 def preparar(path: Path, tmp: Path) -> tuple[Path, bool]:
+    validar_archivo_office(path)
     extension = path.suffix.lower()
     if extension == ".docx":
         return path, False
@@ -732,6 +749,7 @@ def validar_documento_word(path: Path, tmp: Path) -> None:
         raise ValueError("el archivo esta vacio")
     lectura, _ = preparar(path, tmp)
     try:
+        validar_archivo_office(lectura)
         doc = Document(lectura)
     except Exception as exc:
         raise ValueError("el archivo no es un documento Word valido") from exc
@@ -751,6 +769,7 @@ def texto_ooxml(path: Path) -> str:
     if cache is not None and clave_cache in cache:
         return cache[clave_cache]
     partes = []
+    validar_archivo_office(path)
     with ZipFile(path) as z:
         for nombre in z.namelist():
             if nombre.startswith("word/") and nombre.endswith(".xml"):
@@ -778,16 +797,18 @@ def _partes_word(path: Path) -> dict:
 def metadatos_formato(path: Path) -> dict:
     from lectura_estructuras_word import metadatos_formato as leer_metadatos
     datos = leer_metadatos(_partes_word(path))
-    exe = shutil.which("tesseract")
+    exe = ejecutable_conocido("tesseract")
     if not exe:
         return datos
+    validar_archivo_office(path)
     with tempfile.TemporaryDirectory() as td, ZipFile(path) as z:
         for i, nombre in enumerate(n for n in z.namelist() if n.startswith("word/media/")):
             img = Path(td) / f"{i}{Path(nombre).suffix}"
             img.write_bytes(z.read(nombre))
             try:
                 r = subprocess.run([exe, str(img), "stdout", "-l", "spa+eng", "--psm", "6"],
-                                   capture_output=True, text=True, timeout=20, check=False)
+                                   capture_output=True, text=True, timeout=20, check=False,
+                                   **_opciones_subproceso_oculto())
             except Exception:
                 continue
             t = limpiar(r.stdout)
@@ -1519,7 +1540,7 @@ def _procesar(
                         base / REVISAR / origen.name
                     )
                     destino_revisar.parent.mkdir(exist_ok=True)
-                    shutil.move(str(origen), str(destino_revisar))
+                    shutil.move(str(origen), str(ruta_contenida(destino_revisar, destino_revisar.parent)))
                     origen = destino_revisar
                     rel = ruta_portatil(origen, base)
                     detalle = ", ".join(menciones)
@@ -1556,7 +1577,7 @@ def _procesar(
                 datos = extraer(lectura, idioma, catalogo=catalogo)
             if idioma == "en" and not ya_esta_en_ingles and refrescando is None:
                 destino_eng = destino_movimiento_sin_colision(entrada_eng / origen.name)
-                shutil.move(str(origen), str(destino_eng))
+                shutil.move(str(origen), str(ruta_contenida(destino_eng, destino_eng.parent)))
                 origen = destino_eng
                 rel = ruta_portatil(origen, base)
                 con.commit()
@@ -1696,7 +1717,7 @@ def _procesar(
                 carpeta_revisar.mkdir(exist_ok=True)
                 if origen.exists():
                     destino_revisar = destino_movimiento_sin_colision(carpeta_revisar / origen.name)
-                    shutil.move(str(origen), str(destino_revisar))
+                    shutil.move(str(origen), str(ruta_contenida(destino_revisar, destino_revisar.parent)))
                     origen = destino_revisar
                     rel = ruta_portatil(origen, base)
                     resumen["movidos_revisar"] += 1

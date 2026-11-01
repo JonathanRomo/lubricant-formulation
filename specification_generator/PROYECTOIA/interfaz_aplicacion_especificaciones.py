@@ -13,7 +13,7 @@ from traductor_especificaciones import (
     SERVICIO as SERVICIO_TRADUCTOR, actualizar_traductor,
     validar_registros as validar_registros_traducciones,
 )
-from rutas_proyecto import BASE, CARPETAS, resolver_ruta, ruta_portatil, rutas_configuradas, ruta_maestro, carpeta_listas
+from rutas_proyecto import referencia_documento, validar_archivo_office, BASE, CARPETAS, resolver_ruta, ruta_portatil, rutas_configuradas, ruta_maestro, carpeta_listas
 from generador_hii import conservar_historial, hash_especificacion, ZoomHII
 from cambios_alineacion import (cambios_documento, diferencias_filas, original_disponible,
                                comparar_valores_pruebas, ResaltadorCambios, CambiosFila)
@@ -34,6 +34,8 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
+import traceback
 import unicodedata
 import tkinter as tk
 from datetime import date, datetime, timezone, timedelta
@@ -59,6 +61,7 @@ from alinear_especificaciones_json import (
     metodos_maestros,
     mejor_coincidencia,
     normalizar_espacio_unidades,
+    normalizar_unidad_declarada,
     normalizar_especificacion,
     normalizar_formato_numerico,
     normalizar_terminos_especificacion,
@@ -66,6 +69,8 @@ from alinear_especificaciones_json import (
     nombres_canonicos,
     normalizar,
     referencias_astm,
+    referencias_normativas,
+    temperaturas_prueba,
     unidad_original_esta_entre_alternativas,
     resolver_unidad_declarada,
 )
@@ -195,6 +200,61 @@ def _valores_control_predeterminados(fecha_actual: date | None = None) -> dict[s
         }
     )
     return valores
+
+
+def _componentes_nombre_json_final(control: dict[str, Any]) -> tuple[str, str]:
+    from gestor_especificaciones import nombre_seguro
+
+    codigo = nombre_seguro(control.get("codigo_unico_producto", "")) or "SIN_CODIGO_200"
+    revision = nombre_seguro(control.get("revision", "")) or "SIN_REVISION"
+    if revision.isdigit():
+        revision = revision.zfill(2)
+    return codigo, revision
+
+
+def _nombre_json_final_editor(
+    control: dict[str, Any], fecha_actual: date | None = None, idioma: str = "es"
+) -> str:
+    codigo, revision = _componentes_nombre_json_final(control)
+    fecha = fecha_actual or date.today()
+    sufijo_idioma = "ENG" if normalizar(idioma) in {"EN", "ENG", "INGLES", "ENGLISH"} else "ESP"
+    return f"{codigo} {revision}_{fecha:%d_%m_%y}_{sufijo_idioma}.JSON"
+
+
+def _nombre_json_ya_homologado(
+    ruta: Path, control: dict[str, Any], idioma: str = "es"
+) -> bool:
+    codigo, revision = _componentes_nombre_json_final(control)
+    sufijo_idioma = "ENG" if normalizar(idioma) in {"EN", "ENG", "INGLES", "ENGLISH"} else "ESP"
+    patron = (
+        rf"{re.escape(codigo)} {re.escape(revision)}_"
+        rf"\d{{2}}_\d{{2}}_\d{{2}}_{sufijo_idioma}(?:_\d{{2}})?\.JSON"
+    )
+    return re.fullmatch(patron, ruta.name, flags=re.IGNORECASE) is not None
+
+
+def _ruta_json_final_editor(
+    directorio: Path,
+    control: dict[str, Any],
+    ocupadas: set[Path] | None = None,
+    actual: Path | None = None,
+    fecha_actual: date | None = None,
+    idioma: str = "es",
+) -> Path:
+    directorio = Path(directorio).resolve()
+    actual = Path(actual).resolve() if actual is not None else None
+    ocupadas = {Path(ruta).resolve() for ruta in (ocupadas or set())}
+    if actual is not None and _nombre_json_ya_homologado(actual, control, idioma):
+        return actual
+    nombre = _nombre_json_final_editor(control, fecha_actual, idioma)
+    candidato = directorio / nombre
+    indice = 1
+    while candidato.resolve() in ocupadas or (
+        candidato.exists() and (actual is None or candidato.resolve() != actual)
+    ):
+        candidato = directorio / f"{Path(nombre).stem}_{indice:02d}.JSON"
+        indice += 1
+    return candidato.resolve()
 
 
 def _traducir_nombre_prueba(
@@ -340,6 +400,7 @@ def crear_datos_especificacion_nueva(
     notas: list[str],
     desarrollador: str = "",
     fecha_reanalisis: str = "",
+    comentario: str = "",
 ) -> dict[str, Any]:
     """Construye el JSON alineado que usa la vista previa y la generación Word."""
     nombre = nombre_producto.strip()
@@ -398,6 +459,7 @@ def crear_datos_especificacion_nueva(
         "control_documental": control_documental,
         "FECHA DE REANALISIS": _valor_reanalisis_json(fecha_reanalisis, idioma),
         "Desarrollador": desarrollador.strip(),
+        "comentario": comentario.strip(),
         "pruebas": pruebas_json,
         "notas": notas_especificacion,
     }
@@ -604,6 +666,7 @@ def _datos_generador_desde_json(datos: dict[str, Any]) -> dict[str, Any]:
         "notas": [str(nota) for nota in notas if nota is not None],
         "fecha_reanalisis": _valor_reanalisis_editor(datos.get("FECHA DE REANALISIS", "")),
         "desarrollador": str(datos.get("Desarrollador", "") or ""),
+        "comentario": str(datos.get("comentario", "") or ""),
     }
 
 
@@ -829,6 +892,7 @@ def _integrar_edicion_json(
         "alineacion_metodos_lab",
         "Desarrollador",
         "FECHA DE REANALISIS",
+        "comentario",
     ):
         valor_actualizado = actualizado.get(clave)
         valor_original = resultado.get(clave)
@@ -848,6 +912,11 @@ def _integrar_edicion_json(
             resultado[clave] = fusionado
         elif clave in actualizado:
             resultado[clave] = copy.deepcopy(valor_actualizado)
+    control_original = original.get("control_documental", {})
+    control_resultado = resultado.get("control_documental", {})
+    revision_origen = str(control_original.get("revision") or "").strip()
+    if revision_origen and str(control_resultado.get("revision") or "").strip() != revision_origen:
+        control_resultado.setdefault("revision_fuente", control_original.get("revision_fuente") or revision_origen)
     fecha_actualizada = actualizado.get("control_documental", {}).get("fecha")
     if fecha_actualizada is not None and fecha_actualizada != original.get("control_documental", {}).get("fecha"):
         from gestor_especificaciones import parsear_fecha_documento
@@ -958,6 +1027,213 @@ def _normalizar_periodicidad(valor: str, numero_fila: int) -> str:
     if len(set(simbolos)) != len(simbolos):
         raise ValueError(f"No repitas símbolos de periodicidad en la fila {numero_fila}.")
     return "".join(simbolos)
+
+
+def _texto_sin_marcador_comentario(valor: Any) -> str:
+    return re.sub(rf"\s+[{DIGITOS_SUPERINDICE}]+$", "", str(valor or "")).strip()
+
+
+def _clave_bilingue_prueba_periodicidad(
+    prueba: str, metodo: str, maestro: list[dict[str, str]]
+) -> str:
+    """Resuelve una prueba a una clave común ESP/ENG sin considerar unidades."""
+    clave_prueba = normalizar(prueba)
+    if not clave_prueba or not maestro:
+        return ""
+    referencias = set(referencias_normativas(metodo))
+    metodo_canonico = normalizar(metodo_maestro_canonico(metodo))
+    candidatos: list[tuple[int, str]] = []
+    for registro in maestro:
+        nombre_es = normalizar(nombres_canonicos(registro, "ESPANOL")[0])
+        nombre_en = normalizar(nombres_canonicos(registro, "INGLES")[0])
+        if clave_prueba not in {nombre_es, nombre_en}:
+            continue
+        clave_canonica = nombre_es or nombre_en
+        if not clave_canonica:
+            continue
+        metodos_registro = metodos_maestros(registro)
+        referencias_registro = {
+            referencia
+            for metodo_registro in metodos_registro
+            for referencia in referencias_normativas(metodo_registro)
+        }
+        if referencias and referencias_registro:
+            if referencias == referencias_registro:
+                puntaje = 3
+            elif referencias <= referencias_registro or referencias_registro <= referencias:
+                puntaje = 2
+            elif referencias & referencias_registro:
+                puntaje = 1
+            else:
+                puntaje = 0
+        else:
+            metodos_canonicos = {
+                normalizar(metodo_maestro_canonico(valor))
+                for valor in metodos_registro
+            }
+            puntaje = 3 if metodo_canonico and metodo_canonico in metodos_canonicos else 0
+        candidatos.append((puntaje, clave_canonica))
+    if not candidatos:
+        return ""
+    mejor_puntaje = max(puntaje for puntaje, _ in candidatos)
+    claves = {
+        clave for puntaje, clave in candidatos
+        if puntaje == mejor_puntaje
+    }
+    return next(iter(claves)) if len(claves) == 1 else ""
+
+
+def _rasgos_fila_periodicidad(
+    fila: dict[str, Any], maestro: list[dict[str, str]], idioma: str
+) -> dict[str, Any]:
+    prueba = _texto_sin_marcador_comentario(fila.get("prueba", ""))
+    metodo = _texto_sin_marcador_comentario(fila.get("metodo", ""))
+    nombre_canonico = normalizar(fila.get("clave_prueba", ""))
+    if not nombre_canonico:
+        nombre_canonico = _clave_bilingue_prueba_periodicidad(
+            prueba, metodo, maestro
+        )
+    if not nombre_canonico and prueba and metodo and maestro:
+        try:
+            coincidencia = mejor_coincidencia(
+                prueba,
+                metodo,
+                maestro,
+                "INGLES" if idioma == "en" else "ESPANOL",
+                "",
+            )
+        except ValueError:
+            coincidencia = {}
+        if coincidencia.get("estado") == "ALINEADO":
+            registro = coincidencia.get("registro", {})
+            nombre_canonico = normalizar(
+                nombres_canonicos(registro, "ESPANOL")[0]
+                or nombres_canonicos(registro, "INGLES")[0]
+            )
+    referencias = tuple(sorted(referencias_normativas(metodo)))
+    metodo_canonico = normalizar(metodo_maestro_canonico(metodo))
+    return {
+        "nombre": nombre_canonico or normalizar(prueba),
+        "referencias": referencias,
+        "metodo": metodo_canonico,
+    }
+
+
+def _firma_metodo_periodicidad(rasgos: dict[str, Any]) -> tuple[str, ...]:
+    referencias = tuple(rasgos.get("referencias", ()))
+    return referencias or ((rasgos.get("metodo") or ""),)
+
+
+def _puntaje_periodicidad(origen: dict[str, Any], destino: dict[str, Any]) -> int:
+    mismo_nombre = bool(origen["nombre"] and origen["nombre"] == destino["nombre"])
+    refs_origen, refs_destino = set(origen["referencias"]), set(destino["referencias"])
+    mismo_metodo = bool(origen["metodo"] and origen["metodo"] == destino["metodo"])
+    if mismo_nombre:
+        if refs_origen and refs_destino:
+            if refs_origen == refs_destino:
+                return 400
+            if refs_origen <= refs_destino or refs_destino <= refs_origen:
+                return 350
+            if refs_origen & refs_destino:
+                return 300
+        elif mismo_metodo:
+            return 400
+        return 0
+    # El mÃ©todo por sÃ­ solo no identifica una prueba: D445, por ejemplo,
+    # puede repetirse a 40 y 100 Â°C. La equivalencia bilingÃ¼e del nombre la
+    # resuelve la lista maestra antes de llegar a este punto.
+    return 0
+
+
+def _crear_paquete_periodicidades(
+    pruebas: list[dict[str, Any]], idioma: str, producto: str,
+    maestro: list[dict[str, str]] | None = None,
+) -> str:
+    filas = []
+    for indice, fila in enumerate(pruebas, 1):
+        metodo = _texto_sin_marcador_comentario(fila.get("metodo", ""))
+        periodicidad = str(fila.get("periodicidad", "") or "").strip()
+        if not metodo or not periodicidad:
+            continue
+        try:
+            periodicidad = _normalizar_periodicidad(periodicidad, indice)
+        except ValueError:
+            continue
+        fila_copiada = {
+            "prueba": _texto_sin_marcador_comentario(fila.get("prueba", "")),
+            "metodo": metodo,
+            "periodicidad": periodicidad,
+        }
+        if maestro:
+            clave_prueba = _clave_bilingue_prueba_periodicidad(
+                fila_copiada["prueba"], metodo, maestro
+            )
+            if clave_prueba:
+                fila_copiada["clave_prueba"] = clave_prueba
+        filas.append(fila_copiada)
+    if not filas:
+        raise ValueError("No hay filas con método y periodicidad válidos para copiar.")
+    contenido = {"version": 1, "producto": producto.strip(), "idioma": idioma, "filas": filas}
+    return json.dumps(contenido, ensure_ascii=False)
+
+
+def _leer_paquete_periodicidades(contenido: str) -> dict[str, Any]:
+    try:
+        paquete = json.loads(contenido)
+    except json.JSONDecodeError as exc:
+        raise ValueError("El portapapeles no contiene periodicidades copiadas por el editor.") from exc
+    if not isinstance(paquete, dict) or paquete.get("version") != 1:
+        raise ValueError("La versión de las periodicidades copiadas no es compatible.")
+    filas = paquete.get("filas")
+    if not isinstance(filas, list) or not filas or any(not isinstance(fila, dict) for fila in filas):
+        raise ValueError("El portapapeles no contiene filas de periodicidad válidas.")
+    return paquete
+
+
+def _aplicar_periodicidades_por_metodo(
+    pruebas: list[dict[str, Any]], paquete: dict[str, Any],
+    maestro: list[dict[str, str]], idioma_destino: str,
+) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    idioma_origen = "en" if paquete.get("idioma") == "en" else "es"
+    origenes = []
+    for indice, fila in enumerate(paquete["filas"], 1):
+        periodicidad = str(fila.get("periodicidad", "") or "").strip()
+        try:
+            periodicidad = _normalizar_periodicidad(periodicidad, indice)
+        except ValueError:
+            continue
+        rasgos = _rasgos_fila_periodicidad(fila, maestro, idioma_origen)
+        if rasgos["nombre"] and _firma_metodo_periodicidad(rasgos) != ("",):
+            origenes.append((fila, rasgos, periodicidad))
+    if not origenes:
+        raise ValueError("No hay periodicidades válidas que se puedan pegar.")
+
+    salida = copy.deepcopy(pruebas)
+    rasgos_destino = [_rasgos_fila_periodicidad(fila, maestro, idioma_destino) for fila in salida]
+    resumen = {"aplicadas": 0, "sin_cambios": 0, "sin_coincidencia": 0, "ambiguas": 0}
+
+    for fila_destino, rasgos_objetivo in zip(salida, rasgos_destino):
+        candidatos = []
+        for fila_origen, rasgos_origen, periodicidad in origenes:
+            puntaje = _puntaje_periodicidad(rasgos_origen, rasgos_objetivo)
+            if puntaje:
+                candidatos.append((puntaje, periodicidad, fila_origen))
+        if not candidatos:
+            resumen["sin_coincidencia"] += 1
+            continue
+        mejor_puntaje = max(candidato[0] for candidato in candidatos)
+        mejores = [candidato for candidato in candidatos if candidato[0] == mejor_puntaje]
+        periodicidades = {candidato[1] for candidato in mejores}
+        if len(periodicidades) != 1:
+            resumen["ambiguas"] += 1
+            continue
+        periodicidad = next(iter(periodicidades))
+        if str(fila_destino.get("periodicidad", "") or "").strip() == periodicidad:
+            resumen["sin_cambios"] += 1
+        else:
+            fila_destino["periodicidad"] = periodicidad
+            resumen["aplicadas"] += 1
+    return salida, resumen
 
 
 MENSAJE_CODIGO_RESTRINGIDO = "El código 20000000 corresponde al formato, está restringido para su uso"
@@ -2007,7 +2283,8 @@ def registrar_metodos(ruta):
 
     ruta = Path(ruta)
     with _lock_historial_metodos:
-        libro = load_workbook(ruta, read_only=True, data_only=False)
+        validar_archivo_office(ruta)
+        libro = load_workbook(ruta, read_only=True, data_only=False, keep_links=False)
         try:
             hoja = libro["METODOS"]
             filas = [["" if v is None else str(v) for v in fila]
@@ -2048,7 +2325,8 @@ def _leer_filas_maestro_editable(
 ) -> list[tuple[int, tuple[str, ...]]]:
     from openpyxl import load_workbook
 
-    libro = load_workbook(ruta, read_only=True, data_only=False)
+    validar_archivo_office(ruta)
+    libro = load_workbook(ruta, read_only=True, data_only=False, keep_links=False)
     try:
         if "METODOS" not in libro.sheetnames:
             raise ValueError("El Excel maestro no contiene la hoja METODOS.")
@@ -2090,7 +2368,8 @@ def _guardar_cambios_maestro(
     from openpyxl import load_workbook
 
     registrar_metodos(ruta)
-    libro = load_workbook(ruta)
+    validar_archivo_office(ruta)
+    libro = load_workbook(ruta, keep_links=False)
     try:
         if "METODOS" not in libro.sheetnames:
             raise ValueError("El Excel maestro no contiene la hoja METODOS.")
@@ -2511,6 +2790,7 @@ class GeneradorEspecificacion:
         self._idioma_anterior = "es"
         self._nota_predeterminada_actual = ""
         self._elaboro_aprobo_predeterminado_actual = VALORES_ELABORO_APROBO["es"]
+        self.comentario = ""
         self.ventana = ui.Ventana(app.raiz)
         self.ventana.bind("<Button-1>", self._cerrar_editor_al_clic_fuera, add="+")
         self.ventana.bind("<Destroy>", self._al_destruir_ventana_editor, add="+")
@@ -2540,6 +2820,15 @@ class GeneradorEspecificacion:
         )
         self.selector_idioma.pack(side="left")
         self.selector_idioma.bind("<<ComboboxSelected>>", self._actualizar_idioma)
+        self.boton_comentario = ttk.Button(
+            encabezado,
+            text="💬",
+            width=3,
+            height=24,
+            variante="secundario",
+            command=self._abrir_comentario_especificacion,
+        )
+        self.boton_comentario.pack(side="left", padx=(6, 0))
         self.zoom_editor = 1.0
         self._zoom_contenido_editor = ZoomHII(self.ventana)
         self.boton_zoom_mas = ttk.Button(
@@ -2765,6 +3054,10 @@ class GeneradorEspecificacion:
         self.tabla_pruebas.bind("<Configure>", self._reposicionar_editor)
         self.tabla_pruebas.bind("<Delete>", self._borrar_celda_activa)
         self.tabla_pruebas.bind("<KP_Delete>", self._borrar_celda_activa)
+        self._menu_periodicidades = tk.Menu(self.ventana, tearoff=False)
+        self._menu_periodicidades.add_command(command=self._copiar_periodicidades_producto)
+        self._menu_periodicidades.add_command(command=self._pegar_periodicidades_producto)
+        self.tabla_pruebas.bind("<Button-3>", self._mostrar_menu_periodicidades)
         barra_vertical = ttk.Scrollbar(
             self.marco_pruebas,
             orient="vertical",
@@ -2878,7 +3171,8 @@ class GeneradorEspecificacion:
         poco_espacio = (self.ventana.winfo_screenheight() - 80) / self.ventana._get_window_scaling() <= 650
         if ui.PREFERENCIAS["control_compacto"] or (ui.PREFERENCIAS["adaptacion_auto"] and poco_espacio):
             self._alternar_control_documental()
-        if idioma_destino is None and (self.datos_originales is None or self.datos_originales.get("alineacion_metodos_lab")):
+        # El cambio de idioma no requiere que el documento ya este alineado.
+        if idioma_destino is None:
             self._iniciar_bilingue()
             self._contenido_inicial_revision = self._contenido_para_revision()
         self._actualizar_traductor_editor(avisar=False)
@@ -2900,6 +3194,95 @@ class GeneradorEspecificacion:
         self.boton_zoom_menos.configure(state="disabled" if nuevo <= 0.7 else "normal")
         self.boton_zoom_mas.configure(state="disabled" if nuevo >= 1.6 else "normal")
         self._programar_resaltado()
+
+    def _actualizar_estado_boton_comentario(self):
+        if not hasattr(self, "boton_comentario"):
+            return
+        colores = ui.paleta()
+        tiene_comentario = bool(getattr(self, "comentario", "").strip())
+        self.boton_comentario.configure(
+            fg_color=colores["acento"] if tiene_comentario else colores["seleccion"],
+            hover_color="#10446f" if tiene_comentario else colores["borde"],
+            text_color="white" if tiene_comentario else colores["texto"],
+        )
+
+    def _abrir_comentario_especificacion(self):
+        self._cerrar_editor_celda(guardar=True)
+        ingles = self._idioma.get() == "English"
+        ventana = ui.Ventana(self.ventana)
+        ventana.title("Specification comment" if ingles else "Comentario de la especificación")
+        ventana.geometry("520x300")
+        ventana.minsize(420, 240)
+        ventana.transient(self.ventana)
+        ventana.grab_set()
+
+        ttk.Label(
+            ventana,
+            text=(
+                "Write a general comment for this specification."
+                if ingles
+                else "Escribe un comentario general para esta especificación."
+            ),
+            wraplength=480,
+            justify="left",
+        ).pack(fill="x", padx=16, pady=(16, 8))
+
+        colores = ui.paleta()
+        texto_comentario = tk.Text(
+            ventana,
+            height=8,
+            wrap="word",
+            background=colores["panel"],
+            foreground=colores["texto"],
+            insertbackground=colores["texto"],
+            selectbackground=colores["acento"],
+            relief="solid",
+            borderwidth=1,
+            highlightthickness=0,
+            font=(ui.PREFERENCIAS["fuente"], 10),
+        )
+        texto_comentario.pack(fill="both", expand=True, padx=16, pady=(0, 10))
+        texto_comentario.insert("1.0", getattr(self, "comentario", ""))
+
+        acciones = ttk.Frame(ventana)
+        acciones.pack(fill="x", padx=16, pady=(0, 14))
+
+        def guardar_comentario():
+            self.comentario = texto_comentario.get("1.0", "end-1c").strip()
+            self._actualizar_estado_boton_comentario()
+            ventana.destroy()
+
+        def copiar_comentario():
+            ventana.clipboard_clear()
+            ventana.clipboard_append(texto_comentario.get("1.0", "end-1c"))
+            ventana.update_idletasks()
+            boton_copiar.configure(text="Copied" if ingles else "Copiado")
+            ventana.after(
+                1200,
+                lambda: boton_copiar.configure(text="Copy" if ingles else "Copiar")
+                if ventana.winfo_exists() else None,
+            )
+
+        ttk.Button(
+            acciones,
+            text="Save" if ingles else "Guardar",
+            command=guardar_comentario,
+        ).pack(side="right")
+        ttk.Button(
+            acciones,
+            text="Cancel" if ingles else "Cancelar",
+            variante="secundario",
+            command=ventana.destroy,
+        ).pack(side="right", padx=(0, 8))
+        boton_copiar = ttk.Button(
+            acciones,
+            text="Copy" if ingles else "Copiar",
+            variante="secundario",
+            command=copiar_comentario,
+        )
+        boton_copiar.pack(side="left")
+        ventana.protocol("WM_DELETE_WINDOW", ventana.destroy)
+        texto_comentario.focus_set()
 
     def _actualizar_traductor_editor(self, avisar=True):
         if self._cargando_traductor:
@@ -2939,7 +3322,7 @@ class GeneradorEspecificacion:
             self._traductor = diccionario
             if self._bilingue is not None:
                 seleccion = self._seleccion()
-                self._bilingue.actualizar_traducciones_automaticas()
+                self._bilingue.actualizar_traducciones_automaticas(completar_sin_traducir=True)
                 self._aplicar_borrador(self._idioma_anterior)
                 self._actualizar_tabla()
                 if seleccion is not None and seleccion < len(self.pruebas):
@@ -2954,43 +3337,61 @@ class GeneradorEspecificacion:
             "notas": self.notas.get("1.0", "end-1c").splitlines(),
             "desarrollador": self.desarrollador.get(),
             "fecha_reanalisis": self.fecha_reanalisis.get(),
+            "comentario": getattr(self, "comentario", ""),
         }
 
     def _traducir_campo_bilingue(self, campo, texto, origen, destino, fila):
         diccionario = getattr(self, "_traductor", SERVICIO_TRADUCTOR.diccionario)
         if campo == "notas":
-            lineas = [(NOTAS_PLANTILLA[destino], True) if linea.strip() == NOTAS_PLANTILLA[origen].strip()
+            lineas = [(NOTAS_PLANTILLA[destino], True) if linea.strip() in {n.strip() for n in NOTAS_PLANTILLA.values()}
                       else diccionario.traducir(linea, origen, destino) for linea in texto.splitlines()]
             return "\n".join(t for t, _ in lineas), all(seguro for _, seguro in lineas)
         if campo == "elaboro_y_aprobo":
-            if texto == VALORES_ELABORO_APROBO[origen]:
+            if normalizar(texto) in {normalizar(v) for v in VALORES_ELABORO_APROBO.values()}:
                 return VALORES_ELABORO_APROBO[destino], True
             # Nombres de personas no requieren traducción.
             return texto, True
         if campo in {"prueba", "unidades", "metodo"}:
-            registros = [r for r in self.maestro
-                         if normalizar(_nombre_maestro_para_idioma(r, origen)) == normalizar(fila.get("prueba", ""))]
-            referencias = set(referencias_astm(fila.get("metodo", "")))
-            if referencias:
-                registros = [r for r in registros if any(set(referencias_astm(m)) == referencias for m in metodos_maestros(r))]
-            alternativas = set()
-            for registro in registros:
+            # La identidad tecnica y la ambiguedad las decide el mismo alineador,
+            # incluidas temperaturas, subtipos y conjuntos de normas aprobados.
+            nombre = re.sub(rf"\s+[{DIGITOS_SUPERINDICE}]+$", "", fila.get("prueba", "")).strip()
+            metodo = re.sub(rf"\s+[{DIGITOS_SUPERINDICE}]+$", "", fila.get("metodo", "")).strip()
+            match = mejor_coincidencia(nombre, metodo, self.maestro,
+                                       "INGLES" if destino == "en" else "ESPANOL",
+                                       fila.get("unidades", "")) if self.maestro else {}
+            temperaturas = temperaturas_prueba(nombre)
+            registro = match.get("registro", {})
+            if (temperaturas_prueba(nombres_canonicos(registro, "INGLES" if destino == "en" else "ESPANOL")[0]) != temperaturas
+                    or match.get("ambiguo")):
+                compatibles = [r for r in self.maestro if temperaturas_prueba(
+                    nombres_canonicos(r, "INGLES" if destino == "en" else "ESPANOL")[0]) == temperaturas]
+                match = mejor_coincidencia(nombre, metodo, compatibles,
+                                           "INGLES" if destino == "en" else "ESPANOL",
+                                           fila.get("unidades", "")) if compatibles else {}
+            if match.get("estado") == "ALINEADO":
+                registro = match["registro"]
                 if campo == "prueba":
-                    fuente = _nombre_maestro_para_idioma(registro, origen)
                     objetivo = nombres_canonicos(registro, "INGLES" if destino == "en" else "ESPANOL")[0]
+                    # Mantener las referencias a comentarios de la celda.
+                    marcador = re.search(rf"\s+([{DIGITOS_SUPERINDICE}]+)$", texto)
+                    if objetivo:
+                        return objetivo + (" " + marcador[1] if marcador else ""), True
                 elif campo == "metodo":
-                    fuente = metodo_maestro_para_idioma(registro, "INGLES" if origen == "en" else "ESPANOL")
                     objetivo = metodo_maestro_para_idioma(registro, "INGLES" if destino == "en" else "ESPANOL")
-                    if destino == "en" and not (registro.get("MÉTODO INGLÉS") or registro.get("METODO INGLES")):
+                    if destino == "en" and not (registro.get("MÉTODO INGLÉS") or registro.get("METODO INGLES")) and not referencias_astm(objetivo):
                         objetivo = ""
+                    # No convertir un metodo distinto solo porque la fila coincida.
+                    if objetivo and normalizar(texto) == normalizar(fila.get("metodo", "")):
+                        marcador = re.search(rf"\s+([{DIGITOS_SUPERINDICE}]+)$", texto)
+                        valor = match.get("metodo_confirmado") or metodo_alineado_canonico(metodo, objetivo)
+                        return valor + (" " + marcador[1] if marcador else ""), True
                 else:
-                    fuente = registro.get("UNITS" if origen == "en" else "UNIDADES", "")
-                    objetivo = registro.get("UNITS" if destino == "en" else "UNIDADES", "")
-                if normalizar(texto) == normalizar(fuente) and objetivo:
-                    alternativas.add(objetivo)
-            if len(alternativas) == 1:
-                return alternativas.pop(), True
-            if campo == "unidades" and (not texto or re.fullmatch(r"(?:N/A|[-−°%\d\s.,/*·²³^μµ]+|(?:mPa|Pa|kg|mg|g|mm|cm|m|ml|mL|L|s|cSt|SUS|K|F|C|ppm)(?:[-\d\s.,/*·²³^°%]|kg|mg|g|mm|cm|m|ml|mL|L|s|K|F|C|mol)*)", texto)):
+                    if any(unidad_original_esta_entre_alternativas(texto, registro.get(c, ""))
+                           for c in ("UNITS", "UNIDADES")):
+                        return normalizar_unidad_declarada(texto, destino), True
+            if campo == "unidades" and normalizar_unidad_declarada(texto, "es") in {"NA", "ADIMENSIONAL"}:
+                return normalizar_unidad_declarada(texto, destino), True
+            if campo == "unidades" and (not texto or re.fullmatch(r"(?:N/A|[-−°%\d\s.,/*·²³^μµ]+|(?:°\s*)?(?:mPa|Pa|kg|mg|g|mm|cm|m|ml|mL|L|s|cSt|cP|SUS|K|F|C|ppm)(?:[-\d\s.,/*·²³^°%]|kg|mg|g|mm|cm|m|ml|mL|L|s|K|F|C|mol)*)", texto)):
                 return texto, True
         return diccionario.traducir(texto, origen, destino)
 
@@ -3016,7 +3417,8 @@ class GeneradorEspecificacion:
                     raise ValueError("Las referencias de idioma no tienen un formato válido.")
                 for referencia in referencias:
                     if isinstance(referencia, dict) and isinstance(referencia.get("archivo_json"), str):
-                        rutas.add((Path(self.archivo_inicial).parent / referencia["archivo_json"]).resolve())
+                        rutas.add(referencia_documento(referencia["archivo_json"], Path(self.archivo_inicial).parent,
+                            tuple(self.app.rutas[k] for k in ("json_alineadas", "json_anteriores") if k in self.app.rutas)))
                 if len(rutas) > 1:
                     raise ValueError("Hay varias traducciones relacionadas.")
                 if rutas:
@@ -3044,12 +3446,12 @@ class GeneradorEspecificacion:
                 self._originales_idioma = {i: json.loads(r.read_text(encoding="utf-8-sig")) for i, r in self._rutas_idioma.items()}
                 for lengua, datos in self._originales_idioma.items():
                     modelo.borradores[lengua].setdefault("fecha_reanalisis", _valor_reanalisis_editor(datos.get("FECHA DE REANALISIS", "")))
-                self._aplicar_borrador(idioma)
             except (OSError, ValueError, KeyError, TypeError) as exc:
                 messagebox.showerror("No se pudo recuperar el trabajo en progreso", str(exc), parent=self.ventana)
                 self.boton_guardar.configure(state="disabled")
                 return
-        self.pruebas = copy.deepcopy(modelo.borradores[idioma]["pruebas"])
+        modelo.actualizar_traducciones_automaticas(completar_sin_traducir=True)
+        self._aplicar_borrador(idioma)
         for lengua, datos in self._originales_idioma.items():
             visibles = modelo.borradores[lengua]["pruebas"]
             original = original_disponible(datos, self._rutas_idioma.get(lengua), self.app.rutas.get("json_anteriores"))
@@ -3069,12 +3471,14 @@ class GeneradorEspecificacion:
         self.nombre_producto.set(contenido["nombre_producto"])
         self.desarrollador.set(contenido["desarrollador"])
         self.fecha_reanalisis.set(contenido.get("fecha_reanalisis", ""))
+        self.comentario = contenido.get("comentario", "")
         for campo, valor in contenido["control"].items():
             self.variables_control[campo].set(valor)
         self.notas.delete("1.0", tk.END)
         self.notas.insert("1.0", "\n".join(contenido["notas"]))
         self.datos_originales = self._originales_idioma.get(idioma)
         self.destino_inicial = self._rutas_idioma.get(idioma)
+        self._actualizar_estado_boton_comentario()
 
     def _programar_resaltado(self):
         if (self._bilingue is not None or self._cambios_alineacion) and self._redibujado_pendiente is None:
@@ -3191,11 +3595,13 @@ class GeneradorEspecificacion:
             self._capturar_bilingue(self._idioma_anterior)
             return tuple((idioma, tuple(tuple(sorted((k, v) for k, v in f.items() if k != "_id_bilingue")) for f in c["pruebas"]), tuple(c["notas"]),
                           c.get("desarrollador", ""), c.get("fecha_reanalisis", ""),
-                          c["control"].get("nombre_cliente", ""), c["control"].get("revision_cliente", ""))
+                          c["control"].get("nombre_cliente", ""), c["control"].get("revision_cliente", ""),
+                          c.get("comentario", ""))
                          for idioma, c in sorted(self._bilingue.borradores.items()))
         return (tuple(tuple(sorted(fila.items())) for fila in self.pruebas),
                 self.notas.get("1.0", "end-1c"), self.desarrollador.get(), self.fecha_reanalisis.get(),
-                self.variables_control["nombre_cliente"].get(), self.variables_control["revision_cliente"].get())
+                self.variables_control["nombre_cliente"].get(), self.variables_control["revision_cliente"].get(),
+                getattr(self, "comentario", ""))
 
     def _actualizar_revision_automatica(self) -> bool:
         if not hasattr(self, "_contenido_inicial_revision"):
@@ -3315,6 +3721,18 @@ class GeneradorEspecificacion:
             parent=self.ventana, icon="warning", default="no",
         )
 
+    def _resumen_revision_guardado(self) -> str:
+        codigo = self.variables_control["codigo_unico_producto"].get().strip()
+        calculada = getattr(self, "_revision_calculada", None)
+        if calculada is None or calculada[0] != codigo:
+            return ""
+        historial = getattr(self, "_revisiones_historial", {})
+        explicacion = getattr(historial.get(codigo), "explicacion", "")
+        if not isinstance(explicacion, str) or not explicacion:
+            return ""
+        revision = self.variables_control["revision"].get().strip()
+        return f"Part ID: {codigo}\nRevisión a guardar: {revision}\nRevisión calculada: {calculada[1]}\n\n{explicacion}"
+
     def _vigilar_revision(self):
         if self.ventana.winfo_exists():
             self._adoptar_diccionario_traductor(SERVICIO_TRADUCTOR.diccionario)
@@ -3356,12 +3774,14 @@ class GeneradorEspecificacion:
             self.variables_control[clave].set(valor)
         self.desarrollador.set(contenido["desarrollador"])
         self.fecha_reanalisis.set(contenido["fecha_reanalisis"])
+        self.comentario = contenido.get("comentario", "")
         self.pruebas = contenido["pruebas"]
         self.notas.delete("1.0", tk.END)
         self.notas.insert("1.0", "\n".join(contenido["notas"]))
         self._nota_predeterminada_actual = "\n".join(contenido["notas"])
         self._actualizar_tabla()
         self._actualizar_validacion_codigo()
+        self._actualizar_estado_boton_comentario()
         self.ventana.title(
             f"Editar especificación · {ruta.name}"
         )
@@ -3755,17 +4175,101 @@ class GeneradorEspecificacion:
             parent=self.ventana,
         )
 
+    def _actualizar_etiquetas_menu_periodicidades(self) -> None:
+        menu = getattr(self, "_menu_periodicidades", None)
+        if menu is None:
+            return
+        ingles = self._idioma.get() == "English"
+        menu.entryconfigure(0, label="Copy periodicities" if ingles else "Copiar periodicidades")
+        menu.entryconfigure(1, label="Paste periodicities" if ingles else "Pegar periodicidades")
+
+    def _contenido_periodicidades_portapapeles(self) -> str:
+        try:
+            return self.ventana.clipboard_get()
+        except tk.TclError:
+            return ""
+
+    def _mostrar_menu_periodicidades(self, evento: tk.Event) -> str | None:
+        if self.tabla_pruebas.identify_column(evento.x) != "#6":
+            return None
+        self._cerrar_editor_celda(guardar=True)
+        self._actualizar_etiquetas_menu_periodicidades()
+        contenido = self._contenido_periodicidades_portapapeles()
+        try:
+            _leer_paquete_periodicidades(contenido)
+        except ValueError:
+            estado_pegar = "disabled"
+        else:
+            estado_pegar = "normal"
+        self._menu_periodicidades.entryconfigure(1, state=estado_pegar)
+        try:
+            self._menu_periodicidades.tk_popup(evento.x_root, evento.y_root)
+        finally:
+            self._menu_periodicidades.grab_release()
+        return "break"
+
+    def _copiar_periodicidades_producto(self) -> None:
+        idioma = "en" if self._idioma.get() == "English" else "es"
+        try:
+            contenido = _crear_paquete_periodicidades(
+                self.pruebas, idioma, self.nombre_producto.get(), self.maestro
+            )
+        except ValueError as exc:
+            messagebox.showwarning(
+                "Periodicities" if idioma == "en" else "Periodicidades",
+                str(exc), parent=self.ventana,
+            )
+            return
+        self.ventana.clipboard_clear()
+        self.ventana.clipboard_append(contenido)
+        self.ventana.update_idletasks()
+
+    def _pegar_periodicidades_producto(self) -> None:
+        idioma = "en" if self._idioma.get() == "English" else "es"
+        try:
+            paquete = _leer_paquete_periodicidades(
+                self._contenido_periodicidades_portapapeles()
+            )
+            actualizadas, resumen = _aplicar_periodicidades_por_metodo(
+                self.pruebas, paquete, self.maestro, idioma
+            )
+        except ValueError as exc:
+            messagebox.showerror(
+                "Could not paste periodicities" if idioma == "en" else "No se pudieron pegar las periodicidades",
+                str(exc), parent=self.ventana,
+            )
+            return
+
+        if resumen["aplicadas"]:
+            self.pruebas = actualizadas
+            self._actualizar_tabla()
+
+        titulo = "Periodicity paste" if idioma == "en" else "Pegado de periodicidades"
+        if idioma == "en":
+            mensaje = (
+                f"Applied: {resumen['aplicadas']}\nUnchanged: {resumen['sin_cambios']}\n"
+                f"No match: {resumen['sin_coincidencia']}\nAmbiguous: {resumen['ambiguas']}"
+            )
+        else:
+            mensaje = (
+                f"Aplicadas: {resumen['aplicadas']}\nSin cambios: {resumen['sin_cambios']}\n"
+                f"Sin correspondencia: {resumen['sin_coincidencia']}\nAmbiguas: {resumen['ambiguas']}"
+            )
+        messagebox.showinfo(titulo, mensaje, parent=self.ventana)
+
     def _mostrar_ayuda_tabla(self) -> None:
         ingles = self._idioma.get() == "English"
         mensaje = (
             "Click an empty cell to add a row; click any cell to edit it. "
             "Gray suggestions can be clicked to accept them. Enter 1–3 "
-            "symbols with the periodicity dropdown. Press Delete to clear a cell."
+            "symbols with the periodicity dropdown. Right-click the periodicity "
+            "column to copy or paste them by method. Press Delete to clear a cell."
             if ingles
             else "Haz clic en una celda vacía para agregar una fila y en "
             "cualquier celda para editarla. Puedes hacer clic en una sugerencia "
             "gris para aceptarla. Selecciona de 1 a 3 símbolos en el desplegable "
-            "de periodicidad. Presiona Suprimir para borrar una celda."
+            "de periodicidad. Haz clic derecho en esa columna para copiarlas o "
+            "pegarlas por método. Presiona Suprimir para borrar una celda."
         )
         messagebox.showinfo(
             "Table help" if ingles else "Ayuda de la tabla",
@@ -3922,6 +4426,8 @@ class GeneradorEspecificacion:
         self.etiqueta_notas.configure(text="Notes:" if ingles else "Notas:")
         self.boton_guardar.configure(text="Save JSON" if ingles else "Guardar JSON")
         self.boton_cancelar.configure(text="Cancel" if ingles else "Cancelar")
+        self._actualizar_etiquetas_menu_periodicidades()
+        self._actualizar_estado_boton_comentario()
         if self._bilingue is not None:
             self.ventana.title(f"Editar producto · {self.nombre_producto.get()} · ESP / ENG")
             self._programar_resaltado()
@@ -4497,17 +5003,18 @@ class GeneradorEspecificacion:
             return
         editor = ttk.Combobox(
             marco,
-            values=SIMBOLOS_PERIODICIDAD,
+            values=(("",) + SIMBOLOS_PERIODICIDAD if self._periodicidad_editores else SIMBOLOS_PERIODICIDAD),
             state="readonly",
             width=3,
         )
         editor.set(valor)
+        editor._ultimo_simbolo_periodicidad = valor
         if getattr(self, "zoom_editor", 1.0) != 1.0:
             estilo = ttk.Style(self.tabla_pruebas)
             editor.configure(font=estilo.lookup(self.tabla_pruebas.cget("style"), "font"))
         editor.grid(
             row=0,
-            column=len(self._periodicidad_editores),
+            column=2 * len(self._periodicidad_editores),
             sticky="nsew",
             padx=(0, 2),
         )
@@ -4521,12 +5028,35 @@ class GeneradorEspecificacion:
         editor.bind("<FocusOut>", self._programar_cierre_editor)
         editor.bind("<Delete>", self._borrar_valor_editor)
         editor.bind("<KP_Delete>", self._borrar_valor_editor)
+        if self._periodicidad_editores:
+            editor._boton_quitar_periodicidad = ttk.Button(
+                marco, text="×", width=2,
+                command=lambda: self._quitar_selector_periodicidad(editor),
+            )
+            editor._boton_quitar_periodicidad.bind("<Return>", lambda _e: self._cerrar_editor_celda(guardar=True))
+            editor._boton_quitar_periodicidad.bind("<Escape>", lambda _e: self._cerrar_editor_celda(guardar=False))
+            editor._boton_quitar_periodicidad.bind("<FocusOut>", self._programar_cierre_editor)
         self._periodicidad_editores.append(editor)
         self._actualizar_selectores_periodicidad()
+
+    def _quitar_selector_periodicidad(self, editor):
+        if editor not in self._periodicidad_editores[1:]:
+            return "break"
+        self._cancelar_cierre_editor()
+        self._periodicidad_editores.remove(editor)
+        editor._boton_quitar_periodicidad.destroy()
+        editor.destroy()
+        self._mostrar_boton_mas_periodicidad()
+        self._periodicidad_editores[0].focus_set()
+        return "break"
 
     def _actualizar_selectores_periodicidad(
         self, _evento: tk.Event | None = None
     ) -> None:
+        cambiado = _evento.widget if _evento is not None else None
+        if cambiado in self._periodicidad_editores[1:] and cambiado.get() == "":
+            self._quitar_selector_periodicidad(cambiado)
+            return
         simbolos = [editor.get() for editor in self._periodicidad_editores if editor.get()]
         if len(set(simbolos)) != len(simbolos):
             editor_cambiado = (
@@ -4536,7 +5066,7 @@ class GeneradorEspecificacion:
                 else None
             )
             if editor_cambiado is not None:
-                editor_cambiado.set("")
+                editor_cambiado.set(editor_cambiado._ultimo_simbolo_periodicidad)
             ingles = self._idioma.get() == "English"
             messagebox.showwarning(
                 "Duplicate symbol" if ingles else "Símbolo duplicado",
@@ -4547,6 +5077,8 @@ class GeneradorEspecificacion:
                 ),
                 parent=self.ventana,
             )
+        for editor in self._periodicidad_editores:
+            editor._ultimo_simbolo_periodicidad = editor.get()
         self._mostrar_boton_mas_periodicidad()
 
     def _mostrar_boton_mas_periodicidad(self) -> None:
@@ -4554,10 +5086,18 @@ class GeneradorEspecificacion:
         marco = self._periodicidad_marco
         if boton is None or marco is None or not marco.winfo_exists():
             return
+        for columna in range(2 * MAX_SIMBOLOS_PERIODICIDAD + 1):
+            marco.grid_columnconfigure(columna, weight=0)
+        for indice, editor in enumerate(self._periodicidad_editores):
+            editor.grid_configure(column=2 * indice)
+            marco.grid_columnconfigure(2 * indice, weight=int(len(self._periodicidad_editores) > 1))
+            quitar = getattr(editor, "_boton_quitar_periodicidad", None)
+            if quitar is not None:
+                quitar.grid(row=0, column=2 * indice + 1, sticky="ns", padx=(0, 1))
         if len(self._periodicidad_editores) < MAX_SIMBOLOS_PERIODICIDAD:
             boton.grid(
                 row=0,
-                column=len(self._periodicidad_editores),
+                column=2 * len(self._periodicidad_editores),
                 sticky="nsew",
                 padx=(1, 0),
             )
@@ -4627,8 +5167,8 @@ class GeneradorEspecificacion:
         if editor is None:
             return "break"
         if isinstance(editor, ttk.Frame):
-            for selector in self._periodicidad_editores:
-                selector.set("")
+            if _evento is not None and _evento.widget in self._periodicidad_editores[1:]:
+                return self._quitar_selector_periodicidad(_evento.widget)
         elif isinstance(editor, ttk.Combobox) and str(
             editor.cget("state")
         ) == "readonly":
@@ -4993,6 +5533,7 @@ class GeneradorEspecificacion:
         datos["notas"] = list(contenido["notas"])
         datos["Desarrollador"] = contenido["desarrollador"]
         datos["FECHA DE REANALISIS"] = _valor_reanalisis_json(contenido.get("fecha_reanalisis", ""), idioma)
+        datos["comentario"] = str(contenido.get("comentario", "") or "").strip()
         datos["pruebas"] = [{"numero": indice, **{campo: fila.get(campo, "") for campo in CAMPOS_TABLA},
                              CAMPO_PERIODICIDAD: fila.get("periodicidad", "")}
                             for indice, fila in enumerate(contenido["pruebas"], 1)]
@@ -5044,7 +5585,8 @@ class GeneradorEspecificacion:
                 if not en_progreso:
                     _validar_completitud_final_editor(contenido["control"], contenido["pruebas"], idioma)
                 datos = self._datos_en_progreso(contenido, idioma) if en_progreso else crear_datos_especificacion_nueva(contenido["nombre_producto"], idioma,
-                    contenido["control"], contenido["pruebas"], contenido["notas"], contenido["desarrollador"], contenido.get("fecha_reanalisis", ""))
+                    contenido["control"], contenido["pruebas"], contenido["notas"], contenido["desarrollador"],
+                    contenido.get("fecha_reanalisis", ""), contenido.get("comentario", ""))
                 if idioma in self._originales_idioma:
                     datos = _integrar_edicion_json(self._originales_idioma[idioma], datos)
                 documentos[idioma] = datos
@@ -5060,10 +5602,15 @@ class GeneradorEspecificacion:
             if idioma not in rutas:
                 nombre = re.sub(r'[<>:"/\\|?*]+', "_", self.nombre_producto.get()).strip(" .") or "ESPECIFICACION"
                 directorio = next(iter(rutas.values())).parent if rutas else carpeta
-                base_nombre = f"{nombre}_{'ESP' if idioma == 'es' else 'ENG'}{'_trabajo' if en_progreso else ''}"
-                sugerido, indice = directorio / f"{base_nombre}.json", 1
+                if en_progreso:
+                    archivo_sugerido = f"{nombre}_{'ESP' if idioma == 'es' else 'ENG'}_trabajo.json"
+                else:
+                    archivo_sugerido = _nombre_json_final_editor(
+                        documentos[idioma]["control_documental"], idioma=idioma
+                    )
+                sugerido, indice = directorio / archivo_sugerido, 1
                 while sugerido.exists():
-                    sugerido = directorio / f"{base_nombre}_{indice}.json"
+                    sugerido = directorio / f"{Path(archivo_sugerido).stem}_{indice:02d}{Path(archivo_sugerido).suffix}"
                     indice += 1
                 elegido = filedialog.asksaveasfilename(parent=self.ventana,
                     title=f"Guardar JSON alineado · {'ESP' if idioma == 'es' else 'ENG'}",
@@ -5085,11 +5632,31 @@ class GeneradorEspecificacion:
                                for r in rutas.values() for original in self._rutas_idioma.values()):
             messagebox.showerror("Guardar en progreso", "Elige archivos nuevos para el borrador y conserva la especificación terminada.", parent=self.ventana)
             return
+        rutas_anteriores = dict(self._rutas_idioma)
+        if not en_progreso:
+            ocupadas = {Path(ruta).resolve() for ruta in rutas_anteriores.values()}
+            rutas_finales = {}
+            for idioma in ("es", "en"):
+                actual = rutas_anteriores.get(idioma)
+                if actual is not None:
+                    ocupadas.discard(Path(actual).resolve())
+                destino = _ruta_json_final_editor(
+                    Path(rutas[idioma]).parent,
+                    documentos[idioma]["control_documental"],
+                    ocupadas,
+                    actual,
+                    idioma=idioma,
+                )
+                rutas_finales[idioma] = destino
+                ocupadas.add(destino.resolve())
+            rutas = rutas_finales
+        resumen_revision = "" if en_progreso else self._resumen_revision_guardado()
         if not messagebox.askyesno("Guardar pareja ESP / ENG",
             f"{self.nombre_producto.get()} · ESP / ENG\n" + (
                 f"En progreso · ESP: {conteos['es']} pendientes · ENG: {conteos['en']} pendientes\n\n" if en_progreso
                 else "ESP: Completo · ENG: Completo\n\n") +
             f"Se guardarán ambos JSON alineados (se reemplazarán si existen):\n\nESP: {rutas['es']}\nENG: {rutas['en']}\n\n" +
+            ((resumen_revision + "\n\n") if resumen_revision else "") +
             ("¿Guardar el trabajo para continuarlo después?" if en_progreso else "¿Confirmas que revisaste ambas versiones y deseas guardarlas?"), parent=self.ventana):
             return
         for idioma, datos in documentos.items():
@@ -5112,6 +5679,12 @@ class GeneradorEspecificacion:
             if not en_progreso:
                 for r in rutas.values():
                     ruta_estado(r).unlink(missing_ok=True)
+                destinos = {Path(ruta).resolve() for ruta in rutas.values()}
+                for anterior in rutas_anteriores.values():
+                    anterior = Path(anterior).resolve()
+                    if anterior not in destinos:
+                        anterior.unlink(missing_ok=True)
+                        ruta_estado(anterior).unlink(missing_ok=True)
         except (OSError, ValueError) as exc:
             messagebox.showerror("No se pudo guardar la pareja", str(exc), parent=self.ventana)
             return
@@ -5211,6 +5784,7 @@ class GeneradorEspecificacion:
                 self.notas.get("1.0", "end-1c").splitlines(),
                 self.desarrollador.get(),
                 self.fecha_reanalisis.get(),
+                getattr(self, "comentario", ""),
             )
             if self.datos_originales is not None:
                 datos = _integrar_edicion_json(self.datos_originales, datos)
@@ -5223,26 +5797,29 @@ class GeneradorEspecificacion:
             )
             return
 
-        nombre = re.sub(
-            r'[<>:"/\\|?*]+',
-            "_",
-            self.nombre_producto.get().strip(),
-        ).strip(" .")
-        if not nombre:
-            nombre = "NEW_SPECIFICATION" if ingles else "ESPECIFICACION_NUEVA"
+        resumen_revision = self._resumen_revision_guardado()
+        destino_anterior = Path(self.destino_inicial).resolve() if self.destino_inicial is not None else None
         if self.destino_inicial is not None:
-            destino = self.destino_inicial
-            if destino.exists() and not messagebox.askyesno(
+            destino = _ruta_json_final_editor(
+                destino_anterior.parent,
+                datos["control_documental"],
+                actual=destino_anterior,
+                idioma=idioma,
+            )
+            if destino_anterior.exists() and not messagebox.askyesno(
                 "Overwrite JSON" if ingles else "Reemplazar JSON",
                 (
-                    f"Save changes to the currently opened JSON?\n{destino}"
+                    f"Save the completed JSON as?\n{destino}"
                     if ingles
-                    else f"¿Guardar los cambios en el JSON abierto?\n{destino}"
-                ),
+                    else f"¿Guardar el JSON terminado como?\n{destino}"
+                ) + (f"\n\n{resumen_revision}" if resumen_revision else ""),
                 parent=self.ventana,
             ):
                 return
         else:
+            nombre = _nombre_json_final_editor(
+                datos["control_documental"], idioma=idioma
+            )
             ruta = filedialog.asksaveasfilename(
                 parent=self.ventana,
                 title="Save specification JSON" if ingles else "Guardar JSON de especificación",
@@ -5253,7 +5830,17 @@ class GeneradorEspecificacion:
             )
             if not ruta:
                 return
-            destino = Path(ruta)
+            destino = _ruta_json_final_editor(
+                Path(ruta).parent,
+                datos["control_documental"],
+                idioma=idioma,
+            )
+            calculada = getattr(self, "_revision_calculada", None)
+            if (resumen_revision and calculada is not None
+                    and self.variables_control["revision"].get().strip() == calculada[1]
+                    and not messagebox.askyesno("Guardar especificación",
+                        f"{resumen_revision}\n\n{destino}\n\n¿Guardar la especificación con esta revisión?", parent=self.ventana)):
+                return
         temporal = None
         try:
             origen_historial = self.archivo_inicial or destino
@@ -5275,6 +5862,9 @@ class GeneradorEspecificacion:
                 json.dump(datos, archivo, ensure_ascii=False, indent=2)
                 archivo.write("\n")
             os.replace(temporal, destino)
+            if destino_anterior is not None and destino_anterior != destino:
+                destino_anterior.unlink(missing_ok=True)
+                ruta_estado(destino_anterior).unlink(missing_ok=True)
         except (OSError, ValueError) as exc:
             if temporal is not None:
                 temporal.unlink(missing_ok=True)
@@ -5928,6 +6518,12 @@ class Comparador:
 class AplicacionEspecificaciones:
     def __init__(self, raiz: tk.Tk, zoom_aplicacion: float = 1.0):
         self.raiz = raiz
+        self._ultimo_error_callback = ""
+        self._firma_error_callback = None
+        self._instante_error_callback = 0.0
+        self._ventana_error_callback = None
+        self._notificando_error_callback = False
+        self.raiz.report_callback_exception = self._informar_error_callback
         self.zoom_aplicacion = zoom_aplicacion
         self._escala_tk_base = float(self.raiz.tk.call("tk", "scaling"))
         self.ventanas_flotantes: set[tk.Toplevel] = set()
@@ -5953,6 +6549,95 @@ class AplicacionEspecificaciones:
         if necesita_recuperacion(BASE, rutas=self.rutas):
             self.reconstruir_base_datos(automatica=True)
         self.raiz.after_idle(lambda: self.raiz.state("zoomed"))
+
+    def _informar_error_callback(self, tipo, error, traza):
+        """Respaldo de eventos Tk: un diagnostico acotado, exclusivamente en memoria."""
+        if self._notificando_error_callback:
+            return
+        self._notificando_error_callback = True
+        try:
+            detalle = "".join(traceback.format_exception(tipo, error, traza, limit=12))
+            # No retener excepciones, tracebacks, datos de ventanas ni historiales.
+            self._ultimo_error_callback = (
+                f"Aplicación de especificaciones v{VERSION}\n"
+                f"Alineador v{VERSION_ALINEADOR}\n\n" + detalle[-16000:]
+            )
+            ubicacion = traceback.extract_tb(traza, limit=1)
+            firma = (tipo.__name__, str(error)[:512],
+                     (ubicacion[0].filename, ubicacion[0].lineno) if ubicacion else None)
+            ahora = time.monotonic()
+            repetido = firma == self._firma_error_callback and ahora - self._instante_error_callback < 5
+            self._firma_error_callback = firma
+            self._instante_error_callback = ahora
+            if not self.raiz.winfo_exists():
+                return
+            ventana = self._ventana_error_callback
+            if ventana is not None and ventana.winfo_exists():
+                # Copiar detalles siempre consulta el ultimo error, no una captura antigua.
+                return
+            if repetido:
+                return
+            self._mostrar_error_callback()
+        except Exception:
+            # Un fallo al dibujar el aviso no debe provocar otra cadena de callbacks.
+            ventana = self._ventana_error_callback
+            self._ventana_error_callback = None
+            if ventana is not None:
+                try:
+                    ventana.destroy()
+                except Exception:
+                    pass
+            try:
+                messagebox.showerror(
+                    "Operación interrumpida",
+                    "La operación se interrumpió por un error inesperado.", parent=self.raiz,
+                )
+            except Exception:
+                pass
+        finally:
+            self._notificando_error_callback = False
+
+    def _mostrar_error_callback(self):
+        # Toplevel basico: el respaldo tampoco depende de inicializar CustomTkinter.
+        padre = self.raiz.grab_current() or self.raiz
+        ventana = tk.Toplevel(padre)
+        self._ventana_error_callback = ventana
+        ventana.title("Operación interrumpida")
+        ventana.transient(padre.winfo_toplevel())
+        ventana.resizable(False, False)
+        contenido = ttk.Frame(ventana, padding=18)
+        contenido.pack(fill="both", expand=True)
+        ttk.Label(contenido, text="La operación se interrumpió por un error inesperado.",
+                  wraplength=430, justify="left").pack(anchor="w")
+        ttk.Label(contenido, text="Puedes copiar los detalles para reportar el problema.",
+                  wraplength=430, justify="left").pack(anchor="w", pady=(8, 14))
+        estado = ttk.Label(contenido, text="")
+        estado.pack(anchor="w")
+        botones = ttk.Frame(contenido)
+        botones.pack(fill="x", pady=(8, 0))
+
+        def copiar():
+            try:
+                ventana.clipboard_clear()
+                ventana.clipboard_append(self._ultimo_error_callback)
+                estado.configure(text="Detalles copiados.")
+            except tk.TclError:
+                estado.configure(text="No se pudo copiar. Inténtalo de nuevo.")
+
+        def cerrar(_evento=None):
+            self._ventana_error_callback = None
+            ventana.destroy()
+
+        def destruida(evento):
+            if evento.widget is ventana and self._ventana_error_callback is ventana:
+                self._ventana_error_callback = None
+
+        ttk.Button(botones, text="Copiar detalles", command=copiar).pack(side="left")
+        ttk.Button(botones, text="Cerrar", command=cerrar).pack(side="right")
+        ventana.protocol("WM_DELETE_WINDOW", cerrar)
+        ventana.bind("<Escape>", cerrar)
+        ventana.bind("<Destroy>", destruida, add="+")
+        ventana.lift()
 
     def _crear_interfaz(self) -> None:
         from menu_principal import crear_menu_principal
@@ -6426,6 +7111,18 @@ class AplicacionEspecificaciones:
             "\n".join(lineas),
             parent=self.raiz,
         )
+
+    def abrir_analisis(self):
+        from analisis_productos import VentanaAnalisis
+
+        analisis = getattr(self, "_ventana_analisis", None)
+        if analisis is None or not analisis.ventana.winfo_exists():
+            analisis = VentanaAnalisis(self.raiz, self.rutas["json_alineadas"])
+            self._ventana_analisis = analisis
+        if analisis.ventana.state() == "iconic":
+            analisis.ventana.deiconify()
+        analisis.ventana.lift()
+        return analisis
 
     def generar_hii(self, rutas_json: tuple[Path, ...] = ()):
         from generador_hii import GeneradorHII

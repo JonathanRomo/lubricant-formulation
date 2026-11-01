@@ -1,12 +1,39 @@
-"""Estado y sincronización de borradores; las traducciones las provee el editor."""
+"""Borradores de un producto y traducciones controladas, sin servicios externos."""
 from __future__ import annotations
 
 import copy
 import re
 import uuid
 
-# Nombres de campos de la tabla, sin equivalencias de traducción.
-CAMPOS = ('prueba', 'unidades', 'metodo', 'especificacion', 'valor_tipico')
+# Ampliar aquí las equivalencias aprobadas por el laboratorio.
+PATRONES_VALORES = (
+    ("MÁXIMO", "MAXIMUM"), ("MAXIMO", "MAXIMUM"),
+    ("MÍNIMO", "MINIMUM"), ("MINIMO", "MINIMUM"),
+    ("TÍPICO", "TYPICAL"), ("TIPICO", "TYPICAL"),
+    ("GRIS", "GRAY"), ("PASA", "PASS"),
+)
+CAMPOS = ("prueba", "unidades", "metodo", "especificacion", "valor_tipico")
+
+
+def traducir_patrones(texto, origen, destino):
+    """Devuelve texto y certeza; no altera cifras, signos ni códigos técnicos."""
+    if not texto.strip():
+        return texto, True
+    salida = texto
+    resto = texto
+    usados = set()
+    for es, en in PATRONES_VALORES:
+        fuente, objetivo = (es, en) if origen == "es" else (en, es)
+        if fuente in usados:
+            continue
+        usados.add(fuente)
+        patron = re.compile(r"(?<!\w)" + re.escape(fuente) + r"(?!\w)", re.I)
+        salida = patron.sub(objetivo, salida)
+        resto = patron.sub("", resto)
+    resto = re.sub(r"\b(?:ASTM\s+[A-Z]\s*\d+(?:-\d+)?|INS-[A-Z0-9-]+|N/A|NA)\b", "", resto, flags=re.I)
+    # Solo datos numéricos y signos: no aceptar palabras desconocidas como traducidas.
+    seguro = re.fullmatch(r"[\d\s.,+−\-–—/<>=≤≥±%():;°]*", resto) is not None
+    return salida, seguro
 
 
 class BorradoresBilingues:
@@ -65,7 +92,6 @@ class BorradoresBilingues:
                         if destino.get(campo, "").strip():
                             self.pendientes[idioma].add(clave)
                             self.automaticas[idioma].add(clave)
-                            self.manuales[idioma].discard(clave)
                         else:
                             destino[campo] = ""
                             for lengua in (idioma, otro):
@@ -75,10 +101,10 @@ class BorradoresBilingues:
                     completando = clave in self.pendientes[idioma]
                     revisando = clave in self.revisiones[idioma]
                     if valor.strip():
+                        self.manuales[idioma].add(clave)
                         self.pendientes[idioma].discard(clave)
                         self.revisiones[idioma].discard(clave)
                         self.automaticas[idioma].discard(clave)
-                        self.manuales[idioma].add(clave)
                     traducido, seguro = self.traducir(campo, valor, idioma, otro, fila)
                     compartido = seguro and not re.search(r"[A-Za-zÁÉÍÓÚáéíóú]", valor)
                     if completando and not revisando and not compartido and destino.get(campo, "").strip() and clave not in self.automaticas[otro]:
@@ -105,10 +131,10 @@ class BorradoresBilingues:
                     completando = clave in self.pendientes[idioma]
                     revisando = clave in self.revisiones[idioma]
                     if valor.strip():
+                        self.manuales[idioma].add(clave)
                         self.pendientes[idioma].discard(clave)
                         self.revisiones[idioma].discard(clave)
                         self.automaticas[idioma].discard(clave)
-                        self.manuales[idioma].add(clave)
                     if completando and not revisando and self._texto(contraparte, campo).strip():
                         continue
                     traducido, seguro = self.traducir(campo, valor, idioma, otro, {})
@@ -131,7 +157,6 @@ class BorradoresBilingues:
         for lengua in (idioma, otro):
             ids = {f["_id_bilingue"] for f in self.borradores[lengua]["pruebas"]} | {"cabecera"}
             self.pendientes[lengua] = {c for c in self.pendientes[lengua] if c[0] in ids}
-            self.manuales[lengua] = {c for c in self.manuales[lengua] if c[0] in ids}
         return copy.deepcopy(nuevo)
 
     @staticmethod
@@ -146,47 +171,56 @@ class BorradoresBilingues:
             contenido["control"][campo] = valor
 
     def confirmar(self, idioma, clave):
+        self.manuales[idioma].add(clave)
         self.pendientes[idioma].discard(clave)
         self.revisiones[idioma].discard(clave)
         self.automaticas[idioma].discard(clave)
-        self.manuales[idioma].add(clave)
 
-    def actualizar_traducciones_automaticas(self, idioma_destino=None, completar_sin_traducir=False):
-        """Recalcula sugerencias del diccionario sin reemplazar correcciones manuales."""
-        fuentes = copy.deepcopy(self.borradores)
-        for idioma in ("es", "en") if idioma_destino is None else (idioma_destino,):
-            otro = "en" if idioma == "es" else "es"
-            origenes = {f["_id_bilingue"]: f for f in fuentes[otro]["pruebas"]}
-            for fila in self.borradores[idioma]["pruebas"]:
-                fuente = origenes.get(fila["_id_bilingue"])
-                if fuente is None:
+    def actualizar_traducciones_automaticas(self, idioma=None, completar_sin_traducir=False):
+        """Refresca equivalencias sin reemplazar traducciones manuales."""
+        # Leer ambos originales antes de actualizar para no traducir de vuelta
+        # el resultado que acabamos de producir en el otro idioma.
+        originales = copy.deepcopy(self.borradores)
+        for destino in ((idioma,) if idioma else ("es", "en")):
+            origen = "en" if destino == "es" else "es"
+            fuente = originales[origen]
+            objetivo = self.borradores[destino]
+            filas = {f["_id_bilingue"]: f for f in fuente["pruebas"]}
+            celdas = [(f["_id_bilingue"], c, f, filas[f["_id_bilingue"]])
+                      for f in objetivo["pruebas"] for c in CAMPOS]
+            celdas += [("cabecera", c, None, {}) for c in ("notas", "elaboro_y_aprobo")]
+            for identidad, campo, fila, referencia in celdas:
+                clave = (identidad, campo)
+                if clave in self.manuales[destino]:
                     continue
-                for campo in CAMPOS:
-                    marca = (fila["_id_bilingue"], campo)
-                    sin_traducir = (not fila.get(campo, "").strip()
-                                    or fila.get(campo, "").strip().casefold() == fuente.get(campo, "").strip().casefold()
-                                    or (marca in self.pendientes[idioma] and marca not in self.revisiones[idioma]))
-                    if marca in self.manuales[idioma] or (marca not in self.automaticas[idioma] and not (completar_sin_traducir and sin_traducir)):
-                        continue
-                    self.automaticas[idioma].add(marca)
-                    fila[campo], seguro = self.traducir(campo, fuente.get(campo, ""), otro, idioma, fuente)
-                    if seguro:
-                        self.pendientes[idioma].discard(marca)
-                    else:
-                        self.pendientes[idioma].add(marca)
-            for campo in ("notas", "elaboro_y_aprobo"):
-                marca = ("cabecera", campo)
-                valor_actual = self._texto(self.borradores[idioma], campo).strip()
-                valor_origen = self._texto(fuentes[otro], campo).strip()
-                sin_traducir = not valor_actual or valor_actual.casefold() == valor_origen.casefold()
-                if marca not in self.manuales[idioma] and (marca in self.automaticas[idioma] or (completar_sin_traducir and sin_traducir)):
-                    self.automaticas[idioma].add(marca)
-                    valor, seguro = self.traducir(campo, self._texto(fuentes[otro], campo), otro, idioma, {})
-                    self._poner(self.borradores[idioma], campo, valor)
-                    if seguro:
-                        self.pendientes[idioma].discard(marca)
-                    else:
-                        self.pendientes[idioma].add(marca)
+                actual = self._texto(objetivo, campo) if fila is None else fila.get(campo, "")
+                texto = self._texto(fuente, campo) if fila is None else referencia.get(campo, "")
+                automatica = clave in self.automaticas[destino]
+                if not automatica and not completar_sin_traducir:
+                    continue
+                if not automatica and clave in self.revisiones[destino]:
+                    continue
+                if not actual.strip() and texto.strip():
+                    continue
+                if automatica or actual.strip() == texto.strip():
+                    traducido, seguro = self.traducir(campo, texto, origen, destino, referencia)
+                else:
+                    # Normalizar el texto propio de una pareja guardada, sin
+                    # sustituir cifras ni traducciones diferentes por las del otro.
+                    traducido, seguro = self.traducir(campo, actual, destino, destino, fila or {})
+                # Una equivalencia nueva incierta no reemplaza un texto existente.
+                if not seguro:
+                    if automatica:
+                        self.pendientes[destino].add(clave)
+                    continue
+                if fila is None:
+                    self._poner(objetivo, campo, traducido)
+                else:
+                    fila[campo] = traducido
+                if automatica or actual.strip() == texto.strip():
+                    self.automaticas[destino].add(clave)
+                self.pendientes[destino].discard(clave)
+                self.revisiones[destino].discard(clave)
 
     def cargar_pareja(self, contenido):
         """Relaciona filas por nombre traducido y método, nunca por posición."""
@@ -194,12 +228,20 @@ class BorradoresBilingues:
         generado = self.borradores[idioma]
         cargado = copy.deepcopy(contenido)
         disponibles = list(cargado["pruebas"])
+        def identidad(fila):
+            valores = []
+            for campo in ("prueba", "metodo"):
+                original = fila.get(campo, "")
+                valor, seguro = self.traducir(campo, original, idioma, idioma, fila)
+                valores.append((valor if seguro else original).strip().casefold())
+            return tuple(valores)
+        identidades = {id(f): identidad(f) for f in disponibles}
         for fila in generado["pruebas"]:
             candidatas = [f for f in disponibles if f.get("prueba", "").strip().casefold() == fila.get("prueba", "").strip().casefold()
                           and f.get("metodo", "").strip().casefold() == fila.get("metodo", "").strip().casefold()]
             if len(candidatas) != 1:
-                candidatas = [f for f in disponibles if fila.get("metodo", "").strip()
-                              and f.get("metodo", "").strip().casefold() == fila["metodo"].strip().casefold()]
+                clave = identidad(fila)
+                candidatas = [f for f in disponibles if identidades[id(f)] == clave]
                 if len(candidatas) != 1:
                     raise ValueError("No se pueden relacionar de forma inequívoca las pruebas de ESP y ENG. Revisa la pareja antes de editarla.")
             pareja = candidatas[0]
@@ -218,6 +260,7 @@ class BorradoresBilingues:
                     self.pendientes[idioma].add((fila["_id_bilingue"], campo))
                 if campo in {"especificacion", "valor_tipico"} and re.findall(r"[+-]?\d+(?:[.,]\d+)?", generado["pruebas"][indice].get(campo, "")) != re.findall(r"[+-]?\d+(?:[.,]\d+)?", fila.get(campo, "")):
                     self.pendientes[idioma].add((fila["_id_bilingue"], campo))
+                    self.revisiones[idioma].add((fila["_id_bilingue"], campo))
         if self._texto(generado, "notas").strip() and not self._texto(cargado, "notas").strip():
             self.pendientes[idioma].add(("cabecera", "notas"))
 
@@ -228,15 +271,12 @@ def guardar_pareja_json(documentos):
     import os
     import tempfile
     from pathlib import Path
-    from rutas_proyecto import resolver_ruta
     temporales = {}
     respaldos = {}
     escritos = []
     try:
         for ruta, datos in documentos.items():
             ruta = Path(ruta)
-            if not ruta.is_absolute():
-                ruta = resolver_ruta(ruta)
             respaldos[ruta] = ruta.read_bytes() if ruta.exists() else None
             with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=ruta.parent,
                                              prefix=".bilingue_", suffix=".tmp", delete=False) as archivo:

@@ -157,9 +157,10 @@ class MenuPrincipal:
         pagina.pack(fill="both", expand=True, padx=8, pady=8)
         pagina.grid_columnconfigure(0, weight=1)
         ctk.CTkLabel(pagina, text=titulo, font=(ui.PREFERENCIAS["fuente"], 24, "bold"),
-                     anchor="w").pack(fill="x", padx=14, pady=(8, 2))
-        ctk.CTkLabel(pagina, text=subtitulo, anchor="w", justify="left", wraplength=850,
-                     text_color=("#5d718a", "#a5b5ca")).pack(fill="x", padx=14, pady=(0, 18))
+                     anchor="w").pack(fill="x", padx=14, pady=(8, 2 if subtitulo else 18))
+        if subtitulo:
+            ctk.CTkLabel(pagina, text=subtitulo, anchor="w", justify="left", wraplength=850,
+                         text_color=("#5d718a", "#a5b5ca")).pack(fill="x", padx=14, pady=(0, 18))
         return pagina
 
     def cambiar_pestana(self):
@@ -194,6 +195,7 @@ class MenuPrincipal:
             ("SELECCIONAR ESPEC", "Busca por producto, código, cliente o revisión.", self.app.seleccionar_especificacion),
             ("COMPARAR ESPECS", "Revisa versiones y diferencias en paralelo.", self.app.comparar_especificaciones),
             ("GENERAR HII", "Prepara hojas Excel en español o inglés.", self.app.generar_hii),
+            ("ANÁLISIS", "Compara productos a partir de JSON alineados.", self.app.abrir_analisis),
         )):
             boton = ui.Boton(self.rejilla, text=titulo, command=comando, height=48, font=(ui.PREFERENCIAS["fuente"], 12, "bold"))
             boton.grid(row=numero, column=0, sticky="ew", pady=(0, 12))
@@ -207,14 +209,14 @@ class MenuPrincipal:
         if not hasattr(self, "rejilla"):
             return
         alto = self.raiz.winfo_height() / self.raiz._get_window_scaling() / ui.PREFERENCIAS["escala"]
-        altura_boton = max(30, min(48, int((alto - 155) / 5) - 12))
+        altura_boton = max(30, min(48, int((alto - 155) / len(self.tarjetas)) - 12))
         for boton in self.tarjetas:
             boton._altura_fija = altura_boton
             boton.configure(height=altura_boton)
 
     def instrucciones(self):
         from interfaz_aplicacion_especificaciones import BASE
-        pagina = self.pagina("Instrucciones", "Guía del gestor", "Consulta las instrucciones sin salir de la aplicación.")
+        pagina = self.pagina("Instrucciones", "Guía del gestor", "")
         selector = ctk.CTkOptionMenu(pagina, values=["RESUMEN_ALINEADOR_ESPECIFICACIONES.md", "README_ACTUALIZACION_CODIGOS_200.md", "README_INTERFAZ.md"],
                                     command=lambda nombre: cargar(nombre))
         selector.set("RESUMEN_ALINEADOR_ESPECIFICACIONES.md")
@@ -272,8 +274,6 @@ class MenuPrincipal:
         encabezado.pack(fill="x", padx=18, pady=(12, 18))
         self._encabezado_metodos = encabezado
         ctk.CTkLabel(encabezado, text="Métodos y traducciones", font=(ui.PREFERENCIAS["fuente"], 24, "bold"), anchor="w").pack(fill="x", pady=(0, 4))
-        ctk.CTkLabel(encabezado, text="Administra las listas utilizadas por el editor de especificaciones.", anchor="w", justify="left", wraplength=700,
-                     text_color=("#5d718a", "#a5b5ca")).pack(fill="x")
         rejilla = ctk.CTkFrame(pagina, fg_color="transparent")
         rejilla.pack(fill="x", padx=18, pady=(0, 18))
         self._rejilla_metodos = rejilla

@@ -29,6 +29,7 @@ from threading import Event
 from tkinter import filedialog, messagebox, ttk as ttk_nativo
 from uuid import uuid4
 from zipfile import ZipFile, ZIP_DEFLATED
+from rutas_proyecto import referencia_documento, validar_archivo_office
 
 from lxml import etree as ET
 from openpyxl import load_workbook
@@ -301,7 +302,11 @@ def indexar(con, ruta, *, _visitadas=None):
             for referencia in referencias:
                 if not isinstance(referencia, dict) or not isinstance(referencia.get("archivo_json"), str):
                     continue
-                destino = resolver_ruta(referencia["archivo_json"], ruta.parent)
+                try:
+                    destino = referencia_documento(referencia["archivo_json"], ruta.parent,
+                        (rutas_configuradas(_base_registro(con))["json_alineadas"],))
+                except ValueError:
+                    continue
                 clave = _clave_ruta(con, destino)
                 try:
                     if clave in visitadas:
@@ -438,7 +443,7 @@ def registrar(con, excel, especificacion, idioma, fecha):
 
 # Catalogo en cache y disponibilidad de idiomas
 
-VERSION_CACHE = 1
+VERSION_CACHE = 2
 NOMBRE_CACHE = ".cache_catalogo_hii"
 
 
@@ -453,7 +458,7 @@ def _restaurar(datos: dict, ruta: Path, carpeta: Path) -> Especificacion:
     if not isinstance(datos, dict):
         raise ValueError("Entrada de caché inválida")
     datos = dict(datos)
-    for campo in ("nombre_producto", "codigo", "cliente", "revision", "busqueda", "idioma", "version_alineador"):
+    for campo in ("nombre_producto", "codigo", "cliente", "revision", "busqueda", "idioma", "version_alineador", "comentario"):
         if not isinstance(datos.get(campo), str):
             raise ValueError("Metadatos de caché inválidos")
     for campo in ("edicion_bilingue", "en_progreso"):
@@ -929,10 +934,11 @@ def _firma_plantilla(ruta):
 
 @lru_cache(maxsize=4)
 def _cargar_plantilla(ruta, firma):
+    validar_archivo_office(ruta)
     contenido = ruta.read_bytes()
     if _firma_plantilla(ruta) != firma:
         raise ValueError("La plantilla cambió mientras se leía. Vuelve a intentarlo.")
-    modelo_libro = load_workbook(io.BytesIO(contenido), read_only=False)
+    modelo_libro = load_workbook(io.BytesIO(contenido), read_only=False, keep_links=False)
     try:
         modelo_hoja = modelo_libro.worksheets[0]
         anchos = tuple(modelo_hoja.column_dimensions[get_column_letter(c)].width for c in range(1, 7))
@@ -1074,18 +1080,10 @@ def construir_excel(plantilla: Path, datos: DatosHII) -> bytes:
                 if ET.QName(elemento).localname == "definedName" and elemento.text:
                     elemento.text = desplazar_referencia(elemento.text, extra, desde)
             partes[nombre] = ET.tostring(raiz, xml_declaration=True, encoding="UTF-8")
-    # Limita la impresión a la HII, sin incluir el catálogo auxiliar de la plantilla inglesa.
-    libro = ET.fromstring(partes["xl/workbook.xml"])
-    definidos = libro.find("s:definedNames", NS)
-    if definidos is None:
-        definidos = ET.Element(f"{{{NS['s']}}}definedNames")
-        posicion = list(libro).index(libro.find("s:sheets", NS)) + 1
-        libro.insert(posicion, definidos)
-    area = next((n for n in definidos if n.get("name") == "_xlnm.Print_Area" and n.get("localSheetId") == "0"), None)
-    if area is None:
-        area = ET.SubElement(definidos, f"{{{NS['s']}}}definedName", name="_xlnm.Print_Area", localSheetId="0")
-    area.text = "'" + nombre_hoja.replace("'", "''") + f"'!$A$1:$F${43 + extra}"
-    partes["xl/workbook.xml"] = ET.tostring(libro, xml_declaration=True, encoding="UTF-8")
+    # El área de impresión pertenece al formato y no debe sustituirse. Cuando se
+    # insertan filas, el bloque anterior ya desplaza sus referencias junto con
+    # las demás definiciones del libro. Si la plantilla no define un área, se
+    # conserva así para que Excel determine el rango usado.
     # Reemplazar fechas también en cadenas compartidas, encabezados y otros objetos XML.
     for nombre, contenido in list(partes.items()):
         if nombre.endswith((".xml", ".vml")) and b"DD/MM/YY" in contenido:
@@ -1315,6 +1313,13 @@ class GeneradorHII:
         self.guardar_word_boton.pack(side="left", padx=8)
         self.guardar_boton = ttk.Button(barra, text="Guardar HII", command=self.guardar, state="disabled")
         self.guardar_boton.pack(side="left", padx=8)
+        self.comentario_boton = ttk.Button(
+            barra,
+            text="💬",
+            width=3,
+            command=self._mostrar_comentario_especificacion,
+            variante="secundario",
+        )
         self.estado = ttk.Label(barra, text="Selecciona una fila para ver su vista previa.")
         self.estado.pack(side="left")
         idiomas = ttk.Frame(self.cuerpo, padding=(8, 0, 8, 8))
@@ -1435,6 +1440,75 @@ class GeneradorHII:
     def _cambiar_ambos(self):
         self.guardar_boton.configure(text="Guardar ambas" if self.ambos_idiomas.get() else "Guardar HII")
         self._programar("zoom", 40, self._aplicar_zoom)
+
+    def _especificacion_mostrada(self):
+        if self.actual is None:
+            return None
+        ruta = Path(self.actual).resolve()
+        encontrada = next(
+            (especificacion for especificacion in self.catalogo.especificaciones
+             if especificacion.ruta.resolve() == ruta),
+            None,
+        )
+        if encontrada is not None:
+            return encontrada
+        try:
+            return self._leer_entrada(ruta)
+        except (OSError, ValueError, IndexError):
+            return None
+
+    def _actualizar_boton_comentario(self):
+        boton = getattr(self, "comentario_boton", None)
+        if boton is None:
+            return
+        especificacion = self._especificacion_mostrada()
+        if especificacion is None or not especificacion.comentario.strip():
+            boton.pack_forget()
+        else:
+            boton.configure(state="normal")
+            boton.pack(side="right", padx=(8, 0))
+
+    def _mostrar_comentario_especificacion(self):
+        especificacion = self._especificacion_mostrada()
+        comentario = especificacion.comentario.strip() if especificacion is not None else ""
+        if not comentario:
+            self._actualizar_boton_comentario()
+            return
+
+        ventana_anterior = getattr(self, "_ventana_comentario", None)
+        if ventana_anterior is not None and ventana_anterior.winfo_exists():
+            ventana_anterior.destroy()
+        ventana = self._ventana_comentario = ui.Ventana(self.ventana)
+        ventana.title("Comentario de la especificación")
+        ventana.geometry("560x320")
+        ventana.minsize(420, 240)
+        ventana.transient(self.ventana)
+        contenido = ttk.Frame(ventana, padding=14)
+        contenido.pack(fill="both", expand=True)
+        ttk.Label(
+            contenido,
+            text=especificacion.nombre_producto or especificacion.ruta.name,
+            font=("Segoe UI", 13, "bold"),
+            wraplength=520,
+        ).pack(anchor="w", pady=(0, 8))
+        texto_comentario = tk.Text(contenido, wrap="word", font=("Segoe UI", 11), padx=8, pady=8)
+        texto_comentario.insert("1.0", comentario)
+        texto_comentario.configure(state="disabled")
+        texto_comentario.pack(fill="both", expand=True)
+        barra = ttk.Frame(contenido)
+        barra.pack(fill="x", pady=(10, 0))
+        estado = ttk.Label(barra, text="")
+        estado.pack(side="left")
+
+        def copiar():
+            ventana.clipboard_clear()
+            ventana.clipboard_append(comentario)
+            ventana.update_idletasks()
+            estado.configure(text="Comentario copiado al portapapeles.")
+
+        ttk.Button(barra, text="Cerrar", variante="secundario", command=ventana.destroy).pack(side="right")
+        ttk.Button(barra, text="Copiar", command=copiar).pack(side="right", padx=(0, 8))
+        ventana.bind("<Escape>", lambda _evento: ventana.destroy())
 
     def _cancelar_tarea(self, clave):
         identificador = self._tareas.pop(clave, None)
@@ -1824,6 +1898,7 @@ class GeneradorHII:
                 widget.destroy()
         self._actualizar_vistas()
         self.estado.configure(text="Selecciona una fila para ver su vista previa.")
+        self._actualizar_boton_comentario()
         self._actualizar_idiomas()
 
     def abrir(self):
@@ -1848,6 +1923,7 @@ class GeneradorHII:
             self.plantilla_actual = plantilla
             self.actual = Path(ruta)
             self.origen_actual = origen
+            self._actualizar_boton_comentario()
             self._vistas_renderizadas.clear()
             for panel in (self.izquierda, self.derecha):
                 for widget in panel.winfo_children():
