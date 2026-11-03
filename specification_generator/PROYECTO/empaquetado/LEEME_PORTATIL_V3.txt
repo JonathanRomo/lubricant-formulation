@@ -1,0 +1,28 @@
+APLICACION DE ESPECIFICACIONES - DISTRIBUCION 3 PORTATIL
+
+Extraiga el ZIP completo en una carpeta con permiso de escritura.
+Ejecute AplicacionEspecificaciones_v3.exe. No necesita instalar Python.
+Mantenga la carpeta _internal y CODIGOS_200.xlsx junto al ejecutable.
+No distribuya ni mueva solamente el archivo .exe: necesita toda la carpeta.
+
+El catalogo Excel es externo y puede sustituirse con la aplicacion cerrada.
+Las preferencias, ayuda y configuracion se guardan junto al ejecutable.
+Se conserva el funcionamiento actual de la base de datos de la aplicacion.
+Los temporales no se almacenan en una base de datos.
+
+Esta version utiliza las bibliotecas de _internal directamente, sin extraer
+un paquete _MEI en el TEMP del usuario al arrancar.
+Los temporales de Python se crean en TEMPORAL/sesion_* junto al ejecutable.
+Cada proceso utiliza su propia sesion, que se limpia al finalizar normalmente.
+Un cierre forzado puede dejar restos. Con todas las instancias cerradas,
+puede eliminar el contenido de TEMPORAL.
+
+Los archivos temporales de guardado atomico se crean junto a su destino.
+Word, Windows y otras herramientas externas pueden crear archivos propios
+fuera de esta carpeta; la aplicacion no controla todos esos archivos.
+
+No se incluyen tests, METODOS_LAB, FORMATOS, ESPECIFICACIONES_VIEJAS_ENG,
+ESPECIFICACIONES_VIEJAS, ESPECIFICACIONES_JSON ni
+ESPECIFICACIONES_JSON_ALINEADAS. Configure sus carpetas de datos externas.
+Para trasladar su trabajo, copie toda la carpeta portatil y los datos externos
+que haya seleccionado; actualice las rutas externas si cambian de ubicacion.
