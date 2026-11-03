@@ -9,7 +9,8 @@ from PyInstaller.utils.hooks import collect_data_files, get_package_paths
 from PyInstaller.utils.hooks.tcl_tk import tcltk_info
 
 
-base = Path(SPECPATH).resolve().parent
+base = Path(SPECPATH).resolve().parent.parent
+fuentes = base / "src" / "specification_generator"
 nombre = "AplicacionEspecificaciones_v4"
 documentos = (
     "RESUMEN_ALINEADOR_ESPECIFICACIONES.md",
@@ -33,11 +34,11 @@ if not tcltk_info.available:
         binarios.append((str(Path(sys.base_prefix) / "DLLs" / dll), "."))
 
 a = Analysis(
-    [str(base / "interfaz_aplicacion_especificaciones.py")],
-    pathex=[str(base)],
+    [str(fuentes / "interfaz_aplicacion_especificaciones.py")],
+    pathex=[str(base / "src"), str(fuentes)],
     binaries=binarios,
     datas=datos,
-    hiddenimports=[p.stem for p in base.glob("*.py")],
+    hiddenimports=[p.stem for p in fuentes.glob("*.py")],
     hookspath=[str(base / "empaquetado" / "hooks")],
     hooksconfig={},
     runtime_hooks=[str(base / "empaquetado" / "temporales_portatiles.py")],
@@ -87,7 +88,7 @@ exe = EXE(
 carpeta = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False, name=nombre)
 salida = Path(CONF["distpath"]) / nombre
 for documento in documentos:
-    shutil.copy2(base / documento, salida / documento)
+    shutil.copy2(base / "docs" / documento, salida / documento)
 shutil.copy2(base / "empaquetado" / "LEEME_PORTATIL_V4.txt", salida / "LEEME_PORTATIL.txt")
 
 # Auditar recursivamente el producto final, incluidos los recursos de bibliotecas.

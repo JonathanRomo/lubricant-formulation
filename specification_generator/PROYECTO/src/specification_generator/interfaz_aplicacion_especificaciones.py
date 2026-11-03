@@ -6745,8 +6745,10 @@ class AplicacionEspecificaciones:
         self.raiz.after(100, recibir)
 
     def abrir_instrucciones(self) -> None:
-        for nombre in ("README_ACTUALIZACION_CODIGOS_200.md", "README.md"):
-            ruta = BASE / nombre
+        for ruta in (
+            BASE / "docs" / "README_ACTUALIZACION_CODIGOS_200.md",
+            BASE / "README.md",
+        ):
             if ruta.is_file():
                 try:
                     abrir_en_windows = getattr(os, "startfile", None)

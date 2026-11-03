@@ -18,6 +18,9 @@ from interfaz_aplicacion_especificaciones import _guardar_configuracion, _cargar
 from rutas_proyecto import BASE, CARPETAS, resolver_ruta, ruta_portatil, rutas_configuradas
 
 
+FUENTES = Path(__file__).resolve().parents[1] / "src" / "specification_generator"
+
+
 @contextmanager
 def otro_directorio(carpeta):
     anterior = Path.cwd()
@@ -88,7 +91,9 @@ class PortabilidadRutasTests(unittest.TestCase):
             proyecto = raiz / "Programa portable"
             proyecto.mkdir()
             modulos = []
-            for fuente in BASE.glob("*.py"):
+            for fuente in FUENTES.glob("*.py"):
+                if fuente.stem in {"__init__", "__main__", "main"}:
+                    continue
                 shutil.copy2(fuente, proyecto / fuente.name)
                 modulos.append(fuente.stem)
             codigo = """

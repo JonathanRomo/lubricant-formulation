@@ -1759,12 +1759,12 @@ class SelectorEspecificaciones:
             )
             return
         if self.al_actualizar is None:
-            aplicacion = BASE / "interfaz_aplicacion_especificaciones.py"
             try:
+                comando = [sys.executable]
+                if not getattr(sys, "frozen", False):
+                    comando.extend(["-m", "specification_generator"])
                 subprocess.Popen(
-                    [
-                        sys.executable,
-                        *([] if getattr(sys, "frozen", False) else [str(aplicacion)]),
+                    comando + [
                         "--editar-json",
                         str(seleccionadas[0]),
                     ],
@@ -1780,7 +1780,7 @@ class SelectorEspecificaciones:
         self.al_actualizar(seleccionadas[0])
 
     def abrir_resumen_alineador(self) -> None:
-        ruta = BASE / "RESUMEN_ALINEADOR_ESPECIFICACIONES.md"
+        ruta = BASE / "docs" / "RESUMEN_ALINEADOR_ESPECIFICACIONES.md"
         try:
             abrir_en_windows = getattr(os, "startfile", None)
             if callable(abrir_en_windows):
@@ -2077,12 +2077,12 @@ class SelectorEspecificaciones:
         if especificacion is None:
             return
         if self.al_editar is None:
-            aplicacion = BASE / "interfaz_aplicacion_especificaciones.py"
             try:
+                comando = [sys.executable]
+                if not getattr(sys, "frozen", False):
+                    comando.extend(["-m", "specification_generator"])
                 subprocess.Popen(
-                    [
-                        sys.executable,
-                        *([] if getattr(sys, "frozen", False) else [str(aplicacion)]),
+                    comando + [
                         "--generar-json",
                         str(especificacion.ruta),
                     ],

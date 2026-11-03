@@ -13,6 +13,7 @@ __pycache__/
 .coverage
 coverage.xml
 htmlcov/
+*.egg-info/
 
 # Configuración local y secretos
 .env
@@ -64,3 +65,7 @@ REPORTE_ALINEACION.txt
 *.tmp
 *.temp
 *.log
+
+# Directorio de logs: conservar solo el marcador de la estructura
+/logs/*
+!/logs/.gitkeep

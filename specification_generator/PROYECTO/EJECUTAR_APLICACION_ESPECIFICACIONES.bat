@@ -37,7 +37,8 @@ if errorlevel 1 (
     )
 )
 
-"%PYTHON%" "%~dp0interfaz_aplicacion_especificaciones.py"
+set "PYTHONPATH=%~dp0src"
+"%PYTHON%" -m specification_generator
 if errorlevel 1 (
     echo.
     echo ERROR: La aplicacion termino con un error.

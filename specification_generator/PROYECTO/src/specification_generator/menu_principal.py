@@ -225,7 +225,7 @@ class MenuPrincipal:
         texto.pack(fill="both", expand=True, padx=14, pady=(0, 14))
         def cargar(nombre):
             try:
-                contenido = (BASE / nombre).read_text(encoding="utf-8-sig")
+                contenido = (BASE / "docs" / nombre).read_text(encoding="utf-8-sig")
             except OSError as exc:
                 contenido = str(exc)
             texto.configure(state="normal")

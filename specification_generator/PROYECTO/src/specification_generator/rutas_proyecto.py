@@ -13,8 +13,16 @@ from zipfile import ZipFile
 
 
 def base_programa() -> Path:
-    origen = sys.executable if getattr(sys, "frozen", False) else __file__
-    return Path(origen).resolve().parent
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    origen = Path(__file__).resolve()
+    # En el layout src, los datos operativos viven junto a pyproject.toml.
+    # Si el modulo se copia o distribuye de forma aislada, se conserva el
+    # comportamiento historico de usar la carpeta que contiene el archivo.
+    for carpeta in origen.parents:
+        if (carpeta / "pyproject.toml").is_file():
+            return carpeta
+    return origen.parent
 
 
 BASE = base_programa()

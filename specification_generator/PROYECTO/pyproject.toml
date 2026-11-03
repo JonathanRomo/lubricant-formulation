@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "specification-generator"
+version = "1.1.4"
+description = "Gestor de especificaciones tecnicas bilingues"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+authors = [
+    { name = "Jonathan Romo", email = "jonathanromomacias@gmail.com" },
+]
+dependencies = [
+    "python-docx==1.2.0",
+    "customtkinter==5.2.2",
+    "openpyxl==3.1.5",
+    "lxml>=5,<7",
+    "pandas>=2.2,<3",
+    "rapidfuzz>=3.9,<4",
+    "pywin32>=306; platform_system == 'Windows'",
+]
+
+[project.scripts]
+gestor-especificaciones = "specification_generator.main:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "src/specification_generator", "tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+exclude = [".venv", "build", "dist"]
