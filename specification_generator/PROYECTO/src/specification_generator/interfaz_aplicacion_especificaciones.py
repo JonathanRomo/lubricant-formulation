@@ -86,7 +86,7 @@ from interfaz_seleccion_especificaciones import (
 from reconstruir_base_datos import notificar_catalogo, suscribir_catalogo
 
 
-VERSION = "1.1.4"
+VERSION = "1.1.5"
 RUTAS_PREDETERMINADAS = {clave: BASE / carpeta for clave, carpeta in CARPETAS.items()}
 ARCHIVO_CONFIGURACION = BASE / "configuracion_interfaz.json"
 CAMPOS_TABLA = ("prueba", "unidades", "metodo", "especificacion", "valor_tipico")
@@ -519,7 +519,7 @@ def alinear_filas_generador(
 
         especificacion, ambiguos_especificacion = normalizar_valor_medicion(
             normalizar_terminos_especificacion(
-                normalizar_especificacion(nombres_sin_comentario["especificacion"])
+                normalizar_especificacion(nombres_sin_comentario["especificacion"], idioma_maestro)
             )
         )
         valor_tipico, ambiguos_valor_tipico = normalizar_valor_medicion(
@@ -538,12 +538,14 @@ def alinear_filas_generador(
         metodo_maestro = match.get("metodo_confirmado") or metodo_alineado_canonico(nombres_sin_comentario["metodo"], metodo_maestro_fuente)
         if match["estado"] == "ALINEADO" and not nombre_maestro:
             match["estado"] = "REVISION_REQUERIDA"
+        coincidencia_alineada = match["estado"] == "ALINEADO"
         if ambiguos_especificacion or ambiguos_valor_tipico:
             match["estado"] = "REVISION_REQUERIDA"
 
         alternativas = alternativas_unidades(unidad_maestra)
         unidades_alineadas = alternativas[0] if alternativas else unidad_maestra
-        if match["estado"] == "ALINEADO":
+        unidades_alineadas = match.get("unidad_confirmada", unidades_alineadas)
+        if coincidencia_alineada:
             for campo, valor_base in (
                 ("prueba", nombre_maestro),
                 ("metodo", metodo_maestro),
@@ -551,37 +553,41 @@ def alinear_filas_generador(
                 marcador = originales[campo][len(nombres_sin_comentario[campo]):].strip()
                 fila[campo] = " ".join(parte for parte in (valor_base, marcador) if parte)
             if unidades_alineadas:
-                if unidad_original_esta_entre_alternativas(
+                if "unidad_confirmada" not in match and unidad_original_esta_entre_alternativas(
                     originales["unidades"], unidad_maestra
                 ):
                     unidades_alineadas = originales["unidades"]
                 fila["unidades"] = normalizar_formato_numerico(unidades_alineadas)
-            conteo["alineados"] += 1
+            conteo["revision" if match["estado"] == "REVISION_REQUERIDA" else "alineados"] += 1
         elif match["estado"] == "REVISION_REQUERIDA":
             conteo["revision"] += 1
         else:
             conteo["sin_coincidencia"] += 1
 
-        if match["estado"] != "ALINEADO" and match.get("metodo_normalizado"):
+        if not coincidencia_alineada and match.get("metodo_normalizado"):
             marcador = originales["metodo"][len(nombres_sin_comentario["metodo"]):].strip()
             fila["metodo"] = " ".join(parte for parte in (match["metodo_normalizado"], marcador) if parte)
-        if match["estado"] != "ALINEADO" and match.get("nombre_normalizado"):
+        if not coincidencia_alineada and match.get("nombre_normalizado"):
             marcador = originales["prueba"][len(nombres_sin_comentario["prueba"]):].strip()
             fila["prueba"] = " ".join(parte for parte in (match["nombre_normalizado"], marcador) if parte)
 
+        if not coincidencia_alineada and not match.get("metodo_normalizado"):
+            from alinear_especificaciones_json import normalizar_metodo_pendiente
+            fila["metodo"] = normalizar_metodo_pendiente(originales["metodo"])
+
         if match.get("fila_separadora") and errores_metodo is not None:
             errores_metodo[indice - 1] = match["mensaje_separador"]
+        if match.get("mensaje_unidades") and errores_metodo is not None:
+            errores_metodo[indice - 1] = match["mensaje_unidades"]
 
         if match.get("metodo_no_encontrado"):
             if errores_metodo is not None:
                 errores_metodo[indice - 1] = match["mensaje_metodo"]
             # Conserva la fila desconocida, salvo los alias de unidad confirmados.
             fila.update(originales)
-            fila['unidades'] = resolver_unidad_declarada(originales['unidades'], fila.get('unidades', ''), idioma_maestro)
-            if al_progreso is not None:
-                procesadas += 1
-                al_progreso(procesadas, total)
-            continue
+            from alinear_especificaciones_json import normalizar_metodo_pendiente, _normalizar_simbolos_unidades
+            fila['metodo'] = normalizar_metodo_pendiente(originales['metodo'])
+            fila['unidades'] = resolver_unidad_declarada(originales['unidades'], _normalizar_simbolos_unidades(fila.get('unidades', '')), idioma_maestro)
 
         marcador_especificacion = originales["especificacion"][
             len(nombres_sin_comentario["especificacion"]):
@@ -592,7 +598,7 @@ def alinear_filas_generador(
         fila["valor_tipico"] = valor_tipico
         for campo in ("prueba", "metodo", "unidades"):
             fila[campo] = normalizar_espacio_unidades(fila.get(campo, ""))
-        fila['unidades'] = resolver_unidad_declarada(originales['unidades'], fila.get('unidades', ''), idioma_maestro, usar_maestro=match['estado'] == 'ALINEADO')
+        fila['unidades'] = resolver_unidad_declarada(originales['unidades'], fila.get('unidades', ''), idioma_maestro, usar_maestro=coincidencia_alineada)
         if al_progreso is not None:
             procesadas += 1
             al_progreso(procesadas, total)
@@ -2672,7 +2678,13 @@ class EditorTraducciones:
             return False
         self.filas = candidatas
         self.modificado = True
+        if nueva:
+            self.busqueda.set("")
         self._mostrar()
+        if nueva:
+            identificador = str(len(self.filas) - 1)
+            self.tabla.selection_set(identificador)
+            self.tabla.see(identificador)
         return True
 
     def _eliminar(self):
@@ -2685,8 +2697,12 @@ class EditorTraducciones:
     def _guardar(self):
         if self.guardando:
             return
-        if self.tabla.selection() and not self._aplicar():
+        seleccion = self.tabla.selection()
+        if seleccion and not self._aplicar():
             return
+        if not seleccion and any(self.variables[c].get().strip() for c in ("es", "en", "observaciones")):
+            if not self._aplicar(nueva=True):
+                return
         self.guardando = True
         self.boton_guardar.configure(state="disabled", text="Guardando…")
         filas = copy.deepcopy(self.filas)
@@ -2713,6 +2729,7 @@ class EditorTraducciones:
         if correcto:
             self.huella = resultado["sha256_excel"]
             self.modificado = False
+            self._mostrar()
             if self.al_guardar is not None:
                 self.al_guardar()
             for campo, variable in self.variables.items():
@@ -2778,6 +2795,10 @@ class GeneradorEspecificacion:
         self._validacion_codigo_pendiente = None
         self._actualizando_validacion_codigo = False
         self._celda_activa: tuple[str, str] | None = None
+        self._identidades_tabla = {}
+        self._fila_provisional = None
+        self._fila_antes_edicion = None
+        self._posicion_editor_pendiente = None
         self._periodicidad_editores: list[ttk.Combobox] = []
         self._periodicidad_marco: ttk.Frame | None = None
         self._periodicidad_boton_mas: ttk.Button | None = None
@@ -3051,7 +3072,8 @@ class GeneradorEspecificacion:
         self.tabla_pruebas.bind(
             "<Double-1>", lambda e: self._editar_celda(e, permitir_alineada=True)
         )
-        self.tabla_pruebas.bind("<Configure>", self._reposicionar_editor)
+        self.tabla_pruebas.bind("<Configure>", self._reposicionar_editor, add="+")
+        self.tabla_pruebas.bind("<ButtonRelease-1>", self._programar_posicion_editor, add="+")
         self.tabla_pruebas.bind("<Delete>", self._borrar_celda_activa)
         self.tabla_pruebas.bind("<KP_Delete>", self._borrar_celda_activa)
         self._menu_periodicidades = tk.Menu(self.ventana, tearoff=False)
@@ -3069,8 +3091,8 @@ class GeneradorEspecificacion:
             command=self.tabla_pruebas.xview,
         )
         self.tabla_pruebas.configure(
-            yscrollcommand=lambda *args: (barra_vertical.set(*args), self._programar_resaltado()),
-            xscrollcommand=lambda *args: (barra_horizontal.set(*args), self._programar_resaltado()),
+            yscrollcommand=lambda *args: (barra_vertical.set(*args), self._programar_posicion_editor(), self._programar_resaltado()),
+            xscrollcommand=lambda *args: (barra_horizontal.set(*args), self._programar_posicion_editor(), self._programar_resaltado()),
         )
         self.tabla_pruebas.bind("<Configure>", lambda _e: self._programar_resaltado(), add="+")
         self.tabla_pruebas.grid(row=0, column=0, sticky="nsew")
@@ -3462,8 +3484,20 @@ class GeneradorEspecificacion:
         self._programar_resaltado()
 
     def _capturar_bilingue(self, idioma):
-        contenido = self._bilingue.actualizar(idioma, self._contenido_bilingue(idioma))
-        self.pruebas = contenido["pruebas"]
+        contenido = self._contenido_bilingue(idioma)
+        celda = getattr(self, "_celda_editada", None)
+        provisional = getattr(self, "_fila_provisional", None)
+        # La vigilancia de revisión también captura el borrador mientras se escribe.
+        # No debe publicar filas provisionales ni efectos de sugerencias sin confirmar.
+        if provisional is not None:
+            contenido["pruebas"].pop(int(provisional))
+        elif celda is not None and getattr(self, "_fila_antes_edicion", None) is not None:
+            contenido["pruebas"][int(celda[0])] = copy.deepcopy(self._fila_antes_edicion)
+            if celda[1] in CAMPOS_CON_COMENTARIO:
+                contenido["notas"] = self._notas_antes_edicion.splitlines()
+        actualizado = self._bilingue.actualizar(idioma, contenido)
+        if celda is None and provisional is None:
+            self.pruebas = actualizado["pruebas"]
 
     def _aplicar_borrador(self, idioma):
         contenido = copy.deepcopy(self._bilingue.borradores[idioma])
@@ -3998,7 +4032,7 @@ class GeneradorEspecificacion:
                 self._aceptar_sugerencia_popup,
             )
             lista.bind("<Return>", self._aceptar_sugerencia_popup)
-            lista.bind("<Escape>", lambda _evento: entrada.focus_set())
+            lista.bind("<Escape>", self._cancelar_popup_desde_lista)
             lista.bind("<FocusOut>", self._programar_cierre_editor)
             self._popup_sugerencias = popup
             self._lista_sugerencias = lista
@@ -4051,7 +4085,25 @@ class GeneradorEspecificacion:
             if indice_activo < 0:
                 return "break"
             seleccion = (indice_activo,)
+        entrada = self._entrada_sugerencias
+        foco_en_popup = self._popup_sugerencias is not None and self._foco_en_popup_sugerencias()
         callback(lista.get(seleccion[0]))
+        if foco_en_popup and entrada is not None and entrada.winfo_exists():
+            entrada.focus_force()
+        return "break"
+
+    def _foco_en_popup_sugerencias(self) -> bool:
+        popup = self._popup_sugerencias
+        if popup is None:
+            return False
+        foco = str(self.ventana.tk.call("focus"))
+        return foco == str(popup) or foco.startswith(str(popup) + ".")
+
+    def _cancelar_popup_desde_lista(self, _evento: tk.Event | None = None) -> str:
+        entrada = self._entrada_sugerencias
+        self._ocultar_lista_sugerencias()
+        if entrada is not None and entrada.winfo_exists():
+            entrada.focus_force()
         return "break"
 
     def _enfocar_sugerencias(self, _evento: tk.Event | None = None) -> str:
@@ -4260,13 +4312,15 @@ class GeneradorEspecificacion:
     def _mostrar_ayuda_tabla(self) -> None:
         ingles = self._idioma.get() == "English"
         mensaje = (
-            "Click an empty cell to add a row; click any cell to edit it. "
+            "Click an empty cell to add a row; click a cell to edit it. "
+            "Blue aligned cells require a double-click for review. "
             "Gray suggestions can be clicked to accept them. Enter 1–3 "
             "symbols with the periodicity dropdown. Right-click the periodicity "
             "column to copy or paste them by method. Press Delete to clear a cell."
             if ingles
             else "Haz clic en una celda vacía para agregar una fila y en "
-            "cualquier celda para editarla. Puedes hacer clic en una sugerencia "
+            "una celda para editarla. Las celdas azules alineadas requieren "
+            "doble clic para revisarlas. Puedes hacer clic en una sugerencia "
             "gris para aceptarla. Selecciona de 1 a 3 símbolos en el desplegable "
             "de periodicidad. Haz clic derecho en esa columna para copiarlas o "
             "pegarlas por método. Presiona Suprimir para borrar una celda."
@@ -4414,7 +4468,7 @@ class GeneradorEspecificacion:
         )
         self.tabla_pruebas.heading(
             "periodicidad",
-            text=f"{ETIQUETA_PERIODICIDAD[idioma]} ⓘ",
+            text=f"{'Periodicidad' if idioma == 'es' else ETIQUETA_PERIODICIDAD[idioma]} ⓘ",
             command=self._mostrar_leyenda_periodicidad,
         )
         if self.etiqueta_codigo_invalido is not None:
@@ -4434,39 +4488,53 @@ class GeneradorEspecificacion:
 
     def _seleccion(self) -> int | None:
         seleccion = self.tabla_pruebas.selection()
-        if not seleccion or seleccion[0] == "nueva":
+        if not seleccion or not seleccion[0].isdigit() or int(seleccion[0]) >= len(self.pruebas):
             return None
         return int(seleccion[0])
 
+    @staticmethod
+    def _identidad_fila_editor(fila):
+        return ("bilingue", fila["_id_bilingue"]) if fila.get("_id_bilingue") else ("objeto", id(fila))
+
     def _actualizar_tabla(self) -> None:
         self._cerrar_editor_celda(guardar=True)
-        if self._bilingue is not None:
+        anteriores = getattr(self, "_identidades_tabla", {})
+        seleccion = self.tabla_pruebas.selection()
+        seleccion_identidad = anteriores.get(seleccion[0]) if seleccion else None
+        activa = getattr(self, "_celda_activa", None)
+        activa_identidad = anteriores.get(activa[0]) if activa else None
+        if self._bilingue is not None and getattr(self, "_fila_provisional", None) is None:
             self._capturar_bilingue(self._idioma_anterior)
         self._limpiar_sugerencia()
-        filas_existentes = self.tabla_pruebas.get_children()
-        if filas_existentes:
-            self.tabla_pruebas.delete(*filas_existentes)
+        identidades = {str(i): self._identidad_fila_editor(f) for i, f in enumerate(self.pruebas)}
+        por_identidad = {identidad: iid for iid, identidad in identidades.items()}
+        sobrantes = set(self.tabla_pruebas.get_children()) - set(identidades) - {"nueva"}
+        if sobrantes:
+            self.tabla_pruebas.delete(*sobrantes)
         for indice, fila in enumerate(self.pruebas):
-            self.tabla_pruebas.insert(
-                "",
-                tk.END,
-                iid=str(indice),
-                values=tuple(
-                    fila.get(campo, "")
-                    for campo in (*CAMPOS_TABLA, "periodicidad")
-                ),
-                tags=("fila_alterna",) if indice % 2 else (),
-            )
-        self.tabla_pruebas.insert(
-            "",
-            tk.END,
-            iid="nueva",
-            values=("", "", "", "", "", ""),
-        )
+            iid = str(indice)
+            valores = tuple(str(fila.get(campo, "")) for campo in (*CAMPOS_TABLA, "periodicidad"))
+            tags = ("fila_alterna",) if indice % 2 else ()
+            if not self.tabla_pruebas.exists(iid):
+                self.tabla_pruebas.insert("", tk.END, iid=iid, values=valores, tags=tags)
+            elif (tuple(str(v) for v in self.tabla_pruebas.item(iid, "values")) != valores
+                  or tuple(self.tabla_pruebas.item(iid, "tags")) != tags):
+                self.tabla_pruebas.item(iid, values=valores, tags=tags)
+        if not self.tabla_pruebas.exists("nueva"):
+            self.tabla_pruebas.insert("", tk.END, iid="nueva", values=("", "", "", "", "", ""))
+        orden = [*identidades, "nueva"]
+        if self._ordenador_pruebas.columna_ordenada is None:
+            self.tabla_pruebas.set_children("", *orden)
         self._ordenador_pruebas.registrar_orden_original(
-            [*(str(indice) for indice in range(len(self.pruebas))), "nueva"]
+            orden
         )
-        self.boton_eliminar.configure(state="disabled")
+        self._identidades_tabla = identidades
+        iid_seleccion = por_identidad.get(seleccion_identidad)
+        self.tabla_pruebas.selection_set(iid_seleccion or ())
+        self.tabla_pruebas.focus(iid_seleccion or "")
+        iid_activa = por_identidad.get(activa_identidad)
+        self._celda_activa = (iid_activa, activa[1]) if iid_activa else None
+        self.boton_eliminar.configure(state="normal" if iid_seleccion else "disabled")
         self._programar_resaltado()
 
     def _sugerencias(self, campo: str, texto_actual: str, iid: str) -> tuple[str, ...]:
@@ -4539,14 +4607,20 @@ class GeneradorEspecificacion:
         if not 0 <= indice_columna < len(campos_generador):
             return None
         campo = campos_generador[indice_columna]
+        if iid != "nueva" and (not iid.isdigit() or int(iid) >= len(self.pruebas)):
+            return "break"
+        if self._celda_editada == (iid, campo):
+            self._cancelar_cierre_editor()
+            controles = self._periodicidad_editores if campo == "periodicidad" else [self._editor_celda]
+            if controles and controles[0] is not None:
+                controles[0].focus_set()
+            return "break"
         if iid != "nueva" and not permitir_alineada:
             fila = self.pruebas[int(iid)]
             idioma = "en" if self._idioma.get() == "English" else "es"
             cambios = getattr(self, "_cambios_alineacion", {}).get(idioma, {})
             if campo in cambios.get(fila.get("_id_bilingue", iid), set()):
                 return "break"
-        if self._celda_editada == (iid, campo):
-            return "break"
         self._cerrar_editor_celda(guardar=True)
         if iid == "nueva":
             self.pruebas.append(
@@ -4556,8 +4630,13 @@ class GeneradorEspecificacion:
                 }
             )
             iid = str(len(self.pruebas) - 1)
+            self._fila_provisional = iid
             self._actualizar_tabla()
+        if not self.tabla_pruebas.exists(iid):
+            return "break"
         self.tabla_pruebas.selection_set(iid)
+        self.tabla_pruebas.focus(iid)
+        self.tabla_pruebas.see(iid)
         bbox = self.tabla_pruebas.bbox(iid, columna)
         if not bbox:
             return "break"
@@ -4568,6 +4647,9 @@ class GeneradorEspecificacion:
             else ""
         )
         self._celda_activa = (iid, campo)
+        self._fila_antes_edicion = copy.deepcopy(self.pruebas[int(iid)])
+        self._identidad_fila_en_edicion = self._identidad_fila_editor(self.pruebas[int(iid)])
+        self._notas_antes_edicion = self.notas.get("1.0", "end-1c")
         self._mostrar_referencia_bilingue(iid, campo)
         if campo == "periodicidad":
             editor = self._crear_editor_periodicidad(
@@ -4617,8 +4699,8 @@ class GeneradorEspecificacion:
             else [editor]
         )
         for control in controles:
-            control.bind("<Return>", lambda _e: self._cerrar_editor_celda(guardar=True))
-            control.bind("<Escape>", lambda _e: self._cerrar_editor_celda(guardar=False))
+            control.bind("<Return>", self._confirmar_editor_celda)
+            control.bind("<Escape>", self._cancelar_edicion_o_sugerencias)
             control.bind("<FocusOut>", self._programar_cierre_editor)
             if campo not in (*CAMPOS_CON_COMENTARIO, "unidades", "valor_tipico"):
                 control.bind("<Delete>", self._borrar_valor_editor)
@@ -4638,7 +4720,7 @@ class GeneradorEspecificacion:
                     editor.bind(f"<KeyRelease-{tecla}>", self._ocultar_sugerencias_celda)
         if campo in (*CAMPOS_CON_COMENTARIO, "unidades", "valor_tipico"):
             editor.bind("<Return>", self._confirmar_editor_celda)
-            editor.bind("<Escape>", self._ocultar_sugerencias_celda)
+            editor.bind("<Escape>", self._cancelar_edicion_o_sugerencias)
             editor.bind("<Tab>", self._guardar_editor_con_tab)
             editor.bind("<Shift-Tab>", self._guardar_editor_con_tab)
             if self.ventana.tk.call("tk", "windowingsystem") == "x11":
@@ -4788,7 +4870,8 @@ class GeneradorEspecificacion:
 
         def actualizar() -> None:
             self._sugerencias_editor_pendientes = None
-            if self._editor_celda is editor and self._celda_editada == celda:
+            if (self._editor_celda is editor and self._celda_editada == celda
+                    and str(self.ventana.tk.call("focus")) == str(editor)):
                 self._filtrar_sugerencias(None, celda[1], celda[0])
 
         if celda[1] in CAMPOS_AUTOCOMPLETADO_TERMINOS:
@@ -4839,6 +4922,13 @@ class GeneradorEspecificacion:
     def _ocultar_sugerencias_celda(self, _evento: tk.Event | None = None) -> str:
         self._cancelar_sugerencias_pendientes()
         self._ocultar_lista_sugerencias()
+        return "break"
+
+    def _cancelar_edicion_o_sugerencias(self, _evento=None):
+        if self._popup_sugerencias is not None:
+            return self._ocultar_sugerencias_celda()
+        self._cerrar_editor_celda(guardar=False)
+        self.tabla_pruebas.focus_set()
         return "break"
 
     def _guardar_editor_con_tab(self, evento: tk.Event) -> str:
@@ -5019,12 +5109,8 @@ class GeneradorEspecificacion:
             padx=(0, 2),
         )
         editor.bind("<<ComboboxSelected>>", self._actualizar_selectores_periodicidad)
-        editor.bind(
-            "<Return>", lambda _e: self._cerrar_editor_celda(guardar=True)
-        )
-        editor.bind(
-            "<Escape>", lambda _e: self._cerrar_editor_celda(guardar=False)
-        )
+        editor.bind("<Return>", self._confirmar_editor_celda)
+        editor.bind("<Escape>", self._cancelar_edicion_o_sugerencias)
         editor.bind("<FocusOut>", self._programar_cierre_editor)
         editor.bind("<Delete>", self._borrar_valor_editor)
         editor.bind("<KP_Delete>", self._borrar_valor_editor)
@@ -5033,8 +5119,8 @@ class GeneradorEspecificacion:
                 marco, text="×", width=2,
                 command=lambda: self._quitar_selector_periodicidad(editor),
             )
-            editor._boton_quitar_periodicidad.bind("<Return>", lambda _e: self._cerrar_editor_celda(guardar=True))
-            editor._boton_quitar_periodicidad.bind("<Escape>", lambda _e: self._cerrar_editor_celda(guardar=False))
+            editor._boton_quitar_periodicidad.bind("<Return>", self._confirmar_editor_celda)
+            editor._boton_quitar_periodicidad.bind("<Escape>", self._cancelar_edicion_o_sugerencias)
             editor._boton_quitar_periodicidad.bind("<FocusOut>", self._programar_cierre_editor)
         self._periodicidad_editores.append(editor)
         self._actualizar_selectores_periodicidad()
@@ -5137,6 +5223,7 @@ class GeneradorEspecificacion:
 
     def _al_destruir_ventana_editor(self, evento: tk.Event) -> None:
         if evento.widget is self.ventana:
+            self._cancelar_posicion_editor()
             self._cancelar_sugerencias_notas()
             self._cancelar_cierre_editor()
             self._limpiar_autocompletado_editor()
@@ -5183,7 +5270,11 @@ class GeneradorEspecificacion:
         if self._celda_activa is None:
             return "break"
         iid, campo = self._celda_activa
-        if iid == "nueva":
+        seleccion = self._seleccion()
+        if (not iid.isdigit() or int(iid) >= len(self.pruebas)
+                or seleccion is None or str(seleccion) != iid
+                or campo not in (*CAMPOS_TABLA, "periodicidad")):
+            self._celda_activa = None
             return "break"
         marcador = _marcador_comentario_celda(
             self.pruebas[int(iid)].get(campo, "")
@@ -5202,10 +5293,24 @@ class GeneradorEspecificacion:
             )
         self._actualizar_tabla()
         self.tabla_pruebas.selection_set(iid)
+        self.tabla_pruebas.focus(iid)
         self._actualizar_sugerencia_contextual(iid)
         return "break"
 
-    def _reposicionar_editor(self, _evento: tk.Event) -> None:
+    def _cancelar_posicion_editor(self):
+        pendiente = getattr(self, "_posicion_editor_pendiente", None)
+        self._posicion_editor_pendiente = None
+        if pendiente is not None:
+            self.ventana.after_cancel(pendiente)
+
+    def _programar_posicion_editor(self, _evento=None):
+        if self._editor_celda is not None and getattr(self, "_posicion_editor_pendiente", None) is None:
+            def actualizar():
+                self._posicion_editor_pendiente = None
+                self._reposicionar_editor()
+            self._posicion_editor_pendiente = self.ventana.after_idle(actualizar)
+
+    def _reposicionar_editor(self, _evento=None) -> None:
         if self._editor_celda is None or self._celda_editada is None:
             return
         iid, campo = self._celda_editada
@@ -5213,8 +5318,8 @@ class GeneradorEspecificacion:
             nombre: f"#{indice}"
             for indice, nombre in enumerate((*CAMPOS_TABLA, "periodicidad"), 1)
         }
-        bbox = self.tabla_pruebas.bbox(iid, columnas[campo])
-        if not bbox:
+        bbox = self.tabla_pruebas.bbox(iid, columnas[campo]) if self.tabla_pruebas.exists(iid) else ()
+        if not bbox or bbox[0] < 0 or bbox[0] >= self.tabla_pruebas.winfo_width():
             self._cerrar_editor_celda(guardar=True)
             return
         marco = (
@@ -5225,9 +5330,14 @@ class GeneradorEspecificacion:
             else self._editor_celda
         )
         if marco is not None:
-            marco.place(x=bbox[0], y=bbox[1], width=bbox[2], height=bbox[3])
+            posicion = marco.place_info()
+            if str(posicion.get("x")) != str(bbox[0]) or str(posicion.get("y")) != str(bbox[1]):
+                self._cancelar_sugerencias_pendientes()
+                self._ocultar_lista_sugerencias()
+            marco.place(x=bbox[0], y=bbox[1], width=min(bbox[2], self.tabla_pruebas.winfo_width() - bbox[0]), height=bbox[3])
 
     def _cerrar_editor_celda(self, guardar: bool) -> None:
+        self._cancelar_posicion_editor()
         self._cancelar_cierre_editor()
         editor = self._editor_celda
         celda = self._celda_editada
@@ -5259,9 +5369,31 @@ class GeneradorEspecificacion:
         self._periodicidad_boton_mas = None
         self._comentario_marco = None
         self._comentario_boton_mas = None
-        if not guardar:
+        if (not iid.isdigit() or int(iid) >= len(self.pruebas)
+                or self._identidad_fila_editor(self.pruebas[int(iid)]) != getattr(self, "_identidad_fila_en_edicion", None)):
+            self._celda_activa = None
             return
+        provisional = getattr(self, "_fila_provisional", None) == iid
         fila = self.pruebas[int(iid)]
+        if not guardar:
+            original = getattr(self, "_fila_antes_edicion", None)
+            if original is not None:
+                fila.clear()
+                fila.update(original)
+            if campo in CAMPOS_CON_COMENTARIO and hasattr(self, "_notas_antes_edicion"):
+                if self.notas.get("1.0", "end-1c") != self._notas_antes_edicion:
+                    self.notas.delete("1.0", tk.END)
+                    self.notas.insert("1.0", self._notas_antes_edicion)
+            if provisional:
+                del self.pruebas[int(iid)]
+                self._fila_provisional = None
+                self._celda_activa = None
+                self._nombres_sugeridos_por_fila.pop(iid, None)
+            self._actualizar_tabla()
+            if not provisional:
+                self.tabla_pruebas.selection_set(iid)
+                self.tabla_pruebas.focus(iid)
+            return
         fila_antes = dict(fila)
         if campo in CAMPOS_CON_COMENTARIO:
             notas_actualizadas = _guardar_celda_con_comentario(
@@ -5291,6 +5423,14 @@ class GeneradorEspecificacion:
                 "en" if self._idioma.get() == "English" else "es",
             )
             self._nombres_sugeridos_por_fila[iid] = sugerencias
+        if provisional:
+            self._fila_provisional = None
+            if not any(str(fila.get(c, "")).strip() for c in CAMPOS_TABLA):
+                del self.pruebas[int(iid)]
+                self._celda_activa = None
+                self._nombres_sugeridos_por_fila.pop(iid, None)
+                self._actualizar_tabla()
+                return
         idioma = "en" if self._idioma.get() == "English" else "es"
         cambios = getattr(self, "_cambios_alineacion", {}).get(idioma, {})
         campos_alineados = cambios.get(fila.get("_id_bilingue", iid))
@@ -5301,6 +5441,8 @@ class GeneradorEspecificacion:
         self._actualizar_tabla()
         if iid != "nueva":
             self.tabla_pruebas.selection_set(iid)
+            self.tabla_pruebas.focus(iid)
+            self._celda_activa = (iid, campo)
             self._actualizar_sugerencia_contextual(iid)
 
     def _agregar_comentario_celda(
@@ -5339,6 +5481,14 @@ class GeneradorEspecificacion:
         self.boton_eliminar.configure(
             state="normal" if seleccion is not None else "disabled"
         )
+        if self._editor_celda is None:
+            activa = getattr(self, "_celda_activa", None)
+            if seleccion is None:
+                self._celda_activa = None
+            else:
+                self.tabla_pruebas.focus(str(seleccion))
+                if activa is not None:
+                    self._celda_activa = (str(seleccion), activa[1])
 
     def _eliminar_seleccionada(self) -> None:
         self._cerrar_editor_celda(guardar=True)
@@ -5362,6 +5512,9 @@ class GeneradorEspecificacion:
                 )
             )
         }
+        self._celda_activa = None
+        self.tabla_pruebas.selection_remove(*self.tabla_pruebas.selection())
+        self.tabla_pruebas.focus("")
         del self.pruebas[indice]
         texto_notas = self.notas.get("1.0", "end-1c")
         if marcadores_eliminados:
@@ -6647,8 +6800,102 @@ class AplicacionEspecificaciones:
         self.reconstruir_base_datos(solo_duplicados=True)
 
     def actualizar_listas_json(self):
-        notificar_catalogo(self.raiz)
-        self._estado_progreso_carga.configure(text="Listas actualizadas.")
+        if self._reconstruccion_en_proceso or self._carga_en_proceso:
+            messagebox.showinfo("Procesamiento en curso", "Espera a que termine el proceso actual.", parent=self.raiz)
+            return
+        self._carga_en_proceso = True
+        self._estado_progreso_carga.configure(text="Revisando documentos y revisiones…")
+        carpeta = Path(self.rutas["especificaciones_viejas"])
+        carpeta_alineadas = Path(self.rutas['json_alineadas'])
+        cola = queue.Queue()
+
+        def buscar_y_extraer():
+            try:
+                import gestor_especificaciones as gestor
+                base_datos = BASE / gestor.DB
+                registradas = set()
+                if base_datos.exists():
+                    with contextlib.closing(sqlite3.connect(base_datos)) as con:
+                        registradas = {fila[0] for fila in con.execute(
+                            "SELECT hash_actual FROM archivos WHERE hash_actual IS NOT NULL"
+                        )}
+                nuevos = []
+                huellas_word = {}
+                nuevos_hash = set()
+                errores = []
+                for origen in (carpeta, carpeta.parent / 'ESPECIFICACIONES_VIEJAS_ENG'):
+                    for ruta in sorted(origen.rglob("*")):
+                        if not ruta.is_file() or ruta.suffix.lower() not in EXTENSIONES_WORD or ruta.name.startswith("~$"):
+                            continue
+                        try:
+                            huella = gestor.sha256(ruta)
+                            huellas_word.setdefault(huella, []).append(ruta)
+                            if huella not in registradas and huella not in nuevos_hash:
+                                nuevos.append(ruta)
+                                nuevos_hash.add(huella)
+                        except OSError as exc:
+                            errores.append(f"{ruta.name}: {exc}")
+                resultado = _procesar_carga_especificaciones(BASE, archivos_seleccionados=nuevos) if nuevos else {}
+                resultado['duplicados_word'] = [str(ruta) for grupo in huellas_word.values() if len(grupo) > 1 for ruta in grupo[1:]]
+                from revisiones_cronologicas import revisar_ingresos_json
+                resultado['ingresos_json'] = revisar_ingresos_json(
+                    carpeta_alineadas, base_datos, BASE / 'RESPALDOS_BASE_DATOS')
+                cola.put((len(nuevos), resultado, errores, None))
+            except Exception as exc:
+                cola.put((0, {}, [], str(exc)))
+
+        def recibir():
+            try:
+                cantidad, resultado, errores, error = cola.get_nowait()
+            except queue.Empty:
+                if self.raiz.winfo_exists():
+                    self.raiz.after(100, recibir)
+                return
+            self._carga_en_proceso = False
+            notificar_catalogo(self.raiz)
+            extraccion = resultado.get("extraccion", {})
+            ingresos = resultado.get('ingresos_json', {})
+            problemas = [error, resultado.get("error_extraccion"), resultado.get("error_alineacion")]
+            problemas = [p for p in problemas if p] + errores
+            if resultado.get("alineacion", {}).get("protegidos"):
+                problemas.append("Se conservaron alineados con cambios o sin huella verificable. Revisa REPORTE_ALINEACION.txt y realinea desde la pestaña de alineadas.")
+            if extraccion.get("errores") or extraccion.get("bloqueados") or extraccion.get("pendientes_conversion"):
+                problemas.append("Algunos documentos no pudieron procesarse; revisa los registros de extracción.")
+            self._estado_progreso_carga.configure(text="Actualización finalizada." if not problemas else "Actualización con avisos.")
+            detalle = (f"Word nuevos detectados: {cantidad}.\n"
+                       f"Copias Word idénticas: {len(resultado.get('duplicados_word', []))}.\n"
+                       f"JSON nuevos: {ingresos.get('nuevos', 0)}.\n"
+                       f"Duplicados detectados: {ingresos.get('duplicados', 0)}.\n"
+                       f"Revisiones ajustadas: {ingresos.get('ajustados', 0)}.\n"
+                       f"Conflictos anteriores por revisar: {ingresos.get('conflictos_existentes', 0)}.\n"
+                       f"Pendientes de revisión: {ingresos.get('pendientes', 0)}.\n"
+                       f"Archivos conocidos modificados: {ingresos.get('modificados', 0)}.")
+            if ingresos.get('inicializado'):
+                detalle += "\nSe creó el registro inicial de JSON conocidos."
+            if ingresos.get('respaldo'):
+                detalle += "\nRespaldo: " + ingresos['respaldo']
+            duplicados = ingresos.get('archivos_duplicados', [])
+            if duplicados:
+                detalle += "\n\nPosibles copias confirmadas (sin mover):\n" + "\n".join(duplicados[:8])
+                if len(duplicados) > 8:
+                    detalle += f"\nY {len(duplicados) - 8} archivo(s) más; usa Revisar duplicados para verlos."
+            copias_word = resultado.get('duplicados_word', [])
+            if copias_word:
+                detalle += "\n\nCopias Word idénticas (sin mover):\n" + "\n".join(copias_word[:8])
+                if len(copias_word) > 8:
+                    detalle += f"\nY {len(copias_word) - 8} archivo(s) más."
+            avisos = ingresos.get('avisos', [])
+            if avisos:
+                problemas.extend(avisos[:12])
+                if len(avisos) > 12:
+                    problemas.append(f"Y {len(avisos) - 12} aviso(s) más.")
+            if problemas:
+                messagebox.showwarning("Actualización de especificaciones", detalle + "\n\n" + "\n".join(problemas), parent=self.raiz)
+            else:
+                messagebox.showinfo("Actualización de especificaciones", detalle, parent=self.raiz)
+
+        threading.Thread(target=buscar_y_extraer, daemon=True, name="buscar-word-nuevos").start()
+        self.raiz.after(100, recibir)
 
     def reconstruir_base_datos(self, automatica=False, *, solo_duplicados=False):
         """Recuperación en segundo plano; todas las acciones de Tk se hacen en el hilo principal."""
@@ -7102,6 +7349,9 @@ class AplicacionEspecificaciones:
                         f"{etiqueta}: {resumen.get('archivos', 0)} archivos procesados; "
                         f"{errores_etapa} error(es)."
                     )
+                    if resumen.get("protegidos"):
+                        hay_pendientes = True
+                        lineas.append(f"Alineados conservados para revisión: {resumen['protegidos']}. Revisa REPORTE_ALINEACION.txt y realinea desde la pestaña de alineadas.")
             else:
                 hay_errores = True
                 lineas.append(f"{etiqueta}: no se obtuvo resultado.")

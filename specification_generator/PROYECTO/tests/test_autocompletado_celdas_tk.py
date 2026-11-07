@@ -12,6 +12,9 @@ class AutocompletadoCeldasTkTests(unittest.TestCase):
     def setUpClass(cls):
         cls.raiz = tk.Tk()
         cls.raiz.withdraw()
+        estilo = modulo.ttk.Style(cls.raiz)
+        estilo.configure("TCombobox", fieldbackground=modulo.ui.paleta()["panel"],
+                         foreground=modulo.ui.paleta()["texto"])
 
     @classmethod
     def tearDownClass(cls):
@@ -287,6 +290,45 @@ class AutocompletadoCeldasTkTests(unittest.TestCase):
         self.assertIs(g._editor_celda, entrada)
         self.assertEqual(g.pruebas[0]["metodo"], "")
 
+    def test_filtro_pendiente_no_abre_lista_si_el_foco_salio_de_la_celda(self):
+        g = self.generador
+        entrada = self.abrir()
+        entrada.insert(0, "ASTM")
+        self.assertIsNotNone(g._sugerencias_editor_pendientes)
+        self.exterior.focus_force()
+        self.raiz.update()
+        self.assertIsNone(g._popup_sugerencias)
+        self.assertEqual(str(self.raiz.tk.call("focus")), str(self.exterior))
+
+    def test_seleccionar_lista_activada_devuelve_foco_para_seguir_escribiendo(self):
+        g = self.generador
+        entrada = self.abrir()
+        self.escribir(entrada, "ASTM")
+        lista = g._lista_sugerencias
+        lista.focus_force()
+        self.raiz.update()
+        self.assertEqual(str(self.raiz.tk.call("focus")), str(lista))
+        lista.selection_set(0)
+        lista.event_generate("<ButtonRelease-1>")
+        self.raiz.update()
+        self.procesar_cierres()
+        self.assertIs(g._editor_celda, entrada)
+        self.assertEqual(str(self.raiz.tk.call("focus")), str(entrada))
+
+    def test_escape_en_lista_activada_la_cierra_y_devuelve_foco(self):
+        g = self.generador
+        entrada = self.abrir()
+        self.escribir(entrada, "ASTM")
+        lista = g._lista_sugerencias
+        lista.focus_force()
+        self.raiz.update()
+        lista.event_generate("<Escape>")
+        self.raiz.update()
+        self.procesar_cierres()
+        self.assertIsNone(g._popup_sugerencias)
+        self.assertIs(g._editor_celda, entrada)
+        self.assertEqual(str(self.raiz.tk.call("focus")), str(entrada))
+
     def test_popup_y_boton_de_comentario_pertenecen_a_la_edicion(self):
         g = self.generador
         entrada = self.abrir()
@@ -431,6 +473,18 @@ class AutocompletadoCeldasTkTests(unittest.TestCase):
         g._cerrar_editor_celda(guardar=True)
         self.assertEqual(g._cambios_alineacion["es"]["0"], {"unidades"})
 
+    def test_clic_repetido_recupera_foco_del_editor_abierto(self):
+        g = self.generador
+        entrada = self.abrir("metodo")
+        self.exterior.focus_force()
+        self.raiz.update()
+        self.assertIsNotNone(g._cierre_editor_pendiente)
+        g._editar_celda(SimpleNamespace(iid="0", columna="#3"))
+        self.raiz.update()
+        self.assertIs(g._editor_celda, entrada)
+        self.assertEqual(self.raiz.focus_get(), entrada)
+        self.assertIsNone(g._cierre_editor_pendiente)
+
     def test_metodo_primero_completa_primera_prueba_y_unidad_del_idioma(self):
         g = self.generador
         g.maestro = [
@@ -490,6 +544,7 @@ class AutocompletadoCeldasTkTests(unittest.TestCase):
         g.pruebas[0].update(metodo="Método ¹", especificacion="30 MÁXIMO ²")
         g.notas.insert("1.0", "Nota base\n¹ Conservar\n² Quitar")
         g._celda_activa = ("0", "especificacion")
+        g.tabla_pruebas.selection_set("0")
         g._borrar_celda_activa()
         self.assertEqual(g.pruebas[0]["especificacion"], "")
         self.assertEqual(g.pruebas[0]["metodo"], "Método ¹")
@@ -576,6 +631,8 @@ class AutocompletadoCeldasTkTests(unittest.TestCase):
         entrada.event_generate("<Escape>")
         self.procesar_cierres()
         self.assertIsNone(g._popup_sugerencias)
+        self.assertIsNone(g._editor_celda)
+        entrada = self.abrir("valor_tipico")
         self.escribir(entrada, "MIN")
         self.escribir(entrada, "30")
         self.procesar_cierres()

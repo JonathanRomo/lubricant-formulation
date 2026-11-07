@@ -7,7 +7,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-from generador_hii import GeneradorHII, FILAS_POR_BLOQUE, _trabajar_excel, _procesar_trabajos_excel
+from generador_hii import GeneradorHII, FILAS_POR_BLOQUE, _trabajar_excel, _procesar_trabajos_excel, abrir_archivos_en_explorador
 from interfaz_seleccion_especificaciones import Catalogo, Especificacion
 
 
@@ -231,12 +231,15 @@ class CargaGeneradorTests(unittest.TestCase):
         self.g.guardar_archivo = Mock(return_value=None)
         with patch("generador_hii.filedialog.asksaveasfilename", return_value=str(self.base / "salida.xlsm")), patch(
             "generador_hii.construir_excel", return_value=b"excel"
-        ) as construir, patch("generador_hii.messagebox") as mensajes:
+        ) as construir, patch("generador_hii.messagebox") as mensajes, patch.object(
+            self.g, "_preguntar_abrir_ubicacion"
+        ) as abrir_ubicacion:
             self.g.guardar()
             construir.assert_not_called()
             self.terminar_excel()
             construir.assert_called_once_with(self.g.plantilla_actual, self.g.datos)
             mensajes.showerror.assert_not_called()
+            abrir_ubicacion.assert_called_once_with([self.base / "salida.xlsm"])
         self.assertEqual(self.g.guardar_archivo.call_args.args[-1], b"excel")
         self.g.mostrar_excel.assert_not_called()
 
@@ -306,7 +309,7 @@ class CargaGeneradorTests(unittest.TestCase):
         self.g.guardar_archivo = Mock(return_value=None)
         with patch("generador_hii.filedialog.asksaveasfilename", return_value=str(self.base / "salida.xlsm")), patch(
             "generador_hii.construir_excel", return_value=b"archivo P1"
-        ):
+        ), patch.object(self.g, "_preguntar_abrir_ubicacion"):
             self.g.guardar()
             self.g._invalidar_excel()
             self.g.actual = self.base / "otro.json"
@@ -420,6 +423,7 @@ class CargaGeneradorTests(unittest.TestCase):
         self.g._actualizar_idiomas = Mock()
         self.g.cargar_previa = Mock()
         self.g.vaciar_previa = Mock()
+        self.g.compacta = True
         self.g.actualizar_lista()
         filas = self.g.lista.get_children()
         self.g.lista.seleccion = (filas[0],)
@@ -427,7 +431,8 @@ class CargaGeneradorTests(unittest.TestCase):
         self.g.marcar(0)
         self.g.marcar(1)
         self.assertEqual(len(self.g.marcadas), 2)
-        self.assertFalse(self.g.compacta)
+        self.assertTrue(self.g.compacta)
+        self.assertEqual(len(self.g.visibles), 3)
         self.assertEqual(self.g.lista.get_children(), filas)
         self.assertEqual(self.g.lista.selection(), (filas[0],))
         self.g.consulta.set.assert_not_called()
@@ -435,6 +440,96 @@ class CargaGeneradorTests(unittest.TestCase):
         self.g.marcar(0)
         self.g.cargar_previa.assert_not_called()
         self.g.vaciar_previa.assert_not_called()
+
+    def test_ft_recibe_varias_marcadas_sin_ocultar_las_demas(self):
+        g = self.g
+        g.catalogo = self.catalogo(3)
+        g._actualizar_idiomas = Mock()
+        g.compacta = True
+        g.actualizar_lista()
+        g.marcar(0)
+        g.marcar(1)
+        self.assertEqual(len(g.visibles), 3)
+        with patch("generador_hii.candidatas_catalogo", return_value=[]) as parejas, \
+             patch("generador_hii.filedialog.asksaveasfilename", return_value="") as destino, \
+             patch.object(g, "_especificacion_mostrada", side_effect=AssertionError("FT debe usar las marcadas")):
+            g.guardar_ficha_tecnica()
+        self.assertEqual(parejas.call_count, 2)
+        destino.assert_called_once()
+
+    def test_ft_pregunta_por_ubicacion_tras_guardar(self):
+        g = self.g
+        g.catalogo = self.catalogo(1)
+        g.marcadas = {g.catalogo.especificaciones[0].ruta}
+        destino = self.base / "ficha.docx"
+        with patch("generador_hii.candidatas_catalogo", return_value=[]), \
+             patch("generador_hii.filedialog.asksaveasfilename", return_value=str(destino)), \
+             patch("generador_hii.generar_ficha_tecnica") as generar, \
+             patch.object(g, "_preguntar_abrir_ubicacion") as preguntar:
+            g.guardar_ficha_tecnica()
+        generar.assert_called_once()
+        preguntar.assert_called_once_with([destino])
+
+    def test_abrir_ubicacion_pregunta_una_vez_y_selecciona_archivos(self):
+        g = self.g
+        primera = self.base / "a.xlsx"
+        segunda = self.base / "b.docx"
+        tercera = self.base / "otra" / "c.docx"
+        with patch("generador_hii.messagebox.askyesno", return_value=True) as preguntar, \
+             patch("generador_hii.abrir_archivos_en_explorador") as abrir:
+            g._preguntar_abrir_ubicacion([primera, segunda, tercera])
+        preguntar.assert_called_once()
+        abrir.assert_called_once_with([primera, segunda, tercera])
+        with patch("generador_hii.messagebox.askyesno", return_value=False) as preguntar, \
+             patch("generador_hii.abrir_archivos_en_explorador") as abrir:
+            g._preguntar_abrir_ubicacion([primera])
+            g._preguntar_abrir_ubicacion([])
+        preguntar.assert_called_once()
+        abrir.assert_not_called()
+
+    def test_si_falla_la_seleccion_abre_la_carpeta(self):
+        g = self.g
+        destinos = [self.base / "a.xlsx", self.base / "b.docx"]
+        with patch("generador_hii.messagebox.askyesno", return_value=True), \
+             patch("generador_hii.abrir_archivos_en_explorador", side_effect=OSError("Selección fallida")), \
+             patch("generador_hii.os.startfile") as abrir:
+            g._preguntar_abrir_ubicacion(destinos)
+        abrir.assert_called_once_with(str(self.base))
+
+    def test_explorador_agrupa_archivos_y_selecciona_todos_los_de_cada_carpeta(self):
+        primera = self.base / "a.xlsx"
+        segunda = self.base / "b.docx"
+        otra = self.base / "otra"
+        otra.mkdir()
+        tercera = otra / "c.docx"
+        for ruta in (primera, segunda, tercera):
+            ruta.write_bytes(b"archivo")
+        with patch("win32com.shell.shell.SHOpenFolderAndSelectItems") as seleccionar:
+            abrir_archivos_en_explorador([primera, segunda, tercera])
+        self.assertEqual(seleccionar.call_count, 2)
+        self.assertEqual([len(llamada.args[1]) for llamada in seleccionar.call_args_list], [2, 1])
+
+    def test_ft_exige_casilla_marcada_aunque_haya_vista_previa(self):
+        g = self.g
+        g.catalogo = self.catalogo(1)
+        ruta = g.catalogo.especificaciones[0].ruta
+        g.origen_actual = ruta
+        g.actual = ruta
+        g.ft_boton = Mock()
+        g._actualizar_idiomas()
+        g.ft_boton.configure.assert_called_with(state="disabled")
+        with patch.object(g, "_especificacion_mostrada", side_effect=AssertionError("La vista previa no cuenta")), \
+             patch("generador_hii.candidatas_catalogo") as parejas, \
+             patch("generador_hii.filedialog.asksaveasfilename") as destino:
+            g.guardar_ficha_tecnica()
+        parejas.assert_not_called()
+        destino.assert_not_called()
+        g.marcadas.add(ruta)
+        g._actualizar_idiomas()
+        g.ft_boton.configure.assert_called_with(state="normal")
+        g.marcadas.clear()
+        g._actualizar_idiomas()
+        g.ft_boton.configure.assert_called_with(state="disabled")
 
     def test_previsualizar_fila_sin_marcar_y_filtrar_manualmente(self):
         self.g.catalogo = self.catalogo(3)
@@ -447,9 +542,10 @@ class CargaGeneradorTests(unittest.TestCase):
         self.assertFalse(self.g.marcadas)
         self.g.marcadas.add(self.g.visibles[0].ruta)
         self.g.alternar_lista()
-        self.assertEqual(len(self.g.visibles), 1)
+        self.assertEqual(len(self.g.visibles), 3)
         self.g.alternar_lista()
         self.assertEqual(len(self.g.visibles), 3)
+        self.assertEqual(self.g.lista.selection(), (self.g.lista.get_children()[1],))
 
     def test_json_guardados_se_marcan_tras_cargar_y_se_muestra_su_previa(self):
         g = self.g
@@ -467,8 +563,8 @@ class CargaGeneradorTests(unittest.TestCase):
             hilo.call_args.kwargs["target"]()
             self.reloj.ejecutar(g._tareas["catalogo"])
         self.assertEqual(g.marcadas, set(rutas))
-        self.assertEqual({e.ruta for e in g.visibles}, set(rutas))
-        self.assertTrue(all(v[0] == "☑" for v in g.lista.filas.values()))
+        self.assertEqual({e.ruta for e in g.visibles}, {e.ruta for e in catalogo.especificaciones})
+        self.assertEqual(sum(v[0] == "☑" for v in g.lista.filas.values()), 2)
         g.cargar_previa.assert_called_once_with(rutas[0])
         g.lote_boton.configure.assert_called_with(text="Guardar seleccionadas (2)", state="normal")
 
@@ -485,7 +581,7 @@ class CargaGeneradorTests(unittest.TestCase):
             hilo.call_args.kwargs["target"]()
             self.reloj.ejecutar(g._tareas["catalogo"])
             self.assertEqual(g.marcadas, {externo.ruta})
-            self.assertEqual([e.ruta for e in g.visibles], [externo.ruta])
+            self.assertEqual({e.ruta for e in g.visibles}, {externo.ruta, self.base / "0.json"})
             g.recargar_catalogo()
             hilo.call_args.kwargs["target"]()
             self.reloj.ejecutar(g._tareas["catalogo"])

@@ -104,7 +104,10 @@ class Especificacion:
 
     @property
     def etiqueta(self) -> str:
-        identidad = " — ".join(valor for valor in (self.codigo, self.nombre_producto) if valor)
+        nombre = self.nombre_producto
+        if re.fullmatch(r"\d{2}", self.revision):
+            nombre = re.sub(r"\s+rev(?:isi[oó]n)?\.?\s*(?:19|20)\d{2}\s*$", "", nombre, flags=re.IGNORECASE)
+        identidad = " — ".join(valor for valor in (self.codigo, nombre) if valor)
         detalles = []
         if self.revision:
             detalles.append(f"Rev. {self.revision}")
@@ -151,6 +154,9 @@ class OrdenadorColumnasTreeview:
 
     def establecer_encabezados(self, encabezados: dict[str, str]) -> None:
         self.encabezados = dict(encabezados)
+        # El llamador puede haber reemplazado el texto del Treeview aunque
+        # los títulos y el ancho calculados anteriormente sigan siendo iguales.
+        self._firma_encabezados = None
         self._actualizar_encabezados()
 
     def registrar_orden_original(
@@ -172,26 +178,13 @@ class OrdenadorColumnasTreeview:
         if firma == self._firma_encabezados:
             return
         self._firma_encabezados = firma
-        fuente = tkfont.Font(
-            self.tabla,
-            font=fuente_estilo,
-        )
+        fuente = tkfont.Font(self.tabla, font=fuente_estilo)
         ancho_espacio = max(1, fuente.measure(" "))
         for columna, titulo in self.encabezados.items():
             indicador = "▲" if self.columna_ordenada == columna else "▼"
             ancho = int(self.tabla.column(columna, "width"))
-            hueco = max(
-                1,
-                round(
-                    (
-                        ancho / 2
-                        - fuente.measure(titulo) / 2
-                        - fuente.measure(indicador)
-                        - 6
-                    )
-                    / ancho_espacio
-                ),
-            )
+            hueco = max(1, round((ancho / 2 - fuente.measure(titulo) / 2
+                                  - fuente.measure(indicador) - 6) / ancho_espacio))
             self.tabla.heading(
                 columna,
                 text=f"{titulo}{' ' * hueco}{indicador}",
@@ -423,6 +416,7 @@ class PanelEspecificaciones:
     busqueda_pendiente: str | None = None
     zoom_previa: float = 1.44
     especificacion_actual: Especificacion | None = None
+    ancla_seleccion: Path | None = None
 
 
 def _texto(valor: Any) -> str:
@@ -1036,7 +1030,7 @@ class SelectorEspecificaciones:
         else:
             boton_realinear = ttk.Button(
                 panel_busqueda,
-                text="Realinear a versión vigente",
+                text="Realinear seleccionadas",
                 height=28,
                 command=lambda c=clave: self._realinear_seleccionadas(c),
                 state="disabled",
@@ -1253,28 +1247,37 @@ class SelectorEspecificaciones:
 
     def _clic_en_lista(self, clave: str, evento: tk.Event) -> None:
         panel = self.paneles[clave]
-        if evento.x > 24:
-            return
         indice = panel.lista.nearest(evento.y)
         if not 0 <= indice < len(panel.sugerencias):
             return
         especificacion = panel.sugerencias[indice]
-        if especificacion.ruta in panel.documentos_marcados:
-            panel.documentos_marcados.remove(especificacion.ruta)
+        if getattr(evento, 'state', 0) & 0x0001:
+            ancla = next((i for i, e in enumerate(panel.sugerencias)
+                          if e.ruta == getattr(panel, 'ancla_seleccion', None)), indice)
+            indices = range(min(ancla, indice), max(ancla, indice) + 1)
+            panel.documentos_marcados.update(panel.sugerencias[i].ruta for i in indices)
         else:
-            panel.documentos_marcados.add(especificacion.ruta)
+            panel.ancla_seleccion = especificacion.ruta
+            if evento.x > 24:
+                return
+            indices = (indice,)
+            if especificacion.ruta in panel.documentos_marcados:
+                panel.documentos_marcados.remove(especificacion.ruta)
+            else:
+                panel.documentos_marcados.add(especificacion.ruta)
         # Sustituye solo el texto de esta fila; conserva seleccion, color y desplazamiento.
-        texto = panel.lista.get(indice)
-        color = panel.lista.itemcget(indice, "foreground")
-        seleccion = indice in panel.lista.curselection()
         desplazamiento = panel.lista.yview()[0]
-        marca = "\u2611" if especificacion.ruta in panel.documentos_marcados else "\u2610"
-        panel.lista.delete(indice)
-        panel.lista.insert(indice, marca + texto[1:])
-        if color:
-            panel.lista.itemconfigure(indice, foreground=color)
-        if seleccion:
-            panel.lista.selection_set(indice)
+        seleccionadas = set(panel.lista.curselection())
+        for posicion in indices:
+            texto = panel.lista.get(posicion)
+            color = panel.lista.itemcget(posicion, "foreground")
+            marca = "\u2611" if panel.sugerencias[posicion].ruta in panel.documentos_marcados else "\u2610"
+            panel.lista.delete(posicion)
+            panel.lista.insert(posicion, marca + texto[1:])
+            if color:
+                panel.lista.itemconfigure(posicion, foreground=color)
+            if posicion in seleccionadas:
+                panel.lista.selection_set(posicion)
         panel.lista.activate(indice)
         panel.lista.yview_moveto(desplazamiento)
         self._actualizar_estado_accion(clave)
@@ -1291,9 +1294,8 @@ class SelectorEspecificaciones:
                 for especificacion in panel.catalogo.especificaciones
                 if especificacion.ruta in panel.documentos_marcados
             ]
-            pendientes = especificaciones_pendientes_realineacion(seleccionadas)
             panel.boton_realinear.configure(
-                state="normal" if pendientes else "disabled"
+                state="normal" if seleccionadas else "disabled"
             )
         if clave == "nuevas" and panel.boton_comparar is not None:
             cantidad = len(panel.documentos_marcados)
@@ -1821,34 +1823,10 @@ class SelectorEspecificaciones:
             for especificacion in panel.catalogo.especificaciones
             if especificacion.ruta in panel.documentos_marcados
         ]
-        pendientes = especificaciones_pendientes_realineacion(seleccionadas)
-        if not pendientes:
+        if not seleccionadas:
             return
-
-        originales = self.paneles["anteriores"].catalogo.especificaciones
-        archivos_origen: list[Path] = []
-        archivos_destino: list[Path] = []
-        sin_original = []
-        for alineada in pendientes:
-            original = buscar_contraparte(alineada, originales)
-            if original is None:
-                sin_original.append(alineada.ruta.name)
-                continue
-            archivos_origen.append(original.ruta)
-            archivos_destino.append(alineada.ruta)
-
-        if sin_original:
-            messagebox.showwarning(
-                "No se encontró el origen",
-                "No se pueden realinear estos JSON porque no se encontró su "
-                "especificación de origen:\n" + "\n".join(sin_original),
-                parent=self.raiz,
-            )
-        if archivos_origen:
-            self._alinear_especificaciones(
-                archivos_origen,
-                destinos_seleccionados=archivos_destino,
-            )
+        rutas = [especificacion.ruta for especificacion in seleccionadas]
+        self._alinear_especificaciones(rutas, destinos_seleccionados=rutas)
 
     def _guardar_hii_seleccionadas(self, clave: str) -> None:
         if clave != "nuevas":
@@ -1973,6 +1951,9 @@ class SelectorEspecificaciones:
 
         def trabajar() -> None:
             try:
+                realineacion = destinos_seleccionados is not None and all(
+                    origen == destino for origen, destino in zip(archivos, destinos_seleccionados)
+                )
                 resumen = ejecutar_alineacion(
                     BASE,
                     archivos_seleccionados=archivos,
@@ -1980,8 +1961,10 @@ class SelectorEspecificaciones:
                     al_progreso=lambda completados, total, nombre: cola.put(
                         ("progreso", (completados, total, nombre))
                     ),
-                    carpeta_entrada=self.carpetas_json["anteriores"],
+                    carpeta_entrada=self.carpetas_json["nuevas" if realineacion else "anteriores"],
                     carpeta_salida=self.carpetas_json["nuevas"],
+                    forzar=realineacion,
+                    conservar_ediciones=realineacion,
                 )
             except Exception as exc:
                 cola.put(("error", str(exc)))
@@ -2040,7 +2023,7 @@ class SelectorEspecificaciones:
                 self.recargar_catalogos()
                 mostrar = (
                     messagebox.showwarning
-                    if resumen.get("errores", 0)
+                    if resumen.get("errores", 0) or resumen.get("protegidos", 0)
                     else messagebox.showinfo
                 )
                 mostrar(
@@ -2052,7 +2035,10 @@ class SelectorEspecificaciones:
                         f"Pruebas alineadas: {resumen.get('alineados', 0)}\n"
                         f"Para revisión: {resumen.get('revision', 0)}\n"
                         f"Sin coincidencia: {resumen.get('sin_coincidencia', 0)}\n"
-                        f"Errores: {resumen.get('errores', 0)}"
+                        f"Errores: {resumen.get('errores', 0)}\n"
+                        f"Alineados conservados para revisión: {resumen.get('protegidos', 0)}"
+                        + ("\nRevisa REPORTE_ALINEACION.txt y realinea desde la pestaña de alineadas."
+                           if resumen.get('protegidos') else "")
                     ),
                     parent=self.raiz,
                 )

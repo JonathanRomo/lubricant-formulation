@@ -26,7 +26,7 @@ class ActualizacionExtraccionTests(unittest.TestCase):
         libro.close()
         self.documento()
 
-    def documento(self, valor="50 MÁXIMO"):
+    def documento(self, valor="50 MÁXIMO", revision="00"):
         doc = Document()
         doc.add_paragraph("PRODUCTO")
         tabla = doc.add_table(rows=2, cols=4)
@@ -35,7 +35,7 @@ class ActualizacionExtraccionTests(unittest.TestCase):
         for c, t in zip(tabla.rows[1].cells, ("VISCOSIDAD", "cSt", "D445", valor)):
             c.text = t
         control = doc.add_table(rows=3, cols=2)
-        for fila, (k, v) in zip(control.rows, (("Fecha", "01/01/2020"), ("Revisión", "00"), ("Nombre Cliente", "CLIENTE"))):
+        for fila, (k, v) in zip(control.rows, (("Fecha", "01/01/2020"), ("Revisión", revision), ("Nombre Cliente", "CLIENTE"))):
             fila.cells[0].text, fila.cells[1].text = k, v
         doc.save(self.fuente)
 
@@ -100,6 +100,72 @@ class ActualizacionExtraccionTests(unittest.TestCase):
         self.ejecutar("nuevo")
         self.assertEqual(self.leer()["producto"]["nombre"], "NOMBRE MANUAL")
         self.assertEqual(len(self.versiones()), 1)
+
+    def test_reextraccion_conserva_revision_y_procedencia_y_repara_json_ausente(self):
+        self.documento(revision="2023")
+        self.ejecutar()
+        control = self.leer()["control_documental"]
+        self.assertEqual((control["revision"], control["revision_fuente"]), ("00", "2023"))
+        datos = self.leer()
+        datos["control_documental"].update(revision="07", revision_recibida="01",
+                                           historial_revisiones_recibidas=[{"revision": "01"}])
+        self.editar(datos)
+        for lector in ("nuevo", "otro"):
+            self.ejecutar(lector)
+            self.assertEqual(self.leer()["control_documental"], datos["control_documental"])
+        self.json().unlink()
+        self.ejecutar("otro")
+        self.assertEqual(self.leer()["control_documental"], datos["control_documental"])
+        self.assertEqual(len(self.versiones()), 1)
+        with closing(sqlite3.connect(self.base / gestor.DB)) as con:
+            self.assertEqual(con.execute("SELECT revision_especificacion FROM versiones").fetchone()[0], "07")
+            self.assertEqual(con.execute("SELECT revision_especificacion FROM archivos").fetchone()[0], "07")
+
+    def test_json_ausente_sin_instantanea_usa_revision_de_sqlite_y_fuente_word(self):
+        self.documento(revision="2023")
+        self.ejecutar()
+        with closing(sqlite3.connect(self.base / gestor.DB)) as con:
+            con.execute("UPDATE versiones SET base_extraccion_json=NULL")
+            con.commit()
+        self.json().unlink()
+        self.ejecutar("nuevo")
+        control = self.leer()["control_documental"]
+        self.assertEqual((control['revision'], control['revision_fuente']), ('00', '2023'))
+        self.assertEqual(len(self.versiones()), 1)
+
+    def test_fusion_no_sustituye_revision_gestionada_por_fuente_heredada(self):
+        from cache_extraccion import fusionar
+        for fuente in ("2023", "05/11/2026", "", "03"):
+            with self.subTest(fuente=fuente):
+                actual = {"control_documental": {"revision": "01", "revision_fuente": fuente}}
+                nueva = {"control_documental": {"revision": fuente}, "validacion_codigos_200": {}}
+                for base in (None, actual):
+                    resultado, _ = fusionar(actual, nueva, base)
+                    self.assertEqual(resultado["control_documental"], actual["control_documental"])
+
+    def test_recargar_word_no_sobrescribe_alineado_editado(self):
+        import alinear_especificaciones_json as al
+        from interfaz_aplicacion_especificaciones import _procesar_carga_especificaciones
+        maestro = self.base / al.MAESTRO
+        maestro.parent.mkdir()
+        maestro.write_bytes(b"maestro de prueba")
+        registros = [{"NOMBRE IQM": "VISCOSIDAD", "NOMBRE IQM INGLES": "VISCOSITY", "METODO": "ASTM D445", "UNIDADES": "cSt", "UNITS": "cSt", "FILA_MAESTRO": "2"}]
+        with patch.object(al, "cargar_maestro", return_value=registros), patch("builtins.print"):
+            with patch.object(gestor, "VERSION_LECTOR", "primero"):
+                primera = _procesar_carga_especificaciones(self.base, archivos_seleccionados=[self.fuente])
+                self.assertEqual(primera.get('alineacion', {}).get('archivos'), 1, primera)
+            ruta = next((self.base / al.SALIDA).glob("*.JSON"))
+            datos = json.loads(ruta.read_text(encoding="utf-8"))
+            datos["pruebas"][0].update(especificacion="99 MANUAL", periodicidad="I")
+            datos.update(notas=["NOTA MANUAL"], Desarrollador="AUDITOR")
+            datos["control_documental"]["revision"] = "07"
+            ruta.write_text(json.dumps(datos), encoding="utf-8")
+            anterior = ruta.read_bytes()
+            with patch.object(gestor, "VERSION_LECTOR", "segundo"):
+                resultado = _procesar_carga_especificaciones(self.base, archivos_seleccionados=[self.fuente])
+            self.assertEqual(resultado["alineacion"]["protegidos"], 1)
+            self.assertEqual(ruta.read_bytes(), anterior)
+            self.assertEqual(len(self.versiones()), 1)
 
     def test_respeta_una_eliminacion_manual(self):
         self.ejecutar()

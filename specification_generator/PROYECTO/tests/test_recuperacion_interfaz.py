@@ -1,4 +1,8 @@
 import unittest
+from pathlib import Path
+import sqlite3
+import tempfile
+from contextlib import closing
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
@@ -73,12 +77,49 @@ class ErroresCallbackTests(unittest.TestCase):
 
 
 class RecuperacionInterfazTests(unittest.TestCase):
-    def test_actualizar_listas_notifica_a_ventanas_sin_reconstruir_base(self):
-        app = SimpleNamespace(raiz=Mock(), _estado_progreso_carga=Mock())
-        with patch("interfaz_aplicacion_especificaciones.notificar_catalogo") as notificar:
-            AplicacionEspecificaciones.actualizar_listas_json(app)
-        notificar.assert_called_once_with(app.raiz)
-        app._estado_progreso_carga.configure.assert_called_once_with(text="Listas actualizadas.")
+    def test_actualizar_listas_ejecuta_revision_y_notifica_al_final(self):
+        with tempfile.TemporaryDirectory() as temporal:
+            base = Path(temporal)
+            app = SimpleNamespace(raiz=Mock(), _estado_progreso_carga=Mock(),
+                                  _reconstruccion_en_proceso=False, _carga_en_proceso=False,
+                                  rutas={'especificaciones_viejas': base / 'no_existe', 'json_alineadas': base / 'alineadas'})
+            with patch('interfaz_aplicacion_especificaciones.BASE', base), \
+                 patch('interfaz_aplicacion_especificaciones.notificar_catalogo') as notificar, \
+                 patch('interfaz_aplicacion_especificaciones.threading.Thread') as hilo, \
+                 patch('interfaz_aplicacion_especificaciones.messagebox') as mensajes, \
+                 patch('interfaz_aplicacion_especificaciones._procesar_carga_especificaciones', side_effect=AssertionError('No debe extraer Word')), \
+                 patch('revisiones_cronologicas.revisar_ingresos_json', return_value={'nuevos': 1, 'ajustados': 1}) as revisar:
+                AplicacionEspecificaciones.actualizar_listas_json(app)
+                notificar.assert_not_called()
+                hilo.call_args.kwargs['target']()
+                app.raiz.after.call_args.args[1]()
+                revisar.assert_called_once()
+                notificar.assert_called_once_with(app.raiz)
+                self.assertIn('Revisiones ajustadas: 1', mensajes.showinfo.call_args.args[1])
+
+    def test_refresh_detecta_copia_word_y_solo_extrae_una(self):
+        with tempfile.TemporaryDirectory() as temporal:
+            base = Path(temporal); viejas = base / 'ESPECIFICACIONES_VIEJAS'; viejas.mkdir()
+            ingles = base / 'ESPECIFICACIONES_VIEJAS_ENG'; ingles.mkdir()
+            alineadas = base / 'ESPECIFICACIONES_JSON_ALINEADAS'; alineadas.mkdir()
+            (viejas / 'uno.docx').write_bytes(b'contenido identico')
+            (ingles / 'copia.docx').write_bytes(b'contenido identico')
+            with closing(sqlite3.connect(base / 'especificaciones.db')) as con:
+                con.execute('CREATE TABLE archivos (hash_actual TEXT)'); con.commit()
+            app = SimpleNamespace(raiz=Mock(), _estado_progreso_carga=Mock(),
+                _reconstruccion_en_proceso=False, _carga_en_proceso=False,
+                rutas={'especificaciones_viejas': viejas, 'json_alineadas': alineadas})
+            with patch('interfaz_aplicacion_especificaciones.BASE', base), \
+                 patch('interfaz_aplicacion_especificaciones.threading.Thread') as hilo, \
+                 patch('interfaz_aplicacion_especificaciones.notificar_catalogo'), \
+                 patch('interfaz_aplicacion_especificaciones.messagebox') as mensajes, \
+                 patch('interfaz_aplicacion_especificaciones._procesar_carga_especificaciones', return_value={}) as extraer, \
+                 patch('revisiones_cronologicas.revisar_ingresos_json', return_value={}):
+                AplicacionEspecificaciones.actualizar_listas_json(app)
+                hilo.call_args.kwargs['target']()
+                app.raiz.after.call_args.args[1]()
+            self.assertEqual(len(extraer.call_args.kwargs['archivos_seleccionados']), 1)
+            self.assertIn('Copias Word idénticas: 1', mensajes.showinfo.call_args.args[1])
 
     def ejecutar(self, resultado=None, error=None):
         raiz = Mock()

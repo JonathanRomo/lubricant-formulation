@@ -59,6 +59,19 @@ from interfaz_aplicacion_especificaciones import (
 )
 
 
+class AparienciaGrisTests(unittest.TestCase):
+    def test_apariencia_y_acento_gris_se_validan_y_aplican_a_la_paleta(self):
+        import estilo_interfaz as ui
+        preferencias = ui.validar_preferencias({'apariencia': 'Oscuro gris', 'acento': 'Gris'})
+        self.assertEqual(preferencias['apariencia'], 'Oscuro gris')
+        self.assertEqual(preferencias['acento'], 'Gris')
+        with patch.dict(ui.PREFERENCIAS, preferencias), patch.object(ui.ctk, 'get_appearance_mode', return_value='Dark'):
+            colores = ui.paleta()
+        self.assertEqual(colores['fondo'], '#1e1e1e')
+        self.assertEqual(colores['panel'], '#252526')
+        self.assertEqual(colores['acento'], '#4b4b4b')
+
+
 class FocoDiferidoTests(unittest.TestCase):
     def preparar(self):
         import tkinter as tk

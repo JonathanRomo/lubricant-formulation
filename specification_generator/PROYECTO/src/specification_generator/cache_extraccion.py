@@ -10,6 +10,19 @@ from pathlib import Path
 CAMPO_FUENTE = ("producto", "documento", "control_documental", "pruebas", "notas",
                 "datos_institucionales", "estructura_detectada")
 _AUSENTE = object()
+REVISION_GESTIONADA = ("revision", "revision_fuente", "revision_recibida",
+                      "historial_revisiones_recibidas")
+
+
+def conservar_revision(resultado, anterior):
+    """La revisión asignada y su procedencia no son campos del lector Word."""
+    control = resultado.setdefault("control_documental", {})
+    previo = anterior.get("control_documental", {})
+    for campo in REVISION_GESTIONADA:
+        if campo in previo:
+            control[campo] = copy.deepcopy(previo[campo])
+        else:
+            control.pop(campo, None)
 
 
 def base_extraida(datos):
@@ -58,6 +71,7 @@ def fusionar(actual, nueva, base=None):
             resultado.pop(campo, None)
         else:
             resultado[campo] = valor
+    conservar_revision(resultado, actual)
     if not protegidos:
         resultado["validacion_codigos_200"] = copy.deepcopy(nueva["validacion_codigos_200"])
     return resultado, protegidos
@@ -85,6 +99,15 @@ def actualizar(con, registro, salida, nueva, version_lector, fecha):
     if base is not None and not isinstance(base, dict):
         raise ValueError("La base de extracción existente es inválida; no se sobrescribe.")
     resultado, protegidos = fusionar(actual, nueva, base) if original is not None else (copy.deepcopy(nueva), set())
+    if original is None:
+        revision_fuente = copy.deepcopy(nueva.get("control_documental", {}).get("revision", ""))
+        if base:
+            conservar_revision(resultado, base)
+        resultado.setdefault("control_documental", {}).setdefault("revision_fuente", revision_fuente)
+        if "revision_especificacion" in registro.keys():
+            resultado.setdefault("control_documental", {})["revision"] = registro["revision_especificacion"]
+    base_actualizada = base_extraida(nueva)
+    conservar_revision(base_actualizada, resultado)
     for campo in ("hash_sha256_origen", "hash_sha256_catalogo", "extractor_version", "version_lector"):
         resultado[campo] = nueva[campo]
     resultado.setdefault("archivo_origen", nueva["archivo_origen"])
@@ -94,12 +117,15 @@ def actualizar(con, registro, salida, nueva, version_lector, fecha):
     contenido = json.dumps(resultado, ensure_ascii=False, indent=2).encode("utf-8")
     try:
         con.execute("""UPDATE versiones SET version_lector=?, base_extraccion_json=?,
-                    campos_protegidos_json=?, hash_catalogo=? WHERE id=?""",
-                    (version_lector, json.dumps(base_extraida(nueva), ensure_ascii=False),
+                    campos_protegidos_json=?, hash_catalogo=?, revision_especificacion=? WHERE id=?""",
+                    (version_lector, json.dumps(base_actualizada, ensure_ascii=False),
                      json.dumps(sorted(protegidos), ensure_ascii=False),
-                     nueva["hash_sha256_catalogo"], registro["version_id"]))
-        con.execute("""UPDATE archivos SET hash_catalogo=?, ultima_revision_procesada=?, estado='OK', ultimo_error=NULL WHERE id=?""",
-                    (nueva["hash_sha256_catalogo"], fecha, registro["id"]))
+                     nueva["hash_sha256_catalogo"], resultado.get("control_documental", {}).get("revision"), registro["version_id"]))
+        con.execute("""UPDATE archivos SET hash_catalogo=?, ultima_revision_procesada=?,
+                    revision_especificacion=CASE WHEN ultimo_json=? THEN ? ELSE revision_especificacion END,
+                    estado='OK', ultimo_error=NULL WHERE id=?""",
+                    (nueva["hash_sha256_catalogo"], fecha, registro["archivo_json"],
+                     resultado.get("control_documental", {}).get("revision"), registro["id"]))
         escribir_atomico(ruta, contenido)
         con.commit()
     except BaseException:

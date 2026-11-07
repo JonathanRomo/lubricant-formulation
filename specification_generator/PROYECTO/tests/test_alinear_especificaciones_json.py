@@ -46,6 +46,319 @@ def simular_json_para_cache(origen, destino, maestro):
     return {"alineados": 1, "revision": 0, "sin_coincidencia": 0}
 
 
+class NormalizacionUnidadesSinMetodoTests(unittest.TestCase):
+    def test_variantes_del_inventario_en_editor_y_json_sin_coincidencia(self):
+        from interfaz_aplicacion_especificaciones import alinear_filas_generador
+        from alinear_especificaciones_json import normalizar_alias_unidad
+        casos = (('mg/Kg', 'mg/kg'), ('% MASA', '% masa'), ('%masa', '% masa'),
+                 ('% Mass', '% masa'), ('PPM', 'ppm'), ('g/cm3', 'g/cm³'),
+                 ('Kg/m3', 'kg/m³'), ('º C', '°C'), ('mPa. s', 'mPa*s'),
+                 ('mg KOH/g', 'mgKOH/g'), ('mm2/s (cSt)', 'mm²/s'),
+                 ('ml/ml/ml (minutos)', 'mL/mL/mL (min)'), ('UFC/g', 'UFC/g'),
+                 ('μL/min', 'µL/min'), ('1/10mm', '1/10 mm'))
+        for original, esperado in casos:
+            with self.subTest(original=original), tempfile.TemporaryDirectory() as carpeta:
+                fila = {'prueba': 'PRUEBA DESCONOCIDA', 'metodo': 'NOM-999-SSA1',
+                        'unidades': original, 'especificacion': '12', 'valor_tipico': '10'}
+                filas, conteo = alinear_filas_generador([fila], [MAESTRO], 'es')
+                self.assertNotEqual(conteo['alineados'], 1)
+                ruta = Path(carpeta) / 'especificacion.json'
+                ruta.write_text(json.dumps({'documento': {'idioma': 'es'}, 'pruebas': [fila]}), encoding='utf-8')
+                procesar_json(ruta, ruta, [MAESTRO])
+                datos = json.loads(ruta.read_text(encoding='utf-8'))
+                for resultado in (filas[0], datos['pruebas'][0]):
+                    self.assertEqual(resultado['unidades'], esperado)
+                    self.assertEqual((resultado['especificacion'], resultado['valor_tipico']), ('12', '10'))
+                detalle = datos['alineacion_metodos_lab']['detalle'][0]
+                self.assertEqual(detalle['unidades_originales'], original)
+                self.assertEqual(normalizar_alias_unidad(esperado), esperado)
+
+    def test_no_adivina_prefijos_escalas_ni_textos_ambiguos(self):
+        from interfaz_aplicacion_especificaciones import alinear_filas_generador
+        from alinear_especificaciones_json import normalizar_alias_unidad, unidad_sin_conversion
+        for unidad in ('Mg/Kg', 'MPa*s', 'PPM (mg/L)', 'gr/cm3', 'm/ml', 'nm -3',
+                       '% PPM', 'D-2161', 'DE 12 A 24 MESES', 'ml-ml-ml (min)'):
+            with self.subTest(unidad=unidad), tempfile.TemporaryDirectory() as carpeta:
+                self.assertEqual(normalizar_alias_unidad(unidad), unidad)
+                fila = {'prueba': 'PRUEBA DESCONOCIDA', 'metodo': 'NOM-999-SSA1', 'unidades': unidad}
+                filas, _ = alinear_filas_generador([fila], [MAESTRO], 'es')
+                ruta = Path(carpeta) / 'original.json'
+                ruta.write_text(json.dumps({'pruebas': [fila]}), encoding='utf-8')
+                procesar_json(ruta, ruta, [MAESTRO])
+                self.assertEqual(filas[0]['unidades'], unidad)
+                self.assertEqual(json.loads(ruta.read_text(encoding='utf-8'))['pruebas'][0]['unidades'], unidad)
+        self.assertIsNone(unidad_sin_conversion('Mg/Kg', 'mg/kg'))
+        self.assertIsNone(unidad_sin_conversion('MPa*s', 'mPa*s'))
+        self.assertIsNone(unidad_sin_conversion('ppm', 'mg/L'))
+
+    def test_escala_equivalente_ayuda_a_seleccionar_sin_convertir_cifras(self):
+        from alinear_especificaciones_json import unidad_sin_conversion
+        self.assertEqual(unidad_sin_conversion('% MASA', '% en masa'), '% en masa')
+        self.assertEqual(unidad_sin_conversion('mg/Kg', 'mg/kg'), 'mg/kg')
+        self.assertEqual(unidad_sin_conversion('mPa. s', 'mPa*s'), 'mPa*s')
+        self.assertIsNone(unidad_sin_conversion('kg/m³', 'g/cm³'))
+
+    def test_variantes_reales_se_limitan_a_la_norma_y_unidad_compatibles(self):
+        from alinear_especificaciones_json import normalizar_alias_unidad, unidad_sin_conversion
+        for original, esperado in (('mm2/ s', 'mm²/s'), ('mm²/s (cSt)', 'mm²/s'),
+                                   ('mgKOH/gr', 'mgKOH/g')):
+            self.assertEqual(normalizar_alias_unidad(original), esperado)
+        casos = (
+            ('gr/cm3', 'g/cm³ , g/ml , kg/L , kg/m³', 'ASTM D1298', 'g/cm³'),
+            ('mm/10', '1/10 mm', 'ASTM D217', '1/10 mm'),
+            ('ml-ml-ml (min)', 'mL/mL/mL (min)', 'ASTM D1401', 'mL/mL/mL (min)'),
+            ('SSU', 'SUS', 'ASTM D2161', 'SUS'),
+            ('dinas/cm', 'mN/m', 'ASTM D971', 'mN/m'),
+        )
+        for original, maestro, metodo, esperado in casos:
+            with self.subTest(original=original):
+                self.assertEqual(unidad_sin_conversion(original, maestro, metodo), esperado)
+                self.assertIsNone(unidad_sin_conversion(original, maestro, 'ASTM D445'))
+        for original, maestro in (('kg/m³', 'g/cm³'), ('ppm', 'mg/kg'),
+                                   ('1/mm', '1/10 mm'), ('mm', '1/10 mm'),
+                                   ('mg/kg', '% en masa')):
+            self.assertIsNone(unidad_sin_conversion(original, maestro, 'ASTM D217'))
+
+    def test_alias_contextual_alinea_sin_cambiar_los_valores(self):
+        maestro = {**MAESTRO, 'METODO': 'ASTM D1401',
+                   'NOMBRE IQM': 'SEPARABILIDAD AGUA-ACEITE A 82 °C',
+                   'NOMBRE IQM INGLES': 'WATER-OIL SEPARABILITY AT 82 °C',
+                   'UNIDADES': 'mL/mL/mL (min)', 'UNITS': 'mL/mL/mL (min)'}
+        fila = {'prueba': maestro['NOMBRE IQM'], 'metodo': 'ASTM D1401',
+                'unidades': 'ml-ml-ml (min)', 'especificacion': '40/40/0 (30)'}
+        with tempfile.TemporaryDirectory() as carpeta:
+            ruta = Path(carpeta) / 'producto.json'
+            ruta.write_text(json.dumps({'documento': {'idioma': 'es'}, 'pruebas': [fila]}), encoding='utf-8')
+            self.assertEqual(procesar_json(ruta, ruta, [maestro])['alineados'], 1)
+            datos = json.loads(ruta.read_text(encoding='utf-8'))
+            self.assertEqual(datos['pruebas'][0]['unidades'], maestro['UNIDADES'])
+            self.assertEqual(datos['pruebas'][0]['especificacion'], fila['especificacion'])
+            self.assertEqual(datos['alineacion_metodos_lab']['detalle'][0]['unidades_originales'], fila['unidades'])
+
+    def test_unidades_autorizadas_por_contexto_e_idioma(self):
+        from alinear_especificaciones_json import resolver_unidad_declarada, unidad_sin_conversion
+        for original in ('% W', '% w', '% PESO', '% Mass'):
+            with self.subTest(original=original):
+                self.assertEqual(resolver_unidad_declarada(original, original, 'ESPANOL'), '% masa')
+                self.assertEqual(resolver_unidad_declarada(original, original, 'INGLES'), '% mass')
+                self.assertEqual(unidad_sin_conversion(original, '% en masa'), '% en masa')
+                self.assertEqual(unidad_sin_conversion(original, 'wt %'), 'wt %')
+        self.assertEqual(unidad_sin_conversion('ppm', 'mg/kg, % en masa', 'ASTM D6304',
+                                              'CONTENIDO DE AGUA POR KARL FISCHER'), 'mg/kg')
+        self.assertIsNone(unidad_sin_conversion('ppm', 'mg/kg', 'ASTM D6304', 'AZUFRE'))
+        self.assertIsNone(unidad_sin_conversion('ppm', 'mg/kg', 'ASTM D1533', 'CONTENIDO DE AGUA'))
+        for original in ('ABS', 'ABSORBANCE', 'ABSORBANCIA', 'nm', 'nm -3'):
+            with self.subTest(original=original):
+                self.assertEqual(unidad_sin_conversion(original, 'A', 'USP',
+                    'LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS'), 'A')
+                self.assertEqual(unidad_sin_conversion(original, 'A', 'USP',
+                    'LIMIT OF POLYCYCLIC AROMATIC HYDROCARBONS'), 'A')
+                self.assertIsNone(unidad_sin_conversion(original, 'A', 'USP', 'OTRA PRUEBA'))
+                self.assertIsNone(unidad_sin_conversion(original, 'NA', 'USP',
+                    'LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS'))
+        self.assertIsNone(unidad_sin_conversion('nm 3', 'A', 'USP', 'ABSORBANCIA UV'))
+
+    def test_agua_y_absorbancia_en_json_bilingue(self):
+        muestras = (
+            ('es', 'CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)',
+             'ASTM D6304', 'ppm', 'mg/kg'),
+            ('en', 'WATER CONTENT BY KARL FISCHER (COULOMETRIC)',
+             'ASTM D6304', 'ppm', 'mg/kg'),
+            ('es', 'LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS', 'USP', 'nm -3', 'A'),
+            ('en', 'LIMIT OF POLYCYCLIC AROMATIC HYDROCARBONS', 'USP', 'ABSORBANCE', 'A'),
+        )
+        for idioma, nombre, metodo, unidad, esperada in muestras:
+            es_agua = metodo == 'ASTM D6304'
+            maestro = {**MAESTRO, 'METODO': metodo,
+                'NOMBRE IQM': 'CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)' if es_agua else 'LÍMITE DE HIDROCARBUROS POLICÍCLICOS AROMÁTICOS',
+                'NOMBRE IQM INGLES': 'WATER CONTENT BY KARL FISCHER (COULOMETRIC)' if es_agua else 'LIMIT OF POLYCYCLIC AROMATIC HYDROCARBONS',
+                'UNIDADES': 'mg/kg, % en masa' if es_agua else 'A',
+                'UNITS': 'mg/kg, wt %' if es_agua else 'A'}
+            with self.subTest(idioma=idioma, unidad=unidad), tempfile.TemporaryDirectory() as carpeta:
+                ruta = Path(carpeta) / 'producto.json'
+                fila = {'prueba': nombre, 'metodo': metodo, 'unidades': unidad, 'valor_tipico': '10'}
+                ruta.write_text(json.dumps({'documento': {'idioma': idioma}, 'pruebas': [fila]}), encoding='utf-8')
+                self.assertEqual(procesar_json(ruta, ruta, [maestro])['alineados'], 1)
+                datos = json.loads(ruta.read_text(encoding='utf-8'))
+                self.assertEqual(datos['pruebas'][0]['unidades'], esperada)
+                self.assertEqual(datos['pruebas'][0]['valor_tipico'], '10')
+                self.assertEqual(datos['alineacion_metodos_lab']['detalle'][0]['unidades_originales'], unidad)
+
+    def test_unidades_formadoras_de_colonias_respetan_idioma_y_denominador(self):
+        from interfaz_aplicacion_especificaciones import alinear_filas_generador
+        from alinear_especificaciones_json import normalizar_alias_unidad, resolver_unidad_declarada, unidad_sin_conversion
+        self.assertEqual(normalizar_alias_unidad('CFU/g'), 'CFU/g')
+        self.assertEqual(normalizar_alias_unidad('UFC/g'), 'UFC/g')
+        self.assertEqual(unidad_sin_conversion('CFU/g', 'UFC/g'), 'UFC/g')
+        self.assertIsNone(unidad_sin_conversion('CFU', 'UFC/g'))
+        for idioma, original, esperado in (('es', 'UFC', 'UFC'), ('en', 'CFU', 'CFU'),
+                                           ('es', 'CFU/g', 'UFC/g'), ('en', 'UFC/g', 'CFU/g')):
+            with self.subTest(idioma=idioma, original=original), tempfile.TemporaryDirectory() as carpeta:
+                fila = {'prueba': 'PRUEBA DESCONOCIDA', 'metodo': 'NOM-999-SSA1',
+                        'unidades': original, 'especificacion': '< 100', 'valor_tipico': '50'}
+                filas, _ = alinear_filas_generador([fila], [MAESTRO], idioma)
+                ruta = Path(carpeta) / 'producto.json'
+                ruta.write_text(json.dumps({'documento': {'idioma': idioma}, 'pruebas': [fila]}), encoding='utf-8')
+                procesar_json(ruta, ruta, [MAESTRO])
+                datos = json.loads(ruta.read_text(encoding='utf-8'))
+                self.assertEqual(filas[0]['unidades'], esperado)
+                self.assertEqual(datos['pruebas'][0]['unidades'], esperado)
+                self.assertEqual(datos['alineacion_metodos_lab']['detalle'][0]['unidades_originales'], original)
+                self.assertEqual(datos['pruebas'][0]['valor_tipico'], '50')
+        for unidad in ('UFC', 'CFU', 'UFC/g', 'CFU/g'):
+            self.assertEqual(resolver_unidad_declarada(unidad, unidad, 'DESCONOCIDO'), unidad)
+        self.assertEqual(resolver_unidad_declarada('CFU/g', 'UFC/g', 'INGLES', usar_maestro=True), 'CFU/g')
+        self.assertEqual(resolver_unidad_declarada('UFC/g', 'CFU/g', 'ESPANOL', usar_maestro=True), 'UFC/g')
+        maestro = {**MAESTRO, 'NOMBRE IQM': 'RECUENTO MICROBIANO', 'NOMBRE IQM INGLES': 'MICROBIAL COUNT',
+                   'METODO': 'ASTM D445', 'UNIDADES': 'UFC/g', 'UNITS': 'UFC/g'}
+        with tempfile.TemporaryDirectory() as carpeta:
+            ruta = Path(carpeta) / 'en.json'
+            fila = {'prueba': 'MICROBIAL COUNT', 'metodo': 'ASTM D445', 'unidades': 'CFU/g', 'valor_tipico': '10'}
+            ruta.write_text(json.dumps({'documento': {'idioma': 'en'}, 'pruebas': [fila]}), encoding='utf-8')
+            self.assertEqual(procesar_json(ruta, ruta, [maestro])['alineados'], 1)
+            self.assertEqual(json.loads(ruta.read_text(encoding='utf-8'))['pruebas'][0]['unidades'], 'CFU/g')
+            datos = json.loads(ruta.read_text(encoding='utf-8'))
+            datos['pruebas'][0]['unidades'] = 'UFC/g'
+            datos['alineacion_metodos_lab']['detalle'][0]['estado'] = 'EDICION_MANUAL'
+            ruta.write_text(json.dumps(datos), encoding='utf-8')
+            procesar_json(ruta, ruta, [maestro], conservar_ediciones=True)
+            self.assertEqual(json.loads(ruta.read_text(encoding='utf-8'))['pruebas'][0]['unidades'], 'CFU/g')
+
+
+class ReglasFarmacopeasYViscosidadTests(unittest.TestCase):
+    def test_usp_y_farmacopea_europea_conservan_otras_normas_y_apartados(self):
+        from alinear_especificaciones_json import normalizar_metodo_pendiente, referencias_farmacopea
+        for texto in ('Farmacopea Europea13ª Edición 2.2.9./ ASTM D7042 / USP 41',
+                      'Ph. Eur 10th Edition 2.2.9./ ASTM D7042 / USP 32',
+                      'European Pharmacopoeia 2.2.9 / USP 32'):
+            with self.subTest(texto=texto):
+                self.assertEqual(set(referencias_farmacopea(texto)), {'Ph Eur', 'USP'})
+                resultado = normalizar_metodo_pendiente(texto)
+                self.assertIn('PH. EUR', resultado)
+                self.assertIn('2.2.9', resultado)
+                self.assertNotRegex(resultado, r'USP\s+\d')
+                self.assertIn('USP', resultado)
+                if 'D7042' in texto:
+                    self.assertIn('ASTM D7042', resultado)
+        self.assertEqual(normalizar_metodo_pendiente('Farmacopea Europea13ª edición/USP32'), 'PH. EUR 13ª edición/USP')
+        self.assertEqual(normalizar_metodo_pendiente('USP 32. / FEUM'), 'USP. / FEUM')
+
+    def test_agua_karl_fischer_y_unidades_de_casos_reales(self):
+        from alinear_especificaciones_json import MaestroPreparado
+        registro = {**MAESTRO, 'NOMBRE IQM': 'CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)',
+                    'NOMBRE IQM INGLES': 'WATER CONTENT BY KARL FISCHER (COULOMETRIC)',
+                    'METODO': 'ASTM D6304', 'UNIDADES': 'mg/kg , % en masa', 'UNITS': 'mg/kg , % en masa'}
+        for nombre, metodo, unidad in (('% DE HUMEDAD ◊', 'KARL FISCHER (COULOMETRICO)', '%'),
+                                      ('CONTENIDO DE AGUA', 'ASTM D6304', 'mg/Kg')):
+            for maestro in ([registro], MaestroPreparado([registro])):
+                with self.subTest(nombre=nombre, preparado=type(maestro).__name__):
+                    match = mejor_coincidencia(nombre, metodo, maestro, 'ESPANOL', unidad)
+                    self.assertEqual(match['estado'], 'ALINEADO')
+                    self.assertEqual(match['registro']['NOMBRE IQM'], registro['NOMBRE IQM'])
+                    self.assertEqual(match['unidad_confirmada'], '%' if unidad == '%' else 'mg/kg')
+        for metodo in ('KARL FISCHER VOLUMETRICO', 'ASTM D6304 PROCEDIMIENTO B', 'ASTM D1533'):
+            match = mejor_coincidencia('CONTENIDO DE AGUA', metodo, [registro], 'ESPANOL', 'mg/kg')
+            self.assertFalse(match['estado'] == 'ALINEADO' and match.get('reglas_equivalencia'))
+
+    def test_sus_selecciona_saybolt_sin_borrar_metodos_y_no_confunde_temperatura(self):
+        registros = [{**MAESTRO, 'NOMBRE IQM': f'VISCOSIDAD SAYBOLT A {t} °F',
+                     'NOMBRE IQM INGLES': f'SAYBOLT VISCOSITY AT {t} °F', 'METODO': 'ASTM D2161',
+                     'UNIDADES': 'SUS', 'UNITS': 'SUS'} for t in (100, 210)]
+        for temperatura in (100, 210):
+            nombre = f'VISCOSIDAD A {temperatura}°F, SUS'
+            r = mejor_coincidencia(nombre, 'ASTM D445 / ASTM D2161', registros, 'ESPANOL', '*')
+            self.assertEqual(r['estado'], 'ALINEADO')
+            self.assertIn(str(temperatura), r['registro']['NOMBRE IQM'])
+        self.assertNotEqual(mejor_coincidencia('VISCOSIDAD A 200°F SUS', 'ASTM D2161', registros, 'ESPANOL', 'SUS')['estado'], 'ALINEADO')
+        solo_d445 = mejor_coincidencia('VISCOSIDAD A 100°F SUS', 'ASTM D445', registros, 'ESPANOL', 'SUS')
+        self.assertEqual((solo_d445['estado'], solo_d445['metodo_confirmado']), ('ALINEADO', 'ASTM D445'))
+        self.assertNotEqual(mejor_coincidencia('VISCOSIDAD A 100°C SUS', 'ASTM D2161', registros, 'ESPANOL', 'SUS')['estado'], 'ALINEADO')
+        self.assertNotEqual(mejor_coincidencia('VISCOSIDAD A 100°F SUS', 'VISUAL', registros, 'ESPANOL', 'SUS')['estado'], 'ALINEADO')
+        from alinear_especificaciones_json import metodo_alineado_canonico
+        self.assertEqual(metodo_alineado_canonico('ASTM D445 / ASTM D2161', 'ASTM D2161'), 'ASTM D445 / ASTM D2161')
+
+    def test_cst_se_normaliza_incluso_sin_metodo_y_usp_en_realineacion_manual(self):
+        from interfaz_aplicacion_especificaciones import alinear_filas_generador
+        fila = {'prueba': 'OTRA PRUEBA', 'metodo': 'USP 32 / NOM-999-SSA1', 'unidades': 'cSt', 'especificacion': '10'}
+        editadas, _ = alinear_filas_generador([fila], [MAESTRO], 'es')
+        self.assertEqual(editadas[0]['unidades'], 'mm²/s')
+        self.assertNotIn('USP 32', editadas[0]['metodo'])
+        with tempfile.TemporaryDirectory() as carpeta:
+            ruta = Path(carpeta) / 'entrada.json'
+            ruta.write_text(json.dumps({'documento': {'idioma': 'es'}, 'pruebas': [fila],
+                'alineacion_metodos_lab': {'detalle': [{'estado': 'EDICION_MANUAL'}]}}), encoding='utf-8')
+            procesar_json(ruta, ruta, [MAESTRO], conservar_ediciones=True)
+            salida = json.loads(ruta.read_text(encoding='utf-8'))['pruebas'][0]
+            self.assertEqual(salida['metodo'], 'USP / NOM-999-SSA1')
+            self.assertEqual(salida['unidades'], 'mm²/s')
+
+
+class ProteccionesAuditoriaTests(unittest.TestCase):
+    def test_unidad_de_distinta_escala_conserva_limites_y_tipicos_en_editor_y_json(self):
+        from interfaz_aplicacion_especificaciones import alinear_filas_generador
+        for original, propuesta in (("kg/m³", "g/cm³"), ("mPa", "MPa"), ("ppm", "%"), ("old", "g/cm³")):
+            with self.subTest(original=original), tempfile.TemporaryDirectory() as carpeta:
+                maestro = [{**MAESTRO, "NOMBRE IQM": "DENSIDAD A 25 °C", "METODO": "ASTM D1298", "UNIDADES": propuesta}]
+                fila = {"prueba": "DENSIDAD A 25 °C", "metodo": "ASTM D1298", "unidades": original,
+                        "especificacion": "850 - 880", "valor_tipico": "865"}
+                for preparado in (maestro, __import__('alinear_especificaciones_json').MaestroPreparado(maestro)):
+                    self.assertEqual(mejor_coincidencia(fila['prueba'], fila['metodo'], preparado, 'ESPANOL', original)['estado'], 'REVISION_REQUERIDA')
+                errores = {}
+                editadas, conteo = alinear_filas_generador([fila], maestro, "es", errores_metodo=errores)
+                self.assertEqual(conteo['revision'], 1)
+                self.assertIn(0, errores)
+                ruta = Path(carpeta) / "original.json"
+                ruta.write_text(json.dumps({"documento": {"idioma": "es"}, "pruebas": [fila]}), encoding="utf-8")
+                procesar_json(ruta, ruta, maestro)
+                datos = json.loads(ruta.read_text(encoding='utf-8'))
+                for salida in (editadas[0], datos['pruebas'][0]):
+                    for campo in ('unidades', 'especificacion', 'valor_tipico'):
+                        self.assertEqual(salida[campo], fila[campo])
+                self.assertEqual(datos['alineacion_metodos_lab']['detalle'][0]['tipo_pendiente'], 'UNIDADES_POR_REVISAR')
+
+    def test_alias_equivalentes_y_alternativa_con_igual_escala(self):
+        from alinear_especificaciones_json import unidad_sin_conversion
+        for original, maestro, esperado in (("cSt", "mm²/s", "mm²/s"), ("cP", "mPa·s", "mPa·s"),
+                ("g/mL", "g/cm³", "g/cm³"), ("kg/m3", "g/cm³, kg/m³", "kg/m³")):
+            with self.subTest(original=original):
+                self.assertEqual(unidad_sin_conversion(original, maestro), esperado)
+
+    def test_destino_editado_sin_cache_o_forzado_se_conserva_y_el_intacto_tiene_respaldo(self):
+        import alinear_especificaciones_json as al
+        with tempfile.TemporaryDirectory() as carpeta, patch('builtins.print'):
+            base = Path(carpeta)
+            origen = base / al.ENTRADA / 'producto.json'
+            origen.parent.mkdir()
+            origen.write_text(json.dumps({'pruebas': [{'prueba': 'Viscosidad cinemática', 'metodo': 'ASTM D445', 'unidades': 'cSt'}]}), encoding='utf-8')
+            maestro = base / al.MAESTRO
+            maestro.parent.mkdir()
+            maestro.write_bytes(b'maestro')
+            with patch.object(al, 'cargar_maestro', return_value=[MAESTRO]):
+                al.ejecutar(base)
+                destino = base / al.SALIDA / origen.name
+                intacto = destino.read_bytes()
+                # Una nueva fuente puede actualizar un destino aún verificable.
+                datos = json.loads(origen.read_text(encoding='utf-8'))
+                datos['notas'] = ['Nueva lectura']
+                origen.write_text(json.dumps(datos), encoding='utf-8')
+                with patch('cache_extraccion.escribir_atomico', side_effect=OSError('Sin espacio para respaldo')):
+                    self.assertEqual(al.ejecutar(base)['errores'], 1)
+                self.assertEqual(destino.read_bytes(), intacto)
+                self.assertEqual(al.ejecutar(base)['archivos'], 1)
+                self.assertIn(intacto, [p.read_bytes() for p in (destino.parent / '.respaldos_alineacion').glob('*.bak')])
+                datos = json.loads(destino.read_text(encoding='utf-8'))
+                datos['notas'] = ['MANUAL']
+                destino.write_text(json.dumps(datos), encoding='utf-8')
+                editado = destino.read_bytes()
+                self.assertEqual(al.ejecutar(base, forzar=True)['protegidos'], 1)
+                self.assertEqual(destino.read_bytes(), editado)
+                (destino.parent / '.cache_alineacion').unlink()
+                self.assertEqual(al.ejecutar(base)['protegidos'], 1)
+                self.assertEqual(destino.read_bytes(), editado)
+                with self.assertRaises(al.DestinoProtegido):
+                    al.procesar_json(origen, destino, [MAESTRO])
+
+
 class ReglasConfirmadasLaboratorioTests(unittest.TestCase):
     def test_unidades_declaradas_se_normalizan_con_y_sin_coincidencia(self):
         from interfaz_aplicacion_especificaciones import alinear_filas_generador
@@ -66,7 +379,7 @@ class ReglasConfirmadasLaboratorioTests(unittest.TestCase):
                             self.assertIn(0, errores)
                             self.assertEqual(editadas[0]['prueba'], fila['prueba'])
                             self.assertEqual(editadas[0]['metodo'], metodo)
-                            self.assertEqual(editadas[0]['especificacion'], '<1000')
+                            self.assertEqual(editadas[0]['especificacion'], '< 1 000')
                         ruta = Path(carpeta) / 'prueba.json'
                         ruta.write_text(json.dumps({'producto': {'nombre': 'Producto'}, 'documento': {'idioma': idioma},
                             'control_documental': {'codigo_unico_producto': 'P1', 'revision': '00'}, 'pruebas': [fila]}), encoding='utf-8')
@@ -267,7 +580,7 @@ class ReglasConfirmadasLaboratorioTests(unittest.TestCase):
                                 filas, conteo = alinear_filas_generador([{'prueba': nombre, 'metodo': metodo, 'unidades': 'NA'}], maestro, idioma)
                                 self.assertEqual(conteo['alineados'], 1)
                                 self.assertEqual(filas[0]['prueba'], esperado)
-                                self.assertEqual(filas[0]['metodo'], 'USP')
+                                self.assertEqual(filas[0]['metodo'], 'USP / FEUM' if 'FEUM' in metodo and 'USP' in metodo else 'FEUM' if 'FEUM' in metodo else 'USP')
         self.assertTrue(mejor_coincidencia('COMPUESTOS POLINUCLEARES', 'ASTM D9999', [registro], 'ESPANOL')['metodo_no_encontrado'])
 
     def test_iso4406_variantes_limpieza_del_laboratorio(self):
@@ -525,7 +838,8 @@ class ReglasConfirmadasLaboratorioTests(unittest.TestCase):
                      self.registro(es, en, 'ASTM D92', '\u00b0C')]
         for maestro in (registros, MaestroPreparado(registros)):
             for nombre in ('PUNTO DE   INFLAMACI\u00d3N', 'PUNTO DE   INFLAMACION',
-                           'PUNTO DE   INFLAMACION, \u00b0C', 'FLASH POINT, CLEVELAND OPEN CUP'):
+                           'PUNTO DE   INFLAMACION, \u00b0C', 'FLASH POINT, CLEVELAND OPEN CUP',
+                           'TEMPERATURA DE INFLAMACIÓN ◊', 'Flash, COC 0C(OF) ◊'):
                 for idioma, esperado in (('es', es), ('en', en)):
                     with self.subTest(nombre=nombre, idioma=idioma):
                         filas, conteo = alinear_filas_generador([{'prueba': nombre, 'metodo': 'ASTM D92 - 18', 'unidades': '\u00b0C'}], maestro, idioma)
@@ -544,6 +858,18 @@ class ReglasConfirmadasLaboratorioTests(unittest.TestCase):
         especifico = 'PUNTO DE INFLAMACION A 760 mmHg'
         self.assertEqual(equivalencias_confirmadas(especifico, 'ASTM D92')[0], es_760)
 
+    def test_elementos_con_marca_b_reconocen_norma_y_prueba(self):
+        from alinear_especificaciones_json import mejor_coincidencia
+        zinc = self.registro('DETERMINACIÓN DE ZINC (ZN) EN ACEITES LUBRICANTES POR ICP-OES',
+                             'DETERMINATION OF ZINC (ZN) IN LUBRICATING OILS BY ICP-OES', 'ASTM D4951')
+        fosforo = self.registro('DETERMINACIÓN DE FÓSFORO (P) EN ACEITES LUBRICANTES POR ICP-OES',
+                               'DETERMINATION OF PHOSPHORUS (P) IN LUBRICATING OILS BY ICP-OES', 'ASTM D4951')
+        for nombre, esperado in [('ZINC B', zinc), ('PHOSPHORUS B', fosforo)]:
+            with self.subTest(nombre=nombre):
+                resultado = mejor_coincidencia(nombre, 'ASTM D-4951', [zinc, fosforo], 'INGLES')
+                self.assertEqual(resultado['estado'], 'ALINEADO')
+                self.assertEqual(resultado['registro']['NOMBRE IQM'], esperado['NOMBRE IQM'])
+
     def test_azufre_farmacopeas_confirmado_sin_confundir_otras_normas(self):
         from alinear_especificaciones_json import MaestroPreparado, equivalencias_confirmadas
         from interfaz_aplicacion_especificaciones import alinear_filas_generador
@@ -560,11 +886,128 @@ class ReglasConfirmadasLaboratorioTests(unittest.TestCase):
                             filas, conteo = alinear_filas_generador([{'prueba': nombre, 'metodo': metodo, 'unidades': 'A/D'}], maestro, idioma)
                             self.assertEqual(conteo['alineados'], 1)
                             self.assertEqual(filas[0]['prueba'], esperado)
-                            self.assertEqual(filas[0]['metodo'], 'USP')
+                            self.assertEqual(filas[0]['metodo'], 'USP / FEUM' if 'FEUM' in metodo else 'USP')
                             self.assertEqual(filas[0]['unidades'], 'NA')
-        for nombre, metodo in (('AZUFRE', 'ASTM D2622'), ('AZUFRE', ''),
+        for nombre, metodo in (('AZUFRE', ''),
                                ('AZUFRE', 'USP / ASTM D2622')):
             self.assertEqual(equivalencias_confirmadas(nombre, metodo)[0], nombre)
+
+    def test_metodos_espaciados_ir_y_nmx_sin_barra(self):
+        from alinear_especificaciones_json import referencias_astm, mejor_coincidencia
+        self.assertEqual(referencias_astm('ASTM D 2622 / ASTM D 4951'), ('D2622', 'D4951'))
+        ir = self.registro('ESPECTRO INFRARROJO', 'INFRARED SPECTRUM', 'ASTM E1252')
+        for nombre in ('IR', 'ESPECTRO INFRARROJO'):
+            with self.subTest(nombre=nombre):
+                self.assertEqual(mejor_coincidencia(nombre, 'E 1252', [ir], 'ESPANOL')['estado'], 'ALINEADO')
+        viscosidad = self.registro('VISCOSIDAD CINEMÁTICA A 100 °C', 'KINEMATIC VISCOSITY AT 100 °C',
+                                   'ASTM D445 / NMX-J-123-ANCE-2019 P 6,7', 'mm²/s')
+        resultado = mejor_coincidencia('VISCOSIDAD CINEMÁTICA A 100 °C',
+                                      'ASTM D-445 NMX-J 123-ANCE-2019', [viscosidad], 'ESPANOL', 'mm2/s')
+        self.assertEqual(resultado['estado'], 'ALINEADO')
+
+    def test_realineacion_actualiza_maestro_y_preserva_ediciones(self):
+        anterior = self.registro('DENSIDAD A 25 °C', 'DENSITY AT 25 °C', 'ASTM D1298', 'g/cm³')
+        actualizado = self.registro('DENSIDAD A 25 °C ACTUALIZADA', 'DENSITY AT 25 °C UPDATED', 'ASTM D1298', 'g/cm³')
+        with tempfile.TemporaryDirectory() as carpeta:
+            origen, destino = Path(carpeta) / 'original.json', Path(carpeta) / 'alineado.json'
+            origen.write_text(json.dumps({'documento': {'idioma': 'es'}, 'Desarrollador': 'Ana',
+                'FECHA DE REANALISIS': '12 meses', 'notas': ['Nota 40°C'], 'pruebas': [
+                    {'prueba': 'DENSIDAD A 25 °C', 'metodo': 'ASTM D1298', 'unidades': 'g/cm³', 'especificacion': '0,85'},
+                    {'prueba': 'DENSIDAD A 25 °C', 'metodo': 'ASTM D1298', 'unidades': 'g/cm³', 'especificacion': '0,86'}]}), encoding='utf-8')
+            procesar_json(origen, destino, [anterior])
+            datos = json.loads(destino.read_text(encoding='utf-8'))
+            datos['Desarrollador'], datos['FECHA DE REANALISIS'], datos['notas'] = 'Ana', '12 meses', ['Nota 40°C']
+            datos['pruebas'][1]['prueba'] = 'Nombre elegido manualmente'
+            datos['alineacion_metodos_lab']['detalle'][1]['estado'] = 'EDICION_MANUAL'
+            datos['alineacion_metodos_lab']['detalle'][1]['valores_alineados']['prueba'] = 'Nombre elegido manualmente'
+            destino.write_text(json.dumps(datos, ensure_ascii=False), encoding='utf-8')
+            procesar_json(destino, destino, [actualizado], conservar_ediciones=True)
+            resultado = json.loads(destino.read_text(encoding='utf-8'))
+            self.assertEqual(resultado['pruebas'][0]['prueba'], 'DENSIDAD A 25 °C ACTUALIZADA')
+            self.assertEqual(resultado['pruebas'][1]['prueba'], 'Nombre elegido manualmente')
+            self.assertEqual(resultado['notas'], ['Nota 40°C'])
+            self.assertEqual(resultado['Desarrollador'], 'Ana')
+            self.assertEqual(resultado['FECHA DE REANALISIS'], '12 meses')
+            procesar_json(destino, destino, [actualizado], conservar_ediciones=True)
+            resultado = json.loads(destino.read_text(encoding='utf-8'))
+            self.assertEqual(resultado['pruebas'][1]['prueba'], 'Nombre elegido manualmente')
+
+    def test_nmx_sin_anio_usa_anio_y_apartado_del_maestro(self):
+        from alinear_especificaciones_json import metodo_alineado_canonico, mejor_coincidencia, normalizar_metodo_pendiente
+        self.assertEqual(normalizar_metodo_pendiente('DIN 51353 NMX-J-123-ANCE'), 'DIN 51353 / NMX-J-123-ANCE')
+        self.assertEqual(normalizar_metodo_pendiente('DIN 51353 / NMX-J-123-ANCE'), 'DIN 51353 / NMX-J-123-ANCE')
+        maestro = 'ASTM D445 / NMX-J-123-ANCE-2019 P 6,7'
+        registro = self.registro('VISCOSIDAD CINEMÁTICA A 100 °C', 'KINEMATIC VISCOSITY AT 100 °C', maestro, 'mm²/s')
+        for original, esperado in (
+            ('ASTM D-445 NMX-J-123-ANCE', 'ASTM D445 / NMX-J-123-ANCE-2019 P 6,7'),
+            ('ASTM D445 / NMX-J-123-ANCE P 6,7', 'ASTM D445 / NMX-J-123-ANCE-2019 P 6,7'),
+            ('ASTM D445 / NMX-J-123-ANCE-2018', 'ASTM D445 / NMX-J-123-ANCE-2018 P 6,7'),
+        ):
+            with self.subTest(original=original):
+                resultado = mejor_coincidencia('VISCOSIDAD CINEMÁTICA A 100 °C', original, [registro], 'ESPANOL', 'mm2/s')
+                self.assertEqual(resultado['estado'], 'ALINEADO')
+                self.assertEqual(metodo_alineado_canonico(original, maestro), esperado)
+
+    def test_normaliza_astm_desconocido_sin_perder_otras_referencias(self):
+        from alinear_especificaciones_json import normalizar_metodo_astm_desconocido, normalizar_metodo_pendiente
+        casos = {'ASTM D-937': 'ASTM D937', 'D86': 'ASTM D86', 'D-86': 'ASTM D86',
+                 'ASTM G-31': 'ASTM G31', 'D 445/2161': 'ASTM D445 / ASTM D2161',
+                 'ASTM D-86 - 17': 'ASTM D86', 'NMX-J-123': 'NMX-J-123',
+                 'D445 / NMX-J-123': 'D445 / NMX-J-123', 'CLIENT D86': 'CLIENT D86'}
+        for entrada, esperado in casos.items():
+            with self.subTest(entrada=entrada):
+                self.assertEqual(normalizar_metodo_astm_desconocido(entrada), esperado)
+        self.assertEqual(normalizar_metodo_pendiente('ASTM D-97 NMX-J 123-ANCE-2019'),
+                         'ASTM D97 / NMX-J 123-ANCE-2019')
+        self.assertEqual(normalizar_metodo_pendiente('ASTM D 2440 METODO B / NMX-J-123-ANCE'),
+                         'ASTM D2440 METODO B / NMX-J-123-ANCE')
+
+    def test_editor_normaliza_norma_ausente_y_conserva_aviso(self):
+        from interfaz_aplicacion_especificaciones import alinear_filas_generador
+        maestro = [self.registro('OTRA PRUEBA', 'OTHER TEST', 'ASTM D445')]
+        errores = {}
+        filas, conteo = alinear_filas_generador(
+            [{'prueba': 'Destilación', 'metodo': 'D-86', 'unidades': '°C'}], maestro, 'es', errores_metodo=errores)
+        self.assertEqual(filas[0]['metodo'], 'ASTM D86')
+        self.assertEqual(filas[0]['prueba'], 'Destilación')
+        self.assertEqual(conteo['alineados'], 0)
+        self.assertTrue(errores)
+
+    def test_json_normaliza_astm_ausente_y_guarda_original_en_auditoria(self):
+        with tempfile.TemporaryDirectory() as temporal:
+            origen = Path(temporal) / 'origen.json'
+            destino = Path(temporal) / 'alineado.json'
+            origen.write_text(json.dumps({'documento': {'idioma': 'es'}, 'pruebas': [
+                {'prueba': 'Destilación', 'metodo': 'D-86', 'unidades': '°C'}
+            ]}), encoding='utf-8')
+            procesar_json(origen, destino, [self.registro('OTRA PRUEBA', 'OTHER TEST', 'ASTM D445')])
+            datos = json.loads(destino.read_text(encoding='utf-8'))
+            detalle = datos['alineacion_metodos_lab']['detalle'][0]
+            self.assertEqual(detalle['metodo_original'], 'D-86')
+            self.assertEqual(detalle['valores_alineados']['metodo'], 'ASTM D86')
+            self.assertTrue(detalle['metodo_no_encontrado'])
+            self.assertEqual(detalle['referencias_no_encontradas'], ['ASTM D86'])
+
+    def test_metodo_ausente_no_impide_formatear_unidades_y_valores(self):
+        from interfaz_aplicacion_especificaciones import alinear_filas_generador
+        maestro = [self.registro('OTRA PRUEBA', 'OTHER TEST', 'ASTM D445')]
+        fila = {'prueba': 'VISCOSITY', 'metodo': 'ASTM D9999', 'unidades': 'mm2/s',
+                'especificacion': '10.00 - 14.00', 'valor_tipico': '12.50'}
+        editadas, conteo = alinear_filas_generador([fila], maestro, 'en')
+        self.assertEqual(conteo['alineados'], 0)
+        self.assertEqual(editadas[0]['unidades'], 'mm²/s')
+        self.assertEqual(editadas[0]['especificacion'], '10,00 - 14,00')
+        self.assertEqual(editadas[0]['valor_tipico'], '12,50')
+        with tempfile.TemporaryDirectory() as temporal:
+            origen, salida = Path(temporal) / 'origen.json', Path(temporal) / 'salida.json'
+            origen.write_text(json.dumps({'documento': {'idioma': 'en'}, 'pruebas': [fila]}), encoding='utf-8')
+            procesar_json(origen, salida, maestro)
+            detalle = json.loads(salida.read_text(encoding='utf-8'))['alineacion_metodos_lab']['detalle'][0]
+            self.assertTrue(detalle['metodo_no_encontrado'])
+            self.assertEqual(detalle['valores_alineados']['unidades'], 'mm²/s')
+            self.assertEqual(detalle['valores_alineados']['especificacion'], '10,00 - 14,00')
+            self.assertEqual(detalle['valores_alineados']['valor_tipico'], '12,50')
+            self.assertEqual(detalle['especificacion_original'], '10.00 - 14.00')
 
     def test_acidez_confirmada_usa_fila_usp_feum(self):
         from interfaz_aplicacion_especificaciones import alinear_filas_generador
@@ -582,7 +1025,10 @@ class ReglasConfirmadasLaboratorioTests(unittest.TestCase):
                     filas, conteo = alinear_filas_generador([{'prueba': nombre, 'metodo': metodo, 'unidades': 'NA'}], registros, idioma)
                     self.assertEqual(conteo['alineados'], 1)
                     self.assertEqual(filas[0]['prueba'], esperado)
-                    self.assertEqual(filas[0]['metodo'], 'USP / FEUM')
+                    from alinear_especificaciones_json import referencias_farmacopea
+                    referencias = referencias_farmacopea(metodo)
+                    esperado_metodo = ' / '.join('PH. EUR' if r == 'Ph Eur' else r for r in ('USP', 'FEUM', 'Ph Eur') if r in referencias) if referencias else 'USP / FEUM'
+                    self.assertEqual(filas[0]['metodo'], esperado_metodo)
 
     def test_agua_d1533_liquidos_aislantes_conserva_apartado_nmx(self):
         from alinear_especificaciones_json import MaestroPreparado
@@ -927,7 +1373,7 @@ class ReglasConfirmadasLaboratorioTests(unittest.TestCase):
 class NormasAlineadorV2Tests(unittest.TestCase):
     def test_calificadores_de_vigencia_no_impiden_alinear_farmacopeas(self):
         from alinear_especificaciones_json import MaestroPreparado, metodo_alineado_canonico
-        for base, canonico in (("Ph. Eur", "Ph Eur"), ("USP 32", "USP"), ("FEUM 13", "FEUM"),
+        for base, canonico in (("Ph. Eur", "PH. EUR"), ("USP 32", "USP"), ("FEUM 13", "FEUM"),
                                ("USP 32 / FEUM 13", "USP / FEUM")):
             registro = {**MAESTRO, "METODO": canonico}
             for palabra in ("VIGENTE", "CURRENT", "CURRENCY"):
@@ -962,15 +1408,15 @@ class NormasAlineadorV2Tests(unittest.TestCase):
                             datos = json.loads(destino.read_text(encoding="utf-8"))
                             detalle = datos["alineacion_metodos_lab"]["detalle"][0]
                             self.assertEqual(detalle["metodo_original"], metodo)
-                            self.assertEqual(detalle["valores_alineados"]["metodo"], "Ph Eur")
+                            self.assertEqual(detalle["valores_alineados"]["metodo"], "PH. EUR")
                             self.assertEqual(datos["pruebas"][0]["prueba"], nombre)
                             self.assertEqual(datos["pruebas"][0]["unidades"], "DIMENSIONLESS" if idioma == "en" else "ADIMENSIONAL")
-                            self.assertEqual(preparar_vista_previa_alineada(destino).pruebas[0]["metodo"], "Ph Eur")
-                            self.assertEqual(preparar_datos(destino).pruebas[0]["metodo"], "Ph Eur")
+                            self.assertEqual(preparar_vista_previa_alineada(destino).pruebas[0]["metodo"], "PH. EUR")
+                            self.assertEqual(preparar_datos(destino).pruebas[0]["metodo"], "PH. EUR")
                         errores = {}
                         filas, conteo = alinear_filas_generador([{**fila, "metodo": metodo + " ¹"}], maestro, idioma, errores_metodo=errores)
                         self.assertEqual(conteo["alineados"], 0)
-                        self.assertEqual(filas[0]["metodo"], "Ph Eur ¹")
+                        self.assertEqual(filas[0]["metodo"], "PH. EUR ¹")
                         self.assertEqual(filas[0]["prueba"], nombre)
                         self.assertEqual(errores, {})
 
@@ -986,7 +1432,7 @@ class NormasAlineadorV2Tests(unittest.TestCase):
                     self.assertNotIn("metodo_normalizado", match)
                     fila = {"prueba": MAESTRO["NOMBRE IQM"], "metodo": metodo}
                     filas, _ = alinear_filas_generador([fila], maestro, "es")
-                    self.assertEqual(filas[0]["metodo"], metodo)
+                    self.assertEqual(filas[0]["metodo"], "PH. EUR VIGENTE" if metodo == "Ph Eur VIGENTE" else metodo)
 
     def test_astm_alternativos_de_la_misma_prueba_se_alinean_sin_perder_el_compuesto(self):
         from alinear_especificaciones_json import MaestroPreparado
@@ -1055,16 +1501,17 @@ class NormasAlineadorV2Tests(unittest.TestCase):
                         datos = json.loads(destino.read_text(encoding="utf-8"))
                         detalle = datos["alineacion_metodos_lab"]["detalle"][0]
                         self.assertEqual(datos["alineacion_metodos_lab"]["version_programa"], VERSION)
-                        self.assertEqual(detalle["valores_alineados"], fila)
+                        fila_formateada = {**fila, "unidades": "CFU" if idioma == "en" else "UFC", "especificacion": "< 1 000"}
+                        self.assertEqual(detalle["valores_alineados"], fila_formateada)
                         previa = preparar_vista_previa_alineada(destino)
-                        self.assertEqual(previa.pruebas[0], fila)
+                        self.assertEqual(previa.pruebas[0], fila_formateada)
                         self.assertEqual(preparar_datos(destino).pruebas[0]["metodo"], metodo)
                         marcas = cambios_documento(datos, previa.pruebas)
                         self.assertEqual(marcas[0], set(CAMPOS))
                         self.assertIn("Método no encontrado en lista maestra", marcas[0].mensaje_metodo)
                     errores = {}
                     resultado, conteo = alinear_filas_generador([fila], [maestro], idioma, errores_metodo=errores)
-                    self.assertEqual(resultado, [fila])
+                    self.assertEqual(resultado, [fila_formateada])
                     self.assertEqual(conteo["sin_coincidencia"], 1)
                     self.assertIn(0, errores)
 
@@ -1568,6 +2015,15 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
                 self.assertEqual(valor, esperado)
                 self.assertEqual(ambiguos, ambiguos_esperados)
 
+    def test_normaliza_limites_en_ingles_y_conserva_minutos(self):
+        for entrada, esperado in (("2.90 MIN", "2.90 MINIMUM"),
+                                  ("100 MAX", "100 MAXIMUM"),
+                                  ("30 MÍNIMO", "30 MINIMUM"),
+                                  ("30 maximum", "30 MAXIMUM"),
+                                  ("30 min", "30 min")):
+            with self.subTest(entrada=entrada):
+                self.assertEqual(normalizar_especificacion(entrada, "INGLES"), esperado)
+
     def test_normaliza_terminos_frecuentes_en_especificacion_y_valor_tipico(self):
         casos = (
             ("Típico", "TÍPICO"),
@@ -1840,7 +2296,7 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
             self.assertEqual(alineada["valor_tipico"], "0,25 - 7 500,50")
             self.assertEqual(alineada["especificacion"], "40 °C / 0,6 mL")
             self.assertEqual(sin_coincidencia["unidades"], "5.0 mL")
-            self.assertEqual(sin_coincidencia["valor_tipico"], "50-70")
+            self.assertEqual(sin_coincidencia["valor_tipico"], "50 - 70")
             self.assertEqual(sin_coincidencia["nombre"], "Temperatura 40°C")
             self.assertEqual(detalle[0]["unidades_originales"], "mL NaOH 0.01 N")
             self.assertEqual(detalle[0]["valor_tipico_original"], "0.25-7500.50")
@@ -1868,7 +2324,7 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
                 "g/cm³",
                 "Pa",
                 "g/cm³",
-                "mm²/s",
+                "Pa",
             ),
             (
                 "en",
@@ -1876,7 +2332,7 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
                 "g/ml",
                 "Pa",
                 "g/ml",
-                "mm²/s",
+                "Pa",
             ),
         )
         with tempfile.TemporaryDirectory() as temporal:
@@ -1916,7 +2372,8 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
                     salida = json.loads(destino.read_text(encoding="utf-8"))
                     detalle = salida["alineacion_metodos_lab"]["detalle"]
 
-                    self.assertEqual(conteo["alineados"], 2)
+                    self.assertEqual(conteo["alineados"], 1)
+                    self.assertEqual(conteo["revision"], 1)
                     self.assertEqual(
                         [prueba["unidades"] for prueba in salida["pruebas"]],
                         [esperada_valida, esperada_invalida],
@@ -2110,7 +2567,7 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
                             {
                                 "prueba": "Kinematic viscosities",
                                 "metodo": "ASTM D445",
-                                "unidades": "old",
+                                "unidades": "cSt",
                                 "especificacion": "10 min",
                                 "campo_extra": "preservar",
                             }
@@ -2127,7 +2584,7 @@ class AlineacionEspecificacionesTests(unittest.TestCase):
             self.assertEqual(conteo["alineados"], 1)
             self.assertEqual(prueba["prueba"], "Kinematic viscosity")
             self.assertEqual(prueba["metodo"], "ASTM D445")
-            self.assertEqual(prueba["unidades"], "mm2/s")
+            self.assertEqual(prueba["unidades"], "mm²/s")
             self.assertEqual(prueba["especificacion"], "10 min")
             self.assertEqual(prueba["campo_extra"], "preservar")
             self.assertEqual(

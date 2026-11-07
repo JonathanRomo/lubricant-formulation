@@ -204,7 +204,7 @@ def siguiente_revision(codigo, carpetas, base_datos=None, revision_actual="00", 
     codigo = str(codigo).strip().casefold()
     documentos = {}
     consecutivos = set()
-    invalidos = []
+    sin_consecutivo = 0
     for carpeta in dict.fromkeys(resolver_ruta(p) for p in carpetas):
         if not carpeta.exists():
             continue
@@ -228,11 +228,8 @@ def siguiente_revision(codigo, carpetas, base_datos=None, revision_actual="00", 
             elif re.fullmatch(r"(?:19|20)[0-9]{2}", revision):
                 pass  # El año es válido como revisión de origen, no como consecutivo.
             else:
-                invalidos.append(ruta.name)
+                sin_consecutivo += 1
             documentos[ruta.resolve()] = datos
-    if invalidos:
-        raise ValueError("Hay alineados del Part ID con revisión vacía o inválida. "
-                         "Corrige estos archivos antes de calcular la siguiente revisión: " + ", ".join(sorted(invalidos)))
     if not documentos:
         return RevisionCalculada("00", "No hay revisiones terminadas para este Part ID; la primera es 00.")
     # El conteo permite comenzar tras históricos con año. Si hay consecutivos
@@ -245,12 +242,15 @@ def siguiente_revision(codigo, carpetas, base_datos=None, revision_actual="00", 
     explicacion = (f"{cantidad_texto} del Part ID. "
                    "Solo se descuentan copias confirmadas por contenido y traducciones con vínculo confirmado. "
                    "Un mismo número con contenido diferente cuenta por separado.\n")
+    if sin_consecutivo:
+        explicacion += (f"Hay {sin_consecutivo} archivo(s) con revisión vacía o no numérica; "
+                        "se incluyen en el conteo de versiones, sin usar su revisión como consecutivo.\n")
     if consecutivos:
         ultima = max(consecutivos)
         explicacion += f"La mayor revisión numérica es {ultima:02d}; su consecutivo es {ultima + 1:02d}."
         if siguiente > ultima + 1:
             explicacion += f" El historial completo tiene {cantidad} versiones, por lo que corresponde {siguiente:02d}."
     else:
-        explicacion += (f"Las revisiones encontradas son años del documento de origen. "
-                        f"Por el conteo del historial corresponde {siguiente:02d}; el año no se incrementa.")
+        explicacion += (f"No hay revisiones consecutivas numéricas válidas. "
+                        f"Por el conteo del historial corresponde {siguiente:02d}; los años no se incrementan.")
     return RevisionCalculada(f"{siguiente:02d}", explicacion)

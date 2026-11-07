@@ -284,6 +284,10 @@ class SelectorEspecificacionesTests(unittest.TestCase):
         ):
             ordenador = OrdenadorColumnasTreeview(tabla, {"prueba": "Prueba"})
 
+            self.assertTrue(tabla.encabezados["prueba"]["text"].startswith("Prueba "))
+            self.assertTrue(tabla.encabezados["prueba"]["text"].endswith("▼"))
+            self.assertEqual(tabla.encabezados["prueba"]["anchor"], "e")
+
             ordenador.alternar("prueba")
 
             self.assertEqual(tabla.elementos, ["1", "3", "2", "0"])
@@ -335,6 +339,11 @@ class SelectorEspecificacionesTests(unittest.TestCase):
         self.assertTrue(requiere_realineacion("", "1.6.0"))
         self.assertFalse(requiere_realineacion("1.6", "1.6.0"))
         self.assertFalse(requiere_realineacion("1.7.0", "1.6.0"))
+
+    def test_etiqueta_muestra_revision_normalizada_sin_repetir_anio_del_nombre(self):
+        especificacion = Especificacion(Path('producto.json'), 'ACEITE Rev. 2022', 'P1', '', '03', '')
+        self.assertEqual(especificacion.etiqueta, 'P1 — ACEITE  |  Rev. 03')
+        self.assertEqual(especificacion.nombre_producto, 'ACEITE Rev. 2022')
 
     def test_catalogo_lee_la_version_del_alineador_guardada_en_el_json(self):
         with tempfile.TemporaryDirectory() as temporal:
@@ -412,8 +421,8 @@ class SelectorEspecificacionesTests(unittest.TestCase):
         SelectorEspecificaciones._realinear_seleccionadas(selector, "nuevas")
 
         selector._alinear_especificaciones.assert_called_once_with(
-            [origen_viejo.ruta],
-            destinos_seleccionados=[alineada_vieja.ruta],
+            [alineada_vieja.ruta, alineada_actual.ruta],
+            destinos_seleccionados=[alineada_vieja.ruta, alineada_actual.ruta],
         )
 
     def test_boton_realinear_se_deshabilita_si_no_hay_versiones_pendientes(self):
@@ -440,7 +449,7 @@ class SelectorEspecificacionesTests(unittest.TestCase):
 
         SelectorEspecificaciones._actualizar_estado_accion(selector, "nuevas")
 
-        boton.configure.assert_called_once_with(state="disabled")
+        boton.configure.assert_called_once_with(state="normal")
 
     def test_worker_entrega_los_destinos_seleccionados_al_alineador(self):
         selector = SimpleNamespace(
@@ -474,6 +483,18 @@ class SelectorEspecificacionesTests(unittest.TestCase):
             alinear.call_args.kwargs["destinos_seleccionados"],
             [destino],
         )
+
+    def test_worker_realinea_json_seleccionado_con_maestro_vigente(self):
+        selector = SimpleNamespace(_etiqueta_progreso_alineacion=None, _barra_progreso_alineacion=None,
+            _cola_alineacion=queue.Queue(), carpetas_json={'anteriores': Path('origen'), 'nuevas': Path('alineadas')})
+        ruta = Path('alineadas/producto.json')
+        with patch('interfaz_seleccion_especificaciones.ejecutar_alineacion', return_value={'archivos': 1}) as alinear, \
+             patch('interfaz_seleccion_especificaciones.threading.Thread') as thread:
+            SelectorEspecificaciones._ejecutar_tarea_alineacion(selector, [ruta], [ruta])
+            thread.call_args.kwargs['target']()
+        self.assertEqual(alinear.call_args.kwargs['carpeta_entrada'], Path('alineadas'))
+        self.assertTrue(alinear.call_args.kwargs['forzar'])
+        self.assertTrue(alinear.call_args.kwargs['conservar_ediciones'])
 
     def test_boton_bulk_alinea_solo_las_especificaciones_marcadas(self):
         marcada = Path("anteriores/marcada.json")
@@ -596,6 +617,19 @@ class SelectorEspecificacionesTests(unittest.TestCase):
 
         self.assertNotIn(ruta, selector.paneles["anteriores"].documentos_marcados)
         selector._alinear_especificaciones.assert_not_called()
+
+    def test_shift_marca_rango_visible_sin_perder_marcas_previas(self):
+        rutas = [Path(f'producto{i}.json') for i in range(5)]
+        sugerencias = [Especificacion(ruta=r, nombre_producto='Producto', codigo='', cliente='', revision='', busqueda='') for r in rutas]
+        lista = SimpleNamespace(nearest=Mock(return_value=3), get=Mock(return_value='☐ Producto'),
+            itemcget=Mock(return_value=''), curselection=Mock(return_value=()), delete=Mock(), insert=Mock(),
+            itemconfigure=Mock(), yview=Mock(return_value=(0.0, 1.0)), yview_moveto=Mock(),
+            selection_set=Mock(), activate=Mock())
+        panel = SimpleNamespace(sugerencias=sugerencias, documentos_marcados={rutas[4]},
+                                ancla_seleccion=rutas[1], lista=lista)
+        selector = SimpleNamespace(paneles={'anteriores': panel}, _actualizar_estado_accion=Mock())
+        SelectorEspecificaciones._clic_en_lista(selector, 'anteriores', SimpleNamespace(x=100, y=3, state=1))
+        self.assertEqual(panel.documentos_marcados, set(rutas[1:]))
 
     def test_editar_abre_la_especificacion_actual_en_el_callback(self):
         especificacion = Especificacion(

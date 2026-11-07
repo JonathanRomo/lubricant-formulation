@@ -19,7 +19,8 @@ ARCHIVO = BASE / "preferencias_interfaz.json"
 PREDETERMINADAS = {"apariencia": "Claro", "acento": "Azul", "escala": 1.0,
                   "densidad": "Cómoda", "fuente": "Segoe UI", "maximizar": False,
                   "control_compacto": False, "adaptacion_auto": True}
-ACENTOS = {"Azul": "#1765c1", "Petróleo": "#087f8c", "Índigo": "#6152c7", "Verde": "#16826a", "Rosa": "#c9347c"}
+ACENTOS = {"Azul": "#1765c1", "Petróleo": "#087f8c", "Índigo": "#6152c7", "Verde": "#16826a", "Rosa": "#c9347c", "Gris": "#4b4b4b"}
+MODOS_APARIENCIA = {"Claro": "Light", "Oscuro": "Dark", "Oscuro gris": "Dark", "Sistema": "System"}
 VENTANAS = weakref.WeakSet()
 
 
@@ -27,7 +28,7 @@ def validar_preferencias(datos):
     resultado = dict(PREDETERMINADAS)
     if not isinstance(datos, dict):
         return resultado
-    for clave, opciones in (("apariencia", ("Claro", "Oscuro", "Sistema")),
+    for clave, opciones in (("apariencia", tuple(MODOS_APARIENCIA)),
                             ("acento", tuple(ACENTOS)), ("densidad", ("Compacta", "Cómoda")),
                             ("fuente", ("Segoe UI", "Arial", "Calibri"))):
         if datos.get(clave) in opciones:
@@ -68,6 +69,10 @@ def guardar_preferencias(datos):
 
 def paleta():
     oscuro = ctk.get_appearance_mode() == "Dark"
+    if oscuro and PREFERENCIAS["apariencia"] == "Oscuro gris":
+        return {"fondo": "#1e1e1e", "panel": "#252526", "texto": "#e0e0e0",
+                "secundario": "#b3b3b3", "borde": "#454545", "seleccion": "#37373d",
+                "alineado": "#9cc9ed", "acento": ACENTOS[PREFERENCIAS["acento"]]}
     return {"fondo": "#141c2a" if oscuro else "#eef3f9",
             "panel": "#202c3d" if oscuro else "#ffffff",
             "texto": "#e8eef8" if oscuro else "#172b45",
@@ -82,7 +87,7 @@ def aplicar_preferencias(datos):
     validadas = validar_preferencias(datos)
     PREFERENCIAS.clear()
     PREFERENCIAS.update(validadas)
-    ctk.set_appearance_mode({"Claro": "Light", "Oscuro": "Dark", "Sistema": "System"}[PREFERENCIAS["apariencia"]])
+    ctk.set_appearance_mode(MODOS_APARIENCIA[PREFERENCIAS["apariencia"]])
     ctk.set_widget_scaling(PREFERENCIAS["escala"])
     for ventana in list(VENTANAS):
         if ventana.winfo_exists():
@@ -181,6 +186,14 @@ class VentanaAdaptable:
         estilo.configure("Borde.TFrame", borderwidth=1, relief="solid", bordercolor=colores["borde"],
                          lightcolor=colores["borde"], darkcolor=colores["borde"])
         estilo.configure("TLabel", background=colores["fondo"], foreground=colores["texto"])
+        estilo.configure("TCheckbutton", background=colores["fondo"], foreground=colores["texto"],
+                         indicatorbackground=colores["panel"], indicatorcolor=colores["panel"],
+                         indicatorrelief="flat")
+        estilo.map("TCheckbutton",
+                   background=[("active", colores["fondo"])],
+                   foreground=[("disabled", colores["secundario"]), ("!disabled", colores["texto"])],
+                   indicatorcolor=[("disabled", colores["borde"]), ("selected", colores["acento"]),
+                                   ("!selected", colores["panel"])])
         estilo.configure("Seccion.TLabel", foreground=colores["alineado"])
         estilo.configure("TLabelframe", background=colores["fondo"], bordercolor=colores["borde"],
                          lightcolor=colores["borde"], darkcolor=colores["borde"], borderwidth=1, relief="solid")
@@ -233,9 +246,11 @@ class VentanaAdaptable:
             if isinstance(widget, (ctk.CTkBaseClass, ctk.CTkToplevel)):
                 if isinstance(widget, Boton):
                     secundario = widget._variante == "secundario"
+                    if getattr(widget, "_ui_cabecera_hii", False):
+                        widget._fondo_control = "#252526" if PREFERENCIAS["apariencia"] == "Oscuro gris" else "#0752b9"
                     widget.configure(bg_color=widget._fondo_control or colores["fondo"],
                                      fg_color=colores["seleccion"] if secundario else colores["acento"],
-                                     hover_color=colores["borde"] if secundario else "#10446f",
+                                     hover_color=colores["borde"] if secundario or PREFERENCIAS["acento"] == "Gris" else "#10446f",
                                      text_color=colores["texto"] if secundario else "white",
                                      height=widget._altura_fija if widget._altura_fija is not None else
                                      ((18 if PREFERENCIAS["densidad"] == "Compacta" else 20) if widget._boton_pequeno else
@@ -278,7 +293,9 @@ class VentanaAdaptable:
                 widget.configure(background=fondo_canvas, highlightbackground=colores["borde"])
             elif isinstance(widget, (tk.Frame, tk.Label)) and not isinstance(widget, ttk_original.Widget):
                 fondo = str(widget.cget("background"))
-                if fondo in {"#edf2f7", "#f0f0f0", "#d9d9d9", "#eef3f9", "#141c2a", "SystemButtonFace"}:
+                if getattr(widget, "_ui_cabecera_hii", False):
+                    widget.configure(background="#252526" if PREFERENCIAS["apariencia"] == "Oscuro gris" else "#0752b9")
+                elif fondo in {"#edf2f7", "#f0f0f0", "#d9d9d9", "#eef3f9", "#141c2a", "#1e1e1e", "SystemButtonFace"}:
                     widget.configure(background=colores["fondo"])
                     if isinstance(widget, tk.Label):
                         widget.configure(foreground=colores["texto"])
@@ -355,7 +372,7 @@ class Boton(ctk.CTkButton):
             kwargs["width"] = kwargs["height"]
         kwargs.setdefault("bg_color", self._fondo_control or paleta()["fondo"])
         kwargs.setdefault("fg_color", paleta()["seleccion"] if self._variante == "secundario" else paleta()["acento"])
-        kwargs.setdefault("hover_color", paleta()["borde"] if self._variante == "secundario" else "#10446f")
+        kwargs.setdefault("hover_color", paleta()["borde"] if self._variante == "secundario" or PREFERENCIAS["acento"] == "Gris" else "#10446f")
         kwargs.setdefault("text_color", paleta()["texto"] if self._variante == "secundario" else "white")
         kwargs.setdefault("font", (PREFERENCIAS["fuente"], 12))
         super().__init__(master, **kwargs)
@@ -364,6 +381,20 @@ class Boton(ctk.CTkButton):
         if "text" in kwargs and self._ancho_automatico and "width" not in kwargs:
             kwargs["width"] = max(110, len(str(kwargs["text"])) * 7 + 24)
         return super().configure(require_redraw=require_redraw, **kwargs)
+
+    def _clicked(self, event=None):
+        # CTk ejecuta el comando antes de los enlaces adicionales del clic;
+        # un diálogo modal impediría que la ayuda se cierre hasta que termine.
+        ayuda = getattr(self, "_ayuda_hover", None)
+        if ayuda is not None:
+            ayuda.ocultar()
+        return super()._clicked(event)
+
+    def invoke(self):
+        ayuda = getattr(self, "_ayuda_hover", None)
+        if ayuda is not None:
+            ayuda.ocultar()
+        return super().invoke()
 
 
 ttk = SimpleNamespace(**{nombre: getattr(ttk_original, nombre) for nombre in dir(ttk_original) if not nombre.startswith("_")})
@@ -391,6 +422,7 @@ class AyudaHover:
         ventana = self.ventana = ctk.CTkToplevel(self.widget)
         ventana.withdraw()
         ventana.overrideredirect(True)
+        ventana.transient(self.widget.winfo_toplevel())
         ventana.configure(fg_color=paleta()["panel"])
         ctk.CTkLabel(ventana, text=self.texto, wraplength=260, justify="left",
                      font=(PREFERENCIAS["fuente"], 12), text_color=paleta()["texto"]).pack(padx=12, pady=8)
@@ -410,5 +442,5 @@ class AyudaHover:
         if self.ventana:
             self.ventana.destroy()
             self.ventana = None
-ctk.set_appearance_mode({"Claro": "Light", "Oscuro": "Dark", "Sistema": "System"}[PREFERENCIAS["apariencia"]])
+ctk.set_appearance_mode(MODOS_APARIENCIA[PREFERENCIAS["apariencia"]])
 ctk.set_widget_scaling(PREFERENCIAS["escala"])

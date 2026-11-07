@@ -28,7 +28,8 @@ except ModuleNotFoundError as exc:
         ) from None
     raise
 
-VERSION = "2.2.0"
+VERSION = "2.5.0"
+VERSION_REGLAS_UNIDADES = 6
 PYTHON_REQUERIDO = (3, 11)
 ENTRADA = "ESPECIFICACIONES_JSON"
 SALIDA = "ESPECIFICACIONES_JSON_ALINEADAS"
@@ -111,11 +112,11 @@ UNIDAD_ADYACENTE_A_NUMERO = re.compile(
     re.IGNORECASE,
 )
 MAXIMO_ESPECIFICACION = re.compile(
-    r"(?<!\w)M[ÁA]X(?:IMO)?\.?(?!\w)",
+    r"(?<!\w)M[ÁA]X(?:IMO|IMUM)?\.?(?!\w)",
     re.IGNORECASE,
 )
 MINIMO_ESPECIFICACION_COMPLETO = re.compile(
-    r"(?<!\w)M[IÍ]NIMO(?!\w)",
+    r"(?<!\w)M[IÍ]N(?:IMO|IMUM)(?!\w)",
     re.IGNORECASE,
 )
 MINIMO_ESPECIFICACION_ABREVIADO = re.compile(
@@ -220,8 +221,8 @@ FARMACOPEIA_USP = re.compile(
 )
 FARMACOPEIA_FEUM = re.compile(r"\bFEUM\b", re.IGNORECASE)
 FARMACOPEIA_PH_EUR = re.compile(
-    r"\b(?:PH\s*\.?\s*EUR\.?|FARMACOPEA\s+EUROPEA|"
-    r"EUROPEAN\s+PHARMACOPOEIA)(?=$|[^A-Z])",
+    r"\b(?:PH\s*\.?\s*EUR\.?|EUR\s*\.?\s*PH\.?|FARMACOPE(?:A|IA)\s+EUROP(?:EA|EIA)|"
+    r"EUROPEAN\s+PHARMACOP(?:OE|E)IA)(?=$|[^A-Z])",
     re.IGNORECASE,
 )
 
@@ -359,12 +360,14 @@ def normalizar_espacio_unidades(valor: Any) -> str:
     return UNIDAD_ADYACENTE_A_NUMERO.sub(separar_unidad, salida)
 
 
-def normalizar_especificacion(valor: Any) -> str:
+def normalizar_especificacion(valor: Any, idioma: str = "ESPANOL") -> str:
     """Normaliza máximo/mínimo sin confundir «min» minúscula con minutos."""
     salida = "" if valor is None else str(valor)
-    salida = MAXIMO_ESPECIFICACION.sub("MÁXIMO", salida)
-    salida = MINIMO_ESPECIFICACION_COMPLETO.sub("MÍNIMO", salida)
-    return MINIMO_ESPECIFICACION_ABREVIADO.sub("MÍNIMO", salida)
+    ingles = normalizar(idioma).replace(" ", "") in ALIAS_IDIOMA_INGLES
+    maximo, minimo = ("MAXIMUM", "MINIMUM") if ingles else ("MÁXIMO", "MÍNIMO")
+    salida = MAXIMO_ESPECIFICACION.sub(maximo, salida)
+    salida = MINIMO_ESPECIFICACION_COMPLETO.sub(minimo, salida)
+    return MINIMO_ESPECIFICACION_ABREVIADO.sub(minimo, salida)
 
 
 def normalizar_terminos_especificacion(valor: Any) -> str:
@@ -731,6 +734,10 @@ def referencias_astm(valor: Any) -> tuple[str, ...]:
             f"D{coincidencia.group('numero')}{(coincidencia.group('modificador') or '').upper()}"
         )
 
+    # E1252 se cita con frecuencia sin el prefijo ASTM en espectros IR.
+    if re.search(r"(?<![A-Z0-9])E\s*[-]?\s*1252(?![A-Z0-9])", original, re.IGNORECASE):
+        encontradas.append("E1252")
+
     # Algunas filas omiten D/ASTM en el segundo método de una conjugación:
     # "ASTM D445 / 7042".
     segmentos = re.split(r"[/+;]", original)
@@ -785,6 +792,60 @@ def metodo_referencias_canonico(valor: Any) -> str:
     return texto(valor)
 
 
+def normalizar_metodo_astm_desconocido(valor: Any) -> str:
+    """Normaliza citas ASTM completas sin borrar otras normas ni texto libre."""
+    original = texto(valor)
+    segmentos = re.split(r'\s*[/+;]\s*', original)
+    referencias = []
+    patron = re.compile(
+        r'(?:ASTM\s*-?\s*[A-Z]?\s*-?\s*\d{2,5}[A-Z]?|'
+        r'D\s*[-\u2010-\u2015]?\s*\d{2,5}[A-Z]?|E\s*-?\s*1252)'
+        r'(?:\s*[-\u2010-\u2015]\s*\d{1,4}[A-Z]?)?', re.IGNORECASE)
+    for segmento in segmentos:
+        if patron.fullmatch(segmento):
+            encontradas = referencias_astm(segmento)
+            if len(encontradas) != 1:
+                return original
+            referencias.append(encontradas[0])
+        elif referencias and referencias[-1].startswith('D') and ASTM_REFERENCIA_NUMERICA.fullmatch(segmento):
+            referencias.append('D' + ASTM_REFERENCIA_NUMERICA.fullmatch(segmento).group('numero'))
+        else:
+            return original
+    return ' / '.join(f'ASTM {ref}' for ref in dict.fromkeys(referencias)) if referencias else original
+
+
+def normalizar_version_usp(valor: Any) -> str:
+    return re.sub(r'\bUSP\s*\d{1,3}(?!\d|\.\d)', 'USP', texto(valor), flags=re.IGNORECASE)
+
+
+def normalizar_metodo_pendiente(valor: Any) -> str:
+    original = normalizar_version_usp(valor)
+    original = re.sub(r'\b(?:FARMACOPE(?:A|IA)\s+EUROP(?:EA|EIA)|EUROPEAN\s+PHARMACOP(?:OE|E)IA|PH\s*\.?\s*EUR\.?|EUR\s*\.?\s*PH\.?)',
+                      'PH. EUR', original, flags=re.IGNORECASE)
+    original = re.sub(r'(PH\. EUR)(?=\d)', r'\1 ', original, flags=re.IGNORECASE)
+    metodo = normalizar_metodo_astm_desconocido(original)
+    if metodo != original:
+        return metodo
+    # Normaliza también las citas dentro de métodos mixtos; conserva los
+    # apartados, ediciones y demás normas que acompañan a cada referencia.
+    patron = re.compile(
+        r'(?<![A-Z0-9])(?:ASTM\s*-?\s*(?P<letra>[A-Z]?)\s*-?\s*(?P<numero>\d{2,5})(?P<modificador>[A-Z]?)|'
+        r'D\s*[-\u2010-\u2015]?\s*(?P<numero_d>\d{2,5})(?P<modificador_d>[A-Z]?))(?![A-Z0-9])',
+        re.IGNORECASE)
+    def canonizar(coincidencia):
+        letra = (coincidencia.group('letra') or 'D').upper()
+        numero = coincidencia.group('numero') or coincidencia.group('numero_d')
+        modificador = coincidencia.group('modificador') or coincidencia.group('modificador_d') or ''
+        return f"ASTM {letra}{numero}{modificador.upper()}"
+    original = patron.sub(canonizar, original)
+    coincidencia = re.search(r'\bNMX\b', original, re.IGNORECASE)
+    if coincidencia:
+        prefijo = original[:coincidencia.start()].rstrip()
+        if prefijo and prefijo[-1] not in '/;+':
+            return prefijo + ' / ' + original[coincidencia.start():]
+    return original
+
+
 def metodo_maestro_canonico(valor: Any) -> str:
     """Normaliza citas ASTM y farmacopeas del maestro sin ediciones ni capítulos."""
     original = texto(valor).replace("\u2212", "-")
@@ -802,12 +863,29 @@ def metodo_alineado_canonico(original: Any, maestro: Any) -> str:
     resultado = metodo_maestro_canonico(maestro)
     if len(referencias_astm(original)) > len(referencias_astm(maestro)):
         resultado = metodo_referencias_canonico(original)
-    if referencias_astm(original) and re.search(r"\bNMX\b", texto(original), re.IGNORECASE):
+    if re.search(r"\bNMX\b", texto(original), re.IGNORECASE):
         # El apartado NMX pertenece a la cita original y no a otra fila del maestro.
         apartados = re.findall(r"\bNMX\b[^/]+", texto(original), re.IGNORECASE)
-        resultado = " / ".join([*(f"ASTM {r}" for r in referencias_astm(original)),
-                                *referencias_farmacopea(original),
-                                *(re.sub(r"\s+", " ", p).strip() for p in apartados)])
+        patron_nmx = r"\bNMX\s*-\s*J\s*[- ]\s*123\s*[- ]\s*ANCE(?:\s*-\s*(\d{4}))?"
+        maestra_nmx = re.search(patron_nmx, texto(maestro), re.IGNORECASE)
+        if maestra_nmx and maestra_nmx.group(1):
+            def completar_anio(cita):
+                return re.sub(patron_nmx,
+                              lambda m: m.group(0) if m.group(1) else m.group(0).rstrip() + '-' + maestra_nmx.group(1),
+                              cita, flags=re.IGNORECASE)
+            apartados = [completar_anio(cita) for cita in apartados]
+        if maestra_nmx:
+            apartado_maestro = re.match(r'\s+((?:P|APARTADO|SECTION)\s*\d+(?:[.,]\d+)*)',
+                                       texto(maestro)[maestra_nmx.end():], re.IGNORECASE)
+            if apartado_maestro:
+                apartados = [cita if re.search(r'\b(?:P|APARTADO|SECTION)\s*\d', cita, re.IGNORECASE)
+                             else cita.rstrip() + ' ' + apartado_maestro.group(1) for cita in apartados]
+        otras = [*(f"ASTM {r}" for r in referencias_astm(original)), *referencias_farmacopea(original)]
+        if not otras:
+            prefijo = re.split(r"\bNMX\b", texto(original), maxsplit=1, flags=re.IGNORECASE)[0].strip(" /;+")
+            if prefijo:
+                otras.append(prefijo)
+        resultado = " / ".join([*otras, *(re.sub(r"\s+", " ", p).strip() for p in apartados)])
     originales = referencias_farmacopea(original)
     maestras = referencias_farmacopea(maestro)
     if originales and maestras:
@@ -816,7 +894,7 @@ def metodo_alineado_canonico(original: Any, maestro: Any) -> str:
                   if parte not in maestras or parte in originales]
         partes.extend(ref for ref in originales if ref not in partes)
         resultado = " / ".join(partes)
-    return resultado
+    return re.sub(r'\bPh\s+Eur\b', 'PH. EUR', resultado, flags=re.IGNORECASE)
 
 
 def metodo_maestro_para_idioma(registro: dict[str, str], idioma: str) -> str:
@@ -1031,6 +1109,115 @@ def nombres_canonicos(registro: dict[str, str], idioma: str) -> tuple[str, str]:
     )
 
 
+# Variantes completas, no sustituciones dentro de textos ni normalización global
+# de mayúsculas: los prefijos SI m y M representan escalas distintas.
+ALIAS_UNIDADES_SIN_CONVERSION = {
+    'mg/kg': ('mg/kg', 'mg/Kg', 'mg / kg', 'mg / Kg'),
+    '% masa': ('% masa', '% MASA', '% Masa', '%masa', '%MASA', '% en masa', '% W', '% w', '% PESO', '% peso'),
+    '% mass': ('% mass', '% MASS', '% Mass', '%mass'),
+    'ppm': ('ppm', 'PPM', 'Ppm'),
+    'mm²/s': ('mm²/s', 'mm2/s', 'mm^2/s', 'mm²/ s', 'mm2/ s', 'mm2/s (cSt)', 'mm²/s (cSt)', 'cSt', 'cst', 'CST'),
+    'g/cm³': ('g/cm³', 'g/cm3', 'g/cm^3'),
+    'kg/m³': ('kg/m³', 'kg/m3', 'kg/m^3', 'Kg/m³', 'Kg/m3', 'kg ⁄m3'),
+    'mPa*s': ('mPa*s', 'mPa·s', 'mPa.s', 'mPa. s', 'mPa s'),
+    'mgKOH/g': ('mgKOH/g', 'mg KOH/g', 'mgKOH/gr', '(mgKOH/g)', '(mg KOH/g)'),
+    '°C': ('°C', 'ºC', 'º C', '° C'),
+    '°F': ('°F', 'ºF', 'º F', '° F'),
+    'min': ('min', 'Min', 'minutos', 'Minutos', 'MINUTOS', 'Minutes', 'minutes'),
+    'mL': ('mL', 'ml'),
+    'ml/ml': ('ml/ml', 'mL/mL'),
+    'mL/mL/mL (min)': ('mL/mL/mL (min)', 'ml/ml/ml (min)', 'ml/ml/ml (minutos)'),
+    'µL': ('µL', 'μL', 'µl'),
+    'µL/min': ('µL/min', 'μL/min'),
+    '1/10 mm': ('1/10 mm', '1/10mm', '(1/10 mm)', '1 Tenth mm', '1 Tenth Mm'),
+    'kgf': ('kgf', 'Kgf'),
+}
+_UNIDADES_POR_ALIAS = {alias: canonica for canonica, variantes in ALIAS_UNIDADES_SIN_CONVERSION.items()
+                        for alias in variantes}
+
+
+def normalizar_alias_unidad(valor: Any) -> str:
+    """Unifica solo una unidad completa incluida explícitamente en el catálogo."""
+    unidad = texto(valor).strip()
+    return _UNIDADES_POR_ALIAS.get(unidad, unidad)
+
+
+def _escala_unidad(unidad: Any) -> str:
+    """Identidad de escala, sin borrar mayúsculas de prefijos SI (mPa != MPa)."""
+    unidad = normalizar_alias_unidad(unidad)
+    if unidad in {'UFC', 'CFU', 'UFC/g', 'CFU/g'}:
+        return unidad.replace('CFU', 'UFC')
+    if unidad in {'% masa', '% mass', 'wt %', '% wt', '% m/m'}:
+        return '% masa'
+    valor = unicodedata.normalize("NFKC", texto(unidad)).replace("μ", "µ")
+    valor = re.sub(r"\s+", "", valor).replace("^", "")
+    valor = valor.replace("·", "*").replace("⋅", "*")
+    if re.fullmatch(r'cst', valor, re.IGNORECASE):
+        return 'mm2/s'
+    if re.fullmatch(r'mg/[kK]g', valor):
+        return 'mg/kg'
+    equivalencia = re.fullmatch(r"([^()]+)\(([^()]+)\)", valor)
+    if equivalencia and _escala_unidad(equivalencia[1]) == _escala_unidad(equivalencia[2]):
+        return _escala_unidad(equivalencia[1])
+    alias = {
+        "cSt": "mm2/s", "mm2/seg": "mm2/s", "mm2/sec": "mm2/s",
+        "cP": "mPa*s", "mPa.s": "mPa*s", "mPas": "mPa*s",
+        "g/mL": "g/cm3", "g/ml": "g/cm3", "kg/L": "g/cm3",
+        "°C": "Celsius", "ºC": "Celsius", "°F": "Fahrenheit", "ºF": "Fahrenheit",
+    }
+    return alias.get(valor, valor)
+
+
+def unidad_sin_conversion(original: Any, maestra: Any, metodo: Any = '', nombre_maestro: Any = '') -> str | None:
+    """Elige solo alternativas equivalentes; None exige revisión humana."""
+    alternativas = alternativas_unidades(maestra)
+    if not alternativas:
+        return texto(original)
+    # Ausencia de una unidad cuantitativa: conserva la corrección histórica.
+    if normalizar_unidad_declarada(original, 'ESPANOL') in {"", "NA", "ADIMENSIONAL", "---", "-", "*"}:
+        return alternativas[0]
+    if texto(original).strip() == '%' and any(re.fullmatch(r'%\s*(?:en\s+masa|mass)', x, re.IGNORECASE) for x in alternativas):
+        return '%'
+    # Prefiere la unidad ya declarada si el maestro la admite expresamente.
+    compactar = lambda valor: re.sub(r"\s+", "", unicodedata.normalize("NFKC", texto(valor)))
+    for alternativa in alternativas:
+        if compactar(original) == compactar(alternativa):
+            return alternativa
+    for alternativa in alternativas:
+        if _escala_unidad(original) == _escala_unidad(alternativa):
+            return alternativa
+    nombre_candidato = normalizar(nombre_maestro)
+    if ('D6304' in set(referencias_astm(metodo))
+            and ('CONTENIDO DE AGUA' in nombre_candidato or 'WATER CONTENT' in nombre_candidato)
+            and _escala_unidad(original) == 'ppm'):
+        for alternativa in alternativas:
+            if _escala_unidad(alternativa) == 'mg/kg':
+                return alternativa
+    if (texto(original).casefold() in {'abs', 'absorbance', 'absorbancia', 'nm', 'nm -3'}
+            and ('ABSORBANCIA' in nombre_candidato or 'ABSORBANCE' in nombre_candidato
+                 or 'HIDROCARBUROS POLICICLICOS AROMATICOS' in nombre_candidato
+                 or 'POLYCYCLIC AROMATIC HYDROCARBONS' in nombre_candidato)):
+        for alternativa in alternativas:
+            if alternativa == 'A':
+                return alternativa
+    # Grafías encontradas en las especificaciones. Se aceptan únicamente con
+    # la norma y la unidad maestra correspondientes, sin cambiar las cifras.
+    normas = set(referencias_astm(metodo))
+    contextual = (
+        ({'D1298', 'D7042'}, {'gr/cm3', 'gr/cm³', 'gr/ml'}, 'g/cm³'),
+        ({'D217', 'D1321', 'D937'}, {'mm/10'}, '1/10 mm'),
+        ({'D1401'}, {'ml-ml-ml (min)'}, 'mL/mL/mL (min)'),
+        ({'D2161'}, {'SSU'}, 'SUS'),
+        ({'D971'}, {'dinas/cm'}, 'mN/m'),
+    )
+    for referencias, variantes, equivalente in contextual:
+        if normas & referencias and texto(original) in variantes:
+            for alternativa in alternativas:
+                if _escala_unidad(alternativa) == _escala_unidad(equivalente):
+                    return alternativa
+    return None
+
+
 def unidad_original_esta_entre_alternativas(
     unidad_original: Any, unidad_maestra: Any
 ) -> bool:
@@ -1055,11 +1242,28 @@ def normalizar_unidad_declarada(valor, idioma):
 
 def resolver_unidad_declarada(original, propuesta, idioma, usar_maestro=False):
     # La unidad de una coincidencia aceptada tiene prioridad sobre los alias fuente.
+    if re.fullmatch(r'\s*cst\s*', texto(original), re.IGNORECASE):
+        return 'mm²/s'
+    colonias = {'UFC', 'CFU', 'UFC/g', 'CFU/g'}
+    unidad_colonias = texto(original) if texto(original) in colonias else texto(propuesta) if usar_maestro else ''
+    if unidad_colonias in colonias:
+        idioma_normalizado = normalizar(idioma).replace(' ', '')
+        if idioma_normalizado in ALIAS_IDIOMA_ESPANOL:
+            return unidad_colonias.replace('CFU', 'UFC')
+        if idioma_normalizado in ALIAS_IDIOMA_INGLES:
+            return unidad_colonias.replace('UFC', 'CFU')
+        return unidad_colonias
     if usar_maestro:
         return normalizar_unidad_declarada(propuesta, idioma)
+    if _escala_unidad(original) == '% masa':
+        idioma_normalizado = normalizar(idioma).replace(' ', '')
+        if idioma_normalizado in ALIAS_IDIOMA_ESPANOL:
+            return '% masa'
+        if idioma_normalizado in ALIAS_IDIOMA_INGLES:
+            return '% mass'
     if normalizar_unidad_declarada(original, 'ESPANOL') in {'NA', 'ADIMENSIONAL'}:
         return normalizar_unidad_declarada(original, idioma)
-    return normalizar_unidad_declarada(propuesta, idioma)
+    return normalizar_alias_unidad(original)
 
 
 def alternativas_unidades(unidades: Any) -> list[str]:
@@ -1156,7 +1360,7 @@ def _saybolt_fahrenheit(nombre, metodo):
     return None
 
 
-def equivalencias_confirmadas(nombre, metodo):
+def equivalencias_confirmadas(nombre, metodo, unidades=''):
     """Alias aprobados por el laboratorio; no cambian la identidad de otras normas."""
     n, m = normalizar(nombre), normalizar(metodo)
     refs = referencias_normativas(metodo)
@@ -1181,7 +1385,24 @@ def equivalencias_confirmadas(nombre, metodo):
             and not re.search(r'\b(?:PROCEDIMIENTO|PROCEDURE)\s+[BC]\b', n)):
         nombre_busqueda = 'CONTENIDO DE AGUA POR KARL FISCHER (COULOM\u00c9TRICO)'
         reglas.append('ASTM D6304 PROCEDIMIENTO A: AGUA / HUMEDAD / WATER = KARL FISCHER COULOM\u00c9TRICO')
+    nombre_agua = normalizar(limpiar_marca_acreditacion(nombre))
+    if (re.search(r'\b(?:AGUA|HUMEDAD|WATER|MOISTURE)\b', nombre_agua)
+            and not re.search(r'\b(?:PROCEDIMIENTO|PROCEDURE|METODO|METHOD)\s+[BC]\b', n + ' ' + m)
+            and (refs == {'ASTM D6304'} or not refs and re.fullmatch(r'KARL\s+FISCHER\s+COULOM(?:E|E?TRICO|ETRIC|ETRI?C)', m))):
+        nombre_busqueda, metodo_busqueda = 'CONTENIDO DE AGUA POR KARL FISCHER (COULOMÉTRICO)', 'ASTM D6304'
+        reglas.append('AGUA / HUMEDAD: KARL FISCHER COULOMÉTRICO, ASTM D6304')
     acidez = normalizar(limpiar_marca_acreditacion(nombre)).rstrip(' %').strip()
+    if refs == {'ASTM D2622'} and n in {'SULFUR', 'SULPHUR', 'AZUFRE', 'AZUFRE TOTAL', 'TOTAL SULFUR', 'TOTAL SULPHUR'}:
+        nombre_busqueda = 'TOTAL SULFUR BY X-RAY FLUORESCENCE (WDXRF)'
+        reglas.append('AZUFRE ASTM D2622 = AZUFRE TOTAL POR FLUORESCENCIA X')
+    elemento_n = re.sub(r'\s+B$', '', n)
+    if refs == {'ASTM D4951'} and elemento_n in {'ZINC', 'ZN', 'FOSFORO', 'PHOSPHORUS', 'P'}:
+        elemento = 'ZINC (ZN)' if elemento_n in {'ZINC', 'ZN'} else 'FÓSFORO (P)'
+        nombre_busqueda = f'DETERMINACIÓN DE {elemento} EN ACEITES LUBRICANTES POR ICP-OES'
+        reglas.append(f'ASTM D4951: {elemento} POR ICP-OES')
+    if refs == {'ASTM D4294'} and re.fullmatch(r'(?:TOTAL )?(?:SULFUR|SULPHUR|AZUFRE)(?: TOTAL)?(?: B| MASS\s*%)?', n):
+        nombre_busqueda = 'AZUFRE TOTAL POR EDXRF'
+        reglas.append('ASTM D4294: AZUFRE TOTAL POR EDXRF')
     if (re.fullmatch(r'(?:ACIDEZ|ACIDITY)(?: AND ALKALINITY| NO RED OR PINK COLOR IS PRODUCED)?', acidez)
             and (refs and refs <= {'USP', 'FEUM', 'Ph Eur'} or m in {'', 'NA', 'N A'})):
         nombre_busqueda, metodo_busqueda = 'ACIDEZ', 'USP / FEUM'
@@ -1203,7 +1424,7 @@ def equivalencias_confirmadas(nombre, metodo):
     nombre_inflamacion = re.sub(r',?\s*[\u00b0\u00ba]\s*C\s*$', '', limpiar_marca_acreditacion(nombre), flags=re.IGNORECASE)
     clave_inflamacion = normalizar(nombre_inflamacion)
     if (refs == {'ASTM D92'} and re.match(
-            r'^(?:PUNTO DE INFLAMACION|FLASH POINT)(?:\b|$)', clave_inflamacion)):
+            r'^(?:PUNTO DE INFLAMACION|TEMPERATURA DE INFLAMACION|FLASH POINT|FLASH\s+COC)(?:\b|$)', clave_inflamacion)):
         if re.search(r'\b760\s*MMHG\b', clave_inflamacion):
             nombre_busqueda = 'PUNTO DE INFLAMACI\u00d3N A 760 mmHg, COPA ABIERTA CLEVELAND'
             reglas.append('PUNTO DE INFLAMACION, ASTM D92, 760 mmHg = CLEVELAND A 760 mmHg')
@@ -1296,6 +1517,14 @@ def equivalencias_confirmadas(nombre, metodo):
         nombre_busqueda, metodo_busqueda = 'HUMEDAD POR CREPITACIÓN', 'MÉTODO INTERNO (91300029)'
         reglas.append('IDENTIFICADOR CREPITACIÓN = INS-CCA-07 / INS-CCA-07-00 / 91300029')
     saybolt = _saybolt_fahrenheit(nombre, metodo)
+    if saybolt is None and (refs and refs <= {'ASTM D445', 'ASTM D2161'} or not refs and m in {'', 'NA', 'N A', '---'}):
+        combinado = normalizar(texto(nombre) + ' ' + texto(unidades))
+        temperatura = re.search(r'\b(100|210)\b(?:\s*(?:F|FAHRENHEIT)\b)?(?!\s*(?:C|CELSIUS)\b)', combinado)
+        viscosidad = any(fuzz.ratio(palabra, base) >= 85 for palabra in combinado.split()
+                          for base in ('VISCOSIDAD', 'VISCOSITY'))
+        if viscosidad and re.search(r'\bSUS\b', combinado) and temperatura:
+            saybolt = int(temperatura.group(1))
+            metodo_busqueda = 'ASTM D2161'
     if saybolt is not None:
         nombre_busqueda = f'VISCOSIDAD SAYBOLT A {saybolt} °F'
         reglas.append(f'SAYBOLT ASTM D2161: equivalencia nominal de temperatura a {saybolt} °F')
@@ -1327,8 +1556,13 @@ def equivalencias_confirmadas(nombre, metodo):
 
 
 def _apartados_nmx(metodo):
-    return {normalizar(p).replace(' ', '') for p in
-            re.findall(r'\bNMX\b[^/]+', texto(metodo), re.IGNORECASE)}
+    resultado = set()
+    for cita in re.findall(r'\bNMX\b[^/]+', texto(metodo), re.IGNORECASE):
+        apartado = re.search(r'\b(?:P|APARTADO|SECTION)\s*(\d+(?:[.,]\d+)*)', cita, re.IGNORECASE)
+        if apartado:
+            normas = sorted(n for n in referencias_normativas(cita) if n.startswith('NMX-'))
+            resultado.update(f"{norma}:P{apartado.group(1).replace('.', ',')}" for norma in normas)
+    return resultado
 
 
 def _candidato_con_condiciones(nombre, unidades, registro, identidad=None):
@@ -1463,7 +1697,8 @@ def mejor_coincidencia(
                 'registro': {}, 'segunda_opcion': {}, 'fila_separadora': True,
                 'tipo_pendiente': 'SEPARADOR_NO_ES_PRUEBA',
                 'mensaje_separador': 'Separador: ' + texto(nombre) + ' no es una prueba.'}
-    nombre_busqueda, metodo_busqueda, reglas = equivalencias_confirmadas(nombre, metodo)
+    nombre_busqueda, metodo_busqueda, reglas = equivalencias_confirmadas(nombre, metodo, unidades)
+    metodo_busqueda = normalizar_metodo_pendiente(metodo_busqueda)
     if not texto(nombre_busqueda):
         return {
             "estado": "SIN_COINCIDENCIA", "puntaje": 0.0, "puntaje_nombre": 0.0,
@@ -1478,7 +1713,7 @@ def mejor_coincidencia(
     mejor = segundo = None
     grupos_contextuales = {}
     originales = referencias_normativas(metodo_busqueda)
-    metodo_vigencia = (metodo_referencias_canonico(metodo)
+    metodo_vigencia = (normalizar_metodo_pendiente(metodo_referencias_canonico(metodo))
                        if originales and originales == set(referencias_farmacopea(metodo))
                        and re.search(r"\b(?:VIGENTES?|CURRENT|CURRENCY)\b", normalizar(metodo)) else '')
     compatibles = set()
@@ -1634,6 +1869,23 @@ def mejor_coincidencia(
         resultado_match['metodo_confirmado'] = 'USP'
     if resultado_match['estado'] == 'ALINEADO' and 'AZUFRE CONFIRMADO: USP/FEUM = LIMITE DE COMPUESTOS DE AZUFRE, USP' in reglas:
         resultado_match['metodo_confirmado'] = 'USP'
+    if (resultado_match['estado'] == 'ALINEADO'
+            and any(regla.startswith('SAYBOLT ASTM D2161:') for regla in reglas)
+            and referencias_normativas(metodo) == {'ASTM D445'}):
+        resultado_match['metodo_confirmado'] = normalizar_metodo_pendiente(metodo)
+    if resultado_match.get('metodo_confirmado') and referencias_farmacopea(metodo):
+        resultado_match['metodo_confirmado'] = metodo_alineado_canonico(metodo, resultado_match['metodo_confirmado'])
+    if resultado_match['estado'] == 'ALINEADO':
+        nombre_candidato, unidad_candidata = nombres_canonicos(resultado_match['registro'], idioma)
+        unidad = unidad_sin_conversion(unidades, unidad_candidata, metodo, nombre_candidato)
+        if unidad is None:
+            resultado_match.update(estado='REVISION_REQUERIDA', tipo_pendiente='UNIDADES_POR_REVISAR',
+                                   mensaje_unidades='La unidad propuesta no tiene equivalencia de escala confirmada; se conservan la unidad y las cifras originales.')
+        else:
+            resultado_match['unidad_confirmada'] = unidad
+    if (re.search(r'\bSUS\b', normalizar(texto(nombre) + ' ' + texto(unidades)))
+            and re.search(r'\b(?:200\b|(?:100|210)\s*C\b)', normalizar(nombre))):
+        resultado_match.update(estado='REVISION_REQUERIDA', tipo_pendiente='TEMPERATURA_POR_REVISAR')
     if preparado:
         maestro.coincidencias[clave_cache] = deepcopy(resultado_match)
     return resultado_match
@@ -1696,7 +1948,17 @@ def separar_encabezados_pruebas(pruebas: list[Any]) -> tuple[list[Any], list[dic
     return conservadas, omitidas
 
 
-def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> dict[str, int]:
+class DestinoProtegido(ValueError):
+    """El alineado existente no puede sustituirse automáticamente con seguridad."""
+
+
+def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]], *, conservar_ediciones: bool = False,
+                  huella_destino_esperada: str | None = None) -> dict[str, int]:
+    reemplazo = path.resolve() != salida.resolve()
+    contenido_destino_previo = salida.read_bytes() if reemplazo and salida.exists() else None
+    if contenido_destino_previo is not None and (not huella_destino_esperada or
+            hashlib.sha256(contenido_destino_previo).hexdigest() != huella_destino_esperada):
+        raise DestinoProtegido("Se conserva el alineado: tiene cambios o no hay una huella verificable. Realinea desde la pestaña de alineadas.")
     from generador_hii import conservar_historial
     if not isinstance(maestro, MaestroPreparado):
         maestro = MaestroPreparado(maestro)
@@ -1704,8 +1966,9 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
     if not isinstance(datos, dict):
         raise ValueError("La raiz del JSON debe ser un objeto.")
     resultado = deepcopy(datos)
-    resultado["FECHA DE REANALISIS"] = ""
-    resultado["Desarrollador"] = ""
+    if not conservar_ediciones:
+        resultado["FECHA DE REANALISIS"] = ""
+        resultado["Desarrollador"] = ""
     pruebas = resultado.get("pruebas")
     if not isinstance(pruebas, list):
         raise ValueError("El JSON no contiene una lista 'pruebas'.")
@@ -1761,7 +2024,7 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
         valor_tipico_original = texto(_entrada_medicion_original(prueba, anterior, "valor_tipico"))
         limpieza_especificacion, ambiguos_especificacion = normalizar_valor_medicion(
             normalizar_terminos_especificacion(
-                normalizar_especificacion(especificacion_original)
+                normalizar_especificacion(especificacion_original, idioma)
             ), coma_de_miles=coma_de_miles,
         )
         limpieza_valor_tipico, ambiguos_valor_tipico = normalizar_valor_medicion(
@@ -1799,24 +2062,26 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
         metodo_maestro = match.get('metodo_confirmado') or metodo_alineado_canonico(metodo_original, metodo_maestro_fuente)
         if match["estado"] == "ALINEADO" and not nombre_maestro:
             match["estado"] = "REVISION_REQUERIDA"
+        coincidencia_alineada = match["estado"] == "ALINEADO"
         if observaciones_limpieza:
             match["estado"] = "REVISION_REQUERIDA"
         alternativas_maestras = alternativas_unidades(unidad_maestra)
         unidades_limpias = (
             alternativas_maestras[0] if alternativas_maestras else unidad_maestra
         )
-        if match["estado"] == "ALINEADO":
+        unidades_limpias = match.get('unidad_confirmada', unidades_limpias)
+        if coincidencia_alineada:
             prueba["prueba"] = nombre_maestro
             prueba["metodo"] = metodo_maestro
             if unidades_limpias:
-                if unidad_original_esta_entre_alternativas(
+                if 'unidad_confirmada' not in match and unidad_original_esta_entre_alternativas(
                     unidades_originales, unidad_maestra
                 ):
                     unidades_limpias = unidades_originales
                 prueba["unidades"] = normalizar_formato_numerico(unidades_limpias)
             if "nombre" in prueba:
                 prueba["nombre"] = nombre_maestro
-            conteo["alineados"] += 1
+            conteo["revision" if observaciones_limpieza else "alineados"] += 1
         elif match["estado"] == "REVISION_REQUERIDA":
             conteo["revision"] += 1
         else:
@@ -1855,26 +2120,25 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
                 "" if prueba.get("valor_tipico") is None else str(prueba["valor_tipico"])
             ),
         }
-        if match["estado"] != "ALINEADO":
-            metodo_limpio = match.get("metodo_normalizado", metodo_original)
+        if not coincidencia_alineada:
+            metodo_limpio = match.get("metodo_normalizado") or normalizar_metodo_pendiente(metodo_original)
             nombre_limpio = match.get("nombre_normalizado", nombre_original)
             prueba.update(prueba=nombre_limpio, metodo=metodo_limpio, unidades=unidades_originales)
             if 'nombre' in prueba:
                 prueba['nombre'] = nombre_limpio
             valores_alineados.update(prueba=nombre_limpio, metodo=metodo_limpio, unidades=unidades_originales)
         if match.get("metodo_no_encontrado"):
-            # No se exportan propuestas ajenas al método. Conserva la fila fuente.
-            fuente = {"prueba": nombre_original, "metodo": metodo_original, "unidades": unidades_originales,
-                      "especificacion": texto(especificacion_original), "valor_tipico": valor_tipico_original}
+            # Conserva la identidad original, pero limpia los valores independientemente del método.
+            fuente = {"prueba": nombre_original, "metodo": normalizar_metodo_pendiente(metodo_original), "unidades": _normalizar_simbolos_unidades(unidades_originales),
+                      "especificacion": limpieza_especificacion, "valor_tipico": limpieza_valor_tipico}
             prueba.update(fuente)
             if "nombre" in fila_original:
                 prueba["nombre"] = fila_original["nombre"]
             valores_alineados = dict(fuente)
-        unidad_salida = resolver_unidad_declarada(unidades_originales, prueba.get('unidades', ''), idioma, usar_maestro=match['estado'] == 'ALINEADO')
+        unidad_salida = resolver_unidad_declarada(unidades_originales, prueba.get('unidades', ''), idioma, usar_maestro=coincidencia_alineada)
         prueba['unidades'] = unidad_salida
         valores_alineados['unidades'] = unidad_salida
-        if (normalizar_unidad_declarada(unidades_originales, 'ESPANOL') in {'NA', 'ADIMENSIONAL'}
-                and unidad_salida != unidades_originales):
+        if unidad_salida != unidades_originales:
             match.setdefault('reglas_equivalencia', []).append(f'UNIDAD DECLARADA: {unidades_originales} = {unidad_salida}')
         auditoria.append({
             "fila_separadora": bool(match.get("fila_separadora")),
@@ -1887,6 +2151,7 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
             "condiciones_incompatibles": bool(match.get("condiciones_incompatibles")),
             "mensaje_condiciones": match.get("mensaje_condiciones", ""),
             "tipo_pendiente": match.get("tipo_pendiente", ""),
+            "mensaje_unidades": match.get("mensaje_unidades", ""),
             "referencias_no_encontradas": match.get("referencias_no_encontradas", []),
             "nombre_maestro_ingles_propuesto": registro.get("NOMBRE IQM INGLES", ""),
             "metodo_original_normalizado": metodo_referencias_canonico(
@@ -1927,6 +2192,43 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
         "mensajes_astm_no_encontradas": mensajes_astm_no_encontradas,
         "encabezados_omitidos": encabezados_omitidos,
     }
+    if conservar_ediciones:
+        anteriores = datos.get("pruebas", [])
+        if len(anteriores) != len(resultado["pruebas"]) or len(anteriores) != len(auditoria):
+            raise ValueError("No se puede realinear sin riesgo: cambió el número de filas de la especificación.")
+        resultado["notas"] = deepcopy(datos.get("notas", []))
+        for indice, (fila, nueva, detalle) in enumerate(zip(anteriores, resultado["pruebas"], auditoria)):
+            previo = detalle_anterior[indice] if indice < len(detalle_anterior) and isinstance(detalle_anterior[indice], dict) else {}
+            snapshot = previo.get("valores_alineados") if isinstance(previo.get("valores_alineados"), dict) else {}
+            manual = previo.get("estado") == "EDICION_MANUAL" or not snapshot
+            nombres_maestros = [previo.get("nombre_maestro_propuesto"), previo.get("nombre_maestro_ingles_propuesto")]
+            nombre_actual = texto(fila.get("prueba") or fila.get("nombre"))
+            nombres_maestros = {normalizar(x) for x in nombres_maestros if texto(x)}
+            nombre_editado = bool(nombres_maestros and previo.get("estado") == "ALINEADO"
+                                 and normalizar(nombre_actual) not in nombres_maestros)
+            campos_preservados = set(previo.get("campos_editados_manualmente", []))
+            for campo in ("prueba", "metodo", "unidades", "especificacion", "valor_tipico"):
+                vigente = fila.get(campo, fila.get("nombre", "") if campo == "prueba" else "")
+                editado = manual or campo in campos_preservados or campo not in snapshot or texto(vigente) != texto(snapshot.get(campo))
+                if editado or campo == "prueba" and nombre_editado:
+                    nueva[campo] = vigente
+                    detalle["valores_alineados"][campo] = texto(vigente)
+                    campos_preservados.add(campo)
+                    if campo == "prueba" and "nombre" in fila:
+                        nueva["nombre"] = fila["nombre"]
+            if campos_preservados:
+                detalle["campos_editados_manualmente"] = sorted(campos_preservados)
+            nueva['metodo'] = normalizar_version_usp(nueva.get('metodo', ''))
+            detalle['valores_alineados']['metodo'] = nueva['metodo']
+            if re.fullmatch(r'\s*cst\s*', texto(nueva.get('unidades')), re.IGNORECASE):
+                nueva['unidades'] = 'mm²/s'
+                detalle['valores_alineados']['unidades'] = nueva['unidades']
+            elif texto(nueva.get('unidades')) in {'UFC', 'CFU', 'UFC/g', 'CFU/g'}:
+                nueva['unidades'] = resolver_unidad_declarada(nueva['unidades'], nueva['unidades'], idioma)
+                detalle['valores_alineados']['unidades'] = nueva['unidades']
+            elif detalle.get('estado') != 'ALINEADO':
+                nueva['unidades'] = normalizar_alias_unidad(nueva.get('unidades', ''))
+                detalle['valores_alineados']['unidades'] = nueva['unidades']
     conservar_historial(resultado, path, salida)
     salida.parent.mkdir(parents=True, exist_ok=True)
     archivo_temporal = None
@@ -1942,6 +2244,22 @@ def procesar_json(path: Path, salida: Path, maestro: list[dict[str, str]]) -> di
             archivo_temporal = Path(temporal.name)
             json.dump(resultado, temporal, ensure_ascii=False, indent=2)
             temporal.write("\n")
+        if reemplazo:
+            vigente = salida.read_bytes() if salida.exists() else None
+            if vigente != contenido_destino_previo:
+                raise DestinoProtegido("El alineado cambió durante el proceso; se conserva para revisión.")
+            if contenido_destino_previo is not None:
+                # Un respaldo inmutable por contenido; no entra en los catálogos JSON.
+                carpeta_respaldo = salida.parent / ".respaldos_alineacion"
+                carpeta_respaldo.mkdir(exist_ok=True)
+                respaldo = carpeta_respaldo / (hashlib.sha256(contenido_destino_previo).hexdigest() + ".bak")
+                if not respaldo.exists():
+                    from cache_extraccion import escribir_atomico
+                    escribir_atomico(respaldo, contenido_destino_previo)
+                if respaldo.read_bytes() != contenido_destino_previo:
+                    raise OSError("No se pudo verificar el respaldo del alineado; no se sustituye.")
+                if salida.read_bytes() != contenido_destino_previo:
+                    raise DestinoProtegido("El alineado cambió al crear el respaldo; se conserva para revisión.")
         os.replace(archivo_temporal, salida)
     finally:
         if archivo_temporal is not None:
@@ -1964,6 +2282,7 @@ def ejecutar(
     carpeta_salida: Path | None = None,
     destinos_seleccionados: list[Path] | None = None,
     forzar: bool = False,
+    conservar_ediciones: bool = False,
 ) -> dict[str, int]:
     base = resolver_ruta(base)
     rutas = rutas_configuradas(base)
@@ -2046,7 +2365,8 @@ def ejecutar(
         for clave, entrada_cache in cache.items()
         if isinstance(entrada_cache, dict) and isinstance(entrada_cache.get("origen"), str)
     }
-    total = {"archivos": 0, "alineados": 0, "revision": 0, "sin_coincidencia": 0, "errores": 0, "omitidos": 0}
+    total = {"archivos": 0, "alineados": 0, "revision": 0, "sin_coincidencia": 0, "errores": 0, "omitidos": 0, "protegidos": 0}
+    protegidos = set()
     lineas = [f"REPORTE DE ALINEACION {datetime.now().isoformat(timespec='seconds')}", "=" * 72]
     for indice, (origen, rel) in enumerate(archivos_relativos, 1):
         if al_progreso is not None:
@@ -2061,6 +2381,7 @@ def ejecutar(
                        and entrada_cache.get("hash_origen") == hash_origen
                        and entrada_cache.get("hash_maestro") == hash_maestro
                        and entrada_cache.get("version") == VERSION
+                       and entrada_cache.get("version_reglas_unidades") == VERSION_REGLAS_UNIDADES
                        and destino.is_file()
                        and entrada_cache.get("hash_destino") == hashlib.sha256(destino.read_bytes()).hexdigest())
             if vigente:
@@ -2068,17 +2389,29 @@ def ejecutar(
                 lineas.append(f"SIN CAMBIOS | {rel.as_posix()}")
                 print(f"SIN CAMBIOS: {rel}")
                 continue
-            r = procesar_json(origen, destino, maestro)
+            opciones = {"conservar_ediciones": True} if conservar_ediciones else {}
+            if destino.exists() and origen.resolve() != destino.resolve():
+                if entrada_cache.get("origen") == ruta_portatil(origen, base):
+                    opciones["huella_destino_esperada"] = entrada_cache.get("hash_destino")
+            r = procesar_json(origen, destino, maestro, **opciones)
             hash_destino = hashlib.sha256(destino.read_bytes()).hexdigest()
             cache[clave] = {"origen": ruta_portatil(origen, base), "version": VERSION,
                             "hash_origen": hash_destino if origen.resolve() == destino.resolve() else hash_origen,
-                            "hash_maestro": hash_maestro, "hash_destino": hash_destino}
+                            "hash_maestro": hash_maestro, "hash_destino": hash_destino,
+                            "version_reglas_unidades": VERSION_REGLAS_UNIDADES}
             total["archivos"] += 1
             for k in ("alineados", "revision", "sin_coincidencia"):
                 total[k] += r[k]
             lineas.append(f"OK | {rel.as_posix()} | alineados={r['alineados']} revision={r['revision']} sin_coincidencia={r['sin_coincidencia']}")
             print(f"ALINEADO: {rel}")
+        except DestinoProtegido as exc:
+            protegidos.add(destino.resolve())
+            total["protegidos"] += 1
+            lineas.append(f"PROTEGIDO | {rel.as_posix()} | {exc}")
+            print(f"PROTEGIDO: {rel}: {exc}")
         except Exception as exc:
+            if destino.exists() and origen.resolve() != destino.resolve():
+                protegidos.add(destino.resolve())
             total["errores"] += 1
             lineas.append(f"ERROR | {rel.as_posix()} | {exc}")
             print(f"ERROR: {rel}: {exc}", file=sys.stderr)
@@ -2087,7 +2420,7 @@ def ejecutar(
                 al_progreso(indice, len(archivos), str(rel))
     import generador_hii as hii
     with hii.conectar(base / "especificaciones.db") as relaciones:
-        cambios_relaciones = hii.sincronizar_idiomas(relaciones, salida)
+        cambios_relaciones = hii.sincronizar_idiomas(relaciones, salida, excluir_exportacion=protegidos) if protegidos else hii.sincronizar_idiomas(relaciones, salida)
     for origen, rel in archivos_relativos:
         destino = salida / rel
         clave = ruta_portatil(destino, base)

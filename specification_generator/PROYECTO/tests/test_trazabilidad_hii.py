@@ -1,4 +1,5 @@
 import io
+import hashlib
 import json
 import os
 import sqlite3
@@ -19,7 +20,7 @@ from openpyxl.packaging.custom import StringProperty
 
 import reconstruir_base_datos as recuperacion
 import generador_hii as trazabilidad
-from alinear_especificaciones_json import procesar_json
+from alinear_especificaciones_json import procesar_json, DestinoProtegido
 from generador_hii import GeneradorHII, construir_excel, huella_datos, preparar_datos, seleccionar_plantilla
 from interfaz_seleccion_especificaciones import cargar_catalogo
 from rutas_proyecto import BASE
@@ -184,7 +185,12 @@ class TrazabilidadTests(unittest.TestCase):
 
     def test_realinear_desde_original_y_en_sitio_conserva_historial(self):
         registro = self.guardar()
-        procesar_json(self.origen, self.especificacion, [MAESTRO])
+        anterior = self.especificacion.read_bytes()
+        with self.assertRaises(DestinoProtegido):
+            procesar_json(self.origen, self.especificacion, [MAESTRO])
+        self.assertEqual(self.especificacion.read_bytes(), anterior)
+        procesar_json(self.origen, self.especificacion, [MAESTRO],
+                      huella_destino_esperada=hashlib.sha256(anterior).hexdigest())
         self.assertEqual(self.leer()["hii_generadas"], [registro])
         procesar_json(self.especificacion, self.especificacion, [MAESTRO])
         self.assertEqual(self.leer()["hii_generadas"], [registro])
@@ -359,12 +365,14 @@ class TrazabilidadTests(unittest.TestCase):
         generador, ingles = self.generador_bilingue()
         with patch("generador_hii.filedialog") as dialogos, patch("generador_hii.messagebox") as mensajes, \
              patch("generador_hii.conectar"), patch("generador_hii.vincular"), \
+             patch("generador_hii.abrir_archivos_en_explorador") as seleccionar_archivos, \
              patch("generador_hii.construir_excel", side_effect=lambda plantilla, datos: plantilla.read_bytes()):
             dialogos.askdirectory.return_value = str(self.destino.parent)
             mensajes.askyesno.return_value = True
             generador.guardar()
             generador.guardar_seleccionadas()
             mensajes.showerror.assert_not_called()
+            self.assertEqual(seleccionar_archivos.call_count, 2)
         generador.registrar_hii.assert_not_called()
         for ruta, extension in ((self.especificacion, ".xlsx"), (ingles, ".xltx")):
             historial = json.loads(ruta.read_text(encoding="utf-8"))["hii_generadas"]

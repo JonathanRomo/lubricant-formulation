@@ -1489,6 +1489,7 @@ def _procesar(
     productos_afectados = productos_historial_modificados(con, salida) if not revisar_todo else set()
     archivos_json_reindexados: list[int] = []
     versiones_protegidas = set()
+    indice_revisiones = None
 
     def informar_progreso(indice: int, ruta: str) -> None:
         if al_progreso is not None:
@@ -1516,7 +1517,7 @@ def _procesar(
             stat = origen.stat()
             registrado = con.execute(
                 """SELECT a.id, a.producto_clave, v.id version_id, v.archivo_json,
-                          v.revision_json, v.fecha_creacion, v.version_lector, v.base_extraccion_json,
+                          v.revision_json, v.revision_especificacion, v.fecha_creacion, v.version_lector, v.base_extraccion_json,
                           v.hash_catalogo version_hash_catalogo
                    FROM archivos a JOIN versiones v ON v.archivo_id=a.id AND v.hash_fuente=?
                    WHERE a.hash_actual=? AND a.estado='OK'
@@ -1635,6 +1636,10 @@ def _procesar(
                 print(f"ACTUALIZADA EXTRACCIÓN: {refrescando['archivo_json']}")
                 informar_progreso(indice_archivo, rel)
                 continue
+            from revisiones_cronologicas import IndiceRevisiones, asignar_revision_nueva
+            if indice_revisiones is None:
+                indice_revisiones = IndiceRevisiones((salida, rutas['json_alineadas']))
+            asignar_revision_nueva(datos, (salida, rutas['json_alineadas']), indice=indice_revisiones)
             ultima = con.execute("SELECT MAX(revision_json) m FROM versiones WHERE producto_clave=?", (pk,)).fetchone()["m"]
             revision = 0 if ultima is None else ultima + 1
             rev_esp = datos["control_documental"].get("revision", "")
@@ -1654,6 +1659,7 @@ def _procesar(
                          revision_json=f"{revision:02d}", fecha_creacion_json=fecha_iso,
                          archivo_json=archivo_json, extractor_version=APP_VERSION, version_lector=VERSION_LECTOR)
             destino.write_text(json.dumps(datos, ensure_ascii=False, indent=2), encoding="utf-8")
+            indice_revisiones.registrar(destino, datos)
             cod_fmt = datos["documento"].get("codigo_formato", "")
             rev_fmt = datos["documento"].get("revision_formato", "")
             con.execute("""INSERT INTO archivos

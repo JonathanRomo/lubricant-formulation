@@ -41,13 +41,12 @@ class RevisionControlEditorTests(unittest.TestCase):
         g.ventana = Mock()
         return g
 
-    def test_producto_sin_alineados_inicia_en_cero_y_revision_vacia_da_error(self):
+    def test_producto_sin_alineados_inicia_en_cero_y_revision_vacia_se_cuenta(self):
         with tempfile.TemporaryDirectory() as carpeta:
             base = Path(carpeta)
             self.assertEqual(siguiente_revision("P1", [base]), "00")
             (base / "producto.json").write_text(json.dumps({"control_documental": {"codigo_unico_producto": "P1"}}))
-            with self.assertRaisesRegex(ValueError, "producto.json"):
-                siguiente_revision("P1", [base])
+            self.assertEqual(siguiente_revision("P1", [base]), "01")
 
     def test_usa_mayor_revision_ignora_duplicados_idiomas_y_borradores(self):
         with tempfile.TemporaryDirectory() as carpeta:
@@ -71,15 +70,16 @@ class RevisionControlEditorTests(unittest.TestCase):
             self.assertIn("mayor revisión numérica es 05", calculada.explicacion)
             self.assertIn("consecutivo es 06", calculada.explicacion)
 
-    def test_revisiones_invalidas_no_se_ocultan_entre_las_validas(self):
+    def test_revisiones_invalidas_cuentan_sin_bloquear_el_consecutivo(self):
         for revision in ("", "A", "01/02/26", "100", None):
             with self.subTest(revision=revision), tempfile.TemporaryDirectory() as carpeta:
                 base = Path(carpeta)
                 for nombre, valor in (("correcto.json", "05"), ("invalido.json", revision)):
                     (base / nombre).write_text(json.dumps({"control_documental": {
                         "codigo_unico_producto": "P1", "revision": valor}}))
-                with self.assertRaisesRegex(ValueError, "invalido.json"):
-                    siguiente_revision("P1", [base])
+                resultado = siguiente_revision("P1", [base])
+                self.assertEqual(resultado, "06")
+                self.assertIn("revisión vacía o no numérica", resultado.explicacion)
 
     def test_revision_99_no_desborda_el_campo_de_dos_digitos(self):
         with tempfile.TemporaryDirectory() as carpeta:

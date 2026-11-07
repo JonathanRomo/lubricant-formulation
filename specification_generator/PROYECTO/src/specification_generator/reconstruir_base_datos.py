@@ -620,6 +620,30 @@ def _registrar_extraccion(con, documentos, base, rutas):
     registrar_historial_revisado(con, rutas["json_anteriores"], None)
 
 
+def _conservar_registro_json_revision(con, anterior, advertencias):
+    """Mantiene la identidad de archivos conocidos al reconstruir SQLite."""
+    if not anterior.is_file():
+        return
+    try:
+        with closing(sqlite3.connect(anterior, timeout=30)) as origen:
+            tablas = {r[0] for r in origen.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            if 'registro_json_revision' in tablas:
+                filas = origen.execute('SELECT ruta, huella, estado FROM registro_json_revision').fetchall()
+                con.execute('CREATE TABLE IF NOT EXISTS registro_json_revision (ruta TEXT PRIMARY KEY, huella TEXT NOT NULL, estado TEXT NOT NULL)')
+                con.executemany('INSERT OR REPLACE INTO registro_json_revision VALUES (?, ?, ?)', filas)
+            if {'registro_json_revision_v2', 'registro_json_revision_ambitos'} <= tablas:
+                filas = origen.execute('SELECT ambito, ruta, huella, estado FROM registro_json_revision_v2').fetchall()
+                ambitos = origen.execute('SELECT ambito FROM registro_json_revision_ambitos').fetchall()
+                con.execute('CREATE TABLE IF NOT EXISTS registro_json_revision_v2 (ambito TEXT NOT NULL, ruta TEXT NOT NULL, huella TEXT NOT NULL, estado TEXT NOT NULL, PRIMARY KEY(ambito, ruta))')
+                con.execute('CREATE TABLE IF NOT EXISTS registro_json_revision_ambitos (ambito TEXT PRIMARY KEY)')
+                con.executemany('INSERT OR REPLACE INTO registro_json_revision_v2 VALUES (?, ?, ?, ?)', filas)
+                con.executemany('INSERT OR REPLACE INTO registro_json_revision_ambitos VALUES (?)', ambitos)
+    except sqlite3.OperationalError:
+        raise
+    except sqlite3.DatabaseError as exc:
+        advertencias.append(f'No se pudo recuperar el registro de JSON conocidos: {exc}')
+
+
 def _registrar_relaciones(con, documentos, base, resumen):
     from generador_especs_hii import clave_texto
     por_ruta = {d["ruta"]: d for d in documentos}
@@ -810,6 +834,7 @@ def reconstruir(base=BASE, *, destino=None, rutas=None, reemplazar=False, al_pro
                 hii.preparar_registro(con)
                 _registrar_relaciones(con, documentos, base, resumen)
                 _registrar_hii_generadas(con, documentos, base, resumen)
+                _conservar_registro_json_revision(con, destino, resumen['advertencias'])
                 resumen["versiones"] = con.execute("SELECT COUNT(*) FROM versiones").fetchone()[0]
                 _validar(con)
                 con.commit()

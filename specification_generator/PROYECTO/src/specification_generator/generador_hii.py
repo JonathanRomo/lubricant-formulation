@@ -32,6 +32,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from rutas_proyecto import referencia_documento, validar_archivo_office
 
 from lxml import etree as ET
+from docx import Document
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 
@@ -401,7 +402,7 @@ def exportar_relaciones(con, rutas):
     return modificadas
 
 
-def sincronizar_idiomas(con, carpeta):
+def sincronizar_idiomas(con, carpeta, *, excluir_exportacion=()):
     """Calcula coincidencias en memoria; solo los vínculos confirmados se exportan."""
     from collections import defaultdict
     grupos = defaultdict(list)
@@ -431,7 +432,8 @@ def sincronizar_idiomas(con, carpeta):
             if not existe:
                 con.execute("INSERT INTO hii_traducciones VALUES (?, ?)", pareja)
                 con.execute("INSERT INTO hii_enlaces_automaticos VALUES (?, ?)", pareja)
-    return exportar_relaciones(con, rutas)
+    excluidas = {Path(ruta).resolve() for ruta in excluir_exportacion}
+    return exportar_relaciones(con, [ruta for ruta in rutas if ruta not in excluidas])
 
 
 def registrar(con, excel, especificacion, idioma, fecha):
@@ -538,6 +540,84 @@ def candidatas_catalogo(especificaciones, origen: Especificacion, idioma: str) -
     if not codigo or not revision:
         return []
     return sorted({e.ruta for e in compatibles if clave_texto(e.revision) == revision})
+
+
+def rutas_para_explorador(especificaciones, marcadas):
+    """Añade una contraparte inequívoca sin alterar las casillas del usuario."""
+    seleccionadas = {Path(r).resolve() for r in marcadas}
+    rutas = set(seleccionadas)
+    ambiguas = []
+    for especificacion in especificaciones:
+        if especificacion.ruta.resolve() not in seleccionadas:
+            continue
+        otro = {"ESPANOL": "INGLES", "INGLES": "ESPANOL"}.get(especificacion.idioma)
+        if not otro:
+            continue
+        opciones = {p.resolve() for p in candidatas_catalogo(especificaciones, especificacion, otro)}
+        if opciones & rutas:
+            continue
+        if len(opciones) == 1:
+            rutas.update(opciones)
+        elif len(opciones) > 1:
+            ambiguas.append(especificacion.ruta.name)
+    return sorted(rutas, key=str), ambiguas
+
+
+def abrir_archivos_en_explorador(rutas):
+    """Abre una ventana por carpeta con sus archivos seleccionados."""
+    from win32com.shell import shell
+    carpetas = {}
+    for ruta in rutas:
+        carpetas.setdefault(ruta.parent, []).append(ruta)
+    for carpeta, archivos in carpetas.items():
+        carpeta_pidl = shell.SHParseDisplayName(str(carpeta), 0)[0]
+        hijos = [shell.SHParseDisplayName(str(ruta), 0)[0][-1:] for ruta in archivos]
+        shell.SHOpenFolderAndSelectItems(carpeta_pidl, hijos, 0)
+
+
+def generar_ficha_tecnica(destino: Path, versiones: dict[str, list[Path]], *, varios_productos: bool = False) -> None:
+    """Crea tablas editables a partir de los valores alineados de cada idioma."""
+    documento = Document()
+    for idioma in ("ESPANOL", "INGLES"):
+        rutas = versiones.get(idioma, [])
+        if not rutas:
+            continue
+        productos = []
+        filas = {}
+        for indice, ruta in enumerate(rutas):
+            datos = json.loads(ruta.read_text(encoding="utf-8-sig"))
+            vista = preparar_vista_previa_alineada(ruta, datos=datos)
+            codigo = texto(datos.get("control_documental", {}).get("codigo_unico_producto"))
+            productos.append((vista.nombre_producto, codigo))
+            repeticiones = {}
+            for prueba in vista.pruebas:
+                propiedad = texto(prueba.get("prueba"))
+                unidad = texto(prueba.get("unidades"))
+                metodo = texto(prueba.get("metodo"))
+                if not propiedad:
+                    continue
+                clave_base = (clave_texto(propiedad), clave_texto(unidad), clave_texto(metodo))
+                numero = repeticiones.get(clave_base, 0)
+                repeticiones[clave_base] = numero + 1
+                clave = (*clave_base, numero)
+                if clave not in filas:
+                    etiqueta = f"{propiedad}, {unidad}" if unidad and unidad.upper() not in {"NA", "N/A", "---", "-"} else propiedad
+                    filas[clave] = [etiqueta, metodo, [""] * len(rutas)]
+                filas[clave][2][indice] = texto(prueba.get("valor_tipico"))
+        tabla = documento.add_table(rows=1, cols=2 + len(productos))
+        encabezados = (["Propiedades", "Método"] if idioma == "ESPANOL" else ["Properties", "Method"])
+        encabezados += (["Valor típico" if idioma == "ESPANOL" else "Typical value"]
+                        if len(productos) == 1 and not varios_productos else [nombre for nombre, _ in productos])
+        for celda, valor in zip(tabla.rows[0].cells, encabezados):
+            celda.text = valor
+        for propiedad, metodo, valores in filas.values():
+            for celda, valor in zip(tabla.add_row().cells, [propiedad, metodo, *valores]):
+                celda.text = valor
+        etiqueta_codigo = "Código de parte" if idioma == "ESPANOL" else "Part number"
+        for celda, valor in zip(tabla.add_row().cells, [etiqueta_codigo, "", *[codigo for _, codigo in productos]]):
+            celda.text = valor
+        documento.add_paragraph()
+    documento.save(destino)
 
 
 def disponibilidad_catalogo(especificaciones) -> dict[Path, set[str]]:
@@ -1290,29 +1370,39 @@ class GeneradorHII:
         self.ventana.geometry("1400x850")
         self.ventana.minsize(1000, 650)
         self.ventana.configure(background="#edf2f7")
-        cabecera = tk.Frame(self.ventana, background="#0752b9", padx=18, pady=8)
+        color_cabecera = "#252526" if ui.PREFERENCIAS["apariencia"] == "Oscuro gris" else "#0752b9"
+        cabecera = tk.Frame(self.ventana, background=color_cabecera, padx=18, pady=8)
+        cabecera._ui_cabecera_hii = True
         cabecera.pack(fill="x")
-        tk.Label(cabecera, text="GENERAR HII", background="#0752b9", foreground="white",
-                 font=("Segoe UI", 17, "bold")).pack(side="left")
-        self.zoom_mas = ttk.Button(cabecera, text="+", width=3, fondo="#0752b9", command=lambda: self.cambiar_zoom(.1))
+        titulo = tk.Label(cabecera, text="GENERAR HII", background=color_cabecera, foreground="white",
+                          font=("Segoe UI", 17, "bold"))
+        titulo._ui_cabecera_hii = True
+        titulo.pack(side="left")
+        self.zoom_mas = ttk.Button(cabecera, text="+", width=3, fondo=color_cabecera, command=lambda: self.cambiar_zoom(.1))
+        self.zoom_mas._ui_cabecera_hii = True
         self.zoom_mas.pack(side="right", padx=(3, 0))
-        self.zoom_porcentaje = tk.Label(cabecera, text="100%", background="#0752b9", foreground="white", font=("Segoe UI", 10))
+        self.zoom_porcentaje = tk.Label(cabecera, text="100%", background=color_cabecera, foreground="white", font=("Segoe UI", 10))
+        self.zoom_porcentaje._ui_cabecera_hii = True
         self.zoom_porcentaje.pack(side="right", padx=6)
-        self.zoom_menos = ttk.Button(cabecera, text="−", width=3, fondo="#0752b9", command=lambda: self.cambiar_zoom(-.1))
+        self.zoom_menos = ttk.Button(cabecera, text="−", width=3, fondo=color_cabecera, command=lambda: self.cambiar_zoom(-.1))
+        self.zoom_menos._ui_cabecera_hii = True
         self.zoom_menos.pack(side="right", padx=(3, 0))
         self.cuerpo = ttk.Frame(self.ventana)
         self.cuerpo.pack(fill="both", expand=True)
         self.zoom_contenido = ZoomHII(self.cuerpo)
         barra = ttk.Frame(self.cuerpo, padding=8)
         barra.pack(fill="x")
-        self.editar_seleccion = ttk.Button(barra, text="Ø", width=3, command=self.alternar_lista)
+        self.editar_seleccion = ttk.Button(barra, text="Ø", cuadrado=True, command=self.alternar_lista)
         self.editar_seleccion.pack(side="left")
+        ui.AyudaHover(self.editar_seleccion, "Compactar o ampliar la lista de especificaciones")
         self.lote_boton = ttk.Button(barra, text="Guardar seleccionadas (0)", command=self.guardar_seleccionadas, state="disabled")
         self.lote_boton.pack(side="left", padx=8)
         self.guardar_word_boton = ttk.Button(barra, text="Guardar Word", command=self.guardar_word, state="disabled")
         self.guardar_word_boton.pack(side="left", padx=8)
         self.guardar_boton = ttk.Button(barra, text="Guardar HII", command=self.guardar, state="disabled")
         self.guardar_boton.pack(side="left", padx=8)
+        self.ft_boton = ttk.Button(barra, text="FT", cuadrado=True, command=self.guardar_ficha_tecnica, state="disabled")
+        self.ft_boton.pack(side="right", padx=(8, 8))
         self.comentario_boton = ttk.Button(
             barra,
             text="💬",
@@ -1344,6 +1434,7 @@ class GeneradorHII:
         self.contenido.add(self.previa_panel, weight=3)
         ttk.Label(self.busqueda_panel, text="Buscar especificación", foreground="#163b70",
                   font=("Segoe UI", 12, "bold")).pack(anchor="w", pady=(0, 8))
+        ttk.Label(self.busqueda_panel, text="Marca varias en la columna de casillas para incluirlas en FT.").pack(anchor="w", pady=(0, 8))
         self.consulta = tk.StringVar()
         ttk.Entry(self.busqueda_panel, textvariable=self.consulta).pack(fill="x", pady=(0, 8))
         self.consulta.trace_add("write", lambda *_: self.programar_busqueda())
@@ -1368,6 +1459,8 @@ class GeneradorHII:
         self.lista.bind("<<TreeviewSelect>>", self.seleccionar_fila)
         self.actualizar_boton = ttk.Button(self.busqueda_panel, text="Actualizar lista", command=self.recargar_catalogo)
         self.actualizar_boton.pack(fill="x", pady=(10, 0))
+        self.ubicacion_boton = ttk.Button(self.busqueda_panel, text="Ir a ubicación", command=self.ir_a_ubicacion, state="disabled")
+        self.ubicacion_boton.pack(fill="x", pady=(6, 0))
         self.contador = ttk.Label(self.busqueda_panel, wraplength=250)
         self.contador.pack(anchor="w", pady=(8, 0))
         encabezados = ttk.Frame(self.previa_panel)
@@ -1417,6 +1510,9 @@ class GeneradorHII:
         return self._disponibilidad.get(ruta, set())
 
     def _actualizar_idiomas(self, origen=None):
+        boton_ft = getattr(self, "ft_boton", None)
+        if boton_ft is not None:
+            boton_ft.configure(state="normal" if self.marcadas else "disabled")
         rutas = set(self.marcadas)
         if origen or self.origen_actual:
             rutas.add(Path(origen or self.origen_actual))
@@ -1697,7 +1793,6 @@ class GeneradorHII:
     def alternar_lista(self):
         self.compacta = not self.compacta
         self.editar_seleccion.configure(text="Ø")
-        self.actualizar_lista()
         self.posicionar_paneles()
 
     def seleccionar_json_guardados(self, rutas):
@@ -1808,10 +1903,7 @@ class GeneradorHII:
         self._cancelar_tarea("lista")
         self._revision_lista += 1
         self.lista.delete(*self.lista.get_children())
-        candidatas = self.catalogo.especificaciones
-        if self.compacta and self.marcadas:
-            candidatas = [e for e in candidatas if e.ruta in self.marcadas]
-        self.visibles = buscar_especificaciones(candidatas, self.consulta.get())
+        self.visibles = buscar_especificaciones(self.catalogo.especificaciones, self.consulta.get())
         self._insertar_bloque(self._revision_lista, 0)
         self._actualizar_contador()
 
@@ -1822,6 +1914,28 @@ class GeneradorHII:
                                f"{len(self.marcadas)} seleccionadas · {len(self.visibles)} visibles{errores}")
         self.lote_boton.configure(text=f"Guardar seleccionadas ({len(self.marcadas)})",
                                   state="normal" if self.marcadas else "disabled")
+        if getattr(self, "ubicacion_boton", None) is not None:
+            self.ubicacion_boton.configure(state="normal" if self.marcadas else "disabled")
+
+    def ir_a_ubicacion(self):
+        if not self.marcadas:
+            return
+        rutas, ambiguas = rutas_para_explorador(self.catalogo.especificaciones, self.marcadas)
+        existentes = [ruta for ruta in rutas if ruta.is_file()]
+        faltantes = [ruta for ruta in rutas if not ruta.is_file()]
+        try:
+            if existentes:
+                abrir_archivos_en_explorador(existentes)
+        except Exception as exc:
+            messagebox.showerror("No se pudo abrir la ubicación", str(exc), parent=self.ventana)
+            return
+        avisos = []
+        if faltantes:
+            avisos.append("No se encontraron estos archivos:\n" + "\n".join(str(ruta) for ruta in faltantes))
+        if ambiguas:
+            avisos.append("Hay varias versiones en el otro idioma para estos archivos; marca la correspondiente:\n" + "\n".join(ambiguas))
+        if avisos:
+            messagebox.showwarning("Revisa la selección", "\n\n".join(avisos), parent=self.ventana)
 
     def _insertar_bloque(self, revision, inicio):
         if self._cerrada or revision != self._revision_lista:
@@ -1865,14 +1979,11 @@ class GeneradorHII:
         else:
             self.marcadas.add(especificacion.ruta)
         self._actualizar_idiomas()
-        if self.compacta:
-            self.actualizar_lista()
-        else:
-            fila = f"{self._revision_lista}:{indice}"
-            valores = list(self.lista.item(fila, "values"))
-            valores[0] = "☑" if especificacion.ruta in self.marcadas else "☐"
-            self.lista.item(fila, values=valores)
-            self._actualizar_contador()
+        fila = f"{self._revision_lista}:{indice}"
+        valores = list(self.lista.item(fila, "values"))
+        valores[0] = "☑" if especificacion.ruta in self.marcadas else "☐"
+        self.lista.item(fila, values=valores)
+        self._actualizar_contador()
 
     def seleccionar_fila(self, _evento=None):
         seleccion = self.lista.selection()
@@ -2137,24 +2248,88 @@ class GeneradorHII:
         existentes = [p for _, p, _, _ in salidas if p.exists()]
         if existentes and not messagebox.askyesno("Archivos existentes", f"Se reemplazarán {len(existentes)} archivos HII. ¿Continuar?", parent=self.ventana):
             return
-        errores, avisos, guardadas = [], [], 0
+        errores, avisos, destinos_guardados = [], [], []
         for especificacion, destino, datos, plantilla in salidas:
             try:
                 aviso = self.guardar_archivo(destino, especificacion, datos, construir_excel(plantilla, datos))
-                guardadas += 1
+                destinos_guardados.append(destino)
                 if aviso:
                     avisos.append(aviso)
             except Exception as exc:
                 errores.append(f"{especificacion.name}: {exc}")
-        self.estado.configure(text=f"{guardadas} HII guardadas")
+        self.estado.configure(text=f"{len(destinos_guardados)} HII guardadas")
         if errores:
             messagebox.showerror("Algunas HII no se generaron", "\n".join(errores), parent=self.ventana)
         if avisos:
             messagebox.showwarning("HII guardadas con registro pendiente", "\n".join(avisos), parent=self.ventana)
+        self._preguntar_abrir_ubicacion(destinos_guardados)
+
+    def _preguntar_abrir_ubicacion(self, destinos):
+        if not destinos:
+            return
+        if messagebox.askyesno(
+            "Abrir ubicación",
+            "¿Quieres abrir la ubicación y seleccionar los archivos guardados en el Explorador de Windows?",
+            parent=self.ventana,
+            default="no",
+        ) is not True:
+            return
+        rutas = [Path(destino) for destino in destinos]
+        try:
+            abrir_archivos_en_explorador(rutas)
+        except Exception:
+            # Si Windows no puede seleccionar los archivos, abre al menos su carpeta.
+            carpetas = dict.fromkeys(ruta.parent for ruta in rutas)
+            errores = []
+            for carpeta in carpetas:
+                try:
+                    os.startfile(str(carpeta))
+                except OSError as exc:
+                    errores.append(str(exc))
+            if errores:
+                messagebox.showerror("No se pudo abrir la ubicación", "\n".join(errores), parent=self.ventana)
 
     def _validar_destino(self, destino, tipo="la HII"):
         if destino.resolve() in {p.resolve() for p in self.formatos.rglob("*") if p.is_file()}:
             raise ValueError(f"Guarda {tipo} con otro nombre para conservar la plantilla.")
+
+    def guardar_ficha_tecnica(self):
+        seleccionadas = [e for e in self.catalogo.especificaciones if e.ruta in self.marcadas]
+        if not seleccionadas:
+            return
+        try:
+            versiones = {"ESPANOL": [], "INGLES": []}
+            procesadas = set()
+            cantidad_productos = 0
+            for origen in seleccionadas:
+                if origen.ruta in procesadas:
+                    continue
+                cantidad_productos += 1
+                pareja = {origen.idioma: origen.ruta}
+                otro = "INGLES" if origen.idioma == "ESPANOL" else "ESPANOL"
+                opciones = candidatas_catalogo(self.catalogo.especificaciones, origen, otro)
+                if len(opciones) > 1:
+                    raise ValueError(f"Hay varias versiones en {otro} para {origen.codigo}. Vincula la versión correspondiente antes de generar la ficha técnica.")
+                if opciones:
+                    pareja[otro] = opciones[0]
+                for idioma, ruta in pareja.items():
+                    versiones[idioma].append(ruta)
+                    procesadas.add(ruta)
+            elegida = filedialog.asksaveasfilename(
+                parent=self.ventana, title="Guardar ficha técnica", defaultextension=".docx",
+                initialfile="Ficha técnica.docx", filetypes=[("Documento Word", "*.docx")],
+            )
+            if not elegida:
+                return
+            destino = Path(elegida)
+            if destino.suffix.lower() != ".docx":
+                raise ValueError("La ficha técnica debe guardarse con la extensión .docx.")
+            self._validar_destino(destino, "la ficha técnica")
+            generar_ficha_tecnica(destino, versiones, varios_productos=cantidad_productos > 1)
+            self.estado.configure(text=f"Ficha técnica guardada: {destino.name}")
+            self._preguntar_abrir_ubicacion([destino])
+        except (OSError, ValueError, KeyError) as exc:
+            messagebox.showerror("No se pudo generar la ficha técnica", str(exc), parent=self.ventana)
 
     def _actualizar_boton_word(self):
         boton = getattr(self, "guardar_word_boton", None)
@@ -2230,6 +2405,7 @@ class GeneradorHII:
                                     else f"{len(guardadas)} documentos Word guardados"))
         if errores:
             messagebox.showerror("No se pudieron generar todos los Word", "\n".join(errores), parent=self.ventana)
+        self._preguntar_abrir_ubicacion(guardadas)
 
     def mostrar_excel(self, contenido, datos):
         """Dibuja el plano preparado en bloques breves dentro del hilo de Tk."""
@@ -2328,6 +2504,8 @@ class GeneradorHII:
                             messagebox.showwarning("HII guardada con registro pendiente", aviso, parent=self.ventana)
                     except Exception as exc:
                         messagebox.showerror("No se pudo guardar", str(exc), parent=self.ventana)
+                        return
+                    self._preguntar_abrir_ubicacion([destino])
                 self.estado.configure(text=f"Preparando: {destino.name}")
                 self._solicitar_excel(terminar)
             except Exception as exc:

@@ -143,7 +143,8 @@ class GuardadoWordHIITests(unittest.TestCase):
         g = self.generador(idioma="INGLES")
         destino = self.base / "salida.docx"
         originales = {ruta: ruta.read_bytes() for ruta in (*self.rutas.values(), *self.plantillas.values())}
-        with patch.object(modulo, "filedialog") as dialogos, patch.object(modulo, "messagebox") as mensajes:
+        with patch.object(modulo, "filedialog") as dialogos, patch.object(modulo, "messagebox") as mensajes, \
+             patch.object(g, "_preguntar_abrir_ubicacion") as preguntar:
             dialogos.asksaveasfilename.return_value = str(destino)
             g.guardar_word()
             g.guardar_word_boton.configure.assert_called_with(state="disabled")
@@ -152,6 +153,7 @@ class GuardadoWordHIITests(unittest.TestCase):
             self.assertEqual(errores, [])
             mensajes.showerror.assert_not_called()
             dialogos.askdirectory.assert_not_called()
+            preguntar.assert_called_once_with([destino])
         self.verificar_word(destino, ingles=True)
         self.assertEqual(originales, {ruta: ruta.read_bytes() for ruta in originales})
         g.guardar_word_boton.configure.assert_called_with(state="normal")
@@ -221,13 +223,14 @@ class GuardadoWordHIITests(unittest.TestCase):
         destino.write_bytes(b"Anterior")
         with patch.object(modulo, "filedialog") as dialogos, patch.object(modulo, "messagebox") as mensajes, patch.object(
             modulo, "generar_documento", side_effect=ValueError("No se pudo completar")
-        ):
+        ), patch.object(g, "_preguntar_abrir_ubicacion") as preguntar:
             dialogos.asksaveasfilename.return_value = str(destino)
             g.guardar_word()
             guardadas, errores = self.terminar(g)
             self.assertEqual(guardadas, [])
             self.assertIn("No se pudo completar", errores[0])
             mensajes.showerror.assert_called_once()
+            preguntar.assert_called_once_with([])
         self.assertEqual(destino.read_bytes(), b"Anterior")
         self.assertEqual(list(self.base.glob("word_*")), [])
         g.guardar_word_boton.configure.assert_called_with(state="normal")

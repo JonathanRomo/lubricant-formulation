@@ -129,6 +129,22 @@ se guardará y cómo se calculó. En una pareja ESP/ENG se incluye en la misma
 confirmación de ambos archivos. La edición manual de una revisión distinta
 mantiene su advertencia correspondiente.
 
+## Actualización de listas y revisiones
+
+El botón de actualización de **Personalizar** busca Word nuevos en las carpetas
+de especificaciones anteriores, detecta copias idénticas y extrae los archivos
+nuevos. Después revisa los JSON alineados recibidos: informa de duplicados y
+conflictos y, cuando puede identificar con seguridad un ingreso nuevo con una
+revisión ya ocupada, le asigna la siguiente revisión local. Antes de modificarlo
+guarda una copia de respaldo y conserva la revisión recibida. Los casos ambiguos
+quedan pendientes y los duplicados detectados no se mueven automáticamente.
+
+La aplicación registra los archivos conocidos en la base SQLite existente; el
+índice usado para asignar revisiones a los Word se mantiene solo en memoria
+durante cada lote. La actualización no renumera las especificaciones locales
+existentes. Para una revisión completa de duplicados se utiliza el botón
+**Revisar duplicados** descrito a continuación.
+
 ## Revisión de duplicados
 
 En **Personalizar**, junto a **Reconstruir base desde JSON**, el botón **Revisar duplicados**
@@ -562,7 +578,53 @@ El editor reutiliza la coincidencia del alineador para los nombres y métodos de
 
 Al abrir una especificación o cambiar de idioma, el borrador resuelve las equivalencias conocidas del maestro y del diccionario de traducciones, incluido el texto mezclado dentro de una celda. Por ejemplo, `88 MÁXIMO` se muestra como `88 MAXIMUM` en English. El texto ya escrito en el idioma correcto se reconoce sin retraducirlo. Las correcciones manuales y las confirmaciones se respetan; las diferencias numéricas entre versiones y los campos vaciados en un borrador siguen pendientes de revisión. Los archivos originales solo se modifican al guardar.
 
-### Comprobaciones de seguridad de documentos
+### Protección de recargas, unidades y requisitos repetidos
+
+Al volver a extraer un Word, se conservan la revisión local (`00`, `01`, etc.),
+la revisión fuente, la recibida y su historial. Releer el documento no crea por
+sí mismo una revisión documental. Si falta el JSON, la recuperación reutiliza
+la revisión registrada y los datos de procedencia disponibles.
+
+La alineación automática solo sustituye un destino existente cuando su huella
+coincide con la registrada para esa fuente. Si tiene cambios o falta esa huella,
+conserva el archivo y lo señala en `REPORTE_ALINEACION.txt` y en el resumen de la
+interfaz. Para actualizar nombres conservando las ediciones, seleccione el JSON
+en la pestaña de alineadas y use la realineación. Esto no incorpora automáticamente
+los cambios de una nueva extracción: esos conflictos requieren revisión.
+Antes de sustituir un destino verificado se guarda una copia exacta `.bak` en
+`.respaldos_alineacion`, junto al JSON; si el respaldo falla, no se sustituye.
+
+Los alias de igual escala, como `cSt` y `mm²/s`, pueden normalizarse. Una unidad
+cuantitativa con distinta escala o equivalencia desconocida conserva su unidad
+y sus cifras y queda pendiente de revisión. No se convierten magnitudes
+automáticamente. Se mantiene el tratamiento existente de unidades vacías, `NA`
+y adimensionales cuando el maestro permite completar la unidad.
+
+Análisis conserva todas las filas que comparten nombre, unidad y método. Cada
+requisito del producto consultado participa en la cobertura. Si hay varias filas
+candidatas compatibles, se marca la comparación como no verificable; no se elige
+la primera. La matriz muestra sus valores como un grupo por revisar y la
+comparación multidimensional no les atribuye una distancia ni una ventaja única.
+
+### Edición y navegación en la tabla
+
+Al confirmar una celda se actualizan las filas que cambiaron, conservando el orden
+y el foco de la selección. Las flechas permiten cambiar de fila. Al eliminar una
+prueba se invalida la celda activa: Suprimir no utiliza la posición de la fila
+eliminada para borrar otra celda.
+
+El campo de edición acompaña a su celda al desplazar la tabla. Si la celda deja de
+ser visible, se confirma el texto en la fila original y se retira el campo.
+Enter confirma la edición (o acepta la sugerencia resaltada, si corresponde).
+Escape cierra primero las sugerencias visibles; sin sugerencias, cancela la edición
+y restaura los valores previos. Estas teclas también devuelven el foco a la tabla
+al terminar de editar la periodicidad.
+
+La fila nueva es provisional: cancelar o confirmar sin contenido no deja una fila
+vacía. Solo se incorpora al borrador bilingüe al confirmar contenido. La vigilancia
+automática de revisión no publica los cambios de una celda todavía en edición.
+
+### Límites de documentos de entrada
 
 La carga comprueba el tamaño antes de interpretar documentos Office: hasta 128 MiB por archivo. En DOCX, DOCM, XLSX y XLSM se permiten hasta 4096 partes internas, 64 MiB por parte y 256 MiB de contenido expandido; también se rechazan paquetes cifrados, rutas internas inseguras, enlaces simbólicos y expansiones desproporcionadas. Si un documento excede estos límites, debe revisarse antes de incorporarlo.
 

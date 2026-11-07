@@ -107,8 +107,17 @@ class Producto:
     pruebas: dict[tuple[str, str, str], dict]
 
     @property
+    def numero_pruebas(self) -> int:
+        return sum(len(filas_grupo(fila)) for fila in self.pruebas.values())
+
+    @property
     def etiqueta(self) -> str:
-        return f"{self.nombre} · {self.codigo or 'sin código'} · {len(self.pruebas)} pruebas"
+        return f"{self.nombre} · {self.codigo or 'sin código'} · {self.numero_pruebas} pruebas"
+
+
+def filas_grupo(fila: dict) -> list[dict]:
+    """Una clave alineada no garantiza que las condiciones de sus filas sean iguales."""
+    return fila.get("_filas_repetidas", [fila])
 
 
 def leer_producto(ruta: Path) -> Producto | None:
@@ -133,8 +142,11 @@ def leer_producto(ruta: Path) -> Producto | None:
             continue
         detalle = detalles.get(fila.get("numero"), {})
         clave = clave_prueba(fila, detalle)
-        if clave and clave not in pruebas:
-            pruebas[clave] = fila
+        if clave:
+            if clave in pruebas:
+                pruebas[clave] = {"_filas_repetidas": [*filas_grupo(pruebas[clave]), fila]}
+            else:
+                pruebas[clave] = fila
     if not pruebas:
         return None
     return Producto(
@@ -165,9 +177,9 @@ def cargar_catalogo(carpeta: Path) -> tuple[list[Producto], int]:
             continue
         identidad = producto.codigo or normalizar(producto.nombre)
         anterior = encontrados.get(identidad)
-        prioridad = (producto.idioma == "es", producto.fecha, len(producto.pruebas), ruta.name)
+        prioridad = (producto.idioma == "es", producto.fecha, producto.numero_pruebas, ruta.name)
         if anterior is None or prioridad > (anterior.idioma == "es", anterior.fecha,
-                                             len(anterior.pruebas), anterior.ruta.name):
+                                             anterior.numero_pruebas, anterior.ruta.name):
             encontrados[identidad] = producto
     return sorted(encontrados.values(), key=lambda p: (p.nombre.casefold(), p.codigo)), descartados
 
@@ -275,7 +287,7 @@ def comparar(origen: Producto, candidato: Producto) -> Comparacion:
     filas: list[FilaAnalisis] = []
     requisitos = cubiertos = indicativos = fuera = parciales = faltantes = sin_dato = compartidas = 0
     peso_total = peso_cubierto = 0.0
-    for clave, fila in origen.pruebas.items():
+    for clave, fila in ((clave, fila) for clave, grupo in origen.pruebas.items() for fila in filas_grupo(grupo)):
         nombre, unidad, metodo = clave
         esperado = requisito(fila.get("especificacion"))
         if esperado is not None:
@@ -283,7 +295,11 @@ def comparar(origen: Producto, candidato: Producto) -> Comparacion:
             peso_total += peso(fila)
         opciones = por_nombre.get(nombre, [])
         compatibles = [(k, f) for k, f in opciones if k[1] == unidad and metodo_compatible(metodo, k[2])]
-        if compatibles:
+        if len(compatibles) > 1 or (compatibles and len(filas_grupo(compatibles[0][1])) > 1):
+            compartidas += 1
+            rival = None
+            estado, motivo = "NO_COMPARABLE", "Hay varias filas candidatas para esta prueba; revisa sus condiciones y límites. No se elige la primera."
+        elif compatibles:
             compartidas += 1
             _, rival = compatibles[0]
             estado, motivo = evaluar_requisito(fila, rival)
@@ -394,6 +410,9 @@ def comparar_multidimensional(a: Producto, b: Producto) -> ComparacionMultidimen
     diferencias: list[str] = []
     for clave in sorted(compartidas):
         fila_a, fila_b = a.pruebas[clave], b.pruebas[clave]
+        if len(filas_grupo(fila_a)) > 1 or len(filas_grupo(fila_b)) > 1:
+            diferencias.append(f"{clave[0]}: varias filas con la misma clave; requiere revisión de condiciones y límites.")
+            continue
         distancia, fuente = distancia_fila(fila_a, fila_b)
         if distancia is not None:
             importancia = max(peso(fila_a), peso(fila_b))
@@ -427,6 +446,115 @@ def comparar_multidimensional(a: Producto, b: Producto) -> ComparacionMultidimen
     )
 
 
+class _ListaSelectorProductos(ctk.CTkFrame):
+    """Una tabla reutilizable: filtrar no crea ni destruye controles por producto."""
+
+    def __init__(self, padre, valores, consulta, seleccionados, elegir, *, multiple=False):
+        colores = ui.paleta()
+        super().__init__(padre, fg_color=colores["panel"], corner_radius=0)
+        self.consulta = consulta
+        self.seleccionados = seleccionados
+        self.elegir = elegir
+        self.multiple = multiple
+        self._pendiente = None
+        self._filas = {str(i): valor for i, valor in enumerate(valores)}
+        self._busqueda = [(fila, normalizar(valor)) for fila, valor in self._filas.items()]
+        self._visibles = list(self._filas)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.tabla = ttk.Treeview(
+            self, columns=("marca", "producto"), show="", selectmode="browse",
+            displaycolumns=("marca", "producto") if multiple else ("producto",),
+        )
+        self.tabla.column("marca", width=36, minwidth=36, stretch=False, anchor="center")
+        self.tabla.column("producto", width=580, minwidth=200, stretch=True)
+        self.tabla.grid(row=0, column=0, sticky="nsew")
+        scroll = ctk.CTkScrollbar(
+            self, command=self.tabla.yview, fg_color=colores["panel"],
+            button_color=colores["acento"], button_hover_color="#10446f",
+        )
+        scroll.grid(row=0, column=1, sticky="ns")
+        self.tabla.configure(yscrollcommand=scroll.set)
+        self.estado = ctk.CTkLabel(self, text="", anchor="w", text_color=colores["secundario"])
+        self.estado.grid(row=1, column=0, columnspan=2, sticky="ew", padx=4)
+        marcados = seleccionados()
+        for fila, valor in self._filas.items():
+            self.tabla.insert("", "end", iid=fila, values=("☑" if valor in marcados else "☐", valor))
+            if not multiple and valor in marcados:
+                self.tabla.selection_set(fila)
+                self.tabla.focus(fila)
+                self.tabla.see(fila)
+        self.tabla.bind("<Button-1>", self._clic)
+        self.tabla.bind("<Return>", self.activar)
+        self.tabla.bind("<space>", self.activar)
+        self._traza = consulta.trace_add("write", self._programar_filtro)
+        self.aplicar_filtro()
+
+    def _programar_filtro(self, *_):
+        if self._pendiente is not None:
+            self.after_cancel(self._pendiente)
+        self._pendiente = self.after(120, self.aplicar_filtro)
+
+    def aplicar_filtro(self):
+        if self._pendiente is not None:
+            self.after_cancel(self._pendiente)
+            self._pendiente = None
+        filtro = normalizar(self.consulta.get())
+        self._visibles = [fila for fila, texto in self._busqueda if filtro in texto]
+        # set_children separa las filas ocultas y reutiliza las existentes al volver.
+        self.tabla.set_children("", *self._visibles)
+        self.estado.configure(text=(f"{len(self._visibles)} de {len(self._filas)} productos"
+                                    if self._visibles else "No se encontraron productos."))
+        if self._visibles and self.tabla.focus() not in self._visibles:
+            self.tabla.focus(self._visibles[0])
+            self.tabla.selection_set(self._visibles[0])
+        if self._visibles:
+            self.tabla.see(self.tabla.focus())
+
+    def valores_visibles(self):
+        # Marcar visibles y Enter usan la consulta vigente, incluso antes de 120 ms.
+        self.aplicar_filtro()
+        return [self._filas[fila] for fila in self._visibles]
+
+    def actualizar_marcas(self, filas=None):
+        marcados = self.seleccionados()
+        for fila in self._filas if filas is None else filas:
+            self.tabla.set(fila, "marca", "☑" if self._filas[fila] in marcados else "☐")
+
+    def enfocar(self, _evento=None):
+        self.aplicar_filtro()
+        self.tabla.focus_set()
+        return "break"
+
+    def _clic(self, evento):
+        fila = self.tabla.identify_row(evento.y)
+        if fila:
+            self.tabla.focus_set()
+            self.tabla.focus(fila)
+            self.tabla.selection_set(fila)
+            self._elegir_fila(fila)
+        return "break"
+
+    def activar(self, _evento=None):
+        self.aplicar_filtro()
+        fila = self.tabla.focus()
+        if fila in self._visibles:
+            self._elegir_fila(fila)
+        return "break"
+
+    def _elegir_fila(self, fila):
+        self.elegir(self._filas[fila])
+        if self.multiple:
+            self.actualizar_marcas([fila])
+
+    def destroy(self):
+        if self._pendiente is not None:
+            self.after_cancel(self._pendiente)
+            self._pendiente = None
+        self.consulta.trace_remove("write", self._traza)
+        super().destroy()
+
+
 class SelectorProductos(ctk.CTkFrame):
     """Selector buscable con desplazamiento CTk, sin controles de flecha nativos."""
 
@@ -436,6 +564,7 @@ class SelectorProductos(ctk.CTkFrame):
         self.valores: list[str] = []
         self.valor = ""
         self.popup = None
+        self._foco_pendiente = None
         colores = ui.paleta()
         self.boton = ctk.CTkButton(
             self, text="Cargando...", anchor="w", height=30, corner_radius=6,
@@ -494,36 +623,12 @@ class SelectorProductos(ctk.CTkFrame):
         )
         cerrar.pack(side="left", padx=(8, 0))
 
-        lista = ctk.CTkScrollableFrame(
-            panel, fg_color=colores["panel"], corner_radius=0,
-            scrollbar_fg_color=colores["panel"],
-            scrollbar_button_color=colores["acento"],
-            scrollbar_button_hover_color="#10446f",
+        lista = self.lista = _ListaSelectorProductos(
+            panel, self.valores, consulta, lambda: {self.valor}, self.elegir,
         )
         lista.pack(fill="both", expand=True, padx=(8, 5), pady=(0, 8))
-        lista.grid_columnconfigure(0, weight=1)
-
-        def poblar(*_):
-            for widget in lista.winfo_children():
-                widget.destroy()
-            filtro = normalizar(consulta.get())
-            visibles = [valor for valor in self.valores if filtro in normalizar(valor)]
-            for fila, valor in enumerate(visibles):
-                seleccionado = valor == self.valor
-                boton = ctk.CTkButton(
-                    lista, text=valor, anchor="w", height=32, corner_radius=5,
-                    fg_color=colores["seleccion"] if seleccionado else "transparent",
-                    hover_color=colores["seleccion"], text_color=colores["texto"],
-                    font=(ui.PREFERENCIAS["fuente"], 12),
-                    command=lambda elegido=valor: self.elegir(elegido),
-                )
-                boton.grid(row=fila, column=0, sticky="ew", padx=(0, 4), pady=1)
-            if not visibles:
-                ctk.CTkLabel(lista, text="No se encontraron productos.",
-                             text_color=colores["secundario"]).grid(row=0, column=0, pady=24)
-
-        consulta.trace_add("write", poblar)
-        poblar()
+        entrada.bind("<Down>", lista.enfocar)
+        entrada.bind("<Return>", lista.activar)
         popup.update_idletasks()
         ancho = max(self.winfo_width(), 660)
         alto = min(470, max(300, self.winfo_screenheight() - 120))
@@ -538,9 +643,12 @@ class SelectorProductos(ctk.CTkFrame):
     def _revisar_foco(self, _evento=None):
         if self.popup is None:
             return
-        self.after(80, self._cerrar_si_perdio_foco)
+        if self._foco_pendiente is not None:
+            self.after_cancel(self._foco_pendiente)
+        self._foco_pendiente = self.after(80, self._cerrar_si_perdio_foco)
 
     def _cerrar_si_perdio_foco(self):
+        self._foco_pendiente = None
         if self.popup is None or not self.popup.winfo_exists():
             return
         enfocado = self.popup.focus_displayof()
@@ -555,6 +663,9 @@ class SelectorProductos(ctk.CTkFrame):
             self.command(valor)
 
     def cerrar(self):
+        if self._foco_pendiente is not None:
+            self.after_cancel(self._foco_pendiente)
+            self._foco_pendiente = None
         if self.popup is not None:
             try:
                 self.popup.destroy()
@@ -571,7 +682,9 @@ class SelectorMultipleProductos(ctk.CTkFrame):
         self.command = command
         self.valores: list[str] = []
         self.seleccionados: set[str] = set()
+        self._seleccion_al_abrir: set[str] = set()
         self.popup = None
+        self._foco_pendiente = None
         colores = ui.paleta()
         self.boton = ctk.CTkButton(
             self, text="Seleccionar productos · 0", anchor="w", height=30, corner_radius=6,
@@ -603,6 +716,7 @@ class SelectorMultipleProductos(ctk.CTkFrame):
     def abrir(self):
         if not self.valores:
             return
+        self._seleccion_al_abrir = set(self.seleccionados)
         colores = ui.paleta()
         popup = self.popup = ctk.CTkToplevel(self)
         popup.withdraw()
@@ -623,61 +737,28 @@ class SelectorMultipleProductos(ctk.CTkFrame):
             border_color=colores["borde"], font=(ui.PREFERENCIAS["fuente"], 12),
         )
         entrada.pack(fill="x", expand=True)
-        lista = ctk.CTkScrollableFrame(
-            panel, fg_color=colores["panel"], corner_radius=0,
-            scrollbar_fg_color=colores["panel"], scrollbar_button_color=colores["acento"],
-            scrollbar_button_hover_color="#10446f",
+        def alternar_valor(valor):
+            if valor in self.seleccionados:
+                self.seleccionados.discard(valor)
+            else:
+                self.seleccionados.add(valor)
+            self._actualizar_texto()
+
+        lista = self.lista = _ListaSelectorProductos(
+            panel, self.valores, consulta, self.get, alternar_valor, multiple=True,
         )
         lista.pack(fill="both", expand=True, padx=(8, 5), pady=(0, 6))
-        lista.grid_columnconfigure(0, weight=1)
-        visibles: list[str] = []
-
-        def alternar_valor(valor, variable):
-            if variable.get():
-                self.seleccionados.add(valor)
-            else:
-                self.seleccionados.discard(valor)
-            self._notificar()
-
-        def poblar(*_):
-            nonlocal visibles
-            for widget in lista.winfo_children():
-                widget.destroy()
-            filtro = normalizar(consulta.get())
-            visibles = [valor for valor in self.valores if filtro in normalizar(valor)]
-            for fila, valor in enumerate(visibles):
-                variable = ctk.BooleanVar(master=popup, value=valor in self.seleccionados)
-                casilla = ctk.CTkCheckBox(
-                    lista, text=valor, variable=variable, height=30, corner_radius=4,
-                    fg_color=colores["acento"], hover_color="#10446f",
-                    border_color=colores["borde"], text_color=colores["texto"],
-                    font=(ui.PREFERENCIAS["fuente"], 12),
-                    command=lambda elegido=valor, estado=variable: alternar_valor(elegido, estado),
-                )
-                casilla.grid(row=fila, column=0, sticky="ew", padx=(4, 8), pady=2)
-            if not visibles:
-                ctk.CTkLabel(lista, text="No se encontraron productos.",
-                             text_color=colores["secundario"]).grid(row=0, column=0, pady=24)
-
-        def seleccionar_visibles():
-            self.seleccionados.update(visibles)
-            self._notificar()
-            poblar()
-
-        def quitar_visibles():
-            self.seleccionados.difference_update(visibles)
-            self._notificar()
-            poblar()
-
-        consulta.trace_add("write", poblar)
-        poblar()
+        entrada.bind("<Down>", lista.enfocar)
+        entrada.bind("<Return>", lista.activar)
         acciones = ctk.CTkFrame(panel, fg_color="transparent")
         acciones.pack(fill="x", padx=10, pady=(0, 10))
         ui.Boton(acciones, text="Marcar visibles", variante="secundario", fondo=colores["panel"],
-                 command=seleccionar_visibles).pack(side="left")
+                 command=lambda: self._marcar_visibles(True)).pack(side="left")
         ui.Boton(acciones, text="Quitar visibles", variante="secundario", fondo=colores["panel"],
-                 command=quitar_visibles).pack(side="left", padx=8)
+                 command=lambda: self._marcar_visibles(False)).pack(side="left", padx=8)
         ui.Boton(acciones, text="Listo", fondo=colores["panel"], command=self.cerrar).pack(side="right")
+        ctk.CTkLabel(panel, text="El análisis se actualiza al cerrar este selector.",
+                     text_color=colores["secundario"]).pack(fill="x", padx=10, pady=(0, 6))
 
         popup.update_idletasks()
         ancho = max(self.winfo_width(), 700)
@@ -690,6 +771,15 @@ class SelectorMultipleProductos(ctk.CTkFrame):
         popup.lift()
         entrada.focus_set()
 
+    def _marcar_visibles(self, marcar):
+        visibles = self.lista.valores_visibles()
+        if marcar:
+            self.seleccionados.update(visibles)
+        else:
+            self.seleccionados.difference_update(visibles)
+        self.lista.actualizar_marcas()
+        self._actualizar_texto()
+
     def _notificar(self):
         self._actualizar_texto()
         if self.command:
@@ -697,9 +787,12 @@ class SelectorMultipleProductos(ctk.CTkFrame):
 
     def _revisar_foco(self, _evento=None):
         if self.popup is not None:
-            self.after(80, self._cerrar_si_perdio_foco)
+            if self._foco_pendiente is not None:
+                self.after_cancel(self._foco_pendiente)
+            self._foco_pendiente = self.after(80, self._cerrar_si_perdio_foco)
 
     def _cerrar_si_perdio_foco(self):
+        self._foco_pendiente = None
         if self.popup is None or not self.popup.winfo_exists():
             return
         enfocado = self.popup.focus_displayof()
@@ -707,12 +800,17 @@ class SelectorMultipleProductos(ctk.CTkFrame):
             self.cerrar()
 
     def cerrar(self):
+        if self._foco_pendiente is not None:
+            self.after_cancel(self._foco_pendiente)
+            self._foco_pendiente = None
         if self.popup is not None:
             try:
                 self.popup.destroy()
             except TclError:
                 pass
             self.popup = None
+            if self.seleccionados != self._seleccion_al_abrir:
+                self._notificar()
 
 
 class VentanaAnalisis:
@@ -1078,6 +1176,12 @@ class VentanaAnalisis:
 
     @staticmethod
     def _valor_matriz(fila):
+        if len(filas_grupo(fila)) > 1:
+            valores = [f.get("valor_tipico") for f in filas_grupo(fila)]
+            if all(normalizar(valor) in SIN_DATO for valor in valores):
+                return None
+            return "Revisar varias filas: " + " | ".join(
+                "N/D" if normalizar(valor) in SIN_DATO else str(valor) for valor in valores)
         valor = fila.get("valor_tipico")
         if normalizar(valor) in SIN_DATO:
             return None
@@ -1165,7 +1269,7 @@ class VentanaAnalisis:
         self.selector_productos_matriz.establecer_valores(etiquetas)
         self.selector_grupo_multidimensional.establecer_valores(etiquetas)
         inicial = (anterior if anterior in etiquetas else
-                   max(productos, key=lambda p: len(p.pruebas)).etiqueta if productos else "Sin productos disponibles")
+                   max(productos, key=lambda p: p.numero_pruebas).etiqueta if productos else "Sin productos disponibles")
         self.selector.set(inicial)
         self.estado.configure(text=f"Catálogo completo: {len(productos)} productos únicos de JSON alineados. "
                                    f"{descartados} archivos omitidos. Selecciona un candidato para ver qué cubre.")
@@ -1180,14 +1284,14 @@ class VentanaAnalisis:
         if origen is None:
             self._escribir_detalle("No hay productos alineados disponibles para comparar.")
             return
-        resultados = [comparar(origen, p) for p in self.productos if p is not origen]
-        self.comparaciones = sorted((r for r in resultados if r.compartidas),
+        resultados = (comparar(origen, p) for p in self.productos if p is not origen)
+        self.comparaciones = sorted((r for r in resultados if r.cobertura > 0),
                                     key=lambda r: (r.cobertura, r.cubiertos, r.indicativos,
                                                    -r.fuera, -r.faltantes), reverse=True)
         for indice, resultado in enumerate(self.comparaciones):
             self.tabla.insert("", "end", iid=str(indice), values=(
                 f"{resultado.candidato.nombre} · {resultado.candidato.codigo}",
-                resultado.dictamen, f"{resultado.cobertura:.0%}",
+                resultado.dictamen, "<1%" if resultado.cobertura < 0.005 else f"{resultado.cobertura:.0%}",
                 f"{resultado.cubiertos}/{resultado.requisitos}", resultado.indicativos,
                 resultado.parciales, resultado.fuera, resultado.faltantes + resultado.sin_dato,
             ))
@@ -1197,7 +1301,7 @@ class VentanaAnalisis:
             self.tabla.focus(primero)
             self.mostrar_detalle()
         else:
-            self._escribir_detalle("No hay candidatos con pruebas alineadas comparables para este producto.")
+            self._escribir_detalle("No hay candidatos con cobertura demostrada para este producto.")
 
     def mostrar_detalle(self, _evento=None):
         seleccion = self.tabla.selection()
@@ -1216,7 +1320,7 @@ class VentanaAnalisis:
             f"típico indicativo {resultado.indicativos}; parcial {resultado.parciales}; "
             f"fuera {resultado.fuera}; faltan/no verificables "
             f"{resultado.faltantes + resultado.sin_dato}.",
-            f"Pruebas alineadas compartidas: {resultado.compartidas}/{len(origen.pruebas)}. "
+            f"Pruebas alineadas compartidas: {resultado.compartidas}/{origen.numero_pruebas}. "
             "El valor típico no garantiza el cumplimiento de todos los lotes.",
             f"Categoría: {origen.categoria or 'no documentada'} / {candidato.categoria or 'no documentada'}. "
             f"Uso: {origen.uso or 'no documentado'} / {candidato.uso or 'no documentado'}.",

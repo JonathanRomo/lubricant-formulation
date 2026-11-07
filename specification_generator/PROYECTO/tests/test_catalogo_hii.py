@@ -36,6 +36,38 @@ class CacheCatalogoTests(unittest.TestCase):
         )
         self.en = escribir(self.carpeta, "sub/en.JSON", "en")
 
+    def test_explorador_incluye_contraparte_y_no_duplica(self):
+        catalogo = selector.cargar_catalogo(self.carpeta)
+        for seleccion in ({self.es}, {self.en}, {self.es, self.en}):
+            rutas, ambiguas = cache_hii.rutas_para_explorador(catalogo.especificaciones, seleccion)
+            self.assertEqual(set(rutas), {self.es, self.en})
+            self.assertEqual(ambiguas, [])
+
+    def test_sincronizar_no_reescribe_archivos_protegidos_por_recarga(self):
+        anterior = self.es.read_bytes()
+        with cache_hii.conectar(self.base / "especificaciones.db") as con:
+            cambios = cache_hii.sincronizar_idiomas(con, self.carpeta, excluir_exportacion={self.es})
+        self.assertNotIn(self.es, cambios)
+        self.assertEqual(self.es.read_bytes(), anterior)
+
+    def test_explorador_no_adivina_contraparte_ambigua(self):
+        escribir(self.carpeta, 'otra.json', 'en')
+        catalogo = selector.cargar_catalogo(self.carpeta)
+        entradas = [replace(e, versiones_idioma=()) for e in catalogo.especificaciones]
+        rutas, ambiguas = cache_hii.rutas_para_explorador(entradas, {self.es})
+        self.assertEqual(rutas, [self.es])
+        self.assertEqual(ambiguas, [self.es.name])
+
+    def test_explorador_agrupa_archivos_por_carpeta(self):
+        from win32com.shell import shell
+        def parsear(ruta, _atributos):
+            return ([b'carpeta', str(ruta).encode('utf-8')], 0)
+        with patch.object(shell, 'SHParseDisplayName', side_effect=parsear), \
+             patch.object(shell, 'SHOpenFolderAndSelectItems') as abrir:
+            cache_hii.abrir_archivos_en_explorador([self.es, self.en])
+        self.assertEqual(abrir.call_count, 2)
+        self.assertEqual(abrir.call_args_list[0].args[1], [[str(self.es).encode('utf-8')]])
+
     def test_cache_equivale_al_catalogo_y_no_relee_json_sin_cambios(self):
         esperado = selector.cargar_catalogo(self.carpeta)
         antes = {p: p.read_bytes() for p in (self.es, self.en)}

@@ -110,6 +110,11 @@ class BarraPestanas(ctk.CTkFrame):
         return self.paginas[nombre]
 
     def configure(self, require_redraw=False, **kwargs):
+        if "segmented_button_unselected_color" in kwargs:
+            self.color_inactivo = kwargs.pop("segmented_button_unselected_color")
+            for nombre, boton in self.botones.items():
+                if nombre != self.seleccion:
+                    boton.configure(fg_color=self.color_inactivo)
         if "segmented_button_selected_color" in kwargs:
             self.color_seleccion = kwargs.pop("segmented_button_selected_color")
             if self.seleccion:
@@ -123,6 +128,8 @@ class MenuPrincipal:
         self.raiz = app.raiz
         self.creadas = set()
         self.tarjetas = []
+        self._paginas_con_desplazamiento = []
+        self._recuadros_texto = []
         colores = ui.paleta()
         self.crear_pie()
         self.pestanas = BarraPestanas(self.raiz, command=self.cambiar_pestana,
@@ -133,6 +140,7 @@ class MenuPrincipal:
         for titulo in ("Inicio", "Instrucciones", "Histórico", "Formatos", "Métodos", "Configuración", "Personalizar"):
             self.pestanas.add(titulo)
         self.pestanas.set("Inicio")
+        self._actualizar_colores_menu()
         self.cambiar_pestana()
         self.raiz.bind("<Configure>", self.adaptar, add="+")
         self.raiz.after(150, lambda: self.adaptar(None))
@@ -140,20 +148,56 @@ class MenuPrincipal:
     def crear_pie(self):
         from interfaz_aplicacion_especificaciones import VERSION, VERSION_ALINEADOR
         app = self.app
-        pie = ctk.CTkFrame(self.raiz, corner_radius=0, fg_color=("#e5edf7", "#182235"))
+        pie = self.pie = ctk.CTkFrame(self.raiz, corner_radius=0, fg_color=("#e5edf7", "#182235"))
         pie.pack(side="bottom", fill="x")
         pie.grid_columnconfigure(1, weight=1)
         app._barra_progreso_carga = pie
-        app._estado_progreso_carga = ctk.CTkLabel(pie, text="Listo.", width=90, anchor="w")
-        app._estado_progreso_carga.grid(row=0, column=0, padx=(18, 8), pady=7)
-        app._indicador_progreso_carga = ui.ttk.Progressbar(pie, mode="determinate", maximum=100)
-        app._indicador_progreso_carga.grid(row=0, column=1, sticky="ew", pady=7)
+        zona = ctk.CTkFrame(pie, fg_color="transparent")
+        zona.grid(row=0, column=0, columnspan=2, sticky="ew", padx=(18, 0), pady=7)
+        zona.grid_columnconfigure(0, weight=37, uniform="progreso")
+        zona.grid_columnconfigure(1, weight=63, uniform="progreso")
+        estado = ctk.CTkFrame(zona, fg_color="transparent", height=28, width=1)
+        estado.grid(row=0, column=0, sticky="ew", padx=(0, 8))
+        estado.pack_propagate(False)
+        app._estado_progreso_carga = ctk.CTkLabel(estado, text="Listo.", anchor="w")
+        app._estado_progreso_carga.pack(fill="both", expand=True)
+        app._indicador_progreso_carga = ui.ttk.Progressbar(zona, mode="determinate", maximum=100)
+        app._indicador_progreso_carga.grid(row=0, column=1, sticky="ew")
         ui.Boton(pie, text="Ver más", width=8, command=app._mostrar_detalles_carga).grid(row=0, column=2, padx=12, pady=7)
         ctk.CTkLabel(pie, text=f"Interfaz v{VERSION}  ·  Alineador v{VERSION_ALINEADOR}",
                      font=(ui.PREFERENCIAS["fuente"], 11)).grid(row=0, column=3, padx=(4, 18), pady=7)
 
+    def _actualizar_colores_menu(self):
+        gris = ui.PREFERENCIAS["apariencia"] == "Oscuro gris"
+        panel = "#252526" if gris else ("#ffffff", "#202c3d")
+        inactivo = "#333333" if gris else ("#425a77", "#29384d")
+        self.pie.configure(fg_color="#181818" if gris else ("#e5edf7", "#182235"))
+        self.pestanas.configure(fg_color=panel, segmented_button_selected_color=ui.paleta()["acento"],
+                                segmented_button_unselected_color=inactivo)
+        for pagina in self._paginas_con_desplazamiento:
+            pagina.configure(fg_color=panel)
+            pagina._parent_canvas._ui_fondo_control = panel
+        for recuadro in self._recuadros_texto:
+            recuadro.configure(fg_color=ui.paleta()["fondo"], border_color=ui.paleta()["acento"])
+        for boton in self.pestanas.botones.values():
+            boton.configure(hover_color="#555555" if gris else "#10446f")
+        if hasattr(self, "_pagina_metodos"):
+            self._pagina_metodos.configure(fg_color=panel)
+            self._pagina_metodos._parent_canvas._ui_fondo_control = panel
+            color_tarjeta = "#2d2d30" if gris else ("#f5f8fc", "#253449")
+            for tarjeta, _detalle in self._tarjetas_metodos:
+                tarjeta.configure(fg_color=color_tarjeta,
+                                  border_color="#454545" if gris else ("#d8e2ef", "#34465d"))
+                for boton in tarjeta.winfo_children():
+                    if isinstance(boton, ui.Boton):
+                        boton._fondo_control = color_tarjeta
+                        boton.configure(bg_color=color_tarjeta)
+
     def pagina(self, nombre, titulo, subtitulo):
-        pagina = ctk.CTkScrollableFrame(self.pestanas.tab(nombre), fg_color="transparent", corner_radius=0)
+        panel = "#252526" if ui.PREFERENCIAS["apariencia"] == "Oscuro gris" else ("#ffffff", "#202c3d")
+        pagina = ctk.CTkScrollableFrame(self.pestanas.tab(nombre), fg_color=panel, corner_radius=0)
+        pagina._parent_canvas._ui_fondo_control = panel
+        self._paginas_con_desplazamiento.append(pagina)
         pagina.pack(fill="both", expand=True, padx=8, pady=8)
         pagina.grid_columnconfigure(0, weight=1)
         ctk.CTkLabel(pagina, text=titulo, font=(ui.PREFERENCIAS["fuente"], 24, "bold"),
@@ -221,7 +265,9 @@ class MenuPrincipal:
                                     command=lambda nombre: cargar(nombre))
         selector.set("RESUMEN_ALINEADOR_ESPECIFICACIONES.md")
         selector.pack(anchor="w", padx=14, pady=(0, 12))
-        texto = ctk.CTkTextbox(pagina, height=360, wrap="word")
+        texto = ctk.CTkTextbox(pagina, height=360, wrap="word", fg_color=ui.paleta()["fondo"],
+                               border_width=1, border_color=ui.paleta()["acento"])
+        self._recuadros_texto.append(texto)
         texto.pack(fill="both", expand=True, padx=14, pady=(0, 14))
         def cargar(nombre):
             try:
@@ -251,7 +297,9 @@ class MenuPrincipal:
     def formatos(self):
         pagina = self.pagina("Formatos", "Plantillas de documentos", "Gestiona los formatos Word y Excel que se usan para especificaciones y HII.")
         ui.Boton(pagina, text="Añadir o actualizar plantillas", command=self.app.actualizar_formatos).pack(anchor="w", padx=14)
-        lista = ctk.CTkTextbox(pagina, height=300)
+        lista = ctk.CTkTextbox(pagina, height=300, fg_color=ui.paleta()["fondo"],
+                               border_width=1, border_color=ui.paleta()["acento"])
+        self._recuadros_texto.append(lista)
         lista.pack(fill="x", padx=14, pady=16)
         def actualizar():
             carpeta = self.app.rutas["formatos"]
@@ -282,7 +330,7 @@ class MenuPrincipal:
         self._disposicion_metodos = None
         self._margen_metodos = None
         self._wrap_metodos = None
-        color_tarjeta = ("#f5f8fc", "#253449")
+        color_tarjeta = "#2d2d30" if ui.PREFERENCIAS["apariencia"] == "Oscuro gris" else ("#f5f8fc", "#253449")
         def editar():
             try:
                 EditorListaMaestra(self.raiz, ruta_maestro(BASE), self.refrescar_fechas_metodos)
@@ -381,10 +429,13 @@ class MenuPrincipal:
         ui.Boton(pagina, text="Guardar carpetas", command=guardar).pack(anchor="w", padx=14, pady=18)
 
     def personalizar(self):
-        pagina = ctk.CTkScrollableFrame(self.pestanas.tab("Personalizar"), fg_color="transparent", corner_radius=0)
+        panel = "#252526" if ui.PREFERENCIAS["apariencia"] == "Oscuro gris" else ("#ffffff", "#202c3d")
+        pagina = ctk.CTkScrollableFrame(self.pestanas.tab("Personalizar"), fg_color=panel, corner_radius=0)
+        pagina._parent_canvas._ui_fondo_control = panel
+        self._paginas_con_desplazamiento.append(pagina)
         pagina.pack(fill="both", expand=True, padx=8, pady=8)
         variables = {}
-        for clave, etiqueta, opciones in (("apariencia", "Apariencia", ["Claro", "Oscuro", "Sistema"]),
+        for clave, etiqueta, opciones in (("apariencia", "Apariencia", list(ui.MODOS_APARIENCIA)),
             ("acento", "Color de acento", list(ui.ACENTOS)), ("densidad", "Espaciado y altura de filas", ["Cómoda", "Compacta"]),
             ("fuente", "Tipografía", ["Segoe UI", "Arial", "Calibri"])):
             fila = ctk.CTkFrame(pagina, fg_color="transparent")
@@ -397,8 +448,12 @@ class MenuPrincipal:
         ctk.CTkLabel(pagina, text="Tamaño de controles y texto (80–140 %)", anchor="w").pack(fill="x", padx=14, pady=(14, 2))
         porcentaje = ctk.CTkLabel(pagina, text=f"{round(escala.get()*100)} %")
         porcentaje.pack(anchor="w", padx=14)
-        ctk.CTkSlider(pagina, from_=.8, to=1.4, number_of_steps=12, variable=escala,
-                      command=lambda valor: porcentaje.configure(text=f"{round(valor*100)} %")).pack(fill="x", padx=14, pady=(0, 14))
+        marco_zoom = ctk.CTkFrame(pagina, fg_color="transparent", height=28)
+        marco_zoom.pack(fill="x", padx=14, pady=(0, 14))
+        ctk.CTkSlider(marco_zoom, from_=.8, to=1.4, number_of_steps=12, variable=escala,
+                      command=lambda valor: porcentaje.configure(text=f"{round(valor*100)} %")).place(
+                          relx=0, rely=.5, relwidth=.5, anchor="w"
+                      )
         for clave, etiqueta in (("maximizar", "Abrir el menú principal maximizado"),
                                 ("adaptacion_auto", "Optimizar automáticamente el editor en pantallas pequeñas"),
                                 ("control_compacto", "Abrir el editor con control documental colapsado")):
@@ -416,7 +471,7 @@ class MenuPrincipal:
                 variable.set(datos[clave])
             escala.set(datos["escala"])
             porcentaje.configure(text=f"{round(datos['escala']*100)} %")
-            self.pestanas.configure(segmented_button_selected_color=ui.paleta()["acento"])
+            self._actualizar_colores_menu()
             self.app.zoom_aplicacion = datos["escala"]
             self.adaptar(None)
             if datos["maximizar"]:
@@ -431,7 +486,7 @@ class MenuPrincipal:
                               font=("Segoe UI Symbol", 16), command=self.app.actualizar_listas_json)
         actualizar._ui_preservar_fuentes = True
         actualizar.pack(side="left", padx=(10, 0))
-        ui.AyudaHover(actualizar, "Actualiza las listas de especificaciones para incluir los JSON añadidos manualmente a las carpetas del programa.")
+        ui.AyudaHover(actualizar, "Busca Word y JSON nuevos, detecta duplicados y revisa conflictos de revisión antes de actualizar las listas.")
         boton_duplicados = ui.Boton(acciones, text="Revisar duplicados", command=self.app.revisar_duplicados)
         boton_duplicados.pack(side="left", padx=(10, 0))
         ui.AyudaHover(boton_duplicados, "Revisa si existen especificaciones repetidas y las mueve al folder de REVISAR/DUPLICADOS.")
